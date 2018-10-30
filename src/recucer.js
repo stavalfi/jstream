@@ -1,8 +1,8 @@
 import flowStatuses from "./statuses/flowStatuses";
 import workflowStatuses from "./statuses/workflowStatuses";
-import flowsJson from "../workflows";
 import {loop, Cmd} from 'redux-loop';
 import actions from './actions';
+import {flowsNames, workflowsDetails} from './workflowsJSONReader'
 
 const isActionValid = (state, action) => {
     if (action.type !== "COMPLETED_STATUS")
@@ -24,25 +24,6 @@ const isActionValid = (state, action) => {
     return true;
 };
 
-const workflowsDetails = flowsJson.workflowsDetails.map(flow => {
-    // if (flow === null)
-    //     throw Error("there is a null inside flowsJson.json.");
-    if (typeof flow === 'string' || flow instanceof String)
-        return {
-            workflowName: flow,
-            workflow: [flow]
-        };
-    if (flow !== null && typeof flow === 'object')
-        if (flow.length === 0)
-            throw Error("empty workflow in flowsJson.json.");
-        else
-            return {
-                workflowName: flow.workflowName,
-                workflow: [flow.workflow]
-            };
-    throw Error("illegal workflow: " + flow);
-});
-
 const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flowName, flowStatus) => false;
 
 const isWorkflowCompleted = activeWorkflowDetails => false;
@@ -50,7 +31,7 @@ const isWorkflowCompleted = activeWorkflowDetails => false;
 const getActionsToTrigger = activeWorkflowDetails => [];
 
 const initialState = {
-    flowsNames: flowsJson.flowsNames,
+    flowsNames,
     workflowsDetails,
     activeWorkflowsDetails: [],
     nonActiveWorkflowsDetails: []
