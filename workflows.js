@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     flowsNames: [
         "a",
         "b",

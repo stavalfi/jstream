@@ -45,7 +45,7 @@ module.exports = {
         // generate a html file after every time webpack end
         new HtmlWebpackPlugin({
             title: "tracker",
-            template: path.join(__dirname, 'src', 'output-index-tamplate.html')
+            template: path.join(__dirname, 'output-index-tamplate.html')
         }),
         // remove the dist folder before every webpack build.
         new CleanWebpackPlugin([path.join(__dirname, "dist")]),
