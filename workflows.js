@@ -1,25 +1,26 @@
 module.exports = {
-    actions: [
+    flowsNames: [
         "a",
         "b",
         "c"
     ],
-    flows: [
+    workflowsDetails: [
         // version 1:
         "a",
         "c",
         // version 2:
         {
-            flowName: "a",
-            flow: ["a"]
+            workflowName: "a",
+            workflow: ["a"]
         },
         {
-            flowName: "delete",
-            flow: ["a1", "b", "c", "a2", "a3"]
+            workflowName: "delete",
+            workflow: ["a1", "b", "c", "a2", "a3"]
         },
         {
-            flowName: "add",
-            flow: [
+            workflowName: "add",
+            // TODO: be able to declare sub-workflowsDetails that will be used inside this workflow ONLY.
+            workflow: [
                 "delete",
                 ["a", "b"],
                 "c"
@@ -27,9 +28,9 @@ module.exports = {
         },
         // version 3:
         {
-            flowName: "add",
-            predicate: activeFlows => true,
-            flow: [
+            workflowName: "modify",
+            predicate: activeFlows => 1 + 1,
+            workflow: [
                 "a1",
                 {
                     action: "b",
@@ -45,19 +46,22 @@ module.exports = {
         }
     ]
 };
+/*
+// how to use:
 
 const flowIdentifier1 = executeFlow("a");
 // flowIdentifier1 = { id: 03k3u3hf73thh }
-const flowIdentifier2 = executeFlow(actions.a);
+const flowIdentifier2 = executeFlow(flowsNames.a);
 // flowIdentifier1 = { id: xdwd23dwqd23d }
-const flowIdentifier3 = executeFlow(actions.a, {customData1: 1, customData2: "my data!"});
+const flowIdentifier3 = executeFlow(flowsNames.a, {customData1: 1, customData2: "my data!"});
 // flowIdentifier1 = { id: 3uhfd3yhf83fh, customData: {customData1: 1, customData2: "my data!"}}
 // or: (not sure yet)
 // flowIdentifier1 = { id: 3uhfd3yhf83fh, customData1: 1, customData2: "my data!"}
 
-const flowIdentifier4 = executeFlow(actions.add);
+const flowIdentifier4 = executeFlow(flowsNames.add);
 
 
 selfResolved(flowIdentifier4,"a");
-selfResolved(flowIdentifier4,actions.c);
-selfResolved(flowIdentifier4,actions.a);
+selfResolved(flowIdentifier4,flowsNames.c);
+selfResolved(flowIdentifier4,flowsNames.a);
+*/

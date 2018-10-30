@@ -9,7 +9,7 @@ const isDevelopmentMode = process.env.NODE_ENV === 'development';
 // process.traceDeprecation = true
 
 module.exports = {
-    // devtool: "source-map",
+    devtool: "source-map",
     // in production mode, the webpack does uglify and Scope Hoisting which means that all the modules are under
     // the same scope and not in different scopes. it's slow down the build but makes the code run faster.
     mode: isDevelopmentMode ? "development" : "production",

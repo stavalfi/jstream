@@ -1,221 +1,169 @@
-// import "./part2/index";
-// import "./styles.css";
-
-import {createAction, createReducer} from 'redux-act';
 import {createStore, compose, applyMiddleware} from 'redux';
-import {install, loop, Cmd} from 'redux-loop';
-import flowsJson from "../flows"
+import flowsJson from "../workflows"
 
 // TODO: validate flowsJson.json before using it.
 
-const flows = flowsJson.flows.map(flow => {
-    if (flow !== null)
-        throw Error("there is a null inside flowsJson.json.");
+const workflowsDetails = flowsJson.workflowsDetails.map(flow => {
+    // if (flow === null)
+    //     throw Error("there is a null inside flowsJson.json.");
     if (typeof flow === 'string' || flow instanceof String)
         return {
-            [flow]: [flow]
+            workflowName: flow,
+            workflow: [flow]
         };
     if (flow !== null && typeof flow === 'object')
         if (flow.length === 0)
-            throw Error("empty flow in flowsJson.json.");
+            throw Error("empty workflow in flowsJson.json.");
         else
             return {
-                [flow.flowName]: flow.flow
+                workflowName: flow.workflowName,
+                workflow: [flow.workflow]
             };
-    throw Error("illegal flow: " + flow);
-}).reduce((flows, flow) => ({...flows, [Object.keys(flow)[0]]: flow}), {});
+    throw Error("illegal workflow: " + flow);
+});
 
-const actions = flowsJson.actions.reduce((obj, actionType) => ({
-    ...obj,
-    [actionType]: (flowId,status) => ({
-        flowId,
-        type: actionType,
-        status
+const init = (flowsNames, workflowsDetails) => ({
+    type: "INITIALIZE_WORKFLOWS",
+    flowsNames,
+    workflowsDetails
+});
+
+const actions = flowsJson.flowsNames.reduce((flowsObjUntilNow, flowName) => ({
+    ...flowsObjUntilNow,
+    [flowName]: (workflowId, workflowName, flowStatus) => ({
+        type: "COMPLETED_STATUS",
+        flowName,
+        workflowId,
+        workflowName,
+        flowStatus,
+        flowStatusCompleteTime: new Date()
     })
 }), {});
 
-const initialState = {
-    activeFlows: [
-        {
-            flowName: "add",
-            flowId:"12d3df"
-        }
-    ]
+
+const isActionValid = (state, action) => {
+    if (action.type !== "COMPLETED_STATUS")
+        return false;
+
+    if (!state.flowsNames.some(flowName => flowName === action.flowName))
+        return false;
+
+    if (!state.workflowsDetails.some(workflowDetails => workflowDetails.workflowName === action.workflowName))
+        return false;
+
+    if (!Object.values(flowStatuses).some(flowStatus => flowStatus === action.flowStatus))
+        return false;
+
+    if (state.nonActiveWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
+    // throw error because we try to modify not-active workflow.
+        return false;
+
+    return true;
 };
 
+const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flow, status) => false;
+
+const isWorkflowCompleted = activeWorkflowDetails => false;
+
+const flowStatuses = {
+    started: 1,
+    selfResolved: 2,
+    completed: 3,
+    // canceled: 4,
+};
+const workflowStatuses = {
+    started: 1,
+    completed: 2,
+    // canceled: 3,
+};
+
+let initialState = {
+    flowsNames: flowsJson.flowsNames,
+    workflowsDetails,
+    activeWorkflowsDetails: [],
+    nonActiveWorkflowsDetails: []
+};
 const reducer = (state = initialState, action) => {
-    if (!actions.hasOwnProperty(action.type))
+    if (!isActionValid(state, action))
         return state;
 
-    const flow = flows[action.type];
+    const workflowDetails = state.workflowsDetails.filter(workflow => workflow.workflowName === action.workflowName);
 
+    if (workflowDetails.length === 0)
+    // the workflow does not exist by the given name in the action.
+        return state;
 
+    const activeWorkflowDetails = state.activeWorkflowsDetails.filter(activeWorkflow => activeWorkflow.workflowId === action.workflowId)
 
-        if (action.type)
-            switch (action.type) {
-                case 'INIT':
-                    return loop(
-                        {...state, initStarted: true},
-                        Cmd.run(fetchUser, {
-                            successActionCreator: userFetchSuccessfulAction,
-                            failActionCreator: userFetchFailedAction,
-                            args: ['1234']
-                        })
-                    );
-
-                case 'USER_FETCH_SUCCESSFUL':
-                    return {...state, user: action.user};
-
-                case 'USER_FETCH_FAILED':
-                    return {...state, error: action.error};
-
-                default:
-                    return state;
-            }
-};
-
-/**
- * In your reducer you can choose to return a loop or not. The typical pattern
- * you'll end up using is to have some sort of `__Start` action that feeds into
- * one or more pairs of `__Succeed` and `__Fail` actions. You must always handle
- * the failure case, even if the handler is a no-op!
- */
-const reducer = createReducer({
-
-    /**
-     * The following three reducers start through the process of updating the
-     * counter on the short timer. The process starts here and can either fail
-     * or succeed randomly, and we've covered both cases.
-     */
-    [Actions.shortIncrementStart]: (state, amount) => {
-        console.log('short start');
-        return loop(state
-                .setIn(['short', 'loading'], true)
-                .setIn(['short', 'failed'], false),
-            Cmd.run(Api.shortIncrement, {
-                successActionCreator: Actions.shortIncrementSucceed,
-                failActionCreator: Actions.shortIncrementFail,
-                args: [amount]
-            })
-        )
-    },
-
-    [Actions.shortIncrementSucceed]: (state, amount) => {
-        console.log('short success');
-        return state
-            .setIn(['short', 'loading'], false)
-            .updateIn(['short', 'count'], (current) => current + amount)
-    },
-
-    [Actions.shortIncrementFail]: (state) => {
-        console.log('short fail');
-        return state
-            .setIn(['short', 'loading'], false)
-            .setIn(['short', 'failed'], true)
-    },
-
-    /**
-     * The following three reducers perform the same such behavior for the counter
-     * on the long timer.
-     */
-    [Actions.longIncrementStart]: (state, amount) => {
-        console.log('long start');
-        return loop(state
-                .setIn(['long', 'loading'], true)
-                .setIn(['long', 'failed'], false),
-            Cmd.run(Api.longIncrement, {
-                successActionCreator: Actions.longIncrementSucceed,
-                failActionCreator: Actions.longIncrementFail,
-                args: [amount]
-            }))
-    },
-
-    [Actions.longIncrementSucceed]: (state, amount) => {
-        console.log('long success');
-        return state
-            .setIn(['long', 'loading'], false)
-            .updateIn(['long', 'count'], (current) => current + amount)
-    },
-
-    [Actions.longIncrementFail]: (state) => {
-        console.log('log failed');
-        return state
-            .setIn(['long', 'loading'], false)
-            .setIn(['long', 'failed'], true)
-    },
-
-    /**
-     * This final action groups the two increment start actions with a list.
-     */
-    [Actions.incrementBothStart]: (state, amount) => {
-        console.log('both start');
-        return loop(state,
-            Cmd.list([
-                Cmd.action(Actions.shortIncrementStart(amount)),
-                Cmd.action(Actions.longIncrementStart(amount)),
-            ])
-        )
-    },
-}, initialState);
-
-
-function fetchUser(userId) {
-    return new Promise((res, rej) => setTimeout(() => rej(userId), 1000));
-}
-
-
-function initAction() {
-    return {
-        type: 'INIT'
-    };
-}
-
-function userFetchSuccessfulAction(user) {
-    return {
-        type: 'USER_FETCH_SUCCESSFUL',
-        user
-    };
-}
-
-function userFetchFailedAction(err) {
-    return {
-        type: 'USER_FETCH_ERROR',
-        err
-    };
-}
-
-const initialState = {
-    initStarted: false,
-    user: null,
-    error: null
-};
-
-function reducer(state = initialState, action) {
-    console.log(2, "reducer received new action", action);
-    switch (action.type) {
-        case 'INIT':
-            return loop(
-                {...state, initStarted: true},
-                Cmd.run(fetchUser, {
-                    successActionCreator: userFetchSuccessfulAction,
-                    failActionCreator: userFetchFailedAction,
-                    args: ['1234']
-                })
-            );
-
-        case 'USER_FETCH_SUCCESSFUL':
-            return {...state, user: action.user};
-
-        case 'USER_FETCH_FAILED':
-            return {...state, error: action.error};
-
-        default:
+    if (activeWorkflowDetails.length === 0) {
+        if (action.flowStatus !== flowStatuses.started)
+        // the workflow has not stated yet and the user notify about finished flowStatus that is not the first flowStatus.
             return state;
+        if (action.flowName !== workflowDetails[0].workflow[0])
+        // we just started this workflow but the first flow does not match to the given flow in the action.
+            return state;
+
+        // we need to create this workflow
+        const newActiveWorkflow = {
+            workflowId: action.workflowId,
+            workflow: workflowDetails[0].workflow,
+            workflowStatus: workflowStatuses.started,
+            workflowStatuses: [
+                {
+                    flowStatusCompleteTime: action.flowStatusCompleteTime,
+                    flowStatus: flowStatuses.started,
+                    flowName: action.flowName
+                }
+            ]
+        };
+        return {
+            ...state,
+            activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflow],
+        };
     }
-}
+
+    // we need to check that the flowStatus that completed was executed in the right time.
+
+    if (!isStatusLegalInThisWorkflow(activeWorkflowDetails, action.flowName, action.flowStatus))
+    // the user notified about completed flowStatus that is not supposed to complete now or never.
+    // TODO: understand why this flowStatus is not legal and add documentation.
+        return state;
+
+    const updatedActiveWorkflowDetails = {
+        ...activeWorkflowDetails,
+        workflowStatuses: [
+            ...activeWorkflowDetails.workflowStatuses,
+            {
+                flowStatusCompleteTime: action.flowStatusCompleteTime,
+                flowStatus: action.flowStatus,
+                flowName: action.flowName
+            }
+        ]
+    };
+
+    if (isWorkflowCompleted(updatedActiveWorkflowDetails))
+        return {
+            ...state,
+            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
+            nonActiveWorkflowsDetails: [
+                ...state.nonActiveWorkflowsDetails,
+                {
+                    ...updatedActiveWorkflowDetails,
+                    workflowStatus: workflowStatuses.completed
+                }
+            ]
+        };
+
+    return {
+        ...state,
+        activeWorkflowsDetails: [
+            ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
+            updatedActiveWorkflowDetails
+        ]
+    };
+};
 
 const logger = store => next => action => {
-    console.log(1);
     console.group(action.type);
     console.info('dispatching', action);
     let result = next(action);
@@ -225,10 +173,30 @@ const logger = store => next => action => {
 };
 
 const enhancer = compose(
-    install(),
     applyMiddleware(logger)
 );
 
-const store = createStore(reducer, initialState, enhancer);
+const store = createStore(reducer, enhancer);
 
-store.dispatch(initAction());
+store.dispatch(actions.a("1", "a", flowStatuses.started));
+
+
+// const initialState____example = {
+//     activeWorkflowsDetails: [
+//         {
+//             workflowId: "2873ye3787e32",
+//             workflow: "ref to the actual workflow",
+//             workflowStatuses: [
+//                 // done statuses only.
+//                 {
+//                     flowName: "a",
+//                     flowStatus: "1 or 2 or 3",
+//                     flowStatusCompleteTime: "time in milliseconds"
+//                 }
+//             ]
+//         }
+//     ],
+//     nonActiveWorkflowsDetails: [
+//         {}
+//     ]
+// };
