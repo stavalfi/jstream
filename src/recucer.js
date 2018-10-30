@@ -1,6 +1,8 @@
 import flowStatuses from "./statuses/flowStatuses";
 import workflowStatuses from "./statuses/workflowStatuses";
 import flowsJson from "../workflows";
+import {loop, Cmd} from 'redux-loop';
+import actions from './actions';
 
 const isActionValid = (state, action) => {
     if (action.type !== "COMPLETED_STATUS")
@@ -41,9 +43,11 @@ const workflowsDetails = flowsJson.workflowsDetails.map(flow => {
     throw Error("illegal workflow: " + flow);
 });
 
-const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flow, status) => false;
+const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flowName, flowStatus) => false;
 
 const isWorkflowCompleted = activeWorkflowDetails => false;
+
+const getActionsToTrigger = activeWorkflowDetails => [];
 
 const initialState = {
     flowsNames: flowsJson.flowsNames,
@@ -85,10 +89,13 @@ export default (state = initialState, action) => {
                 }
             ]
         };
-        return {
-            ...state,
-            activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflow],
-        };
+        return loop(
+            {
+                ...state,
+                activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflow],
+            },
+            Cmd.list(...getActionsToTrigger(newActiveWorkflow))
+        );
     }
 
     // we need to check that the flowStatus that completed was executed in the right time.
@@ -110,24 +117,25 @@ export default (state = initialState, action) => {
         ]
     };
 
-    if (isWorkflowCompleted(updatedActiveWorkflowDetails))
-        return {
-            ...state,
-            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
-            nonActiveWorkflowsDetails: [
-                ...state.nonActiveWorkflowsDetails,
-                {
-                    ...updatedActiveWorkflowDetails,
-                    workflowStatus: workflowStatuses.completed
-                }
-            ]
+    if (isWorkflowCompleted(updatedActiveWorkflowDetails)) {
+        const completedWorkflow = {
+            ...updatedActiveWorkflowDetails,
+            workflowStatus: workflowStatuses.completed
         };
+        return loop({
+                ...state,
+                activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
+                nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
+            },
+            Cmd.list(...getActionsToTrigger(completedWorkflow)));
+    }
 
-    return {
-        ...state,
-        activeWorkflowsDetails: [
-            ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
-            updatedActiveWorkflowDetails
-        ]
-    };
+    return loop({
+            ...state,
+            activeWorkflowsDetails: [
+                ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
+                updatedActiveWorkflowDetails
+            ]
+        },
+        Cmd.list(...getActionsToTrigger(updatedActiveWorkflowDetails)));
 };

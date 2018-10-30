@@ -1,0 +1,48 @@
+{
+  "flowsNames": [
+    "createUser",
+    "removeUser",
+    "UpdateServer",
+    "getUser"
+  ],
+  "workflowsDetails": [
+    "createUser",
+    "UpdateServer",
+    {
+      "workflowName": "createSuperUser",
+      "workflow": [
+        "addUser"
+      ]
+    },
+    {
+      "workflowName": "delete",
+      "workflow": [
+        "createUser_1",
+        "removeUser",
+        "UpdateServer",
+        "createUser_2",
+        "createUser_3"
+      ]
+    },
+    {
+      "workflowName": "add",
+      "privateWorkflows": [
+        {
+          "workflowName": "getUserFromDatabase",
+          "workflow": [
+            "UpdateServer",
+            "getUser"
+          ]
+        }
+      ],
+      "workflow": [
+        "removeUser",
+        [
+          "createSuperUser",
+          "getUserFromDatabase"
+        ],
+        "UpdateServer"
+      ]
+    }
+  ]
+}
