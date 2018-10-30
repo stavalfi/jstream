@@ -1,11 +1,11 @@
-import flowStatuses from "./statuses/flowStatuses";
-import workflowStatuses from "./statuses/workflowStatuses";
+import flowStatuses from './statuses/flowStatuses';
+import workflowStatuses from './statuses/workflowStatuses';
 import {loop, Cmd} from 'redux-loop';
-import actions from './actions';
-import {flowsNames, workflowsDetails} from './workflowsJSONReader'
+// import actions from './actions';
+import {flowsNames, workflowsDetails} from './workflowsJSONReader';
 
 const isActionValid = (state, action) => {
-    if (action.type !== "COMPLETED_STATUS")
+    if (action.type !== 'COMPLETED_STATUS')
         return false;
 
     if (!state.flowsNames.some(flowName => flowName === action.flowName))
@@ -24,11 +24,12 @@ const isActionValid = (state, action) => {
     return true;
 };
 
-const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flowName, flowStatus) => false;
+const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flowName, flowStatus) =>
+    activeWorkflowDetails + flowName + flowStatus;
 
-const isWorkflowCompleted = activeWorkflowDetails => false;
+const isWorkflowCompleted = activeWorkflowDetails => activeWorkflowDetails;
 
-const getActionsToTrigger = activeWorkflowDetails => [];
+const getActionsToTrigger = activeWorkflowDetails => [activeWorkflowDetails].slice(0, 0);
 
 const initialState = {
     flowsNames,
@@ -47,7 +48,7 @@ export default (state = initialState, action) => {
     // the workflow does not exist by the given name in the action.
         return state;
 
-    const activeWorkflowDetails = state.activeWorkflowsDetails.filter(activeWorkflow => activeWorkflow.workflowId === action.workflowId)
+    const activeWorkflowDetails = state.activeWorkflowsDetails.filter(activeWorkflow => activeWorkflow.workflowId === action.workflowId);
 
     if (activeWorkflowDetails.length === 0) {
         if (action.flowStatus !== flowStatuses.started)
@@ -75,7 +76,7 @@ export default (state = initialState, action) => {
                 ...state,
                 activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflow],
             },
-            Cmd.list(...getActionsToTrigger(newActiveWorkflow))
+            Cmd.list(getActionsToTrigger(newActiveWorkflow))
         );
     }
 
@@ -104,19 +105,19 @@ export default (state = initialState, action) => {
             workflowStatus: workflowStatuses.completed
         };
         return loop({
-                ...state,
-                activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
-                nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
-            },
-            Cmd.list(...getActionsToTrigger(completedWorkflow)));
+            ...state,
+            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
+            nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
+        },
+        Cmd.list(getActionsToTrigger(completedWorkflow)));
     }
 
     return loop({
-            ...state,
-            activeWorkflowsDetails: [
-                ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
-                updatedActiveWorkflowDetails
-            ]
-        },
-        Cmd.list(...getActionsToTrigger(updatedActiveWorkflowDetails)));
+        ...state,
+        activeWorkflowsDetails: [
+            ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
+            updatedActiveWorkflowDetails
+        ]
+    },
+    Cmd.list(getActionsToTrigger(updatedActiveWorkflowDetails)));
 };

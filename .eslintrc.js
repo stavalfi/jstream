@@ -32,19 +32,18 @@ module.exports = {
             "error",
             "always"
         ],
-        "no-console": "error",
+        "no-console": "off",
         "no-unused-vars": "error",
         "fp/no-arguments": "error", // Forbid the use of arguments.
         "fp/no-class": "error", // Forbid the use of class.
         "fp/no-delete": "error", // Forbid the use of delete.
         "fp/no-events": "error", // Forbid the use of the events module.
         "fp/no-get-set": "error", // Forbid the use of getters and setters.
-        "fp/no-let": "off", // Forbid the use of let.
-        "fp/no-loops": "off", // Forbid the use of loops.
+        "fp/no-let": "error", // Forbid the use of let.
+        "fp/no-loops": "error", // Forbid the use of loops.
         "fp/no-mutating-assign": "error", // Forbid the use of Object.assign() with a variable as first argument.
-        // there is a bug in the following rule. he throw error even when method doesn't have mutations.
-        "fp/no-mutating-methods": "off", // Forbid the use of mutating methods.
-        "fp/no-mutation": "off",  // Forbid the use of mutating operators.
+        "fp/no-mutating-methods": "error", // Forbid the use of mutating methods.
+        "fp/no-mutation": "error",  // Forbid the use of mutating operators.
         "fp/no-nil": "error", // Forbid the use of null and undefined.
         "fp/no-proxy": "error", // Forbid the use of Proxy.
         // ... es6 spread is cool.
@@ -53,7 +52,6 @@ module.exports = {
         "fp/no-throw": "error", // Forbid the use of throw.
         "fp/no-unused-expression": "off", // Enforce that an expression gets used.
         "fp/no-valueof-field": "error", // Forbid the creation of valueOf fields.
-        "no-var": "error",
-        "fp/no-nil": "off"
+        "no-var": "error"
     }
 };
