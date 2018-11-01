@@ -1,6 +1,7 @@
 import flowStatuses from './statuses/flowStatuses';
 import workflowStatuses from './statuses/workflowStatuses';
 import {loop, Cmd} from 'redux-loop';
+// import flowsFunctions from 'workflows';
 // import actions from './actions';
 import {flowsNames, workflowsDetails} from './workflowsJSONReader';
 
