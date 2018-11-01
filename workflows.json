@@ -23,26 +23,6 @@
         "createUser_2",
         "createUser_3"
       ]
-    },
-    {
-      "workflowName": "add",
-      "privateWorkflows": [
-        {
-          "workflowName": "getUserFromDatabase",
-          "workflow": [
-            "UpdateServer",
-            "getUser"
-          ]
-        }
-      ],
-      "workflow": [
-        "removeUser",
-        [
-          "createSuperUser",
-          "getUserFromDatabase"
-        ],
-        "UpdateServer"
-      ]
     }
   ]
 }
