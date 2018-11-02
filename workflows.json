@@ -2,16 +2,17 @@
   "flowsNames": [
     "createUser",
     "removeUser",
-    "UpdateServer",
+    "updateServer",
     "getUser"
   ],
   "workflowsDetails": [
     "createUser",
-    "UpdateServer",
+    "updateServer",
     {
       "workflowName": "createSuperUser",
       "workflow": [
-        "addUser"
+        "createUser",
+        "updateServer"
       ]
     },
     {
@@ -19,7 +20,7 @@
       "workflow": [
         "createUser_1",
         "removeUser",
-        "UpdateServer",
+        "updateServer",
         "createUser_2",
         "createUser_3"
       ]
