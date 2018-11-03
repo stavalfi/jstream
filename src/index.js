@@ -8,6 +8,6 @@ import readWorkflowsFile from './workflowsJSONReader';
 const {flowsNames, workflowsDetails} = readWorkflowsFile(workflowsJson);
 
 const actions = createActions(flowsNames);
-const store = createStore(flowsNames, workflowsDetails, flowsFunctions, actions);
+const store = createStore(actions, flowsFunctions, workflowsDetails);
 
-store.dispatch(actions.getUser('wdgh783y83d2', 'createSuperUser', flowStatuses.started));
+store.dispatch(actions.getUser('id1', 'createSuperUser', flowStatuses.started));

@@ -19,17 +19,17 @@ const duplicateWorkflowGraph = (head, ...updatedNodes) => {
         Maybe(duplicate(head.value()));
 };
 
-const isActionValid = (state, action) => {
-    if (!state.flowsNames.some(flowName => flowName === action.flowName))
+const isActionValid = (actions, workflowsDetails, nonActiveWorkflowsDetails, action) => {
+    if (!actions.hasOwnProperty(action.flowName))
         return false;
 
-    if (!state.workflowsDetails.some(workflowDetails => workflowDetails.workflowName === action.workflowName))
+    if (!workflowsDetails.some(workflowDetails => workflowDetails.workflowName === action.workflowName))
         return false;
 
     if (!Object.values(flowStatuses).some(flowStatus => flowStatus === action.flowStatus))
         return false;
 
-    if (state.nonActiveWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
+    if (nonActiveWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
     // throw error because we try to modify not-active workflow.
         return false;
 
@@ -75,11 +75,11 @@ const isWorkflowCompleted = head => {
         areAllNodesCompleted(head.value());
 };
 
-export default actions => (state, action) => {
-    if (!isActionValid(state, action))
+export default (actions, flowsFunctions, workflowsDetails) => (state, action) => {
+    if (!isActionValid(actions, workflowsDetails, state.nonActiveWorkflowsDetails, action))
         return state;
 
-    const workflowDetails = state.workflowsDetails.filter(workflow => workflow.workflowName === action.workflowName);
+    const workflowDetails = workflowsDetails.filter(workflow => workflow.workflowName === action.workflowName);
 
     if (workflowDetails.length === 0)
     // the workflow does not exist by the given name in the action.
@@ -114,7 +114,7 @@ export default actions => (state, action) => {
                 ...state,
                 activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflowDetails],
             },
-            Cmd.list(getActionsToTrigger(actions, state.flowsFunctions, workflowDetails[0].head.value().childs, action))
+            Cmd.list(getActionsToTrigger(actions, flowsFunctions, workflowDetails[0].head.value().childs, action))
         );
     }
 
@@ -162,5 +162,5 @@ export default actions => (state, action) => {
                 updatedActiveWorkflowDetails
             ]
         },
-        Cmd.list(getActionsToTrigger(actions, state.flowsFunctions, uncompletedNodes[completedNodeIndex].childs, action)));
+        Cmd.list(getActionsToTrigger(actions, flowsFunctions, uncompletedNodes[completedNodeIndex].childs, action)));
 };
