@@ -8,7 +8,8 @@ export default {
     'verbose': true,
     'compileEnhancements': false,
     'require': [
-        '@babel/register'
+        '@babel/register',
+        'core-js/fn/array/flat-map'
     ],
     'babel': {
         'testOptions': {
