@@ -11,8 +11,10 @@
     {
       "workflowName": "createSuperUser",
       "workflow": [
-        "createUser",
-        "updateServer"
+        "getUser_1",
+        "updateServer",
+        "getUser_2",
+        "getUser_3"
       ]
     },
     {
