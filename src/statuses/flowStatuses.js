@@ -1,5 +1,6 @@
 export default {
     started: 1,
-    completed: 2,
-    // canceled: 3,
+    selfResolved: 2,
+    completed: 3,
+    // canceled: 4,
 };
