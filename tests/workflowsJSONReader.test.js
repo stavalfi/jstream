@@ -1,6 +1,4 @@
 import test from 'ava';
-// TODO: remove this import (integrate jasmine with my babel/polyfill ???)
-import 'core-js/fn/array/flat-map';
 import readWorkflowsFile from '../src/workflowsJSONReader';
 
 /* eslint fp/no-nil:0 */
