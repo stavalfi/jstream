@@ -1,7 +1,7 @@
 const path = require('path');
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const isDevelopmentMode = process.env.NODE_ENV === 'development';
 
@@ -9,11 +9,11 @@ const isDevelopmentMode = process.env.NODE_ENV === 'development';
 // process.traceDeprecation = true
 
 module.exports = {
-    devtool: "source-map",
+    devtool: 'source-map',
     // in production mode, the webpack does uglify and Scope Hoisting which means that all the modules are under
     // the same scope and not in different scopes. it's slow down the build but makes the code run faster.
-    mode: isDevelopmentMode ? "development" : "production",
-    entry: path.join(__dirname, "src", "index.js"),
+    mode: isDevelopmentMode ? 'development' : 'production',
+    entry: path.join(__dirname, 'src', 'index.js'),
     output: {
         // default output directory: "dist" under the main folder.
         // the amount of output files depends on the webpack configurations.
@@ -24,8 +24,8 @@ module.exports = {
         // ....................................................................
         // [name] == the name of the chunk
         // [chunkhash] == a hash code that is generated from the content (without metadata of webpack) of the chunk.
-        filename: isDevelopmentMode ? "[hash].bundle.js" : "[contenthash].bundle.js",
-        path: path.join(__dirname, "dist")
+        filename: isDevelopmentMode ? '[hash].bundle.js' : '[contenthash].bundle.js',
+        path: path.join(__dirname, 'dist')
     },
     module: {
         rules: [
@@ -44,11 +44,11 @@ module.exports = {
     plugins: [
         // generate a html file after every time webpack end
         new HtmlWebpackPlugin({
-            title: "tracker",
+            title: 'tracker',
             template: path.join(__dirname, 'output-index-tamplate.html')
         }),
         // remove the dist folder before every webpack build.
-        new CleanWebpackPlugin([path.join(__dirname, "dist")]),
+        new CleanWebpackPlugin([path.join(__dirname, 'dist')]),
     ].concat(
         isDevelopmentMode ? [
             // new BundleAnalyzerPlugin()
