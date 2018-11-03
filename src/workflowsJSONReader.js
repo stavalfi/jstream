@@ -1,21 +1,67 @@
-import flowsJson from '../workflows';
-import validator from './workflowsValidator';
+import Maybe from 'maybe';
 
-validator(flowsJson);
+// Given array of flows with statuses, return a directed graph which represents the given workflow.
+const convertWorkflowsToDirectedGraph = workflowArray => {
+    if (workflowArray.length === 0)
+        return Maybe.Nothing;
+    const head = {
+        flowDetails: workflowArray[0],
+        childs: []
+    };
 
-const isExistInFlowsNamesList = flowName => flowsJson.flowsNames.some(originalFlowName => originalFlowName === flowName);
+    const peek = stack => stack[stack.length - 1];
+    const stack = [head];
+    let stacks = [];
+    workflowArray.slice(1)
+        .map(flowDetails => ({flowDetails, childs: []}))
+        .forEach(newNode => {
+            if (newNode.flowDetails.flowName !== peek(stack).flowDetails.flowName &&
+                newNode.flowDetails.flowStatus === 1) {
+                stacks.push({
+                    flowDetails: peek(stack).flowDetails,
+                    stack: []
+                });
+                peek(stack).childs.push(newNode);
+                stack.push(newNode);
+            }
+            if (newNode.flowDetails.flowStatus > 1) {
+                if (stacks.length > 0 && peek(stack).flowDetails === peek(stacks).flowDetails) {
+                    peek(stacks).stack.forEach(node => node.childs.push(newNode));
+                    stacks.pop();
+                }
+                else
+                    peek(stack).childs.push(newNode);
+                stack.push(newNode);
+                if (newNode.flowDetails.flowStatus === 3) {
+                    if (stacks.length > 0)
+                        peek(stacks).stack.push(newNode);
+                    while (stack.length > 0 && peek(stack).flowDetails.flowName === newNode.flowDetails.flowName)
+                        stack.pop();
+                }
+            }
+        });
+    return Maybe(head);
+};
+
+const isExistInFlowsNamesList = (json, flowName) => json.flowsNames.some(originalFlowName => originalFlowName === flowName);
 
 const isFlowNameWithStatus = flow => flow.length > 2 && (flow.slice(flow.length - 2) === '_1' ||
     flow.slice(flow.length - 2) === '_2' ||
     flow.slice(flow.length - 2) === '_3');
 
-function expandFlow(workflowName) {
+function expandFlow(json, workflowName) {
     if (isFlowNameWithStatus(workflowName))
-        return [workflowName];
-    if (isExistInFlowsNamesList(workflowName))
-        return [1, 2, 3].map(number => workflowName + '_' + number);
+        return [{
+            flowName: workflowName.slice(0, workflowName.length - 2),
+            flowStatus: Number(workflowName.slice(workflowName.length - 1))
+        }];
+    if (isExistInFlowsNamesList(json, workflowName))
+        return [1, 2, 3].map(number => ({
+            flowName: workflowName,
+            flowStatus: number
+        }));
 
-    const composedWorkflow = flowsJson.workflowsDetails.filter(workflowDetails =>
+    const composedWorkflow = json.workflowsDetails.filter(workflowDetails =>
         workflowDetails !== null &&
         typeof workflowDetails === 'object' &&
         workflowDetails.workflowName === workflowName);
@@ -28,28 +74,30 @@ function expandFlow(workflowName) {
     return composedWorkflow[0].workflow.flatMap(expandFlow);
 }
 
-
-const workflowsDetails = flowsJson.workflowsDetails.map(flow => {
-    if (typeof flow === 'string' || flow instanceof String) {
-        if (isExistInFlowsNamesList(flow))
+const workflowsDetails = json => json.workflowsDetails
+    .map(workflowDetails => {
+        if (typeof workflowDetails === 'string' || workflowDetails instanceof String)
             return {
-                workflowName: flow,
-                workflow: [flow].flatMap(expandFlow)
+                workflowName: workflowDetails,
+                workflow: expandFlow(json, workflowDetails)
             };
-        console.error('there is no such flow', flow, ', please choose a different way to represent your flow.');
-        return 'there is no such flow ' + flow + ', please choose a different way to represent your flow.';
-    }
-    if (flow !== null && typeof flow === 'object')
-        return {
-            workflowName: flow.workflowName,
-            workflow: flow.workflow.flatMap(expandFlow)
-        };
+        if (workflowDetails !== null && typeof workflowDetails === 'object')
+            return {
+                workflowName: workflowDetails.workflowName,
+                workflow: workflowDetails.workflow.flatMap(workflowName => expandFlow(json, workflowName))
+            };
 
-    console.error('illegal workflow:', flow);
-    return 'illegal workflow';
+        console.error('illegal workflow:', workflowDetails);
+        return 'illegal workflow';
+    })
+    .map(workflowDetails => ({
+        workflowName: workflowDetails.workflowName,
+        head: convertWorkflowsToDirectedGraph(workflowDetails.workflow)
+    }));
+
+const readWorkflowsFile = json => ({
+    flowsNames: json.flowsNames,
+    workflowsDetails: workflowsDetails(json)
 });
 
-
-const flowsNames = flowsJson.flowsNames;
-
-export {flowsNames, workflowsDetails};
+export default readWorkflowsFile;

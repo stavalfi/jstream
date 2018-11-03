@@ -1,14 +1,25 @@
 import flowStatuses from './statuses/flowStatuses';
 import workflowStatuses from './statuses/workflowStatuses';
 import {loop, Cmd} from 'redux-loop';
-// import flowsFunctions from 'workflows';
-// import actions from './actions';
-import {flowsNames, workflowsDetails} from './workflowsJSONReader';
+import Maybe from 'maybe';
+
+const duplicateWorkflowGraph = (head, ...updatedNodes) => {
+    function duplicate(node) {
+        const updatedNodeIndex = updatedNodes.findIndex(updatedNode => node.flowDetails === updatedNode.flowDetails);
+        return Object.assign(
+            {},
+            node,
+            {childs: node.childs.map(duplicate)},
+            updatedNodeIndex > -1 ? updatedNodes[updatedNodeIndex] : {}
+        );
+    }
+
+    return head.isNothing() ?
+        Maybe.Nothing :
+        Maybe(duplicate(head.value()));
+};
 
 const isActionValid = (state, action) => {
-    if (action.type !== 'COMPLETED_STATUS')
-        return false;
-
     if (!state.flowsNames.some(flowName => flowName === action.flowName))
         return false;
 
@@ -25,21 +36,46 @@ const isActionValid = (state, action) => {
     return true;
 };
 
-const isStatusLegalInThisWorkflow = (activeWorkflowDetails, flowName, flowStatus) =>
-    activeWorkflowDetails + flowName + flowStatus;
+const getActionsToTrigger = (actions, flowsFunctions, childNodesToStart, currentAction) =>
+    childNodesToStart.map(child => actions[child.flowDetails.flowName](currentAction.workflowId, currentAction.workflowName, child.flowDetails.flowStatus))
+        .map(actionToTrigger => actionToTrigger.flowStatus !== 2 ?
+            Cmd.action(actionToTrigger) :
+            Cmd.run(flowsFunctions[actionToTrigger.flowName], {
+                successActionCreator: () => actionToTrigger,
+                // TODO: we are not supporting cancellation of workflows and flows.
+                failActionCreator: () => actionToTrigger,
+                args: [currentAction.workflowId]
+            }));
 
-const isWorkflowCompleted = activeWorkflowDetails => activeWorkflowDetails;
+// return an array of all closest nodes to head that are not completed but their parent is completed.
+const getCurrentLeafsOfWorkflowGraph = head => {
+    function findLeafs(node) {
+        if (!node.hasOwnProperty('isCompleted') || !node.isCompleted)
+            return [node];
+        return node.childs.flatMap(findLeafs);
+    }
 
-const getActionsToTrigger = activeWorkflowDetails => [activeWorkflowDetails].slice(0, 0);
-
-const initialState = {
-    flowsNames,
-    workflowsDetails,
-    activeWorkflowsDetails: [],
-    nonActiveWorkflowsDetails: []
+    return head.isNothing() ?
+        [] :
+        findLeafs(head.value());
 };
 
-export default (state = initialState, action) => {
+const isWorkflowCompleted = head => {
+    function areAllNodesCompleted(node) {
+        if (!node.hasOwnProperty('isCompleted') || !node.isCompleted)
+            return false;
+        if (node.childs.length === 0)
+            return true;
+        // it's enough to check only one path.
+        return areAllNodesCompleted(node.childs[0]);
+    }
+
+    return head.isNothing() ?
+        true :
+        areAllNodesCompleted(head.value());
+};
+
+export default actions => (state, action) => {
     if (!isActionValid(state, action))
         return state;
 
@@ -55,70 +91,76 @@ export default (state = initialState, action) => {
         if (action.flowStatus !== flowStatuses.started)
         // the workflow has not stated yet and the user notify about finished flowStatus that is not the first flowStatus.
             return state;
-        if (action.flowName !== workflowDetails[0].workflow[0])
-        // we just started this workflow but the first flow does not match to the given flow in the action.
+        if (workflowDetails[0].head.isJust() && action.flowName !== workflowDetails[0].head.value().flowDetails.flowName)
+        // the user didn't dispatch the first flow in this workflow.
             return state;
 
         // we need to create this workflow
-        const newActiveWorkflow = {
+        const updatedHeadNode = workflowDetails[0].head.isNothing() ?
+            Maybe.Nothing :
+            {
+                ...workflowDetails[0].head.value(),
+                isCompleted: true,
+                completeTime: action.flowStatusCompleteTime
+            };
+        const newActiveWorkflowDetails = {
             workflowId: action.workflowId,
-            workflow: workflowDetails[0].workflow,
-            workflowStatus: workflowStatuses.started,
-            workflowStatuses: [
-                {
-                    flowStatusCompleteTime: action.flowStatusCompleteTime,
-                    flowStatus: flowStatuses.started,
-                    flowName: action.flowName
-                }
-            ]
+            workflowName: workflowDetails[0].workflowName,
+            head: duplicateWorkflowGraph(workflowDetails[0].head, updatedHeadNode),
+            workflowStatus: workflowStatuses.started
         };
         return loop(
             {
                 ...state,
-                activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflow],
+                activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflowDetails],
             },
-            Cmd.list(getActionsToTrigger(newActiveWorkflow))
+            Cmd.list(getActionsToTrigger(actions, state.flowsFunctions, workflowDetails[0].head.value().childs, action))
         );
     }
 
-    // we need to check that the flowStatus that completed was executed in the right time.
+    // find the node of the flow that is completed.
 
-    if (!isStatusLegalInThisWorkflow(activeWorkflowDetails, action.flowName, action.flowStatus))
-    // the user notified about completed flowStatus that is not supposed to complete now or never.
-    // TODO: understand why this flowStatus is not legal and add documentation.
+    // Note: execution of the same flow in parallel is not supported so there
+    //       is no way that the same flow will be more then one in the following array.
+    const uncompletedNodes = getCurrentLeafsOfWorkflowGraph(activeWorkflowDetails[0].head);
+
+    const completedNodeIndex = uncompletedNodes.findIndex(node => node.flowDetails.flowName === action.flowName);
+
+    // check if this flow shouldn't complete now or at all or there are no flows at this workflow.
+    if (completedNodeIndex === -1)
         return state;
 
+    const updatedNode = {
+        ...uncompletedNodes[completedNodeIndex],
+        isCompleted: true,
+        completeTime: action.flowStatusCompleteTime
+    };
     const updatedActiveWorkflowDetails = {
-        ...activeWorkflowDetails,
-        workflowStatuses: [
-            ...activeWorkflowDetails.workflowStatuses,
-            {
-                flowStatusCompleteTime: action.flowStatusCompleteTime,
-                flowStatus: action.flowStatus,
-                flowName: action.flowName
-            }
-        ]
+        workflowId: action.workflowId,
+        head: duplicateWorkflowGraph(activeWorkflowDetails[0].head, updatedNode),
+        workflowStatus: workflowStatuses.started
     };
 
-    if (isWorkflowCompleted(updatedActiveWorkflowDetails)) {
+    // is workflow completed.
+    if (isWorkflowCompleted(updatedActiveWorkflowDetails.head)) {
         const completedWorkflow = {
             ...updatedActiveWorkflowDetails,
             workflowStatus: workflowStatuses.completed
         };
         return loop({
-            ...state,
-            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
-            nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
-        },
-        Cmd.list(getActionsToTrigger(completedWorkflow)));
+                ...state,
+                activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
+                nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
+            },
+            Cmd.none);
     }
 
     return loop({
-        ...state,
-        activeWorkflowsDetails: [
-            ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId),
-            updatedActiveWorkflowDetails
-        ]
-    },
-    Cmd.list(getActionsToTrigger(updatedActiveWorkflowDetails)));
+            ...state,
+            activeWorkflowsDetails: [
+                ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
+                updatedActiveWorkflowDetails
+            ]
+        },
+        Cmd.list(getActionsToTrigger(actions, state.flowsFunctions, uncompletedNodes[completedNodeIndex].childs, action)));
 };

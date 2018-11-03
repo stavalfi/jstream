@@ -1,6 +1,4 @@
-import flowsJson from '../workflows';
-
-export default flowsJson.flowsNames.reduce((flowsObjUntilNow, flowName) => ({
+export default flowsNames => flowsNames.reduce((flowsObjUntilNow, flowName) => ({
     ...flowsObjUntilNow,
     [flowName]: (workflowId, workflowName, flowStatus) => ({
         type: (workflowName + '_' + flowName + '_' + flowStatus).toUpperCase(),
