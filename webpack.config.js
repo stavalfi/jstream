@@ -13,7 +13,10 @@ module.exports = {
     // in production mode, the webpack does uglify and Scope Hoisting which means that all the modules are under
     // the same scope and not in different scopes. it's slow down the build but makes the code run faster.
     mode: isDevelopmentMode ? 'development' : 'production',
-    entry: path.join(__dirname, 'src', 'index.js','core-js/fn/array/flat-map'),
+    entry: [
+        path.join(__dirname, 'src', 'index.js'),
+        path.join(__dirname, 'node_modules', 'core-js', 'fn', 'array', 'flat-map')
+    ],
     output: {
         // default output directory: "dist" under the main folder.
         // the amount of output files depends on the webpack configurations.
