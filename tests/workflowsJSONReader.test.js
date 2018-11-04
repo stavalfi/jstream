@@ -1,4 +1,5 @@
 import test from 'ava';
+import Maybe from 'maybe';
 import readWorkflowsFile from '../src/workflowsJSONReader';
 
 /* eslint fp/no-nil:0 */
@@ -260,4 +261,83 @@ test('test 4', t => {
     t.true(workflowsDetails[0].head.isJust());
     t.is(workflowsDetails[0].workflowName, firstWorkflowName);
     t.deepEqual(workflowsDetails[0].head.value(), firstWorkflowHead);
+});
+
+test('test 5', t => {
+    const workflows = {
+        'flowsNames': [
+            'getUser',
+        ],
+        'workflowsDetails': [
+            {
+                'workflowName': 'workflow1',
+                'workflow': [
+                    'workflow2'
+                ]
+            },
+            {
+                'workflowName': 'workflow2',
+                'workflow': [
+                    'getUser'
+                ]
+            },
+        ]
+    };
+    const {flowsNames, workflowsDetails} = readWorkflowsFile(workflows);
+    t.deepEqual(flowsNames, ['getUser']);
+    const expectedWorkflowDetails = [
+        {
+            workflowName: 'workflow1',
+            head: Maybe({
+                flowDetails: {
+                    flowName: 'getUser',
+                    flowStatus: 1
+                },
+                childs: [
+                    {
+                        flowDetails: {
+                            flowName: 'getUser',
+                            flowStatus: 2
+                        },
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: 'getUser',
+                                    flowStatus: 3
+                                },
+                                childs: []
+                            }
+                        ]
+                    }
+                ]
+            })
+        },
+        {
+            workflowName: 'workflow2',
+            head: Maybe({
+                flowDetails: {
+                    flowName: 'getUser',
+                    flowStatus: 1
+                },
+                childs: [
+                    {
+                        flowDetails: {
+                            flowName: 'getUser',
+                            flowStatus: 2
+                        },
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: 'getUser',
+                                    flowStatus: 3
+                                },
+                                childs: []
+                            }
+                        ]
+                    }
+                ]
+            })
+        }
+    ];
+    t.deepEqual(workflowsDetails, expectedWorkflowDetails);
 });

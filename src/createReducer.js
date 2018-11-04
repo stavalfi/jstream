@@ -1,6 +1,12 @@
 import {loop, Cmd} from 'redux-loop';
 import Maybe from 'maybe';
-import {START_WORKFLOW, START_FLOW, flowActionCreator} from './actionsCreators';
+import {
+    START_WORKFLOW,
+    CHANGE_FLOW_STATUS,
+    COMPLETE_WORKFLOW,
+    changeFlowStatusAction,
+    completeWorkflowAction
+} from './actions';
 import flowStatuses from './statuses/flowStatuses';
 import workflowStatuses from './statuses/workflowStatuses';
 
@@ -8,8 +14,10 @@ export default (flowsFunctions, workflowsDetails) => (state, action) => {
     switch (action.type) {
         case START_WORKFLOW:
             return startWorkflow(workflowsDetails, state, action);
-        case START_FLOW:
+        case CHANGE_FLOW_STATUS:
             return startFlow(flowsFunctions, state, action);
+        case COMPLETE_WORKFLOW:
+            return completeWorkflow(flowsFunctions, workflowsDetails, state, action);
     }
     return state;
 };
@@ -40,15 +48,12 @@ const startWorkflow = (workflowsDetails, state, action) => {
         },
         workflowDetails.head.isNothing() ?
             Cmd.none :
-            Cmd.action(flowActionCreator(action.workflowId, workflowDetails.head.value().flowDetails.flowName, flowStatuses.started))
+            Cmd.action(changeFlowStatusAction(action.workflowId, workflowDetails.head.value().flowDetails.flowName, flowStatuses.started))
     );
 };
 
 const startFlow = (flowsFunctions, state, action) => {
     if (!state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
-        return state;
-
-    if (!Object.values(flowStatuses).some(flowStatus => flowStatus === action.flowStatus))
         return state;
 
     const activeWorkflowDetailsIndex = state.activeWorkflowsDetails.findIndex(activeWorkflow => activeWorkflow.workflowId === action.workflowId);
@@ -64,7 +69,10 @@ const startFlow = (flowsFunctions, state, action) => {
     //       is no way that the same flow will be more then one in the following array.
     const uncompletedNodes = getCurrentLeafsOfWorkflowGraph(activeWorkflowDetails.head);
 
-    const completedNodeIndex = uncompletedNodes.findIndex(node => node.flowDetails.flowName === action.flowName);
+    const completedNodeIndex = uncompletedNodes.findIndex(node =>
+        node.flowDetails.flowName === action.flowName &&
+        node.flowDetails.flowStatus === action.flowStatus
+    );
 
     // check if this flow shouldn't complete now or at all or there are no flows at this workflow.
     if (completedNodeIndex === -1)
@@ -80,20 +88,9 @@ const startFlow = (flowsFunctions, state, action) => {
         head: duplicateWorkflowGraph(activeWorkflowDetails.head, updatedNode)
     };
 
-    // is workflow completed.
-    if (isWorkflowCompleted(updatedActiveWorkflowDetails.head)) {
-        const completedWorkflow = {
-            ...updatedActiveWorkflowDetails,
-            completeTime: action.flowStatusCompleteTime,
-            workflowStatus: workflowStatuses.completed
-        };
-        return loop({
-                ...state,
-                activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
-                nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
-            },
-            Cmd.none);
-    }
+    const actionsToTrigger = isWorkflowCompleted(updatedActiveWorkflowDetails.head) ?
+        [Cmd.action(completeWorkflowAction(action.workflowId))] :
+        getActionsToTrigger(changeFlowStatusAction, flowsFunctions, uncompletedNodes[completedNodeIndex].childs, action);
 
     return loop({
             ...state,
@@ -102,8 +99,35 @@ const startFlow = (flowsFunctions, state, action) => {
                 updatedActiveWorkflowDetails
             ]
         },
-        Cmd.list(getActionsToTrigger(flowActionCreator, flowsFunctions, uncompletedNodes[completedNodeIndex].childs, action))
+        Cmd.list(actionsToTrigger)
     );
+};
+
+const completeWorkflow = (flowsFunctions, workflowsDetails, state, action) => {
+    if (!state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
+        return state;
+
+    const activeWorkflowDetailsIndex = state.activeWorkflowsDetails.findIndex(activeWorkflow => activeWorkflow.workflowId === action.workflowId);
+
+    if (activeWorkflowDetailsIndex === -1)
+        return state;
+
+    const activeWorkflowDetails = state.activeWorkflowsDetails[activeWorkflowDetailsIndex];
+
+    if (!isWorkflowCompleted(activeWorkflowDetails.head))
+        return state;
+
+    const completedWorkflow = {
+        ...activeWorkflowDetails,
+        completeTime: action.completeWorkflowTime,
+        workflowStatus: workflowStatuses.completed
+    };
+    return loop({
+            ...state,
+            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== activeWorkflowDetails.workflowId),
+            nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
+        },
+        Cmd.none);
 };
 
 const duplicateWorkflowGraph = (head, ...updatedNodes) => {

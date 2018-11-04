@@ -71,7 +71,7 @@ function expandFlow(json, workflowName) {
         return 'there is no composed workflow with a name: ' + workflowName;
     }
 
-    return composedWorkflow[0].workflow.flatMap(expandFlow);
+    return composedWorkflow[0].workflow.flatMap(workflowName => expandFlow(json, workflowName));
 }
 
 const workflowsDetails = json => json.workflowsDetails

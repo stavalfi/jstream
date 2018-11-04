@@ -2,7 +2,11 @@ import test from 'ava';
 import {Cmd, loop} from 'redux-loop';
 import createReducer from '../src/createReducer';
 import readWorkflowsFile from '../src/workflowsJSONReader';
-import {workflowActionCreator, flowActionCreator} from '../src/actionsCreators';
+import {
+    startWorkflowAction as startWorkflowActionCreator,
+    changeFlowStatusAction,
+    completeWorkflowAction as completeWorkflowActionCreator
+} from '../src/actions';
 import flowStatuses from '../src/statuses/flowStatuses';
 import workflowStatuses from '../src/statuses/workflowStatuses';
 import Maybe from 'maybe';
@@ -22,7 +26,7 @@ test('test 1 - start a workflow', t => {
         getUser: () => console.log('____TEST____')
     };
     const getUserFlowName = 'getUser';
-    const startWorkflowAction = workflowActionCreator(getUserFlowName);
+    const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
 
     const actualResult = createReducer(flowsFunctions, workflowsDetails)({
         activeWorkflowsDetails: [],
@@ -64,7 +68,7 @@ test('test 1 - start a workflow', t => {
         },
         Cmd.list([
             Cmd.run(flowsFunctions.getUser, {
-                successActionCreator: () => flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started),
+                successActionCreator: () => changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started),
                 args: [startWorkflowAction.workflowId]
             })
         ])
@@ -81,8 +85,8 @@ test('test 2 - start the flow', t => {
         getUser: () => console.log('____TEST____')
     };
     const getUserFlowName = 'getUser';
-    const startWorkflowAction = workflowActionCreator(getUserFlowName);
-    const startFlowAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+    const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
+    const startFlowAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
 
     const actualResult = createReducer(flowsFunctions, workflowsDetails)({
         activeWorkflowsDetails: [
@@ -155,7 +159,7 @@ test('test 2 - start the flow', t => {
         },
         Cmd.list([
             Cmd.run(flowsFunctions.getUser, {
-                successActionCreator: () => flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved),
+                successActionCreator: () => changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved),
                 args: [startWorkflowAction.workflowId]
             })
         ])
@@ -172,9 +176,9 @@ test('test 3 - self-resolve the flow', t => {
         getUser: () => console.log('____TEST____')
     };
     const getUserFlowName = 'getUser';
-    const startWorkflowAction = workflowActionCreator(getUserFlowName);
-    const startFlowAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
-    const selfResolvedAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
+    const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
+    const startFlowAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+    const selfResolvedAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
 
     const actualResult = createReducer(flowsFunctions, workflowsDetails)({
         activeWorkflowsDetails: [
@@ -250,7 +254,7 @@ test('test 3 - self-resolve the flow', t => {
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.action(flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed))
+            Cmd.action(changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed))
         ])
     );
     assertLoopsEqual(t)(actualResult, expectedResult);
@@ -265,12 +269,12 @@ test('test 4 - complete the flow', t => {
         getUser: () => console.log('____TEST____')
     };
     const getUserFlowName = 'getUser';
-    const startWorkflowAction = workflowActionCreator(getUserFlowName);
-    const startFlowAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
-    const selfResolvedAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
-    const completeAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed);
+    const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
+    const startFlowAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+    const selfResolvedAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
+    const completeAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed);
 
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+    const state = {
         activeWorkflowsDetails: [
             {
                 workflowId: startWorkflowAction.workflowId,
@@ -306,7 +310,112 @@ test('test 4 - complete the flow', t => {
             }
         ],
         nonActiveWorkflowsDetails: []
-    }, selfResolvedAction);
+    };
+    const reducer = createReducer(flowsFunctions, workflowsDetails);
+    const actualResult = reducer(state, completeAction);
+
+    const expectedResult = loop({
+            activeWorkflowsDetails: [
+                {
+                    workflowId: startWorkflowAction.workflowId,
+                    workflowName: startWorkflowAction.workflowName,
+                    workflowStatus: workflowStatuses.started,
+                    head: Maybe({
+                        flowDetails: {
+                            flowName: getUserFlowName,
+                            flowStatus: flowStatuses.started
+                        },
+                        isCompleted: true,
+                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: getUserFlowName,
+                                    flowStatus: flowStatuses.selfResolved
+                                },
+                                isCompleted: true,
+                                completeTime: selfResolvedAction.flowStatusCompleteTime,
+                                childs: [
+                                    {
+                                        flowDetails: {
+                                            flowName: getUserFlowName,
+                                            flowStatus: flowStatuses.completed
+                                        },
+                                        isCompleted: true,
+                                        completeTime: completeAction.flowStatusCompleteTime,
+                                        childs: []
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }
+            ],
+            nonActiveWorkflowsDetails: []
+        },
+        Cmd.list([
+            Cmd.action(completeWorkflowActionCreator(startWorkflowAction.workflowId))
+        ])
+    );
+    assertLoopsEqual(t)(actualResult, expectedResult);
+    const invalidActualResult = reducer(state, selfResolvedAction);
+    t.notDeepEqual(invalidActualResult, expectedResult);
+});
+
+test('test 5 - complete workflow', t => {
+    const {workflowsDetails} = readWorkflowsFile({
+        'flowsNames': ['getUser'],
+        'workflowsDetails': ['getUser']
+    });
+    const flowsFunctions = {
+        getUser: () => console.log('____TEST____')
+    };
+    const getUserFlowName = 'getUser';
+    const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
+    const startFlowAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+    const selfResolvedAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
+    const completeAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed);
+    const completeWorkflowAction = completeWorkflowActionCreator(startWorkflowAction.workflowId);
+
+    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+        activeWorkflowsDetails: [
+            {
+                workflowId: startWorkflowAction.workflowId,
+                workflowName: startWorkflowAction.workflowName,
+                workflowStatus: workflowStatuses.started,
+                head: Maybe({
+                    flowDetails: {
+                        flowName: getUserFlowName,
+                        flowStatus: flowStatuses.started
+                    },
+                    isCompleted: true,
+                    completeTime: startFlowAction.flowStatusCompleteTime,
+                    childs: [
+                        {
+                            flowDetails: {
+                                flowName: getUserFlowName,
+                                flowStatus: flowStatuses.selfResolved
+                            },
+                            isCompleted: true,
+                            completeTime: selfResolvedAction.flowStatusCompleteTime,
+                            childs: [
+                                {
+                                    flowDetails: {
+                                        flowName: getUserFlowName,
+                                        flowStatus: flowStatuses.completed
+                                    },
+                                    isCompleted: true,
+                                    completeTime: completeAction.flowStatusCompleteTime,
+                                    childs: []
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }
+        ],
+        nonActiveWorkflowsDetails: []
+    }, completeWorkflowAction);
 
     const expectedResult = loop({
             activeWorkflowsDetails: [],
@@ -315,7 +424,7 @@ test('test 4 - complete the flow', t => {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
                     workflowStatus: workflowStatuses.completed,
-                    completeTime: completeAction.flowStatusCompleteTime,
+                    completeTime: completeWorkflowAction.completeWorkflowTime,
                     head: Maybe({
                         flowDetails: {
                             flowName: getUserFlowName,

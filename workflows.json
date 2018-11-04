@@ -3,7 +3,8 @@
     "createUser",
     "removeUser",
     "updateServer",
-    "getUser"
+    "getUser",
+    "extra"
   ],
   "workflowsDetails": [
     "createUser",
@@ -12,7 +13,7 @@
       "workflowName": "createSuperUser",
       "workflow": [
         "getUser_1",
-        "updateServer",
+        "delete",
         "getUser_2",
         "getUser_3"
       ]
