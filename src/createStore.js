@@ -1,6 +1,6 @@
 import {applyMiddleware, compose, createStore} from 'redux';
 import middleware from './middleware';
-import reducer from './recucer';
+import createReducer from './createReducer';
 import {install} from 'redux-loop';
 
 export default (actions, flowsFunctions, workflowsDetails) => {
@@ -8,5 +8,5 @@ export default (actions, flowsFunctions, workflowsDetails) => {
         activeWorkflowsDetails: [],
         nonActiveWorkflowsDetails: []
     };
-    return createStore(reducer(actions, flowsFunctions, workflowsDetails), initialState, compose(install(), applyMiddleware(middleware)));
+    return createStore(createReducer(actions, flowsFunctions, workflowsDetails), initialState, compose(install(), applyMiddleware(middleware)));
 };

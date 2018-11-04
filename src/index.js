@@ -10,4 +10,4 @@ const {flowsNames, workflowsDetails} = readWorkflowsFile(workflowsJson);
 const actions = createActions(flowsNames);
 const store = createStore(actions, flowsFunctions, workflowsDetails);
 
-store.dispatch(actions.getUser('id1', 'createSuperUser', flowStatuses.started));
+store.dispatch(actions.createUser('id1', 'createUser', flowStatuses.started));
