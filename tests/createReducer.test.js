@@ -2,7 +2,7 @@ import test from 'ava';
 import {Cmd, loop} from 'redux-loop';
 import createReducer from '../src/createReducer';
 import readWorkflowsFile from '../src/workflowsJSONReader';
-import createActions from '../src/createActions';
+import {workflowActionCreator, flowActionCreator} from '../src/actionsCreators';
 import flowStatuses from '../src/statuses/flowStatuses';
 import workflowStatuses from '../src/statuses/workflowStatuses';
 import Maybe from 'maybe';
@@ -10,182 +10,46 @@ import Maybe from 'maybe';
 /* eslint fp/no-nil:0 */
 
 const assertLoopsEqual = t => (expectedLoop, actualLoop) => {
-    t.deepEqual(actualLoop.state, expectedLoop.state);
+    t.deepEqual(actualLoop[0], expectedLoop[0]);
 };
 
 test('test 1 - start a workflow', t => {
-    const workflows = {
+    const {workflowsDetails} = readWorkflowsFile({
         'flowsNames': ['getUser'],
         'workflowsDetails': ['getUser']
-    };
-    const {flowsNames, workflowsDetails} = readWorkflowsFile(workflows);
-    const actions = createActions(flowsNames);
-
+    });
     const flowsFunctions = {
-        getUser: customParams => console.log('WOW!!!!', customParams, 'getUser')
+        getUser: () => console.log('____TEST____')
     };
+    const getUserFlowName = 'getUser';
+    const startWorkflowAction = workflowActionCreator(getUserFlowName);
 
-    const reducer = createReducer(actions, flowsFunctions, workflowsDetails);
-
-    const state = {
+    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
         activeWorkflowsDetails: [],
         nonActiveWorkflowsDetails: []
-    };
-    const result = reducer(state, actions.getUser('id1', 'getUser', flowStatuses.started));
+    }, startWorkflowAction);
 
-    assertLoopsEqual(t)(result, loop({
+    const expectedResult = loop({
             activeWorkflowsDetails: [
                 {
-                    workflowId: 'id1',
-                    workflowName: 'getUser',
+                    workflowId: startWorkflowAction.workflowId,
+                    workflowName: startWorkflowAction.workflowName,
+                    workflowStatus: workflowStatuses.started,
                     head: Maybe({
                         flowDetails: {
-                            flowName: 'getUser',
-                            flowStatus: flowStatuses.started
-                        },
-                        childs: []
-                    }),
-                    workflowStatus: workflowStatuses.started
-                }
-            ],
-            nonActiveWorkflowsDetails: []
-        },
-        Cmd.list([
-            Cmd.run(flowsFunctions.getUser, {
-                successActionCreator: () => actions.getUser('id1', 'getUser', flowStatuses.selfResolved),
-                failActionCreator: () => actions.getUser('id1', 'getUser', flowStatuses.selfResolved),
-                args: ['id1']
-            })
-        ])
-    ));
-});
-
-test('test 2 - self-resolve flow', t => {
-    const workflows = {
-        'flowsNames': ['getUser'],
-        'workflowsDetails': ['getUser']
-    };
-    const {flowsNames, workflowsDetails} = readWorkflowsFile(workflows);
-    const actions = createActions(flowsNames);
-
-    const flowsFunctions = {
-        getUser: customParams => console.log('WOW!!!!', customParams, 'getUser')
-    };
-
-    const reducer = createReducer(actions, flowsFunctions, workflowsDetails);
-
-    const state = {
-        activeWorkflowsDetails: [
-            {
-                workflowId: 'id1',
-                workflowName: 'getUser',
-                head: Maybe({
-                    flowDetails: {
-                        flowName: 'getUser',
-                        flowStatus: flowStatuses.started
-                    },
-                    childs: []
-                }),
-                workflowStatus: workflowStatuses.started
-            }
-        ],
-        nonActiveWorkflowsDetails: []
-    };
-    const result = reducer(state, actions.getUser('id1', 'getUser', flowStatuses.selfResolved));
-
-    assertLoopsEqual(t)(result, loop({
-            activeWorkflowsDetails: [
-                {
-                    workflowId: 'id1',
-                    workflowName: 'getUser',
-                    head: Maybe({
-                        flowDetails: {
-                            flowName: 'getUser',
+                            flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
                         childs: [
                             {
                                 flowDetails: {
-                                    flowName: 'getUser',
-                                    flowStatus: flowStatuses.selfResolved
-                                },
-                                childs: []
-                            }
-                        ]
-                    }),
-                    workflowStatus: workflowStatuses.started
-                }
-            ],
-            nonActiveWorkflowsDetails: []
-        },
-        Cmd.list([
-            Cmd.action(actions.getUser('id1', 'getUser', flowStatuses.completed))
-        ])
-    ));
-});
-
-test('test 3 - complete workflow', t => {
-    const workflows = {
-        'flowsNames': ['getUser'],
-        'workflowsDetails': ['getUser']
-    };
-    const {flowsNames, workflowsDetails} = readWorkflowsFile(workflows);
-    const actions = createActions(flowsNames);
-
-    const flowsFunctions = {
-        getUser: customParams => console.log('WOW!!!!', customParams, 'getUser')
-    };
-
-    const reducer = createReducer(actions, flowsFunctions, workflowsDetails);
-
-    const state = {
-        activeWorkflowsDetails: [
-            {
-                workflowId: 'id1',
-                workflowName: 'getUser',
-                head: Maybe({
-                    flowDetails: {
-                        flowName: 'getUser',
-                        flowStatus: flowStatuses.started
-                    },
-                    childs: [
-                        {
-                            flowDetails: {
-                                flowName: 'getUser',
-                                flowStatus: flowStatuses.selfResolved
-                            },
-                            childs: []
-                        }
-                    ]
-                }),
-                workflowStatus: workflowStatuses.started
-            }
-        ],
-        nonActiveWorkflowsDetails: []
-    };
-    const result = reducer(state, actions.getUser('id1', 'getUser', flowStatuses.completed));
-
-    assertLoopsEqual(t)(result, loop({
-            activeWorkflowsDetails: [],
-            nonActiveWorkflowsDetails: [
-                {
-                    workflowId: 'id1',
-                    workflowName: 'getUser',
-                    head: Maybe({
-                        flowDetails: {
-                            flowName: 'getUser',
-                            flowStatus: flowStatuses.started
-                        },
-                        childs: [
-                            {
-                                flowDetails: {
-                                    flowName: 'getUser',
+                                    flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
                                 childs: [
                                     {
                                         flowDetails: {
-                                            flowName: 'getUser',
+                                            flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
                                         childs: []
@@ -193,11 +57,298 @@ test('test 3 - complete workflow', t => {
                                 ]
                             }
                         ]
-                    }),
-                    workflowStatus: workflowStatuses.completed
+                    })
+                }
+            ],
+            nonActiveWorkflowsDetails: []
+        },
+        Cmd.list([
+            Cmd.run(flowsFunctions.getUser, {
+                successActionCreator: () => flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started),
+                args: [startWorkflowAction.workflowId]
+            })
+        ])
+    );
+    assertLoopsEqual(t)(actualResult, expectedResult);
+});
+
+test('test 2 - start the flow', t => {
+    const {workflowsDetails} = readWorkflowsFile({
+        'flowsNames': ['getUser'],
+        'workflowsDetails': ['getUser']
+    });
+    const flowsFunctions = {
+        getUser: () => console.log('____TEST____')
+    };
+    const getUserFlowName = 'getUser';
+    const startWorkflowAction = workflowActionCreator(getUserFlowName);
+    const startFlowAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+
+    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+        activeWorkflowsDetails: [
+            {
+                workflowId: startWorkflowAction.workflowId,
+                workflowName: startWorkflowAction.workflowName,
+                workflowStatus: workflowStatuses.started,
+                head: Maybe({
+                    flowDetails: {
+                        flowName: getUserFlowName,
+                        flowStatus: flowStatuses.started
+                    },
+                    childs: [
+                        {
+                            flowDetails: {
+                                flowName: getUserFlowName,
+                                flowStatus: flowStatuses.selfResolved
+                            },
+                            childs: [
+                                {
+                                    flowDetails: {
+                                        flowName: getUserFlowName,
+                                        flowStatus: flowStatuses.completed
+                                    },
+                                    childs: []
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }
+        ],
+        nonActiveWorkflowsDetails: []
+    }, startFlowAction);
+
+    const expectedResult = loop({
+            activeWorkflowsDetails: [
+                {
+                    workflowId: startWorkflowAction.workflowId,
+                    workflowName: startWorkflowAction.workflowName,
+                    workflowStatus: workflowStatuses.started,
+                    head: Maybe({
+                        flowDetails: {
+                            flowName: getUserFlowName,
+                            flowStatus: flowStatuses.started
+                        },
+                        isCompleted: true,
+                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: getUserFlowName,
+                                    flowStatus: flowStatuses.selfResolved
+                                },
+                                childs: [
+                                    {
+                                        flowDetails: {
+                                            flowName: getUserFlowName,
+                                            flowStatus: flowStatuses.completed
+                                        },
+                                        childs: []
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }
+            ],
+            nonActiveWorkflowsDetails: []
+        },
+        Cmd.list([
+            Cmd.run(flowsFunctions.getUser, {
+                successActionCreator: () => flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved),
+                args: [startWorkflowAction.workflowId]
+            })
+        ])
+    );
+    assertLoopsEqual(t)(actualResult, expectedResult);
+});
+
+test('test 3 - self-resolve the flow', t => {
+    const {workflowsDetails} = readWorkflowsFile({
+        'flowsNames': ['getUser'],
+        'workflowsDetails': ['getUser']
+    });
+    const flowsFunctions = {
+        getUser: () => console.log('____TEST____')
+    };
+    const getUserFlowName = 'getUser';
+    const startWorkflowAction = workflowActionCreator(getUserFlowName);
+    const startFlowAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+    const selfResolvedAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
+
+    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+        activeWorkflowsDetails: [
+            {
+                workflowId: startWorkflowAction.workflowId,
+                workflowName: startWorkflowAction.workflowName,
+                workflowStatus: workflowStatuses.started,
+                head: Maybe({
+                    flowDetails: {
+                        flowName: getUserFlowName,
+                        flowStatus: flowStatuses.started
+                    },
+                    isCompleted: true,
+                    completeTime: startFlowAction.flowStatusCompleteTime,
+                    childs: [
+                        {
+                            flowDetails: {
+                                flowName: getUserFlowName,
+                                flowStatus: flowStatuses.selfResolved,
+                            },
+                            childs: [
+                                {
+                                    flowDetails: {
+                                        flowName: getUserFlowName,
+                                        flowStatus: flowStatuses.completed
+                                    },
+                                    childs: []
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }
+        ],
+        nonActiveWorkflowsDetails: []
+    }, selfResolvedAction);
+
+    const expectedResult = loop({
+            activeWorkflowsDetails: [
+                {
+                    workflowId: startWorkflowAction.workflowId,
+                    workflowName: startWorkflowAction.workflowName,
+                    workflowStatus: workflowStatuses.started,
+                    head: Maybe({
+                        flowDetails: {
+                            flowName: getUserFlowName,
+                            flowStatus: flowStatuses.started
+                        },
+                        isCompleted: true,
+                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: getUserFlowName,
+                                    flowStatus: flowStatuses.selfResolved
+                                },
+                                isCompleted: true,
+                                completeTime: selfResolvedAction.flowStatusCompleteTime,
+                                childs: [
+                                    {
+                                        flowDetails: {
+                                            flowName: getUserFlowName,
+                                            flowStatus: flowStatuses.completed
+                                        },
+                                        childs: []
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                }
+            ],
+            nonActiveWorkflowsDetails: []
+        },
+        Cmd.list([
+            Cmd.action(flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed))
+        ])
+    );
+    assertLoopsEqual(t)(actualResult, expectedResult);
+});
+
+test('test 4 - complete the flow', t => {
+    const {workflowsDetails} = readWorkflowsFile({
+        'flowsNames': ['getUser'],
+        'workflowsDetails': ['getUser']
+    });
+    const flowsFunctions = {
+        getUser: () => console.log('____TEST____')
+    };
+    const getUserFlowName = 'getUser';
+    const startWorkflowAction = workflowActionCreator(getUserFlowName);
+    const startFlowAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
+    const selfResolvedAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
+    const completeAction = flowActionCreator(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed);
+
+    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+        activeWorkflowsDetails: [
+            {
+                workflowId: startWorkflowAction.workflowId,
+                workflowName: startWorkflowAction.workflowName,
+                workflowStatus: workflowStatuses.started,
+                head: Maybe({
+                    flowDetails: {
+                        flowName: getUserFlowName,
+                        flowStatus: flowStatuses.started
+                    },
+                    isCompleted: true,
+                    completeTime: startFlowAction.flowStatusCompleteTime,
+                    childs: [
+                        {
+                            flowDetails: {
+                                flowName: getUserFlowName,
+                                flowStatus: flowStatuses.selfResolved,
+                            },
+                            isCompleted: true,
+                            completeTime: selfResolvedAction.flowStatusCompleteTime,
+                            childs: [
+                                {
+                                    flowDetails: {
+                                        flowName: getUserFlowName,
+                                        flowStatus: flowStatuses.completed
+                                    },
+                                    childs: []
+                                }
+                            ]
+                        }
+                    ]
+                })
+            }
+        ],
+        nonActiveWorkflowsDetails: []
+    }, selfResolvedAction);
+
+    const expectedResult = loop({
+            activeWorkflowsDetails: [],
+            nonActiveWorkflowsDetails: [
+                {
+                    workflowId: startWorkflowAction.workflowId,
+                    workflowName: startWorkflowAction.workflowName,
+                    workflowStatus: workflowStatuses.completed,
+                    completeTime: completeAction.flowStatusCompleteTime,
+                    head: Maybe({
+                        flowDetails: {
+                            flowName: getUserFlowName,
+                            flowStatus: flowStatuses.started
+                        },
+                        isCompleted: true,
+                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: getUserFlowName,
+                                    flowStatus: flowStatuses.selfResolved
+                                },
+                                isCompleted: true,
+                                completeTime: selfResolvedAction.flowStatusCompleteTime,
+                                childs: [
+                                    {
+                                        flowDetails: {
+                                            flowName: getUserFlowName,
+                                            flowStatus: flowStatuses.completed
+                                        },
+                                        isCompleted: true,
+                                        completeTime: completeAction.flowStatusCompleteTime,
+                                        childs: []
+                                    }
+                                ]
+                            }
+                        ]
+                    })
                 }
             ]
         },
-        Cmd.none)
+        Cmd.none
     );
+    assertLoopsEqual(t)(actualResult, expectedResult);
 });
