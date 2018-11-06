@@ -1,5 +1,4 @@
 import {loop, Cmd} from 'redux-loop';
-import Maybe from 'maybe';
 import Optional from 'optional-js';
 import {
     START_WORKFLOW,
@@ -52,22 +51,24 @@ const startWorkflow = (startWorkflowsFunctions, workflowsDetails, state, action)
         Optional.ofNullable(startWorkflowsFunctions.get()[action.workflowName]) :
         Optional.empty();
 
-    if (workflowDetails.head.isNothing() && startWorkflowFunction.isPresent())
-        return loop(newState, Cmd.run(startWorkflowFunction.get()));
+    if (!workflowDetails.head.isPresent() && startWorkflowFunction.isPresent())
+        return loop(newState, Cmd.run(startWorkflowFunction.get(),{
+            args: [action.workflowId]
+        }));
 
-    if (workflowDetails.head.isNothing() && !startWorkflowFunction.isPresent())
+    if (!workflowDetails.head.isPresent() && !startWorkflowFunction.isPresent())
         return loop(newState, Cmd.none);
 
-    const actionToDispatch = changeFlowStatusAction(action.workflowId, workflowDetails.head.value().flowDetails.flowName, flowStatuses.started);
+    const actionToDispatch = changeFlowStatusAction(action.workflowId, workflowDetails.head.get().flowDetails.flowName, flowStatuses.started);
 
 
-    if (!workflowDetails.head.isNothing() && startWorkflowFunction.isPresent())
+    if (!!workflowDetails.head.isPresent() && startWorkflowFunction.isPresent())
         return loop(newState, Cmd.run(startWorkflowFunction.get(), {
             successActionCreator: () => actionToDispatch,
             args: [action.workflowId]
         }));
 
-    // !workflowDetails.head.isNothing() && !startWorkflowFunction.isPresent() === true
+    // workflowDetails.head.isPresent() && !startWorkflowFunction.isPresent() === true
     return loop(newState, Cmd.action(actionToDispatch));
 };
 
@@ -181,9 +182,9 @@ const duplicateWorkflowGraph = (head, ...updatedNodes) => {
         );
     }
 
-    return head.isNothing() ?
+    return !head.isPresent() ?
         head :
-        Maybe(duplicate(head.value()));
+        Optional.of(duplicate(head.get()));
 };
 
 const getActionsToTrigger = (flowsFunctions, head, childNodesToStart, currentAction) =>
@@ -223,9 +224,9 @@ const areParentsCompleted = (head, possibleLeaf) => {
 
     // if head is Nothing then no one will call this method.
     // this condition is only for unit-tests on this specific function.
-    return head.isNothing() ?
+    return !head.isPresent() ?
         true :
-        searchParents(head.value());
+        searchParents(head.get());
 };
 
 // return an array of all closest nodes to head that are not completed but their parent is completed.
@@ -236,11 +237,11 @@ const getCurrentLeafsOfWorkflowGraph = head => {
         return node.childs.flatMap(findLeafs);
     }
 
-    const possibleLeafs = head.isNothing() ?
+    const possibleLeafs = !head.isPresent() ?
         [] :
         // I may receive nodes such as node3: {node1: completed, node2: not completed } -> {node3: not completed}
         // so I should get only [node2] and not [node2,node3].
-        findLeafs(head.value());
+        findLeafs(head.get());
 
     return possibleLeafs.filter(leaf => areParentsCompleted(head, leaf));
 };
@@ -255,7 +256,7 @@ const isWorkflowCompleted = head => {
         return areAllNodesCompleted(node.childs[0]);
     }
 
-    return head.isNothing() ?
+    return !head.isPresent() ?
         true :
-        areAllNodesCompleted(head.value());
+        areAllNodesCompleted(head.get());
 };

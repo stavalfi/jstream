@@ -1,9 +1,9 @@
-import Maybe from 'maybe';
+import Optional from 'optional-js';
 
 // Given array of flows with statuses, return a directed graph which represents the given workflow.
 const convertWorkflowsToDirectedGraph = workflowArray => {
     if (workflowArray.length === 0)
-        return Maybe();
+        return Optional.empty();
     const head = {
         flowDetails: workflowArray[0],
         childs: []
@@ -41,7 +41,7 @@ const convertWorkflowsToDirectedGraph = workflowArray => {
                 }
             }
         });
-    return Maybe(head);
+    return Optional.of(head);
 };
 
 const isExistInFlowsNamesList = (json, flowName) => json.flowsNames.some(originalFlowName => originalFlowName === flowName);

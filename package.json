@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "maybe": "0.0.2",
     "optional-js": "^2.0.0",
     "redux": "^4.0.1",
     "redux-loop": "^4.4.1"

@@ -1,7 +1,6 @@
 import test from 'ava';
-import Maybe from 'maybe';
 import readWorkflowsFile from '../src/workflowsJSONReader';
-
+import Optional from 'optional-js';
 /* eslint fp/no-nil:0 */
 
 test('test 1', t => {
@@ -36,9 +35,9 @@ test('test 1', t => {
             }
         ]
     };
-    t.true(workflowsDetails[0].head.isJust());
+    t.true(workflowsDetails[0].head.isPresent());
     t.is(workflowsDetails[0].workflowName, firstWorkflowName);
-    t.deepEqual(workflowsDetails[0].head.value(), firstWorkflowHead);
+    t.deepEqual(workflowsDetails[0].head.get(), firstWorkflowHead);
 });
 
 test('test 2', t => {
@@ -82,9 +81,9 @@ test('test 2', t => {
             }
         ]
     };
-    t.true(workflowsDetails[0].head.isJust());
+    t.true(workflowsDetails[0].head.isPresent());
     t.is(workflowsDetails[0].workflowName, firstWorkflowName);
-    t.deepEqual(workflowsDetails[0].head.value(), firstWorkflowHead);
+    t.deepEqual(workflowsDetails[0].head.get(), firstWorkflowHead);
 });
 
 test('test 3', t => {
@@ -156,9 +155,9 @@ test('test 3', t => {
             }
         ]
     };
-    t.true(workflowsDetails[0].head.isJust());
+    t.true(workflowsDetails[0].head.isPresent());
     t.is(workflowsDetails[0].workflowName, firstWorkflowName);
-    t.deepEqual(workflowsDetails[0].head.value(), firstWorkflowHead);
+    t.deepEqual(workflowsDetails[0].head.get(), firstWorkflowHead);
 });
 
 test('test 4', t => {
@@ -258,9 +257,9 @@ test('test 4', t => {
             }
         ]
     };
-    t.true(workflowsDetails[0].head.isJust());
+    t.true(workflowsDetails[0].head.isPresent());
     t.is(workflowsDetails[0].workflowName, firstWorkflowName);
-    t.deepEqual(workflowsDetails[0].head.value(), firstWorkflowHead);
+    t.deepEqual(workflowsDetails[0].head.get(), firstWorkflowHead);
 });
 
 test('test 5', t => {
@@ -288,7 +287,7 @@ test('test 5', t => {
     const expectedWorkflowDetails = [
         {
             workflowName: 'workflow1',
-            head: Maybe({
+            head: Optional.of({
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: 1
@@ -314,7 +313,7 @@ test('test 5', t => {
         },
         {
             workflowName: 'workflow2',
-            head: Maybe({
+            head: Optional.of({
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: 1
@@ -382,7 +381,7 @@ test('test 6 - multiple flows (in parallel) between start and self-resolved', t 
     const expectedWorkflowDetails = [
         {
             workflowName: 'workflow1',
-            head: Maybe({
+            head: Optional.of({
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: 1

@@ -9,7 +9,7 @@ import {
 } from '../../src/actions';
 import flowStatuses from '../../src/statuses/flowStatuses';
 import workflowStatuses from '../../src/statuses/workflowStatuses';
-import Maybe from 'maybe';
+import Optional from 'optional-js';
 
 /* eslint fp/no-nil:0 */
 
@@ -41,7 +41,7 @@ test('test 1 - start a workflow', t => {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
                     workflowStatus: workflowStatuses.started,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
@@ -98,7 +98,7 @@ test('test 2 - start the flow', t => {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
                 workflowStatus: workflowStatuses.started,
-                head: Maybe({
+                head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
@@ -132,7 +132,7 @@ test('test 2 - start the flow', t => {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
                     workflowStatus: workflowStatuses.started,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
@@ -192,7 +192,7 @@ test('test 3 - self-resolve the flow', t => {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
                 workflowStatus: workflowStatuses.started,
-                head: Maybe({
+                head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
@@ -228,7 +228,7 @@ test('test 3 - self-resolve the flow', t => {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
                     workflowStatus: workflowStatuses.started,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
@@ -288,7 +288,7 @@ test('test 4 - complete the flow', t => {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
                 workflowStatus: workflowStatuses.started,
-                head: Maybe({
+                head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
@@ -328,7 +328,7 @@ test('test 4 - complete the flow', t => {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
                     workflowStatus: workflowStatuses.started,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
@@ -393,7 +393,7 @@ test('test 5 - complete workflow', t => {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
                 workflowStatus: workflowStatuses.started,
-                head: Maybe({
+                head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
@@ -435,7 +435,7 @@ test('test 5 - complete workflow', t => {
                     workflowName: startWorkflowAction.workflowName,
                     workflowStatus: workflowStatuses.completed,
                     completeTime: completeWorkflowAction.completeWorkflowTime,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started

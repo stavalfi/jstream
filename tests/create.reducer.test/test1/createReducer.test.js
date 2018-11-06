@@ -9,7 +9,7 @@ import {
 } from '../../../src/actions';
 import flowStatuses from '../../../src/statuses/flowStatuses';
 import workflowStatuses from '../../../src/statuses/workflowStatuses';
-import Maybe from 'maybe';
+import Optional from 'optional-js';
 import workflowsJson from './workflows.json';
 import functions from './workflows.js';
 
@@ -55,7 +55,7 @@ test('test 1 - dispatch complete of one flow from multiple parallel flows.', t =
                 workflowId: startWorkflow1Action.workflowId,
                 workflowName: startWorkflow1Action.workflowName,
                 workflowStatus: workflowStatuses.started,
-                head: Maybe({
+                head: Optional.of({
                     flowDetails: {
                         flowName: 'getUser',
                         flowStatus: flowStatuses.started
@@ -130,7 +130,7 @@ test('test 1 - dispatch complete of one flow from multiple parallel flows.', t =
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
                     workflowStatus: workflowStatuses.started,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
@@ -230,7 +230,7 @@ test('test 2 - dispatch complete of the last flow from multiple parallel flows.'
                 workflowId: startWorkflow1Action.workflowId,
                 workflowName: startWorkflow1Action.workflowName,
                 workflowStatus: workflowStatuses.started,
-                head: Maybe({
+                head: Optional.of({
                     flowDetails: {
                         flowName: 'getUser',
                         flowStatus: flowStatuses.started
@@ -307,7 +307,7 @@ test('test 2 - dispatch complete of the last flow from multiple parallel flows.'
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
                     workflowStatus: workflowStatuses.started,
-                    head: Maybe({
+                    head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
