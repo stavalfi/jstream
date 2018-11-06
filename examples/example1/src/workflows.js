@@ -1,6 +1,20 @@
-const createUser = customParams => console.log('WOW!!!!', customParams, 'createUser');
-const removeUser = customParams => console.log('WOW!!!!', customParams, 'removeUser');
-const updateServer = customParams => console.log('WOW!!!!', customParams, 'updateServer');
-const getUser = customParams => console.log('WOW!!!!', customParams, 'getUser');
-
-export default {createUser, removeUser, updateServer, getUser};
+export default {
+    startWorkflowsFunctions: {
+        createUser: customParams => console.log('Started Flow', customParams, 'createUser'),
+        updateServer: customParams => console.log('Started Flow', customParams, 'updateServer'),
+        createSuperUser: customParams => console.log('Started Flow', customParams, 'createSuperUser'),
+        delete: customParams => console.log('Started Flow', customParams, 'delete')
+    },
+    flowsFunctions: {
+        createUser: customParams => console.log('Middle', customParams, 'createUser'),
+        removeUser: customParams => console.log('Middle', customParams, 'removeUser'),
+        updateServer: customParams => console.log('Middle', customParams, 'updateServer'),
+        getUser: customParams => console.log('Middle', customParams, 'getUser')
+    },
+    completeWorkflowsFunctions: {
+        createUser: customParams => console.log('Completed Flow', customParams, 'createUser'),
+        updateServer: customParams => console.log('Completed Flow', customParams, 'updateServer'),
+        createSuperUser: customParams => console.log('Completed Flow', customParams, 'createSuperUser'),
+        delete: customParams => console.log('Completed Flow', customParams, 'delete')
+    },
+};

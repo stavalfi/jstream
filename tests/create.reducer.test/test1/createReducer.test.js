@@ -11,7 +11,7 @@ import flowStatuses from '../../../src/statuses/flowStatuses';
 import workflowStatuses from '../../../src/statuses/workflowStatuses';
 import Maybe from 'maybe';
 import workflowsJson from './workflows.json';
-import flowsFunctions from './workflows.js';
+import functions from './workflows.js';
 
 /* eslint fp/no-nil:0 */
 
@@ -202,7 +202,7 @@ test('test 1 - dispatch complete of one flow from multiple parallel flows.', t =
         },
         Cmd.list([])
     );
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)(state, action);
+    const actualResult = createReducer(functions, workflowsDetails)(state, action);
     // assertLoopsEqual(t)(actualResult, expectedResult);
     t.deepEqual(actualResult, expectedResult);
 });
@@ -380,12 +380,12 @@ test('test 2 - dispatch complete of the last flow from multiple parallel flows.'
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.run(flowsFunctions.getUser, {
+            Cmd.run(functions.flowsFunctions.getUser, {
                 successActionCreator: () => selfResolvedGetUserAction,
                 args: [startWorkflowAction.workflowId]
             })
         ])
     );
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)(state, action);
+    const actualResult = createReducer(functions, workflowsDetails)(state, action);
     assertLoopsEqual(t)(actualResult, expectedResult);
 });

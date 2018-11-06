@@ -47,7 +47,7 @@ module.exports = {
     plugins: [
         // generate a html file after every time webpack end
         new HtmlWebpackPlugin({
-            title: 'tracker',
+            title: 'workflow.js',
             template: path.join(__dirname, 'output-index-tamplate.html')
         }),
         // remove the dist folder before every webpack build.

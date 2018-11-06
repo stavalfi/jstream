@@ -22,13 +22,15 @@ test('test 1 - start a workflow', t => {
         'flowsNames': ['getUser'],
         'workflowsDetails': ['getUser']
     });
-    const flowsFunctions = {
-        getUser: () => console.log('____TEST____')
+    const functions = {
+        flowsFunctions: {
+            getUser: () => console.log('____TEST____')
+        },
     };
     const getUserFlowName = 'getUser';
     const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
 
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+    const actualResult = createReducer(functions, workflowsDetails)({
         activeWorkflowsDetails: [],
         nonActiveWorkflowsDetails: []
     }, startWorkflowAction);
@@ -67,7 +69,7 @@ test('test 1 - start a workflow', t => {
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.run(flowsFunctions.getUser, {
+            Cmd.run(functions.flowsFunctions.getUser, {
                 successActionCreator: () => changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started),
                 args: [startWorkflowAction.workflowId]
             })
@@ -81,14 +83,16 @@ test('test 2 - start the flow', t => {
         'flowsNames': ['getUser'],
         'workflowsDetails': ['getUser']
     });
-    const flowsFunctions = {
-        getUser: () => console.log('____TEST____')
+    const functions = {
+        flowsFunctions: {
+            getUser: () => console.log('____TEST____')
+        },
     };
     const getUserFlowName = 'getUser';
     const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
     const startFlowAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
 
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+    const actualResult = createReducer(functions, workflowsDetails)({
         activeWorkflowsDetails: [
             {
                 workflowId: startWorkflowAction.workflowId,
@@ -158,7 +162,7 @@ test('test 2 - start the flow', t => {
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.run(flowsFunctions.getUser, {
+            Cmd.run(functions.flowsFunctions.getUser, {
                 successActionCreator: () => changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved),
                 args: [startWorkflowAction.workflowId]
             })
@@ -172,15 +176,17 @@ test('test 3 - self-resolve the flow', t => {
         'flowsNames': ['getUser'],
         'workflowsDetails': ['getUser']
     });
-    const flowsFunctions = {
-        getUser: () => console.log('____TEST____')
+    const functions = {
+        flowsFunctions: {
+            getUser: () => console.log('____TEST____')
+        },
     };
     const getUserFlowName = 'getUser';
     const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
     const startFlowAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.started);
     const selfResolvedAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.selfResolved);
 
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+    const actualResult = createReducer(functions.flowsFunctions, workflowsDetails)({
         activeWorkflowsDetails: [
             {
                 workflowId: startWorkflowAction.workflowId,
@@ -265,8 +271,10 @@ test('test 4 - complete the flow', t => {
         'flowsNames': ['getUser'],
         'workflowsDetails': ['getUser']
     });
-    const flowsFunctions = {
-        getUser: () => console.log('____TEST____')
+    const functions = {
+        flowsFunctions: {
+            getUser: () => console.log('____TEST____')
+        },
     };
     const getUserFlowName = 'getUser';
     const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
@@ -311,7 +319,7 @@ test('test 4 - complete the flow', t => {
         ],
         nonActiveWorkflowsDetails: []
     };
-    const reducer = createReducer(flowsFunctions, workflowsDetails);
+    const reducer = createReducer(functions.flowsFunctions, workflowsDetails);
     const actualResult = reducer(state, completeAction);
 
     const expectedResult = loop({
@@ -367,8 +375,10 @@ test('test 5 - complete workflow', t => {
         'flowsNames': ['getUser'],
         'workflowsDetails': ['getUser']
     });
-    const flowsFunctions = {
-        getUser: () => console.log('____TEST____')
+    const functions = {
+        flowsFunctions: {
+            getUser: () => console.log('____TEST____')
+        }
     };
     const getUserFlowName = 'getUser';
     const startWorkflowAction = startWorkflowActionCreator(getUserFlowName);
@@ -377,7 +387,7 @@ test('test 5 - complete workflow', t => {
     const completeAction = changeFlowStatusAction(startWorkflowAction.workflowId, getUserFlowName, flowStatuses.completed);
     const completeWorkflowAction = completeWorkflowActionCreator(startWorkflowAction.workflowId);
 
-    const actualResult = createReducer(flowsFunctions, workflowsDetails)({
+    const actualResult = createReducer(functions.flowsFunctions, workflowsDetails)({
         activeWorkflowsDetails: [
             {
                 workflowId: startWorkflowAction.workflowId,

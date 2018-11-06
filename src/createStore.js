@@ -3,10 +3,10 @@ import middleware from './middleware';
 import createReducer from './createReducer';
 import {install} from 'redux-loop';
 
-export default (flowsFunctions, workflowsDetails) => {
+export default (functions, workflowsDetails) => {
     const initialState = {
         activeWorkflowsDetails: [],
         nonActiveWorkflowsDetails: []
     };
-    return createStore(createReducer(flowsFunctions, workflowsDetails), initialState, compose(install(), applyMiddleware(middleware)));
+    return createStore(createReducer(functions, workflowsDetails), initialState, compose(install(), applyMiddleware(middleware)));
 };

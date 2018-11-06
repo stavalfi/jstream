@@ -2,9 +2,10 @@ import createStore from '../../../src/createStore';
 import {startWorkflowAction} from '../../../src/actions';
 import readWorkflowsFile from '../../../src/workflowsJSONReader';
 import workflowsJson from './workflows.json';
-import flowsFunctions from './workflows.js';
+import functions from './workflows.js';
+
 const {workflowsDetails} = readWorkflowsFile(workflowsJson);
 
-const store = createStore(flowsFunctions, workflowsDetails);
+const store = createStore(functions, workflowsDetails);
 
-store.dispatch(startWorkflowAction('createSuperUser'));
+store.dispatch(startWorkflowAction('createUser'));

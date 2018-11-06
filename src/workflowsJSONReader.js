@@ -3,7 +3,7 @@ import Maybe from 'maybe';
 // Given array of flows with statuses, return a directed graph which represents the given workflow.
 const convertWorkflowsToDirectedGraph = workflowArray => {
     if (workflowArray.length === 0)
-        return Maybe.Nothing;
+        return Maybe();
     const head = {
         flowDetails: workflowArray[0],
         childs: []

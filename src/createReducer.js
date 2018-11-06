@@ -1,5 +1,6 @@
 import {loop, Cmd} from 'redux-loop';
 import Maybe from 'maybe';
+import Optional from 'optional-js';
 import {
     START_WORKFLOW,
     CHANGE_FLOW_STATUS,
@@ -10,19 +11,19 @@ import {
 import flowStatuses from './statuses/flowStatuses';
 import workflowStatuses from './statuses/workflowStatuses';
 
-export default (flowsFunctions, workflowsDetails) => (state, action) => {
+export default (functions, workflowsDetails) => (state, action) => {
     switch (action.type) {
         case START_WORKFLOW:
-            return startWorkflow(workflowsDetails, state, action);
+            return startWorkflow(Optional.ofNullable(functions.startWorkflowsFunctions), workflowsDetails, state, action);
         case CHANGE_FLOW_STATUS:
-            return changeFlowStatus(flowsFunctions, state, action);
+            return changeFlowStatus(functions.flowsFunctions, Optional.ofNullable(functions.completeWorkflowsFunctions), state, action);
         case COMPLETE_WORKFLOW:
-            return completeWorkflow(flowsFunctions, workflowsDetails, state, action);
+            return completeWorkflow(Optional.ofNullable(functions.completeWorkflowsFunctions), workflowsDetails, state, action);
     }
     return state;
 };
 
-const startWorkflow = (workflowsDetails, state, action) => {
+const startWorkflow = (startWorkflowsFunctions, workflowsDetails, state, action) => {
     if (state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
         return state;
 
@@ -41,18 +42,36 @@ const startWorkflow = (workflowsDetails, state, action) => {
         head: duplicateWorkflowGraph(workflowDetails.head),
         workflowStatus: workflowStatuses.started
     };
-    return loop(
-        {
-            ...state,
-            activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflowDetails],
-        },
-        workflowDetails.head.isNothing() ?
-            Cmd.none :
-            Cmd.action(changeFlowStatusAction(action.workflowId, workflowDetails.head.value().flowDetails.flowName, flowStatuses.started))
-    );
+
+    const newState = {
+        ...state,
+        activeWorkflowsDetails: [...state.activeWorkflowsDetails, newActiveWorkflowDetails],
+    };
+
+    const startWorkflowFunction = startWorkflowsFunctions.isPresent() ?
+        Optional.ofNullable(startWorkflowsFunctions.get()[action.workflowName]) :
+        Optional.empty();
+
+    if (workflowDetails.head.isNothing() && startWorkflowFunction.isPresent())
+        return loop(newState, Cmd.run(startWorkflowFunction.get()));
+
+    if (workflowDetails.head.isNothing() && !startWorkflowFunction.isPresent())
+        return loop(newState, Cmd.none);
+
+    const actionToDispatch = changeFlowStatusAction(action.workflowId, workflowDetails.head.value().flowDetails.flowName, flowStatuses.started);
+
+
+    if (!workflowDetails.head.isNothing() && startWorkflowFunction.isPresent())
+        return loop(newState, Cmd.run(startWorkflowFunction.get(), {
+            successActionCreator: () => actionToDispatch,
+            args: [action.workflowId]
+        }));
+
+    // !workflowDetails.head.isNothing() && !startWorkflowFunction.isPresent() === true
+    return loop(newState, Cmd.action(actionToDispatch));
 };
 
-const changeFlowStatus = (flowsFunctions, state, action) => {
+const changeFlowStatus = (flowsFunctions, completeWorkflowsFunctions, state, action) => {
     if (!state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
         return state;
 
@@ -88,22 +107,41 @@ const changeFlowStatus = (flowsFunctions, state, action) => {
         head: duplicateWorkflowGraph(activeWorkflowDetails.head, updatedNode)
     };
 
-    const actionsToTrigger = isWorkflowCompleted(updatedActiveWorkflowDetails.head) ?
-        [Cmd.action(completeWorkflowAction(action.workflowId))] :
-        getActionsToTrigger(flowsFunctions, updatedActiveWorkflowDetails.head, uncompletedNodes[completedNodeIndex].childs, action);
+    const newState = {
+        ...state,
+        activeWorkflowsDetails: [
+            ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
+            updatedActiveWorkflowDetails
+        ]
+    };
 
-    return loop({
-            ...state,
-            activeWorkflowsDetails: [
-                ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
-                updatedActiveWorkflowDetails
-            ]
-        },
-        Cmd.list(actionsToTrigger)
-    );
+    const isWorkflowFinished = isWorkflowCompleted(updatedActiveWorkflowDetails.head);
+
+    const completeWorkflowFunction = completeWorkflowsFunctions.isPresent() ?
+        Optional.ofNullable(completeWorkflowsFunctions.get()[updatedActiveWorkflowDetails.workflowName]) :
+        Optional.empty();
+
+    const completedWorkflowAction = Cmd.action(completeWorkflowAction(action.workflowId));
+
+    if (isWorkflowFinished && completeWorkflowFunction.isPresent())
+        return loop(newState, Cmd.list([
+            Cmd.run(completeWorkflowFunction.get(), {
+                successActionCreator: () => completedWorkflowAction,
+                args: [action.workflowId]
+            })
+        ]));
+
+    if (isWorkflowFinished && !completeWorkflowFunction.isPresent())
+        return loop(newState, Cmd.list([completedWorkflowAction]));
+
+    // workflow is not completed.
+
+    const actionsToDispatch = getActionsToTrigger(flowsFunctions, updatedActiveWorkflowDetails.head, uncompletedNodes[completedNodeIndex].childs, action);
+
+    return loop(newState, Cmd.list(actionsToDispatch));
 };
 
-const completeWorkflow = (flowsFunctions, workflowsDetails, state, action) => {
+const completeWorkflow = (functions, workflowsDetails, state, action) => {
     if (!state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
         return state;
 
@@ -122,12 +160,14 @@ const completeWorkflow = (flowsFunctions, workflowsDetails, state, action) => {
         completeTime: action.completeWorkflowTime,
         workflowStatus: workflowStatuses.completed
     };
-    return loop({
-            ...state,
-            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== activeWorkflowDetails.workflowId),
-            nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
-        },
-        Cmd.none);
+
+    const newState = {
+        ...state,
+        activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== activeWorkflowDetails.workflowId),
+        nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
+    };
+
+    return loop(newState, Cmd.none);
 };
 
 const duplicateWorkflowGraph = (head, ...updatedNodes) => {
@@ -142,7 +182,7 @@ const duplicateWorkflowGraph = (head, ...updatedNodes) => {
     }
 
     return head.isNothing() ?
-        Maybe.Nothing :
+        head :
         Maybe(duplicate(head.value()));
 };
 
