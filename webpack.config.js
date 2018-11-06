@@ -14,7 +14,7 @@ module.exports = {
     // the same scope and not in different scopes. it's slow down the build but makes the code run faster.
     mode: isDevelopmentMode ? 'development' : 'production',
     entry: [
-        path.join(__dirname, 'src', 'index.js'),
+        path.join(__dirname, 'examples', 'example1', 'src', 'index.js'),
         path.join(__dirname, 'node_modules', 'core-js', 'fn', 'array', 'flat-map')
     ],
     output: {

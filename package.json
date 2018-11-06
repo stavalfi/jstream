@@ -10,7 +10,7 @@
     "test": "node $NODE_DEBUG_OPTION node_modules/.bin/ava"
   },
   "keywords": [],
-  "author": "",
+  "author": "stav alfi",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.0.0",
