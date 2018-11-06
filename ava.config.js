@@ -1,6 +1,6 @@
 export default {
     'files': [
-        './tests/**/*.js'
+        './tests/**/*.test.js'
     ],
     'failFast': true,
     'failWithoutAssertions': false,
