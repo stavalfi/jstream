@@ -17,10 +17,11 @@ const convertWorkflowsToDirectedGraph = workflowArray => {
         .forEach(newNode => {
             if (newNode.flowDetails.flowName !== peek(stack).flowDetails.flowName &&
                 newNode.flowDetails.flowStatus === 1) {
-                stacks.push({
-                    flowDetails: peek(stack).flowDetails,
-                    stack: []
-                });
+                if (stacks.length === 0 || peek(stacks).flowDetails !== peek(stack).flowDetails)
+                    stacks.push({
+                        flowDetails: peek(stack).flowDetails,
+                        stack: []
+                    });
                 peek(stack).childs.push(newNode);
                 stack.push(newNode);
             }

@@ -1,14 +1,14 @@
 import test from 'ava';
 import {Cmd, loop} from 'redux-loop';
-import createReducer from '../src/createReducer';
-import readWorkflowsFile from '../src/workflowsJSONReader';
+import createReducer from '../../src/createReducer';
+import readWorkflowsFile from '../../src/workflowsJSONReader';
 import {
     startWorkflowAction as startWorkflowActionCreator,
     changeFlowStatusAction,
     completeWorkflowAction as completeWorkflowActionCreator
-} from '../src/actions';
-import flowStatuses from '../src/statuses/flowStatuses';
-import workflowStatuses from '../src/statuses/workflowStatuses';
+} from '../../src/actions';
+import flowStatuses from '../../src/statuses/flowStatuses';
+import workflowStatuses from '../../src/statuses/workflowStatuses';
 import Maybe from 'maybe';
 
 /* eslint fp/no-nil:0 */

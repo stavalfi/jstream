@@ -1,0 +1,19 @@
+{
+  "flowsNames": [
+    "getUser",
+    "createUser",
+    "updateServer"
+  ],
+  "workflowsDetails": [
+    {
+      "workflowName": "workflow1",
+      "workflow": [
+        "getUser_1",
+        "createUser",
+        "updateServer",
+        "getUser_2",
+        "getUser_3"
+      ]
+    }
+  ]
+}

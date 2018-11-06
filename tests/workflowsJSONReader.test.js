@@ -341,3 +341,106 @@ test('test 5', t => {
     ];
     t.deepEqual(workflowsDetails, expectedWorkflowDetails);
 });
+
+test('test 6 - multiple flows (in parallel) between start and self-resolved', t => {
+    const workflows = {
+        'flowsNames': [
+            'getUser',
+            'createUser',
+            'updateServer'
+        ],
+        'workflowsDetails': [
+            {
+                'workflowName': 'workflow1',
+                'workflow': [
+                    'getUser_1',
+                    'createUser',
+                    'updateServer',
+                    'getUser_2',
+                    'getUser_3'
+                ]
+            }
+        ]
+    };
+    const {flowsNames, workflowsDetails} = readWorkflowsFile(workflows);
+    t.deepEqual(flowsNames, ['getUser', 'createUser', 'updateServer']);
+    const getUserSelfResolvedNode = {
+        flowDetails: {
+            flowName: 'getUser',
+            flowStatus: 2
+        },
+        childs: [
+            {
+                flowDetails: {
+                    flowName: 'getUser',
+                    flowStatus: 3
+                },
+                childs: []
+            }
+        ]
+    };
+    const expectedWorkflowDetails = [
+        {
+            workflowName: 'workflow1',
+            head: Maybe({
+                flowDetails: {
+                    flowName: 'getUser',
+                    flowStatus: 1
+                },
+                childs: [
+                    {
+                        flowDetails: {
+                            flowName: 'createUser',
+                            flowStatus: 1
+                        },
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: 'createUser',
+                                    flowStatus: 2
+                                },
+                                childs: [
+                                    {
+                                        flowDetails: {
+                                            flowName: 'createUser',
+                                            flowStatus: 3
+                                        },
+                                        childs: [
+                                            getUserSelfResolvedNode
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        flowDetails: {
+                            flowName: 'updateServer',
+                            flowStatus: 1
+                        },
+                        childs: [
+                            {
+                                flowDetails: {
+                                    flowName: 'updateServer',
+                                    flowStatus: 2
+                                },
+                                childs: [
+                                    {
+                                        flowDetails: {
+                                            flowName: 'updateServer',
+                                            flowStatus: 3
+                                        },
+                                        childs: [
+                                            getUserSelfResolvedNode
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            })
+        }
+    ];
+    t.deepEqual(workflowsDetails, expectedWorkflowDetails);
+});
