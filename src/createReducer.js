@@ -15,7 +15,7 @@ export default (flowsFunctions, workflowsDetails) => (state, action) => {
         case START_WORKFLOW:
             return startWorkflow(workflowsDetails, state, action);
         case CHANGE_FLOW_STATUS:
-            return startFlow(flowsFunctions, state, action);
+            return changeFlowStatus(flowsFunctions, state, action);
         case COMPLETE_WORKFLOW:
             return completeWorkflow(flowsFunctions, workflowsDetails, state, action);
     }
@@ -52,7 +52,7 @@ const startWorkflow = (workflowsDetails, state, action) => {
     );
 };
 
-const startFlow = (flowsFunctions, state, action) => {
+const changeFlowStatus = (flowsFunctions, state, action) => {
     if (!state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
         return state;
 
