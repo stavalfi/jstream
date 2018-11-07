@@ -52,24 +52,24 @@ const startWorkflow = (startWorkflowsFunctions, workflowsDetails, state, action)
         Optional.empty();
 
     if (!workflowDetails.head.isPresent() && startWorkflowFunction.isPresent())
-        return loop(newState, Cmd.run(startWorkflowFunction.get(),{
+        return loop(newState, Cmd.list([Cmd.run(startWorkflowFunction.get(), {
             args: [action.workflowId]
-        }));
+        })]));
 
     if (!workflowDetails.head.isPresent() && !startWorkflowFunction.isPresent())
-        return loop(newState, Cmd.none);
+        return loop(newState, Cmd.list([]));
 
     const actionToDispatch = changeFlowStatusAction(action.workflowId, workflowDetails.head.get().flowDetails.flowName, flowStatuses.started);
 
 
     if (!!workflowDetails.head.isPresent() && startWorkflowFunction.isPresent())
-        return loop(newState, Cmd.run(startWorkflowFunction.get(), {
+        return loop(newState, Cmd.list([Cmd.run(startWorkflowFunction.get(), {
             successActionCreator: () => actionToDispatch,
             args: [action.workflowId]
-        }));
+        })]));
 
     // workflowDetails.head.isPresent() && !startWorkflowFunction.isPresent() === true
-    return loop(newState, Cmd.action(actionToDispatch));
+    return loop(newState, Cmd.list([Cmd.action(actionToDispatch)]));
 };
 
 const changeFlowStatus = (flowsFunctions, completeWorkflowsFunctions, state, action) => {
@@ -122,7 +122,7 @@ const changeFlowStatus = (flowsFunctions, completeWorkflowsFunctions, state, act
         Optional.ofNullable(completeWorkflowsFunctions.get()[updatedActiveWorkflowDetails.workflowName]) :
         Optional.empty();
 
-    const completedWorkflowAction = Cmd.action(completeWorkflowAction(action.workflowId));
+    const completedWorkflowAction = completeWorkflowAction(action.workflowId);
 
     if (isWorkflowFinished && completeWorkflowFunction.isPresent())
         return loop(newState, Cmd.list([
@@ -133,7 +133,7 @@ const changeFlowStatus = (flowsFunctions, completeWorkflowsFunctions, state, act
         ]));
 
     if (isWorkflowFinished && !completeWorkflowFunction.isPresent())
-        return loop(newState, Cmd.list([completedWorkflowAction]));
+        return loop(newState, Cmd.list([Cmd.action(completedWorkflowAction)]));
 
     // workflow is not completed.
 
@@ -168,10 +168,11 @@ const completeWorkflow = (functions, workflowsDetails, state, action) => {
         nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, completedWorkflow]
     };
 
-    return loop(newState, Cmd.none);
+    return loop(newState, Cmd.list([]));
 };
 
 const duplicateWorkflowGraph = (head, ...updatedNodes) => {
+    // TODO: bug! if {a,b} -> c  , then the result is: a'->c' , b'->c'' !!
     function duplicate(node) {
         const updatedNodeIndex = updatedNodes.findIndex(updatedNode => node.flowDetails === updatedNode.flowDetails);
         return Object.assign(
