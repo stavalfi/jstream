@@ -239,11 +239,19 @@ test('test 2 - start the workflow - no start workflow function', t => {
     );
     const actualResult = createReducer({
         startWorkflowsFunctions: {},
-        flowsFunctions: {
-            createUser: customParams => console.log('Middle', customParams, 'createUser'),
-            removeUser: customParams => console.log('Middle', customParams, 'removeUser'),
-            updateServer: customParams => console.log('Middle', customParams, 'updateServer'),
-            getUser: customParams => console.log('Middle', customParams, 'getUser')
+        flows: {
+            createUser: {
+                task: customParams => console.log('Middle', customParams, 'createUser'),
+            },
+            removeUser: {
+                task: customParams => console.log('Middle', customParams, 'removeUser'),
+            },
+            updateServer: {
+                task: customParams => console.log('Middle', customParams, 'updateServer'),
+            },
+            getUser: {
+                task: customParams => console.log('Middle', customParams, 'getUser'),
+            }
         },
         completeWorkflowsFunctions: {
             workflow1: customParams => console.log('Completed Flow', customParams, 'workflow1'),
@@ -608,7 +616,7 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.run(functions.flowsFunctions.getUser, {
+            Cmd.run(functions.flows.getUser.task, {
                 successActionCreator: () => selfResolvedGetUserAction,
                 args: [startWorkflowAction.workflowId]
             })
@@ -1029,11 +1037,19 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
         startWorkflowsFunctions: {
             workflow1: customParams => console.log('Started Flow', customParams, 'workflow1'),
         },
-        flowsFunctions: {
-            createUser: customParams => console.log('Middle', customParams, 'createUser'),
-            removeUser: customParams => console.log('Middle', customParams, 'removeUser'),
-            updateServer: customParams => console.log('Middle', customParams, 'updateServer'),
-            getUser: customParams => console.log('Middle', customParams, 'getUser')
+        flows: {
+            createUser: {
+                task: customParams => console.log('Middle', customParams, 'createUser'),
+            },
+            removeUser: {
+                task: customParams => console.log('Middle', customParams, 'removeUser'),
+            },
+            updateServer: {
+                task: customParams => console.log('Middle', customParams, 'updateServer'),
+            },
+            getUser: {
+                task: customParams => console.log('Middle', customParams, 'getUser'),
+            }
         },
         completeWorkflowsFunctions: {},
     }, workflowsDetails)(state, action);

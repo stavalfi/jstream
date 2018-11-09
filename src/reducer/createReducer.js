@@ -23,19 +23,19 @@ import {
 
 const initialState = {activeWorkflowsDetails: [], nonActiveWorkflowsDetails: []};
 
-export default (workflowsFunctions, workflowsDetails) => (state = initialState, action) => {
+export default (functions, workflowsDetails) => (state = initialState, action) => {
     switch (action.type) {
         case START_WORKFLOW:
-            return startWorkflow(state, action, workflowsFunctions, workflowsDetails);
+            return startWorkflow(state, action, functions, workflowsDetails);
         case CHANGE_FLOW_STATUS:
-            return changeFlowStatus(state, action, workflowsFunctions);
+            return changeFlowStatus(state, action, functions);
         case COMPLETE_WORKFLOW:
             return completeWorkflow(state, action);
     }
     return state;
 };
 
-const startWorkflow = (state, action, workflowsFunctions, workflowsDetails) => {
+const startWorkflow = (state, action, functions, workflowsDetails) => {
     return getFirstBy(workflowsDetails, workflow => workflow.workflowName === action.workflowName)
         .filter(() => action.type === START_WORKFLOW)
         .filter(() => !state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
@@ -50,12 +50,12 @@ const startWorkflow = (state, action, workflowsFunctions, workflowsDetails) => {
                 ...state,
                 activeWorkflowsDetails: [...state.activeWorkflowsDetails, activeWorkflowDetails],
             };
-            return generateNextTriggeredActionsAtStart(state, newState, action, workflowsFunctions, activeWorkflowDetails);
+            return generateNextTriggeredActionsAtStart(state, newState, action, functions, activeWorkflowDetails);
         })
         .orElse(state);
 };
 
-const changeFlowStatus = (state, action, workflowsFunctions) => {
+const changeFlowStatus = (state, action, functions) => {
     return getFirstIndexBy(state.activeWorkflowsDetails, workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId)
         .flatMap(activeWorkflowDetailsIndex => {
             const activeWorkflowDetails = state.activeWorkflowsDetails[activeWorkflowDetailsIndex];
@@ -91,7 +91,7 @@ const changeFlowStatus = (state, action, workflowsFunctions) => {
                         state,
                         newState,
                         action,
-                        workflowsFunctions,
+                        functions,
                         updatedActiveWorkflowDetails,
                         completedNode.get());
                 });
@@ -121,15 +121,15 @@ const completeWorkflow = (state, action) => {
 // helper functions
 /////////////////////////////////
 
-const generateNextTriggeredActionsAtStart = (oldState, newState, action, workflowsFunctions, updatedActiveWorkflowDetails) => {
+const generateNextTriggeredActionsAtStart = (oldState, newState, action, functions, updatedActiveWorkflowDetails) => {
     const isNewActiveWorkflow = !oldState.activeWorkflowsDetails.some(activeWorkflowDetails => activeWorkflowDetails.workflowId === updatedActiveWorkflowDetails.workflowId);
     if (!isNewActiveWorkflow)
         return oldState;
 
-    const startWorkflowFunction = Optional.ofNullable(workflowsFunctions.startWorkflowsFunctions)
+    const startWorkflowFunction = Optional.ofNullable(functions.startWorkflowsFunctions)
         .map(startWorkflowsFunctions => startWorkflowsFunctions[updatedActiveWorkflowDetails.workflowName]);
 
-    const completeWorkflowFunction = Optional.ofNullable(workflowsFunctions.completeWorkflowsFunctions)
+    const completeWorkflowFunction = Optional.ofNullable(functions.completeWorkflowsFunctions)
         .map(completeWorkflowsFunctions => completeWorkflowsFunctions[updatedActiveWorkflowDetails.workflowName]);
 
     const completeWorkflowAction = completeWorkflowActionCreator(action.workflowId);
@@ -159,13 +159,13 @@ const generateNextTriggeredActionsAtStart = (oldState, newState, action, workflo
         .orElse(loop(newState, Cmd.list([completeWorkflowCmd])));
 };
 
-const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, workflowsFunctions, updatedActiveWorkflowDetails, completedNode) => {
+const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functions, updatedActiveWorkflowDetails, completedNode) => {
     const isNewActiveWorkflow = !oldState.activeWorkflowsDetails.some(activeWorkflowDetails => activeWorkflowDetails.workflowId === updatedActiveWorkflowDetails.workflowId);
 
     if (isNewActiveWorkflow)
         return oldState;
 
-    const completeWorkflowFunction = Optional.ofNullable(workflowsFunctions.completeWorkflowsFunctions)
+    const completeWorkflowFunction = Optional.ofNullable(functions.completeWorkflowsFunctions)
         .map(completeWorkflowsFunctions => completeWorkflowsFunctions[updatedActiveWorkflowDetails.workflowName]);
 
     const completeWorkflowAction = completeWorkflowActionCreator(action.workflowId);
@@ -192,7 +192,7 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, workfl
         .map(child => changeFlowStatusAction(action.workflowId, child.flowDetails.flowName, child.flowDetails.flowStatus))
         .map(actionToTrigger => actionToTrigger.flowStatus !== flowStatuses.selfResolved ?
             Cmd.action(actionToTrigger) :
-            Cmd.run(workflowsFunctions.flowsFunctions[actionToTrigger.flowName], {
+            Cmd.run(functions.flows[actionToTrigger.flowName].task, {
                 successActionCreator: () => actionToTrigger,
                 args: [action.workflowId]
             }));
