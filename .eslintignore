@@ -1,2 +1,2 @@
-src/workflowsJSONReader.js
+src/json/parser.js
 webpack.config.js

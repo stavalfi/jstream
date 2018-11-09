@@ -1,7 +1,7 @@
 import test from 'ava';
 import {Cmd, loop} from 'redux-loop';
-import createReducer from '../../../src/createReducer';
-import readWorkflowsFile from '../../../src/workflowsJSONReader';
+import createReducer from '../../../src/reducer/createReducer';
+import readWorkflowsFile from '../../../src/json/parser';
 import {
     startWorkflowAction,
     changeFlowStatusAction,
