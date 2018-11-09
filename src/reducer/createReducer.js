@@ -126,11 +126,13 @@ const generateNextTriggeredActionsAtStart = (oldState, newState, action, functio
     if (!isNewActiveWorkflow)
         return oldState;
 
-    const startWorkflowFunction = Optional.ofNullable(functions.startWorkflowsFunctions)
-        .map(startWorkflowsFunctions => startWorkflowsFunctions[updatedActiveWorkflowDetails.workflowName]);
+    const startWorkflowFunction = Optional.ofNullable(functions.workflows)
+        .map(workflowsFunctions => workflowsFunctions[updatedActiveWorkflowDetails.workflowName])
+        .map(workflowFunctions => workflowFunctions.started);
 
-    const completeWorkflowFunction = Optional.ofNullable(functions.completeWorkflowsFunctions)
-        .map(completeWorkflowsFunctions => completeWorkflowsFunctions[updatedActiveWorkflowDetails.workflowName]);
+    const completeWorkflowFunction = Optional.ofNullable(functions.workflows)
+        .map(workflowsFunctions => workflowsFunctions[updatedActiveWorkflowDetails.workflowName])
+        .map(workflowFunctions => workflowFunctions.completed);
 
     const completeWorkflowAction = completeWorkflowActionCreator(action.workflowId);
 
@@ -165,8 +167,9 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functi
     if (isNewActiveWorkflow)
         return oldState;
 
-    const completeWorkflowFunction = Optional.ofNullable(functions.completeWorkflowsFunctions)
-        .map(completeWorkflowsFunctions => completeWorkflowsFunctions[updatedActiveWorkflowDetails.workflowName]);
+    const completeWorkflowFunction = Optional.ofNullable(functions.workflows)
+        .map(workflowsFunctions => workflowsFunctions[updatedActiveWorkflowDetails.workflowName])
+        .map(workflowFunctions => workflowFunctions.completed);
 
     const completeWorkflowAction = completeWorkflowActionCreator(action.workflowId);
 

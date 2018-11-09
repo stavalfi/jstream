@@ -1,10 +1,4 @@
 export default {
-    startWorkflowsFunctions: {
-        createUser: customParams => console.log('Started Flow', customParams, 'createUser'),
-        updateServer: customParams => console.log('Started Flow', customParams, 'updateServer'),
-        createSuperUser: customParams => console.log('Started Flow', customParams, 'createSuperUser'),
-        delete: customParams => console.log('Started Flow', customParams, 'delete')
-    },
     flows: {
         createUser: {
             task: customParams => console.log('Middle', customParams, 'createUser'),
@@ -35,10 +29,26 @@ export default {
             }
         }
     },
-    completeWorkflowsFunctions: {
-        createUser: customParams => console.log('Completed Flow', customParams, 'createUser'),
-        updateServer: customParams => console.log('Completed Flow', customParams, 'updateServer'),
-        createSuperUser: customParams => console.log('Completed Flow', customParams, 'createSuperUser'),
-        delete: customParams => console.log('Completed Flow', customParams, 'delete')
-    }
+    workflows:{
+        createUser:{
+            started: customParams => console.log('Started Flow', customParams, 'createUser'),
+            completed: customParams => console.log('Completed Flow', customParams, 'createUser'),
+            cancellation: customParams => console.log('Cancel workflow', customParams, 'createUser')
+        },
+        updateServer:{
+            started: customParams => console.log('Started Flow', customParams, 'updateServer'),
+            completed: customParams => console.log('Completed Flow', customParams, 'updateServer'),
+            cancellation: customParams => console.log('Cancel workflow', customParams, 'updateServer')
+        },
+        createSuperUser:{
+            started: customParams => console.log('Started Flow', customParams, 'createSuperUser'),
+            completed: customParams => console.log('Completed Flow', customParams, 'createSuperUser'),
+            cancellation: customParams => console.log('Cancel workflow', customParams, 'createSuperUser')
+        },
+        delete:{
+            started: customParams => console.log('Started Flow', customParams, 'delete'),
+            completed: customParams => console.log('Completed Flow', customParams, 'delete'),
+            cancellation: customParams => console.log('Cancel workflow', customParams, 'delete')
+        }
+    },
 };

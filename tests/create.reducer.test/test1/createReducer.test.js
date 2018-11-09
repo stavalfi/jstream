@@ -128,7 +128,7 @@ test('test 1 - start the workflow', t => {
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.run(functions.startWorkflowsFunctions.workflow1, {
+            Cmd.run(functions.workflows[startWorkflow1Action.workflowName].started, {
                 successActionCreator: () => startGetUserAction,
                 args: [startWorkflow1Action.workflowId]
             })
@@ -238,7 +238,6 @@ test('test 2 - start the workflow - no start workflow function', t => {
         ])
     );
     const actualResult = createReducer({
-        startWorkflowsFunctions: {},
         flows: {
             createUser: {
                 task: customParams => console.log('Middle', customParams, 'createUser'),
@@ -253,9 +252,12 @@ test('test 2 - start the workflow - no start workflow function', t => {
                 task: customParams => console.log('Middle', customParams, 'getUser'),
             }
         },
-        completeWorkflowsFunctions: {
-            workflow1: customParams => console.log('Completed Flow', customParams, 'workflow1'),
-        },
+        workflows: {
+            workflow1: {
+                completed: customParams => console.log('Completed Flow', customParams, 'workflow1'),
+                cancellation: customParams => console.log('Cancel workflow', customParams, 'workflow1')
+            }
+        }
     }, workflowsDetails)(state, action);
     assertLoopsEqual(t)(actualResult, expectedResult);
 });
@@ -823,7 +825,7 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
             nonActiveWorkflowsDetails: []
         },
         Cmd.list([
-            Cmd.run(functions.completeWorkflowsFunctions[startWorkflow1Action.workflowName], {
+            Cmd.run(functions.workflows[startWorkflow1Action.workflowName].completed, {
                 successActionCreator: () => completeWorkflow1Action,
                 args: [startWorkflowAction.workflowId]
             })
@@ -1034,8 +1036,11 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
         ])
     );
     const actualResult = createReducer({
-        startWorkflowsFunctions: {
-            workflow1: customParams => console.log('Started Flow', customParams, 'workflow1'),
+        workflows: {
+            workflow1: {
+                started: customParams => console.log('Started Flow', customParams, 'workflow1'),
+                cancellation: customParams => console.log('Cancel workflow', customParams, 'workflow1')
+            }
         },
         flows: {
             createUser: {
@@ -1051,7 +1056,6 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                 task: customParams => console.log('Middle', customParams, 'getUser'),
             }
         },
-        completeWorkflowsFunctions: {},
     }, workflowsDetails)(state, action);
     assertLoopsEqual(t)(actualResult, expectedResult);
 });
