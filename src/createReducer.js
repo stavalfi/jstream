@@ -38,7 +38,7 @@ const startWorkflow = (startWorkflowsFunctions, workflowsDetails, state, action)
     const newActiveWorkflowDetails = {
         workflowId: action.workflowId,
         workflowName: workflowDetails.workflowName,
-        head: duplicateWorkflowGraph(workflowDetails.head),
+        head: initializeGraph(workflowDetails.head),
         workflowStatus: workflowStatuses.started
     };
 
@@ -105,14 +105,15 @@ const changeFlowStatus = (flowsFunctions, completeWorkflowsFunctions, state, act
     };
     const updatedActiveWorkflowDetails = {
         ...activeWorkflowDetails,
-        head: duplicateWorkflowGraph(activeWorkflowDetails.head, updatedNode)
+        head: createNewGraphWithNodesUpdates(activeWorkflowDetails.head, updatedNode)
     };
 
     const newState = {
         ...state,
         activeWorkflowsDetails: [
-            ...state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
-            updatedActiveWorkflowDetails
+            ...state.activeWorkflowsDetails.slice(0, activeWorkflowDetailsIndex),
+            updatedActiveWorkflowDetails,
+            ...state.activeWorkflowsDetails.slice(activeWorkflowDetailsIndex + 1)
         ]
     };
 
@@ -171,25 +172,49 @@ const completeWorkflow = (functions, workflowsDetails, state, action) => {
     return loop(newState, Cmd.list([]));
 };
 
-const duplicateWorkflowGraph = (head, ...updatedNodes) => {
-    // TODO: bug! if {a,b} -> c  , then the result is: a'->c' , b'->c'' !!
-    function duplicate(node) {
-        const updatedNodeIndex = updatedNodes.findIndex(updatedNode => node.flowDetails === updatedNode.flowDetails);
-        return Object.assign(
-            {},
-            node,
-            {childs: node.childs.map(duplicate)},
-            updatedNodeIndex > -1 ? updatedNodes[updatedNodeIndex] : {}
-        );
+function initializeGraph(head) {
+    if (!head.isPresent())
+        return head;
+
+    function duplicateNode(node) {
+        return {
+            ...node,
+            childs: node.childs.map(duplicateNode),
+            isCompleted: false
+        };
     }
 
-    return !head.isPresent() ?
-        head :
-        Optional.of(duplicate(head.get()));
+    const newHead = duplicateNode(head.get());
+    return Optional.of(newHead);
+}
+
+const createNewGraphWithNodesUpdates = (head, ...updatedNodes) => {
+    if (!head.isPresent())
+        return head;
+
+    function generatedUpdatedParents(head, updatedNode) {
+        if (head.flowDetails === updatedNode.flowDetails)
+            return updatedNode;
+
+        return getNodeParents(Optional.of(head), updatedNode)
+            .map((_, i) => i)
+            .reduce((newHead, i) => {
+                const oldParent = getNodeParents(Optional.of(newHead), updatedNode)[i];
+                const nodeIndex = oldParent.childs.findIndex(child => child.flowDetails === updatedNode.flowDetails);
+                const newParent = {
+                    ...oldParent,
+                    childs: [...oldParent.childs.slice(0, nodeIndex), updatedNode, ...oldParent.childs.slice(nodeIndex + 1)]
+                };
+                return generatedUpdatedParents(newHead, newParent);
+            }, head);
+    }
+
+    const newHead = updatedNodes.reduce((newHead, updatedNode) => generatedUpdatedParents(newHead, updatedNode), head.get());
+    return Optional.of(newHead);
 };
 
 const getActionsToTrigger = (flowsFunctions, head, childNodesToStart, currentAction) =>
-    childNodesToStart.filter(child => areParentsCompleted(head, child))
+    childNodesToStart.filter(child => getNodeParents(head, child).every(node => node.isCompleted))
         .map(child => changeFlowStatusAction(currentAction.workflowId, child.flowDetails.flowName, child.flowDetails.flowStatus))
         .map(actionToTrigger => actionToTrigger.flowStatus !== flowStatuses.selfResolved ?
             Cmd.action(actionToTrigger) :
@@ -198,58 +223,55 @@ const getActionsToTrigger = (flowsFunctions, head, childNodesToStart, currentAct
                 args: [currentAction.workflowId]
             }));
 
-// search every node in possibleLeafs and check that it's parents are all completed:
-const areParentsCompleted = (head, possibleLeaf) => {
-    function searchParents(node) {
-        if (node === possibleLeaf)
-        // * if it's true then node === head because if not and the node's
-        // parent is possibleLeaf then I will stop the recursion so this
-        // condition will never be true.
-        // * if head === possibleLeaf => he doesn't have parents so
-        //                               logically it's correct to say
-        //                               that they are all completed.
-            return true;
-        if (node.childs.length > 0 &&
-            node.childs.some(child =>
-                // possibleLeaf belong to the graph before the deep-copy so the condition child===possibleLeaf will be false.
-                // because child belongs to the deep-copied graph.
-                child.flowDetails === possibleLeaf.flowDetails))
-            return node.hasOwnProperty('isCompleted') && node.isCompleted;
+// get all node's parents
+// the given node may not be present by reference in the graph so we check this by NODE.id.
+const getNodeParents = (head, node) => {
+    if (!head.isPresent() || head.get().flowDetails === node.flowDetails)
+        return [];
+
+    function search(pos) {
+        if (pos.childs.length > 0) {
+            // possibleLeaf belong to the graph before the deep-copy so the condition child===possibleLeaf will be false.
+            // because child belongs to the deep-copied graph.
+            const isNodeAChild = pos.childs.some(child => child.flowDetails === node.flowDetails);
+            if (isNodeAChild)
+                return [pos];
+        }
 
         // I didn't find the parent yet so we will keep searching.
-        if (node.childs.length === 0)
-            return true;
+        if (pos.childs.length === 0)
+            return [];
 
-        return node.childs.every(searchParents);
+        return pos.childs.flatMap(search);
     }
 
-    // if head is Nothing then no one will call this method.
-    // this condition is only for unit-tests on this specific function.
-    return !head.isPresent() ?
-        true :
-        searchParents(head.get());
+    return search(head.get());
 };
 
 // return an array of all closest nodes to head that are not completed but their parent is completed.
 const getCurrentLeafsOfWorkflowGraph = head => {
+    if (!head.isPresent())
+        return [];
+
     function findLeafs(node) {
-        if (!node.hasOwnProperty('isCompleted') || !node.isCompleted)
+        if (!node.isCompleted)
             return [node];
         return node.childs.flatMap(findLeafs);
     }
 
-    const possibleLeafs = !head.isPresent() ?
-        [] :
-        // I may receive nodes such as node3: {node1: completed, node2: not completed } -> {node3: not completed}
-        // so I should get only [node2] and not [node2,node3].
-        findLeafs(head.get());
+    // I may receive nodes such as node3: {node1: completed, node2: not completed } -> {node3: not completed}
+    // so I should get only [node2] and not [node2,node3].
+    const possibleLeafs = findLeafs(head.get());
 
-    return possibleLeafs.filter(leaf => areParentsCompleted(head, leaf));
+    return possibleLeafs.filter(leaf => getNodeParents(head, leaf).every(node => node.isCompleted));
 };
 
 const isWorkflowCompleted = head => {
+    if (!head.isPresent())
+        return true;
+
     function areAllNodesCompleted(node) {
-        if (!node.hasOwnProperty('isCompleted') || !node.isCompleted)
+        if (!node.isCompleted)
             return false;
         if (node.childs.length === 0)
             return true;
@@ -257,7 +279,5 @@ const isWorkflowCompleted = head => {
         return areAllNodesCompleted(node.childs[0]);
     }
 
-    return !head.isPresent() ?
-        true :
-        areAllNodesCompleted(head.get());
+    return areAllNodesCompleted(head.get());
 };

@@ -39,12 +39,14 @@ test('test 1 - start the workflow', t => {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
+        isCompleted: false,
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
+                isCompleted: false,
                 childs: []
             }
         ]
@@ -65,24 +67,28 @@ test('test 1 - start the workflow', t => {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
+                        isCompleted: false,
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
+                                isCompleted: false,
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
+                                        isCompleted: false,
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
+                                                isCompleted: false,
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -94,18 +100,21 @@ test('test 1 - start the workflow', t => {
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
+                                isCompleted: false,
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
+                                        isCompleted: false,
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
+                                                isCompleted: false,
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -136,12 +145,14 @@ test('test 2 - start the workflow - no start workflow function', t => {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
+        isCompleted: false,
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
+                isCompleted: false,
                 childs: []
             }
         ]
@@ -162,24 +173,28 @@ test('test 2 - start the workflow - no start workflow function', t => {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
+                        isCompleted: false,
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
+                                isCompleted: false,
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
+                                        isCompleted: false,
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
+                                                isCompleted: false,
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -191,18 +206,21 @@ test('test 2 - start the workflow - no start workflow function', t => {
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
+                                isCompleted: false,
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
+                                        isCompleted: false,
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
+                                                isCompleted: false,
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -241,12 +259,14 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
+        isCompleted: false,
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
+                isCompleted: false,
                 childs: []
             }
         ]
@@ -286,6 +306,7 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                 flowName: 'createUser',
                                                 flowStatus: flowStatuses.completed
                                             },
+                                            isCompleted: false,
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -313,6 +334,7 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                 flowName: 'updateServer',
                                                 flowStatus: flowStatuses.completed
                                             },
+                                            isCompleted: false,
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -390,6 +412,7 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
+                                                isCompleted: false,
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -416,12 +439,14 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
+        isCompleted: false,
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
+                isCompleted: false,
                 childs: []
             }
         ]
@@ -490,6 +515,7 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                 flowName: 'updateServer',
                                                 flowStatus: flowStatuses.completed
                                             },
+                                            isCompleted: false,
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -607,6 +633,7 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
+                isCompleted: false,
                 childs: []
             }
         ]
@@ -813,6 +840,7 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
+                isCompleted: false,
                 childs: []
             }
         ]
@@ -1007,8 +1035,7 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
             updateServer: customParams => console.log('Middle', customParams, 'updateServer'),
             getUser: customParams => console.log('Middle', customParams, 'getUser')
         },
-        completeWorkflowsFunctions: {
-        },
+        completeWorkflowsFunctions: {},
     }, workflowsDetails)(state, action);
     assertLoopsEqual(t)(actualResult, expectedResult);
 });

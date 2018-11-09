@@ -46,18 +46,21 @@ test('test 1 - start a workflow', t => {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
+                        isCompleted: false,
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
+                                isCompleted: false,
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
+                                        isCompleted: false,
                                         childs: []
                                     }
                                 ]
@@ -103,18 +106,21 @@ test('test 2 - start the flow', t => {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
                     },
+                    isCompleted: false,
                     childs: [
                         {
                             flowDetails: {
                                 flowName: getUserFlowName,
                                 flowStatus: flowStatuses.selfResolved
                             },
+                            isCompleted: false,
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
+                                    isCompleted: false,
                                     childs: []
                                 }
                             ]
@@ -145,12 +151,14 @@ test('test 2 - start the flow', t => {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
+                                isCompleted: false,
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
+                                        isCompleted: false,
                                         childs: []
                                     }
                                 ]
@@ -205,12 +213,14 @@ test('test 3 - self-resolve the flow', t => {
                                 flowName: getUserFlowName,
                                 flowStatus: flowStatuses.selfResolved,
                             },
+                            isCompleted: false,
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
+                                    isCompleted: false,
                                     childs: []
                                 }
                             ]
@@ -249,6 +259,7 @@ test('test 3 - self-resolve the flow', t => {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
+                                        isCompleted: false,
                                         childs: []
                                     }
                                 ]
@@ -309,6 +320,7 @@ test('test 4 - complete the flow', t => {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
+                                    isCompleted: false,
                                     childs: []
                                 }
                             ]

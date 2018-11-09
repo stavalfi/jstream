@@ -1,7 +1,7 @@
 {
   "name": "workflow.js",
   "version": "1.0.0-beta.1",
-  "description": "Imperatively manage async workflows",
+  "description": "Manage unidirectional async workflows",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-serve",
@@ -13,9 +13,9 @@
   "author": "stav alfi",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.5",
+    "@babel/preset-env": "^7.1.5",
     "@babel/register": "^7.0.0",
     "ava": "1.0.0-rc.1",
     "babel-loader": "^8.0.0",
@@ -27,7 +27,7 @@
     "git-revision-webpack-plugin": "^3.0.3",
     "html-webpack-plugin": "^3.2.0",
     "url-loader": "^1.1.1",
-    "webpack": "^4.24.0",
+    "webpack": "^4.25.1",
     "webpack-cli": "^3.1.0",
     "webpack-jarvis": "^0.3.2",
     "webpack-serve": "^2.0.2"
