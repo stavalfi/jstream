@@ -2,6 +2,7 @@ import {loop, Cmd} from 'redux-loop';
 import Optional from 'optional-js';
 import workflowStatuses from '../statuses/workflowStatuses';
 import flowStatuses from '../statuses/flowStatuses';
+import activeFlowStatus from '../statuses/activeFlowStatus';
 import {
     START_WORKFLOW,
     CHANGE_FLOW_STATUS,
@@ -18,7 +19,8 @@ import {
     duplicateGraphWithUpdates,
     getCurrentLeafsOfWorkflowGraph,
     areAllFlowsCompleted,
-    getNodeParents
+    getNodeParents,
+    isNodeCompleted
 } from './reducerGraphOperations';
 
 const initialState = {activeWorkflowsDetails: [], nonActiveWorkflowsDetails: []};
@@ -31,27 +33,9 @@ export default (functions, workflowsDetails) => (state = initialState, action) =
             return changeFlowStatus(state, action, functions);
         case COMPLETE_WORKFLOW:
             return completeWorkflow(state, action);
-        // case CANCEL_WORKFLOW:
-        //     return cancelWorkflow(state, action, functions);
     }
     return state;
 };
-
-// const cancelWorkflow = (state, action, functions) => {
-//     return getFirstIndexBy(state.activeWorkflowsDetails, workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId)
-//         .filter(activeWorkflowDetails => activeWorkflowDetails.workflowStatus !== workflowStatuses.canceled)
-//         .map(activeWorkflowDetails => ({
-//             head: cancelAllNotCompletedNodes(activeWorkflowDetails.head),
-//             workflowStatus: workflowStatuses.started,
-//             cancelWorkflowTime: action.cancelWorkflowTime
-//         }));
-// };
-//
-// const cancelAllNotCompletedNodes = head => {
-//     function duplicateAddCancel(node){
-//         if(node.)
-//     }
-// };
 
 const startWorkflow = (state, action, functions, workflowsDetails) => {
     return getFirstBy(workflowsDetails, workflow => workflow.workflowName === action.workflowName)
@@ -59,7 +43,7 @@ const startWorkflow = (state, action, functions, workflowsDetails) => {
         .map(workflowDetails => ({
             workflowId: action.workflowId,
             workflowName: workflowDetails.workflowName,
-            head: initializeWorkflowGraph(workflowDetails.head),
+            head: initializeWorkflowGraph(workflowDetails.head, action.startWorkflowTime),
             workflowStatusesHistory: [
                 {
                     status: workflowStatuses.started,
@@ -92,8 +76,13 @@ const changeFlowStatus = (state, action, functions) => {
             return completedNode
                 .map(uncompletedNode => ({
                     ...uncompletedNode,
-                    isCompleted: true,
-                    completeTime: action.flowStatusCompleteTime
+                    nodeStatusesHistory: [
+                        ...uncompletedNode.nodeStatusesHistory,
+                        {
+                            status: activeFlowStatus.completed,
+                            time: action.flowStatusCompleteTime
+                        }
+                    ]
                 }))
                 .map(updatedNode => ({
                     ...activeWorkflowDetails,
@@ -218,7 +207,8 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functi
     // we check that in the NEW graph, all it's parents are marked
     // as completed. if yes, then I trigger that child.
     // if not, I skip that child.
-    const actionsToDispatch = completedNode.childs.filter(child => getNodeParents(updatedActiveWorkflowDetails.head, child).every(node => node.isCompleted))
+    const actionsToDispatch = completedNode.childs
+        .filter(child => getNodeParents(updatedActiveWorkflowDetails.head, child).every(isNodeCompleted))
         .map(child => changeFlowStatusAction(action.workflowId, child.flowDetails.flowName, child.flowDetails.flowStatus))
         .map(actionToTrigger => actionToTrigger.flowStatus !== flowStatuses.selfResolved ?
             Cmd.action(actionToTrigger) :

@@ -12,6 +12,7 @@ import workflowStatuses from '../../../src/statuses/workflowStatuses';
 import Optional from 'optional-js';
 import workflowsJson from './workflows.json';
 import functions from './workflows.js';
+import activeFlowStatus from '../../../src/statuses/activeFlowStatus';
 
 /* eslint fp/no-nil:0 */
 
@@ -39,14 +40,24 @@ test('test 1 - start the workflow', t => {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: false,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: false,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -72,28 +83,48 @@ test('test 1 - start the workflow', t => {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: false,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: false,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: false,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -105,21 +136,36 @@ test('test 1 - start the workflow', t => {
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: false,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: false,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -150,14 +196,24 @@ test('test 2 - start the workflow - no start workflow function', t => {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: false,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: false,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -183,28 +239,48 @@ test('test 2 - start the workflow - no start workflow function', t => {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: false,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: false,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: false,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -216,21 +292,36 @@ test('test 2 - start the workflow - no start workflow function', t => {
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: false,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: false,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -279,14 +370,24 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: false,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: false,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -307,31 +408,60 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                         flowName: 'getUser',
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startGetUserAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startGetUserAction.flowStatusCompleteTime
+                        }
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: 'createUser',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startCreateUserAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startCreateUserAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'createUser',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'createUser',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: false,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -343,23 +473,44 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                 flowName: 'updateServer',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startUpdateServerAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'updateServer',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'updateServer',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: false,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -389,32 +540,64 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startGetUserAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startGetUserAction.flowStatusCompleteTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startCreateUserAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startCreateUserAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeCreateUserAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -426,23 +609,44 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startUpdateServerAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: false,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -469,14 +673,24 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: false,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: false,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -497,32 +711,64 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                         flowName: 'getUser',
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startGetUserAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startGetUserAction.flowStatusCompleteTime
+                        }
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: 'createUser',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startCreateUserAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startCreateUserAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'createUser',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'createUser',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: true,
-                                            completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.completed,
+                                                    time: completeCreateUserAction.flowStatusCompleteTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -534,23 +780,44 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                 flowName: 'updateServer',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startUpdateServerAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'updateServer',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'updateServer',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: false,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -580,32 +847,64 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startGetUserAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startGetUserAction.flowStatusCompleteTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startCreateUserAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startCreateUserAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeCreateUserAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -617,24 +916,48 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startUpdateServerAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeUpdateServerAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeUpdateServerAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [selfResolvedGetUserNode]
                                             }
                                         ]
@@ -665,15 +988,28 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: true,
-        completeTime: selfResolvedGetUserAction.flowStatusCompleteTime,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.completed,
+                time: selfResolvedGetUserAction.flowStatusCompleteTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: false,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -694,32 +1030,64 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                         flowName: 'getUser',
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startGetUserAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startGetUserAction.flowStatusCompleteTime
+                        }
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: 'createUser',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startCreateUserAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startCreateUserAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'createUser',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'createUser',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: true,
-                                            completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.completed,
+                                                    time: completeCreateUserAction.flowStatusCompleteTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -731,24 +1099,48 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                 flowName: 'updateServer',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startUpdateServerAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'updateServer',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'updateServer',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: true,
-                                            completeTime: completeUpdateServerAction.flowStatusCompleteTime,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.completed,
+                                                    time: completeUpdateServerAction.flowStatusCompleteTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -767,16 +1159,32 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: true,
-        completeTime: selfResolvedGetUserAction.flowStatusCompleteTime,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.completed,
+                time: selfResolvedGetUserAction.flowStatusCompleteTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: true,
-                completeTime: completeGetUserAction.flowStatusCompleteTime,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.completed,
+                        time: completeGetUserAction.flowStatusCompleteTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -797,32 +1205,64 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startGetUserAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: completeGetUserAction.flowStatusCompleteTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startCreateUserAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startCreateUserAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeCreateUserAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [expectedSelfResolvedGetUserNode]
                                             }
                                         ]
@@ -834,24 +1274,48 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startUpdateServerAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeUpdateServerAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeUpdateServerAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [expectedSelfResolvedGetUserNode]
                                             }
                                         ]
@@ -882,15 +1346,28 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: true,
-        completeTime: selfResolvedGetUserAction.flowStatusCompleteTime,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.completed,
+                time: selfResolvedGetUserAction.flowStatusCompleteTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: false,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -911,32 +1388,64 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                         flowName: 'getUser',
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startGetUserAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startGetUserAction.flowStatusCompleteTime
+                        }
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: 'createUser',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startCreateUserAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startCreateUserAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'createUser',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'createUser',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: true,
-                                            completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.completed,
+                                                    time: completeCreateUserAction.flowStatusCompleteTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -948,24 +1457,48 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                 flowName: 'updateServer',
                                 flowStatus: flowStatuses.started
                             },
-                            isCompleted: true,
-                            completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: startUpdateServerAction.flowStatusCompleteTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: 'updateServer',
                                         flowStatus: flowStatuses.selfResolved
                                     },
-                                    isCompleted: true,
-                                    completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflow1Action.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                        }
+                                    ],
                                     childs: [
                                         {
                                             flowDetails: {
                                                 flowName: 'updateServer',
                                                 flowStatus: flowStatuses.completed
                                             },
-                                            isCompleted: true,
-                                            completeTime: completeUpdateServerAction.flowStatusCompleteTime,
+                                            nodeStatusesHistory: [
+                                                {
+                                                    status: activeFlowStatus.notStarted,
+                                                    time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.completed,
+                                                    time: completeUpdateServerAction.flowStatusCompleteTime
+                                                }
+                                            ],
                                             childs: [selfResolvedGetUserNode]
                                         }
                                     ]
@@ -984,16 +1517,32 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
         },
-        isCompleted: true,
-        completeTime: selfResolvedGetUserAction.flowStatusCompleteTime,
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.completed,
+                time: selfResolvedGetUserAction.flowStatusCompleteTime
+            }
+        ],
         childs: [
             {
                 flowDetails: {
                     flowName: 'getUser',
                     flowStatus: flowStatuses.completed
                 },
-                isCompleted: true,
-                completeTime: completeGetUserAction.flowStatusCompleteTime,
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.completed,
+                        time: completeGetUserAction.flowStatusCompleteTime
+                    }
+                ],
                 childs: []
             }
         ]
@@ -1014,32 +1563,64 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                             flowName: 'getUser',
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startGetUserAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startGetUserAction.flowStatusCompleteTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: 'createUser',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startCreateUserAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startCreateUserAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'createUser',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedCreateUserAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'createUser',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeCreateUserAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeCreateUserAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [expectedSelfResolvedGetUserNode]
                                             }
                                         ]
@@ -1051,24 +1632,48 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                     flowName: 'updateServer',
                                     flowStatus: flowStatuses.started
                                 },
-                                isCompleted: true,
-                                completeTime: startUpdateServerAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: startUpdateServerAction.flowStatusCompleteTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: 'updateServer',
                                             flowStatus: flowStatuses.selfResolved
                                         },
-                                        isCompleted: true,
-                                        completeTime: selfResolvedUpdateServerAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflow1Action.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                            }
+                                        ],
                                         childs: [
                                             {
                                                 flowDetails: {
                                                     flowName: 'updateServer',
                                                     flowStatus: flowStatuses.completed
                                                 },
-                                                isCompleted: true,
-                                                completeTime: completeUpdateServerAction.flowStatusCompleteTime,
+                                                nodeStatusesHistory: [
+                                                    {
+                                                        status: activeFlowStatus.notStarted,
+                                                        time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.completed,
+                                                        time: completeUpdateServerAction.flowStatusCompleteTime
+                                                    }
+                                                ],
                                                 childs: [expectedSelfResolvedGetUserNode]
                                             }
                                         ]

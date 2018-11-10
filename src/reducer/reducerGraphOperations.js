@@ -1,6 +1,7 @@
 import Optional from 'optional-js';
+import activeFlowStatus from '../statuses/activeFlowStatus';
 
-function initializeWorkflowGraph(head) {
+function initializeWorkflowGraph(head, startWorkflowTime) {
     if (!head.isPresent())
         return head;
 
@@ -8,7 +9,12 @@ function initializeWorkflowGraph(head) {
         return {
             ...node,
             childs: node.childs.map(duplicateNode),
-            isCompleted: false
+            nodeStatusesHistory: [
+                {
+                    status: activeFlowStatus.notStarted,
+                    time: startWorkflowTime
+                }
+            ]
         };
     }
 
@@ -66,13 +72,15 @@ const getNodeParents = (head, node) => {
     return search(head.get());
 };
 
+const isNodeCompleted = node => node.nodeStatusesHistory.some(nodeStatus => nodeStatus.status === activeFlowStatus.completed);
+
 // return an array of all closest nodes to head that are not completed but their parent is completed.
 const getCurrentLeafsOfWorkflowGraph = head => {
     if (!head.isPresent())
         return [];
 
     function findLeafs(node) {
-        if (!node.isCompleted)
+        if (!isNodeCompleted(node))
             return [node];
         return node.childs.flatMap(findLeafs);
     }
@@ -81,7 +89,7 @@ const getCurrentLeafsOfWorkflowGraph = head => {
     // so I should get only [node2] and not [node2,node3].
     const possibleLeafs = findLeafs(head.get());
 
-    return possibleLeafs.filter(leaf => getNodeParents(head, leaf).every(node => node.isCompleted));
+    return possibleLeafs.filter(leaf => getNodeParents(head, leaf).every(isNodeCompleted));
 };
 
 const areAllFlowsCompleted = head => {
@@ -89,7 +97,7 @@ const areAllFlowsCompleted = head => {
         return true;
 
     function areAllNodesCompleted(node) {
-        if (!node.isCompleted)
+        if (!isNodeCompleted(node))
             return false;
         if (node.childs.length === 0)
             return true;
@@ -105,5 +113,6 @@ export {
     duplicateGraphWithUpdates,
     getCurrentLeafsOfWorkflowGraph,
     areAllFlowsCompleted,
-    getNodeParents
+    getNodeParents,
+    isNodeCompleted
 };

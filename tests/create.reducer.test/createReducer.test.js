@@ -9,6 +9,7 @@ import {
     completeWorkflowAction as completeWorkflowActionCreator
 } from '../../src/actions';
 import flowStatuses from '../../src/statuses/flowStatuses';
+import activeFlowStatus from '../../src/statuses/activeFlowStatus';
 import workflowStatuses from '../../src/statuses/workflowStatuses';
 
 /* eslint fp/no-nil:0 */
@@ -53,21 +54,36 @@ test('test 1 - start a workflow', t => {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: false,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflowAction.startWorkflowTime
+                            }
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
-                                isCompleted: false,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflowAction.startWorkflowTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflowAction.startWorkflowTime
+                                            }
+                                        ],
                                         childs: []
                                     }
                                 ]
@@ -117,21 +133,36 @@ test('test 2 - start the flow', t => {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: false,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflowAction.startWorkflowTime
+                        }
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: getUserFlowName,
                                 flowStatus: flowStatuses.selfResolved
                             },
-                            isCompleted: false,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflowAction.startWorkflowTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
-                                    isCompleted: false,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflowAction.startWorkflowTime
+                                        }
+                                    ],
                                     childs: []
                                 }
                             ]
@@ -159,22 +190,40 @@ test('test 2 - start the flow', t => {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startFlowAction.flowStatusCompleteTime
+                            },
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
-                                isCompleted: false,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflowAction.startWorkflowTime
+                                    }
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflowAction.startWorkflowTime
+                                            }
+                                        ],
                                         childs: []
                                     }
                                 ]
@@ -228,22 +277,40 @@ test('test 3 - self-resolve the flow', t => {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startFlowAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startFlowAction.flowStatusCompleteTime
+                        },
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: getUserFlowName,
                                 flowStatus: flowStatuses.selfResolved,
                             },
-                            isCompleted: false,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflowAction.startWorkflowTime
+                                }
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
-                                    isCompleted: false,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflowAction.startWorkflowTime
+                                        }
+                                    ],
                                     childs: []
                                 }
                             ]
@@ -271,23 +338,44 @@ test('test 3 - self-resolve the flow', t => {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startFlowAction.flowStatusCompleteTime
+                            },
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
-                                isCompleted: true,
-                                completeTime: selfResolvedAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflowAction.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: selfResolvedAction.flowStatusCompleteTime
+                                    },
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
-                                        isCompleted: false,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflowAction.startWorkflowTime
+                                            }
+                                        ],
                                         childs: []
                                     }
                                 ]
@@ -339,23 +427,44 @@ test('test 4 - complete the flow', t => {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startFlowAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startFlowAction.flowStatusCompleteTime
+                        },
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: getUserFlowName,
                                 flowStatus: flowStatuses.selfResolved,
                             },
-                            isCompleted: true,
-                            completeTime: selfResolvedAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflowAction.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: selfResolvedAction.flowStatusCompleteTime
+                                },
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
-                                    isCompleted: false,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflowAction.startWorkflowTime
+                                        }
+                                    ],
                                     childs: []
                                 }
                             ]
@@ -385,24 +494,48 @@ test('test 4 - complete the flow', t => {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startFlowAction.flowStatusCompleteTime
+                            },
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
-                                isCompleted: true,
-                                completeTime: selfResolvedAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflowAction.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: selfResolvedAction.flowStatusCompleteTime
+                                    },
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
-                                        isCompleted: true,
-                                        completeTime: completeAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflowAction.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: completeAction.flowStatusCompleteTime
+                                            },
+                                        ],
                                         childs: []
                                     }
                                 ]
@@ -457,24 +590,48 @@ test('test 5 - complete workflow', t => {
                         flowName: getUserFlowName,
                         flowStatus: flowStatuses.started
                     },
-                    isCompleted: true,
-                    completeTime: startFlowAction.flowStatusCompleteTime,
+                    nodeStatusesHistory: [
+                        {
+                            status: activeFlowStatus.notStarted,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.completed,
+                            time: startFlowAction.flowStatusCompleteTime
+                        },
+                    ],
                     childs: [
                         {
                             flowDetails: {
                                 flowName: getUserFlowName,
                                 flowStatus: flowStatuses.selfResolved
                             },
-                            isCompleted: true,
-                            completeTime: selfResolvedAction.flowStatusCompleteTime,
+                            nodeStatusesHistory: [
+                                {
+                                    status: activeFlowStatus.notStarted,
+                                    time: startWorkflowAction.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.completed,
+                                    time: selfResolvedAction.flowStatusCompleteTime
+                                },
+                            ],
                             childs: [
                                 {
                                     flowDetails: {
                                         flowName: getUserFlowName,
                                         flowStatus: flowStatuses.completed
                                     },
-                                    isCompleted: true,
-                                    completeTime: completeAction.flowStatusCompleteTime,
+                                    nodeStatusesHistory: [
+                                        {
+                                            status: activeFlowStatus.notStarted,
+                                            time: startWorkflowAction.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.completed,
+                                            time: completeAction.flowStatusCompleteTime
+                                        },
+                                    ],
                                     childs: []
                                 }
                             ]
@@ -507,24 +664,48 @@ test('test 5 - complete workflow', t => {
                             flowName: getUserFlowName,
                             flowStatus: flowStatuses.started
                         },
-                        isCompleted: true,
-                        completeTime: startFlowAction.flowStatusCompleteTime,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.completed,
+                                time: startFlowAction.flowStatusCompleteTime
+                            },
+                        ],
                         childs: [
                             {
                                 flowDetails: {
                                     flowName: getUserFlowName,
                                     flowStatus: flowStatuses.selfResolved
                                 },
-                                isCompleted: true,
-                                completeTime: selfResolvedAction.flowStatusCompleteTime,
+                                nodeStatusesHistory: [
+                                    {
+                                        status: activeFlowStatus.notStarted,
+                                        time: startWorkflowAction.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.completed,
+                                        time: selfResolvedAction.flowStatusCompleteTime
+                                    },
+                                ],
                                 childs: [
                                     {
                                         flowDetails: {
                                             flowName: getUserFlowName,
                                             flowStatus: flowStatuses.completed
                                         },
-                                        isCompleted: true,
-                                        completeTime: completeAction.flowStatusCompleteTime,
+                                        nodeStatusesHistory: [
+                                            {
+                                                status: activeFlowStatus.notStarted,
+                                                time: startWorkflowAction.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.completed,
+                                                time: completeAction.flowStatusCompleteTime
+                                            },
+                                        ],
                                         childs: []
                                     }
                                 ]
