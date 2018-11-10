@@ -29,23 +29,23 @@ export default {
             }
         }
     },
-    workflows:{
-        createUser:{
+    workflows: {
+        createUser: {
             started: customParams => console.log('Started Flow', customParams, 'createUser'),
             completed: customParams => console.log('Completed Flow', customParams, 'createUser'),
             cancellation: customParams => console.log('Cancel workflow', customParams, 'createUser')
         },
-        updateServer:{
+        updateServer: {
             started: customParams => console.log('Started Flow', customParams, 'updateServer'),
             completed: customParams => console.log('Completed Flow', customParams, 'updateServer'),
             cancellation: customParams => console.log('Cancel workflow', customParams, 'updateServer')
         },
-        createSuperUser:{
+        createSuperUser: {
             started: customParams => console.log('Started Flow', customParams, 'createSuperUser'),
             completed: customParams => console.log('Completed Flow', customParams, 'createSuperUser'),
             cancellation: customParams => console.log('Cancel workflow', customParams, 'createSuperUser')
         },
-        delete:{
+        delete: {
             started: customParams => console.log('Started Flow', customParams, 'delete'),
             completed: customParams => console.log('Completed Flow', customParams, 'delete'),
             cancellation: customParams => console.log('Cancel workflow', customParams, 'delete')

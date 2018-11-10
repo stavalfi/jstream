@@ -23,9 +23,9 @@ test('test 1 - start a workflow', t => {
         'workflowsDetails': ['getUser']
     });
     const functions = {
-        flows:{
+        flows: {
             createUser: {
-                getUser: customParams => console.log('Middle', customParams, 'getUser','____TEST____')
+                getUser: customParams => console.log('Middle', customParams, 'getUser', '____TEST____')
             },
         }
     };
@@ -42,7 +42,12 @@ test('test 1 - start a workflow', t => {
                 {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflowAction.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
@@ -86,9 +91,9 @@ test('test 2 - start the flow', t => {
         'workflowsDetails': ['getUser']
     });
     const functions = {
-        flows:{
+        flows: {
             getUser: {
-                task: customParams => console.log('Middle', customParams, 'getUser','____TEST____')
+                task: customParams => console.log('Middle', customParams, 'getUser', '____TEST____')
             }
         }
     };
@@ -101,7 +106,12 @@ test('test 2 - start the flow', t => {
             {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflowAction.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
@@ -138,7 +148,12 @@ test('test 2 - start the flow', t => {
                 {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflowAction.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
@@ -186,9 +201,9 @@ test('test 3 - self-resolve the flow', t => {
         'workflowsDetails': ['getUser']
     });
     const functions = {
-        flows:{
+        flows: {
             getUser: {
-                task: customParams => console.log('Middle', customParams, 'getUser','____TEST____')
+                task: customParams => console.log('Middle', customParams, 'getUser', '____TEST____')
             }
         }
     };
@@ -202,7 +217,12 @@ test('test 3 - self-resolve the flow', t => {
             {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflowAction.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
@@ -240,7 +260,12 @@ test('test 3 - self-resolve the flow', t => {
                 {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflowAction.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
@@ -286,9 +311,9 @@ test('test 4 - complete the flow', t => {
         'workflowsDetails': ['getUser']
     });
     const functions = {
-        flows:{
+        flows: {
             getUser: {
-                task: customParams => console.log('Middle', customParams, 'getUser','____TEST____')
+                task: customParams => console.log('Middle', customParams, 'getUser', '____TEST____')
             }
         }
     };
@@ -303,7 +328,12 @@ test('test 4 - complete the flow', t => {
             {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflowAction.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
@@ -344,7 +374,12 @@ test('test 4 - complete the flow', t => {
                 {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflowAction.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,
@@ -393,9 +428,9 @@ test('test 5 - complete workflow', t => {
         'workflowsDetails': ['getUser']
     });
     const functions = {
-        flows:{
+        flows: {
             getUser: {
-                task: customParams => console.log('Middle', customParams, 'getUser','____TEST____')
+                task: customParams => console.log('Middle', customParams, 'getUser', '____TEST____')
             }
         }
     };
@@ -411,7 +446,12 @@ test('test 5 - complete workflow', t => {
             {
                 workflowId: startWorkflowAction.workflowId,
                 workflowName: startWorkflowAction.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflowAction.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: getUserFlowName,
@@ -452,8 +492,16 @@ test('test 5 - complete workflow', t => {
                 {
                     workflowId: startWorkflowAction.workflowId,
                     workflowName: startWorkflowAction.workflowName,
-                    workflowStatus: workflowStatuses.completed,
-                    completeTime: completeWorkflowAction.completeWorkflowTime,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
+                            status: workflowStatuses.completed,
+                            time: completeWorkflowAction.completeWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: getUserFlowName,

@@ -61,7 +61,12 @@ test('test 1 - start the workflow', t => {
                 {
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflow1Action.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
@@ -167,7 +172,12 @@ test('test 2 - start the workflow - no start workflow function', t => {
                 {
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflow1Action.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
@@ -286,7 +296,12 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
             {
                 workflowId: startWorkflow1Action.workflowId,
                 workflowName: startWorkflow1Action.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: 'getUser',
@@ -363,7 +378,12 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                 {
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflow1Action.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
@@ -466,7 +486,12 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
             {
                 workflowId: startWorkflow1Action.workflowId,
                 workflowName: startWorkflow1Action.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: 'getUser',
@@ -544,7 +569,12 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                 {
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflow1Action.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
@@ -620,7 +650,7 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
         Cmd.list([
             Cmd.run(functions.flows.getUser.task, {
                 successActionCreator: () => selfResolvedGetUserAction,
-                args: [startWorkflowAction.workflowId]
+                args: [startWorkflow1Action.workflowId]
             })
         ])
     );
@@ -653,7 +683,12 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
             {
                 workflowId: startWorkflow1Action.workflowId,
                 workflowName: startWorkflow1Action.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: 'getUser',
@@ -751,7 +786,12 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                 {
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflow1Action.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',
@@ -827,7 +867,7 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
         Cmd.list([
             Cmd.run(functions.workflows[startWorkflow1Action.workflowName].completed, {
                 successActionCreator: () => completeWorkflow1Action,
-                args: [startWorkflowAction.workflowId]
+                args: [startWorkflow1Action.workflowId]
             })
         ])
     );
@@ -860,7 +900,12 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
             {
                 workflowId: startWorkflow1Action.workflowId,
                 workflowName: startWorkflow1Action.workflowName,
-                workflowStatus: workflowStatuses.started,
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatuses.started,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
                 head: Optional.of({
                     flowDetails: {
                         flowName: 'getUser',
@@ -958,7 +1003,12 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                 {
                     workflowId: startWorkflow1Action.workflowId,
                     workflowName: startWorkflow1Action.workflowName,
-                    workflowStatus: workflowStatuses.started,
+                    workflowStatusesHistory: [
+                        {
+                            status: workflowStatuses.started,
+                            time: startWorkflow1Action.startWorkflowTime
+                        }
+                    ],
                     head: Optional.of({
                         flowDetails: {
                             flowName: 'getUser',

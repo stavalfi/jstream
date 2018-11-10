@@ -31,19 +31,41 @@ export default (functions, workflowsDetails) => (state = initialState, action) =
             return changeFlowStatus(state, action, functions);
         case COMPLETE_WORKFLOW:
             return completeWorkflow(state, action);
+        // case CANCEL_WORKFLOW:
+        //     return cancelWorkflow(state, action, functions);
     }
     return state;
 };
 
+// const cancelWorkflow = (state, action, functions) => {
+//     return getFirstIndexBy(state.activeWorkflowsDetails, workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId)
+//         .filter(activeWorkflowDetails => activeWorkflowDetails.workflowStatus !== workflowStatuses.canceled)
+//         .map(activeWorkflowDetails => ({
+//             head: cancelAllNotCompletedNodes(activeWorkflowDetails.head),
+//             workflowStatus: workflowStatuses.started,
+//             cancelWorkflowTime: action.cancelWorkflowTime
+//         }));
+// };
+//
+// const cancelAllNotCompletedNodes = head => {
+//     function duplicateAddCancel(node){
+//         if(node.)
+//     }
+// };
+
 const startWorkflow = (state, action, functions, workflowsDetails) => {
     return getFirstBy(workflowsDetails, workflow => workflow.workflowName === action.workflowName)
-        .filter(() => action.type === START_WORKFLOW)
         .filter(() => !state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
         .map(workflowDetails => ({
             workflowId: action.workflowId,
             workflowName: workflowDetails.workflowName,
             head: initializeWorkflowGraph(workflowDetails.head),
-            workflowStatus: workflowStatuses.started
+            workflowStatusesHistory: [
+                {
+                    status: workflowStatuses.started,
+                    time: action.startWorkflowTime
+                }
+            ]
         }))
         .map(activeWorkflowDetails => {
             const newState = {
@@ -104,8 +126,13 @@ const completeWorkflow = (state, action) => {
         .filter(activeWorkflowDetails => areAllFlowsCompleted(activeWorkflowDetails.head))
         .map(activeWorkflowDetails => ({
             ...activeWorkflowDetails,
-            completeTime: action.completeWorkflowTime,
-            workflowStatus: workflowStatuses.completed
+            workflowStatusesHistory: [
+                ...activeWorkflowDetails.workflowStatusesHistory,
+                {
+                    status: workflowStatuses.completed,
+                    time: action.completeWorkflowTime
+                }
+            ]
         }))
         .map(updatedActiveWorkflowDetails => ({
             ...state,
