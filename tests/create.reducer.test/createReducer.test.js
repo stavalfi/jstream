@@ -58,6 +58,10 @@ test('test 1 - start a workflow', t => {
                             {
                                 status: activeFlowStatus.notStarted,
                                 time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflowAction.startWorkflowTime
                             }
                         ],
                         childs: [
@@ -137,6 +141,10 @@ test('test 2 - start the flow', t => {
                         {
                             status: activeFlowStatus.notStarted,
                             time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflowAction.startWorkflowTime
                         }
                     ],
                     childs: [
@@ -196,6 +204,10 @@ test('test 2 - start the flow', t => {
                                 time: startWorkflowAction.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startFlowAction.flowStatusCompleteTime
                             },
@@ -210,6 +222,10 @@ test('test 2 - start the flow', t => {
                                     {
                                         status: activeFlowStatus.notStarted,
                                         time: startWorkflowAction.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startFlowAction.flowStatusCompleteTime
                                     }
                                 ],
                                 childs: [
@@ -283,6 +299,10 @@ test('test 3 - self-resolve the flow', t => {
                             time: startWorkflowAction.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startFlowAction.flowStatusCompleteTime
                         },
@@ -297,6 +317,10 @@ test('test 3 - self-resolve the flow', t => {
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflowAction.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startFlowAction.flowStatusCompleteTime
                                 }
                             ],
                             childs: [
@@ -344,6 +368,10 @@ test('test 3 - self-resolve the flow', t => {
                                 time: startWorkflowAction.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startFlowAction.flowStatusCompleteTime
                             },
@@ -360,6 +388,10 @@ test('test 3 - self-resolve the flow', t => {
                                         time: startWorkflowAction.startWorkflowTime
                                     },
                                     {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startFlowAction.flowStatusCompleteTime
+                                    },
+                                    {
                                         status: activeFlowStatus.completed,
                                         time: selfResolvedAction.flowStatusCompleteTime
                                     },
@@ -374,6 +406,10 @@ test('test 3 - self-resolve the flow', t => {
                                             {
                                                 status: activeFlowStatus.notStarted,
                                                 time: startWorkflowAction.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: selfResolvedAction.flowStatusCompleteTime
                                             }
                                         ],
                                         childs: []
@@ -433,6 +469,10 @@ test('test 4 - complete the flow', t => {
                             time: startWorkflowAction.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startFlowAction.flowStatusCompleteTime
                         },
@@ -449,6 +489,10 @@ test('test 4 - complete the flow', t => {
                                     time: startWorkflowAction.startWorkflowTime
                                 },
                                 {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startFlowAction.flowStatusCompleteTime
+                                },
+                                {
                                     status: activeFlowStatus.completed,
                                     time: selfResolvedAction.flowStatusCompleteTime
                                 },
@@ -463,6 +507,10 @@ test('test 4 - complete the flow', t => {
                                         {
                                             status: activeFlowStatus.notStarted,
                                             time: startWorkflowAction.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: selfResolvedAction.flowStatusCompleteTime
                                         }
                                     ],
                                     childs: []
@@ -500,6 +548,10 @@ test('test 4 - complete the flow', t => {
                                 time: startWorkflowAction.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startFlowAction.flowStatusCompleteTime
                             },
@@ -516,6 +568,10 @@ test('test 4 - complete the flow', t => {
                                         time: startWorkflowAction.startWorkflowTime
                                     },
                                     {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startFlowAction.flowStatusCompleteTime
+                                    },
+                                    {
                                         status: activeFlowStatus.completed,
                                         time: selfResolvedAction.flowStatusCompleteTime
                                     },
@@ -530,6 +586,10 @@ test('test 4 - complete the flow', t => {
                                             {
                                                 status: activeFlowStatus.notStarted,
                                                 time: startWorkflowAction.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: selfResolvedAction.flowStatusCompleteTime
                                             },
                                             {
                                                 status: activeFlowStatus.completed,
@@ -596,6 +656,10 @@ test('test 5 - complete workflow', t => {
                             time: startWorkflowAction.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflowAction.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startFlowAction.flowStatusCompleteTime
                         },
@@ -612,6 +676,10 @@ test('test 5 - complete workflow', t => {
                                     time: startWorkflowAction.startWorkflowTime
                                 },
                                 {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startFlowAction.startWorkflowTime
+                                },
+                                {
                                     status: activeFlowStatus.completed,
                                     time: selfResolvedAction.flowStatusCompleteTime
                                 },
@@ -626,6 +694,10 @@ test('test 5 - complete workflow', t => {
                                         {
                                             status: activeFlowStatus.notStarted,
                                             time: startWorkflowAction.startWorkflowTime
+                                        },
+                                        {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: selfResolvedAction.startWorkflowTime
                                         },
                                         {
                                             status: activeFlowStatus.completed,
@@ -670,6 +742,10 @@ test('test 5 - complete workflow', t => {
                                 time: startWorkflowAction.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflowAction.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startFlowAction.flowStatusCompleteTime
                             },
@@ -686,6 +762,10 @@ test('test 5 - complete workflow', t => {
                                         time: startWorkflowAction.startWorkflowTime
                                     },
                                     {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startFlowAction.startWorkflowTime
+                                    },
+                                    {
                                         status: activeFlowStatus.completed,
                                         time: selfResolvedAction.flowStatusCompleteTime
                                     },
@@ -700,6 +780,10 @@ test('test 5 - complete workflow', t => {
                                             {
                                                 status: activeFlowStatus.notStarted,
                                                 time: startWorkflowAction.startWorkflowTime
+                                            },
+                                            {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: selfResolvedAction.startWorkflowTime
                                             },
                                             {
                                                 status: activeFlowStatus.completed,

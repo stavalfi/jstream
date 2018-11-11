@@ -2,7 +2,6 @@ import {loop, Cmd} from 'redux-loop';
 import Optional from 'optional-js';
 import workflowStatuses from '../statuses/workflowStatuses';
 import flowStatuses from '../statuses/flowStatuses';
-import activeFlowStatus from '../statuses/activeFlowStatus';
 import {
     START_WORKFLOW,
     CHANGE_FLOW_STATUS,
@@ -16,11 +15,9 @@ import {
 } from '../utils';
 import {
     initializeWorkflowGraph,
-    duplicateGraphWithUpdates,
-    getCurrentLeafsOfWorkflowGraph,
+    updateCompletedNodeInGraph,
+    findShouldStartNode,
     areAllFlowsCompleted,
-    getNodeParents,
-    isNodeCompleted
 } from './reducerGraphOperations';
 
 const initialState = {activeWorkflowsDetails: [], nonActiveWorkflowsDetails: []};
@@ -63,50 +60,33 @@ const startWorkflow = (state, action, functions, workflowsDetails) => {
 
 const changeFlowStatus = (state, action, functions) => {
     return getFirstIndexBy(state.activeWorkflowsDetails, workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId)
-        .flatMap(activeWorkflowDetailsIndex => {
-            const activeWorkflowDetails = state.activeWorkflowsDetails[activeWorkflowDetailsIndex];
+        .flatMap(activeWorkflowDetailsIndex =>
+            Optional.of(state.activeWorkflowsDetails[activeWorkflowDetailsIndex])
+                .flatMap(activeWorkflowDetails =>
+                    findShouldStartNode(activeWorkflowDetails.head, action.flowName, action.flowStatus)
+                        .map(nodeToSetAsCompleted => updateCompletedNodeInGraph(activeWorkflowDetails.head, nodeToSetAsCompleted, action.flowStatusCompleteTime))
+                        .map(({head, nodesToStart}) => {
+                            const updatedActiveWorkflowDetails = {
+                                ...activeWorkflowDetails,
+                                head
+                            };
+                            const newState = {
+                                ...state,
+                                activeWorkflowsDetails: [
+                                    ...state.activeWorkflowsDetails.slice(0, activeWorkflowDetailsIndex),
+                                    updatedActiveWorkflowDetails,
+                                    ...state.activeWorkflowsDetails.slice(activeWorkflowDetailsIndex + 1)
+                                ]
+                            };
 
-            // Find the node that is completed in the workflow graph.
-            // Then check for every of it's childs, if I should trigger for them an action.
-            // The condition is: for every child, if all it's parents are completed, then I need to dispatch that child's action.
-
-            const uncompletedNodes = getCurrentLeafsOfWorkflowGraph(activeWorkflowDetails.head);
-
-            const completedNode = getFirstBy(uncompletedNodes, node => node.flowDetails.flowName === action.flowName && node.flowDetails.flowStatus === action.flowStatus);
-            return completedNode
-                .map(uncompletedNode => ({
-                    ...uncompletedNode,
-                    nodeStatusesHistory: [
-                        ...uncompletedNode.nodeStatusesHistory,
-                        {
-                            status: activeFlowStatus.completed,
-                            time: action.flowStatusCompleteTime
-                        }
-                    ]
-                }))
-                .map(updatedNode => ({
-                    ...activeWorkflowDetails,
-                    head: duplicateGraphWithUpdates(activeWorkflowDetails.head, updatedNode)
-                }))
-                .map(updatedActiveWorkflowDetails => {
-                    const newState = {
-                        ...state,
-                        activeWorkflowsDetails: [
-                            ...state.activeWorkflowsDetails.slice(0, activeWorkflowDetailsIndex),
-                            updatedActiveWorkflowDetails,
-                            ...state.activeWorkflowsDetails.slice(activeWorkflowDetailsIndex + 1)
-                        ]
-                    };
-
-                    return generateNextTriggeredActionsAtMiddle(
-                        state,
-                        newState,
-                        action,
-                        functions,
-                        updatedActiveWorkflowDetails,
-                        completedNode.get());
-                });
-        })
+                            return generateNextTriggeredActionsAtMiddle(
+                                state,
+                                newState,
+                                action,
+                                functions,
+                                updatedActiveWorkflowDetails,
+                                nodesToStart);
+                        })))
         .orElse(state);
 };
 
@@ -177,7 +157,7 @@ const generateNextTriggeredActionsAtStart = (oldState, newState, action, functio
         .orElse(loop(newState, Cmd.list([completeWorkflowCmd])));
 };
 
-const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functions, updatedActiveWorkflowDetails, completedNode) => {
+const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functions, updatedActiveWorkflowDetails, nodesToStart) => {
     const isNewActiveWorkflow = !oldState.activeWorkflowsDetails.some(activeWorkflowDetails => activeWorkflowDetails.workflowId === updatedActiveWorkflowDetails.workflowId);
 
     if (isNewActiveWorkflow)
@@ -200,16 +180,12 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functi
     // because the only dispatch was completeWorkflowAction
     // which is the last dispatch in every workflow.
 
+    // if nodesToStart.length===0 it doesn't mean the workflow is completed
+    // because it may mean that some nodes WILL be start async later!
     if (areAllFlowsCompleted(updatedActiveWorkflowDetails.head))
         return loop(newState, Cmd.list([completeWorkflowCmd]));
 
-    // for every child of the node that we marked as completed,
-    // we check that in the NEW graph, all it's parents are marked
-    // as completed. if yes, then I trigger that child.
-    // if not, I skip that child.
-    const actionsToDispatch = completedNode.childs
-        .filter(child => getNodeParents(updatedActiveWorkflowDetails.head, child).every(isNodeCompleted))
-        .map(child => changeFlowStatusAction(action.workflowId, child.flowDetails.flowName, child.flowDetails.flowStatus))
+    const actionsToDispatch = nodesToStart.map(child => changeFlowStatusAction(action.workflowId, child.flowDetails.flowName, child.flowDetails.flowStatus))
         .map(actionToTrigger => actionToTrigger.flowStatus !== flowStatuses.selfResolved ?
             Cmd.action(actionToTrigger) :
             Cmd.run(functions.flows[actionToTrigger.flowName].task, {

@@ -87,6 +87,10 @@ test('test 1 - start the workflow', t => {
                             {
                                 status: activeFlowStatus.notStarted,
                                 time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflow1Action.startWorkflowTime
                             }
                         ],
                         childs: [
@@ -242,6 +246,10 @@ test('test 2 - start the workflow - no start workflow function', t => {
                         nodeStatusesHistory: [
                             {
                                 status: activeFlowStatus.notStarted,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
+                                status: activeFlowStatus.shouldStart,
                                 time: startWorkflow1Action.startWorkflowTime
                             }
                         ],
@@ -414,6 +422,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                             time: startWorkflow1Action.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startGetUserAction.flowStatusCompleteTime
                         }
@@ -428,6 +440,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -446,6 +462,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startCreateUserAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                         }
@@ -460,6 +480,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                 {
                                                     status: activeFlowStatus.notStarted,
                                                     time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                                 }
                                             ],
                                             childs: [selfResolvedGetUserNode]
@@ -479,6 +503,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                     time: startWorkflow1Action.startWorkflowTime
                                 },
                                 {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
+                                },
+                                {
                                     status: activeFlowStatus.completed,
                                     time: startUpdateServerAction.flowStatusCompleteTime
                                 }
@@ -495,6 +523,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startUpdateServerAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                         }
@@ -509,7 +541,11 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                 {
                                                     status: activeFlowStatus.notStarted,
                                                     time: startWorkflow1Action.startWorkflowTime
-                                                }
+                                                },
+                                                {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                                },
                                             ],
                                             childs: [selfResolvedGetUserNode]
                                         }
@@ -546,6 +582,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                 time: startWorkflow1Action.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startGetUserAction.flowStatusCompleteTime
                             }
@@ -560,6 +600,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                     {
                                         status: activeFlowStatus.notStarted,
                                         time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
                                     },
                                     {
                                         status: activeFlowStatus.completed,
@@ -578,6 +622,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startCreateUserAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                             }
@@ -592,6 +640,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                     {
                                                         status: activeFlowStatus.notStarted,
                                                         time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                                     },
                                                     {
                                                         status: activeFlowStatus.completed,
@@ -615,6 +667,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                         time: startWorkflow1Action.startWorkflowTime
                                     },
                                     {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
+                                    },
+                                    {
                                         status: activeFlowStatus.completed,
                                         time: startUpdateServerAction.flowStatusCompleteTime
                                     }
@@ -631,6 +687,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startUpdateServerAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                             }
@@ -645,6 +705,10 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
                                                     {
                                                         status: activeFlowStatus.notStarted,
                                                         time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                                     }
                                                 ],
                                                 childs: [selfResolvedGetUserNode]
@@ -668,7 +732,7 @@ test('test 3 - dispatch complete of one flow from multiple parallel flows.', t =
 
 test('test 4 - dispatch complete of the last flow from multiple parallel flows.', t => {
     const action = completeUpdateServerAction;
-    const selfResolvedGetUserNode = {
+    const selfResolvedGetUserNodeInitial = {
         flowDetails: {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
@@ -717,6 +781,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                             time: startWorkflow1Action.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startGetUserAction.flowStatusCompleteTime
                         }
@@ -731,6 +799,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -749,6 +821,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startCreateUserAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                         }
@@ -765,11 +841,15 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                     time: startWorkflow1Action.startWorkflowTime
                                                 },
                                                 {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                                },
+                                                {
                                                     status: activeFlowStatus.completed,
                                                     time: completeCreateUserAction.flowStatusCompleteTime
                                                 }
                                             ],
-                                            childs: [selfResolvedGetUserNode]
+                                            childs: [selfResolvedGetUserNodeInitial]
                                         }
                                     ]
                                 }
@@ -784,6 +864,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -802,6 +886,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startUpdateServerAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                         }
@@ -816,9 +904,13 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                 {
                                                     status: activeFlowStatus.notStarted,
                                                     time: startWorkflow1Action.startWorkflowTime
+                                                },
+                                                {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                                 }
                                             ],
-                                            childs: [selfResolvedGetUserNode]
+                                            childs: [selfResolvedGetUserNodeInitial]
                                         }
                                     ]
                                 }
@@ -829,6 +921,38 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
             }
         ],
         nonActiveWorkflowsDetails: []
+    };
+
+    const selfResolvedGetUserNodeExpected = {
+        flowDetails: {
+            flowName: 'getUser',
+            flowStatus: flowStatuses.selfResolved
+        },
+        nodeStatusesHistory: [
+            {
+                status: activeFlowStatus.notStarted,
+                time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.shouldStart,
+                time: completeUpdateServerAction.flowStatusCompleteTime
+            }
+        ],
+        childs: [
+            {
+                flowDetails: {
+                    flowName: 'getUser',
+                    flowStatus: flowStatuses.completed
+                },
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflow1Action.startWorkflowTime
+                    }
+                ],
+                childs: []
+            }
+        ]
     };
 
     const expectedResult = loop({
@@ -853,6 +977,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                 time: startWorkflow1Action.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startGetUserAction.flowStatusCompleteTime
                             }
@@ -867,6 +995,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                     {
                                         status: activeFlowStatus.notStarted,
                                         time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
                                     },
                                     {
                                         status: activeFlowStatus.completed,
@@ -885,6 +1017,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startCreateUserAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                             }
@@ -901,11 +1037,15 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                         time: startWorkflow1Action.startWorkflowTime
                                                     },
                                                     {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                                    },
+                                                    {
                                                         status: activeFlowStatus.completed,
                                                         time: completeCreateUserAction.flowStatusCompleteTime
                                                     }
                                                 ],
-                                                childs: [selfResolvedGetUserNode]
+                                                childs: [selfResolvedGetUserNodeExpected]
                                             }
                                         ]
                                     }
@@ -920,6 +1060,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                     {
                                         status: activeFlowStatus.notStarted,
                                         time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
                                     },
                                     {
                                         status: activeFlowStatus.completed,
@@ -938,6 +1082,10 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startUpdateServerAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                             }
@@ -954,11 +1102,15 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
                                                         time: startWorkflow1Action.startWorkflowTime
                                                     },
                                                     {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                                    },
+                                                    {
                                                         status: activeFlowStatus.completed,
                                                         time: completeUpdateServerAction.flowStatusCompleteTime
                                                     }
                                                 ],
-                                                childs: [selfResolvedGetUserNode]
+                                                childs: [selfResolvedGetUserNodeExpected]
                                             }
                                         ]
                                     }
@@ -981,9 +1133,9 @@ test('test 4 - dispatch complete of the last flow from multiple parallel flows.'
     assertLoopsEqual(t)(actualResult, expectedResult);
 });
 
-test('test 5 - dispatch the last flow action in the workflow', t => {
+test('test 5 - dispatch the last flow action in the workflow - there is a complete workflow function', t => {
     const action = completeGetUserAction;
-    const selfResolvedGetUserNode = {
+    const selfResolvedGetUserNodeInitial = {
         flowDetails: {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
@@ -992,6 +1144,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
             {
                 status: activeFlowStatus.notStarted,
                 time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.shouldStart,
+                time: completeCreateUserAction.flowStatusCompleteTime
             },
             {
                 status: activeFlowStatus.completed,
@@ -1008,6 +1164,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                     {
                         status: activeFlowStatus.notStarted,
                         time: startWorkflow1Action.startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.shouldStart,
+                        time: selfResolvedGetUserAction.flowStatusCompleteTime
                     }
                 ],
                 childs: []
@@ -1036,6 +1196,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                             time: startWorkflow1Action.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startGetUserAction.flowStatusCompleteTime
                         }
@@ -1050,6 +1214,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -1068,6 +1236,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startCreateUserAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                         }
@@ -1084,11 +1256,15 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                                     time: startWorkflow1Action.startWorkflowTime
                                                 },
                                                 {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                                },
+                                                {
                                                     status: activeFlowStatus.completed,
                                                     time: completeCreateUserAction.flowStatusCompleteTime
                                                 }
                                             ],
-                                            childs: [selfResolvedGetUserNode]
+                                            childs: [selfResolvedGetUserNodeInitial]
                                         }
                                     ]
                                 }
@@ -1103,6 +1279,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -1121,6 +1301,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startUpdateServerAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                         }
@@ -1137,11 +1321,15 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                                     time: startWorkflow1Action.startWorkflowTime
                                                 },
                                                 {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                                },
+                                                {
                                                     status: activeFlowStatus.completed,
                                                     time: completeUpdateServerAction.flowStatusCompleteTime
                                                 }
                                             ],
-                                            childs: [selfResolvedGetUserNode]
+                                            childs: [selfResolvedGetUserNodeInitial]
                                         }
                                     ]
                                 }
@@ -1165,6 +1353,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                 time: startWorkflow1Action.startWorkflowTime
             },
             {
+                status: activeFlowStatus.shouldStart,
+                time: completeCreateUserAction.flowStatusCompleteTime
+            },
+            {
                 status: activeFlowStatus.completed,
                 time: selfResolvedGetUserAction.flowStatusCompleteTime
             }
@@ -1179,6 +1371,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                     {
                         status: activeFlowStatus.notStarted,
                         time: startWorkflow1Action.startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.shouldStart,
+                        time: selfResolvedGetUserAction.flowStatusCompleteTime
                     },
                     {
                         status: activeFlowStatus.completed,
@@ -1211,8 +1407,12 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                 time: startWorkflow1Action.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
-                                time: completeGetUserAction.flowStatusCompleteTime
+                                time: startGetUserAction.flowStatusCompleteTime
                             }
                         ],
                         childs: [
@@ -1225,6 +1425,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                     {
                                         status: activeFlowStatus.notStarted,
                                         time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
                                     },
                                     {
                                         status: activeFlowStatus.completed,
@@ -1243,6 +1447,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startCreateUserAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                             }
@@ -1257,6 +1465,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                                     {
                                                         status: activeFlowStatus.notStarted,
                                                         time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                                     },
                                                     {
                                                         status: activeFlowStatus.completed,
@@ -1280,6 +1492,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                         time: startWorkflow1Action.startWorkflowTime
                                     },
                                     {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
+                                    },
+                                    {
                                         status: activeFlowStatus.completed,
                                         time: startUpdateServerAction.flowStatusCompleteTime
                                     }
@@ -1296,6 +1512,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startUpdateServerAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                             }
@@ -1310,6 +1530,10 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
                                                     {
                                                         status: activeFlowStatus.notStarted,
                                                         time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                                     },
                                                     {
                                                         status: activeFlowStatus.completed,
@@ -1341,7 +1565,7 @@ test('test 5 - dispatch the last flow action in the workflow', t => {
 
 test('test 6 - dispatch the last flow action in the workflow - no complete workflow function', t => {
     const action = completeGetUserAction;
-    const selfResolvedGetUserNode = {
+    const selfResolvedGetUserNodeInitial = {
         flowDetails: {
             flowName: 'getUser',
             flowStatus: flowStatuses.selfResolved
@@ -1350,6 +1574,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
             {
                 status: activeFlowStatus.notStarted,
                 time: startWorkflow1Action.startWorkflowTime
+            },
+            {
+                status: activeFlowStatus.shouldStart,
+                time: completeCreateUserAction.flowStatusCompleteTime
             },
             {
                 status: activeFlowStatus.completed,
@@ -1366,6 +1594,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                     {
                         status: activeFlowStatus.notStarted,
                         time: startWorkflow1Action.startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.shouldStart,
+                        time: selfResolvedGetUserAction.flowStatusCompleteTime
                     }
                 ],
                 childs: []
@@ -1394,6 +1626,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                             time: startWorkflow1Action.startWorkflowTime
                         },
                         {
+                            status: activeFlowStatus.shouldStart,
+                            time: startWorkflow1Action.startWorkflowTime
+                        },
+                        {
                             status: activeFlowStatus.completed,
                             time: startGetUserAction.flowStatusCompleteTime
                         }
@@ -1408,6 +1644,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -1426,6 +1666,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startCreateUserAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                         }
@@ -1442,11 +1686,15 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                                     time: startWorkflow1Action.startWorkflowTime
                                                 },
                                                 {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedCreateUserAction.flowStatusCompleteTime
+                                                },
+                                                {
                                                     status: activeFlowStatus.completed,
                                                     time: completeCreateUserAction.flowStatusCompleteTime
                                                 }
                                             ],
-                                            childs: [selfResolvedGetUserNode]
+                                            childs: [selfResolvedGetUserNodeInitial]
                                         }
                                     ]
                                 }
@@ -1461,6 +1709,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                 {
                                     status: activeFlowStatus.notStarted,
                                     time: startWorkflow1Action.startWorkflowTime
+                                },
+                                {
+                                    status: activeFlowStatus.shouldStart,
+                                    time: startGetUserAction.flowStatusCompleteTime
                                 },
                                 {
                                     status: activeFlowStatus.completed,
@@ -1479,6 +1731,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                             time: startWorkflow1Action.startWorkflowTime
                                         },
                                         {
+                                            status: activeFlowStatus.shouldStart,
+                                            time: startUpdateServerAction.flowStatusCompleteTime
+                                        },
+                                        {
                                             status: activeFlowStatus.completed,
                                             time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                         }
@@ -1495,11 +1751,15 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                                     time: startWorkflow1Action.startWorkflowTime
                                                 },
                                                 {
+                                                    status: activeFlowStatus.shouldStart,
+                                                    time: selfResolvedUpdateServerAction.flowStatusCompleteTime
+                                                },
+                                                {
                                                     status: activeFlowStatus.completed,
                                                     time: completeUpdateServerAction.flowStatusCompleteTime
                                                 }
                                             ],
-                                            childs: [selfResolvedGetUserNode]
+                                            childs: [selfResolvedGetUserNodeInitial]
                                         }
                                     ]
                                 }
@@ -1523,6 +1783,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                 time: startWorkflow1Action.startWorkflowTime
             },
             {
+                status: activeFlowStatus.shouldStart,
+                time: completeCreateUserAction.flowStatusCompleteTime
+            },
+            {
                 status: activeFlowStatus.completed,
                 time: selfResolvedGetUserAction.flowStatusCompleteTime
             }
@@ -1537,6 +1801,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                     {
                         status: activeFlowStatus.notStarted,
                         time: startWorkflow1Action.startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.shouldStart,
+                        time: selfResolvedGetUserAction.flowStatusCompleteTime
                     },
                     {
                         status: activeFlowStatus.completed,
@@ -1569,6 +1837,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                 time: startWorkflow1Action.startWorkflowTime
                             },
                             {
+                                status: activeFlowStatus.shouldStart,
+                                time: startWorkflow1Action.startWorkflowTime
+                            },
+                            {
                                 status: activeFlowStatus.completed,
                                 time: startGetUserAction.flowStatusCompleteTime
                             }
@@ -1583,6 +1855,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                     {
                                         status: activeFlowStatus.notStarted,
                                         time: startWorkflow1Action.startWorkflowTime
+                                    },
+                                    {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
                                     },
                                     {
                                         status: activeFlowStatus.completed,
@@ -1601,6 +1877,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startCreateUserAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                             }
@@ -1615,6 +1895,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                                     {
                                                         status: activeFlowStatus.notStarted,
                                                         time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedCreateUserAction.flowStatusCompleteTime
                                                     },
                                                     {
                                                         status: activeFlowStatus.completed,
@@ -1638,6 +1922,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                         time: startWorkflow1Action.startWorkflowTime
                                     },
                                     {
+                                        status: activeFlowStatus.shouldStart,
+                                        time: startGetUserAction.flowStatusCompleteTime
+                                    },
+                                    {
                                         status: activeFlowStatus.completed,
                                         time: startUpdateServerAction.flowStatusCompleteTime
                                     }
@@ -1654,6 +1942,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                                 time: startWorkflow1Action.startWorkflowTime
                                             },
                                             {
+                                                status: activeFlowStatus.shouldStart,
+                                                time: startUpdateServerAction.flowStatusCompleteTime
+                                            },
+                                            {
                                                 status: activeFlowStatus.completed,
                                                 time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                             }
@@ -1668,6 +1960,10 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
                                                     {
                                                         status: activeFlowStatus.notStarted,
                                                         time: startWorkflow1Action.startWorkflowTime
+                                                    },
+                                                    {
+                                                        status: activeFlowStatus.shouldStart,
+                                                        time: selfResolvedUpdateServerAction.flowStatusCompleteTime
                                                     },
                                                     {
                                                         status: activeFlowStatus.completed,
@@ -1693,7 +1989,7 @@ test('test 6 - dispatch the last flow action in the workflow - no complete workf
     const actualResult = createReducer({
         workflows: {
             workflow1: {
-                started: customParams => console.log('Started Flow', customParams, 'workflow1'),
+                shouldStart: customParams => console.log('Started Flow', customParams, 'workflow1'),
                 cancellation: customParams => console.log('Cancel workflow', customParams, 'workflow1')
             }
         },

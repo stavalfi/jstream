@@ -1,11 +1,28 @@
 import Optional from 'optional-js';
 import activeFlowStatus from '../statuses/activeFlowStatus';
+import {getFirstBy} from '../utils';
+
 
 function initializeWorkflowGraph(head, startWorkflowTime) {
     if (!head.isPresent())
         return head;
 
     function duplicateNode(node) {
+        if (node === head.get())
+            return {
+                ...node,
+                childs: node.childs.map(duplicateNode),
+                nodeStatusesHistory: [
+                    {
+                        status: activeFlowStatus.notStarted,
+                        time: startWorkflowTime
+                    },
+                    {
+                        status: activeFlowStatus.shouldStart,
+                        time: startWorkflowTime
+                    }
+                ]
+            };
         return {
             ...node,
             childs: node.childs.map(duplicateNode),
@@ -18,33 +35,61 @@ function initializeWorkflowGraph(head, startWorkflowTime) {
         };
     }
 
-    const newHead = duplicateNode(head.get());
-    return Optional.of(newHead);
+    return Optional.of(duplicateNode(head.get()));
 }
 
-const duplicateGraphWithUpdates = (head, ...updatedNodes) => {
+// why we need this function:
+// for every child of the node that we marked as completed,
+// we check that in the NEW graph, all it's parents are marked
+// as completed. if yes, then I trigger that child.
+// if not, I skip that child.
+// what does it do:
+// update node as completed and return the new head and the childs from the updated node that we should dispatch next.
+const updateCompletedNodeInGraph = (head, nodeToSetAsCompleted, flowStatusCompleteTime) => {
     if (!head.isPresent())
-        return head;
+        return Optional.empty();
 
-    function generatedUpdatedParents(head, updatedNode) {
-        if (head.flowDetails === updatedNode.flowDetails)
-            return updatedNode;
-
-        return getNodeParents(Optional.of(head), updatedNode)
-            .map((_, i) => i)
-            .reduce((newHead, i) => {
-                const oldParent = getNodeParents(Optional.of(newHead), updatedNode)[i];
-                const nodeIndex = oldParent.childs.findIndex(child => child.flowDetails === updatedNode.flowDetails);
-                const newParent = {
-                    ...oldParent,
-                    childs: [...oldParent.childs.slice(0, nodeIndex), updatedNode, ...oldParent.childs.slice(nodeIndex + 1)]
-                };
-                return generatedUpdatedParents(newHead, newParent);
-            }, head);
+    function generateNewGraphWithUpdates(pos, ...nodesToUpdateInGraph) {
+        return getFirstBy(nodesToUpdateInGraph, nodeToUpdate => pos.flowDetails === nodeToUpdate.flowDetails)
+            .orElse({
+                ...pos,
+                childs: pos.childs.map(child => generateNewGraphWithUpdates(child, ...nodesToUpdateInGraph))
+            });
     }
 
-    const newHead = updatedNodes.reduce((newHead, updatedNode) => generatedUpdatedParents(newHead, updatedNode), head.get());
-    return Optional.of(newHead);
+    const completedNode = {
+        ...nodeToSetAsCompleted,
+        nodeStatusesHistory: [
+            ...nodeToSetAsCompleted.nodeStatusesHistory,
+            {
+                status: activeFlowStatus.completed,
+                time: flowStatusCompleteTime
+            }
+        ]
+    };
+
+    const newHead = generateNewGraphWithUpdates(head.get(), completedNode);
+
+    const areParentsOfChildCompleted = child => getNodeParents(Optional.of(newHead), child)
+        .every(node => node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status === activeFlowStatus.completed);
+
+    const nodesToStart = completedNode.childs.filter(areParentsOfChildCompleted)
+        .filter(child => child.nodeStatusesHistory[child.nodeStatusesHistory.length - 1].status === activeFlowStatus.notStarted)
+        .map(shouldStartNode => ({
+            ...shouldStartNode,
+            nodeStatusesHistory: [
+                ...shouldStartNode.nodeStatusesHistory,
+                {
+                    status: activeFlowStatus.shouldStart,
+                    time: flowStatusCompleteTime
+                }
+            ]
+        }));
+
+    return {
+        nodesToStart: nodesToStart,
+        head: Optional.of(generateNewGraphWithUpdates(newHead, ...nodesToStart))
+    };
 };
 
 // get all node's parents
@@ -72,32 +117,12 @@ const getNodeParents = (head, node) => {
     return search(head.get());
 };
 
-const isNodeCompleted = node => node.nodeStatusesHistory.some(nodeStatus => nodeStatus.status === activeFlowStatus.completed);
-
-// return an array of all closest nodes to head that are not completed but their parent is completed.
-const getCurrentLeafsOfWorkflowGraph = head => {
-    if (!head.isPresent())
-        return [];
-
-    function findLeafs(node) {
-        if (!isNodeCompleted(node))
-            return [node];
-        return node.childs.flatMap(findLeafs);
-    }
-
-    // I may receive nodes such as node3: {node1: completed, node2: not completed } -> {node3: not completed}
-    // so I should get only [node2] and not [node2,node3].
-    const possibleLeafs = findLeafs(head.get());
-
-    return possibleLeafs.filter(leaf => getNodeParents(head, leaf).every(isNodeCompleted));
-};
-
 const areAllFlowsCompleted = head => {
     if (!head.isPresent())
         return true;
 
     function areAllNodesCompleted(node) {
-        if (!isNodeCompleted(node))
+        if (node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status !== activeFlowStatus.completed)
             return false;
         if (node.childs.length === 0)
             return true;
@@ -108,11 +133,27 @@ const areAllFlowsCompleted = head => {
     return areAllNodesCompleted(head.get());
 };
 
+// search from all the nodes that should start, the node with the given flow name and flow status.
+const findShouldStartNode = (head, flowName, flowStatus) => {
+    if (!head.isPresent())
+        return Optional.empty();
+
+    function find(node) {
+        if (node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status === activeFlowStatus.shouldStart &&
+            node.flowDetails.flowName === flowName &&
+            node.flowDetails.flowStatus === flowStatus)
+            return [node];
+        return node.childs.flatMap(find);
+    }
+
+    const node = find(head.get());
+    return node.length === 0 ? Optional.empty() : Optional.of(node[0]);
+};
+
 export {
     initializeWorkflowGraph,
-    duplicateGraphWithUpdates,
-    getCurrentLeafsOfWorkflowGraph,
+    updateCompletedNodeInGraph,
+    findShouldStartNode,
     areAllFlowsCompleted,
-    getNodeParents,
-    isNodeCompleted
+    getNodeParents
 };
