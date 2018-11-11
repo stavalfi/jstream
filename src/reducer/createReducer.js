@@ -190,7 +190,8 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functi
             Cmd.action(actionToTrigger) :
             Cmd.run(functions.flows[actionToTrigger.flowName].task, {
                 successActionCreator: () => actionToTrigger,
-                args: [action.workflowId]
+                args: [action.workflowId],
+                forceSync: true
             }));
 
     return loop(newState, Cmd.list(actionsToDispatch));
