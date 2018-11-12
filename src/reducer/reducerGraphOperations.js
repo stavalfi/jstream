@@ -150,10 +150,67 @@ const findShouldStartNode = (head, flowName, flowStatus) => {
     return node.length === 0 ? Optional.empty() : Optional.of(node[0]);
 };
 
+// return all nodes that completed but their sub*-child node (under the same flow) is canceled.
+const findAllLatestCompletedNodesInCanceledFlows = head => {
+    const isNodeCanceled = pos => pos.nodeStatusesHistory[pos.nodeStatusesHistory.length - 1].status === activeFlowStatus.canceled;
+
+    if (!head.isPresent() || isNodeCanceled(head.get()))
+        return [];
+
+    const isNodeNextStatusCanceled = node =>
+        // I assume that the given node status is not canceled and not completed.
+        (function findSubChild(pos) {
+            if (pos.flowDetails.flowName === node.flowDetails.flowName &&
+                pos.flowDetails.flowStatus === node.flowDetails.flowStatus + 1)
+                return isNodeCanceled(pos);
+            return findSubChild(pos.childs[0]);
+        })(node);
+
+    function findAllLatestCompletedNodesInCanceledFlowsFrom(pos) {
+        if (isNodeCanceled(pos) && isNodeNextStatusCanceled(pos))
+            return [...pos.childs.flatMap(findAllLatestCompletedNodesInCanceledFlowsFrom), pos];
+        //before I called findAllLatestCompletedNodesInCanceledFlows, I canceled every node that is not completed.
+        // it means that every node in the new graph is completed (from the old graph) or canceled (in the new graph).
+        // so if isNodeNextStatusCanceled(pos)==false, then the sub*-child of this node is completed.
+        if (isNodeCanceled(pos))
+            return pos.childs.flatMap(findAllLatestCompletedNodesInCanceledFlowsFrom);
+        return [];
+    }
+
+    return findAllLatestCompletedNodesInCanceledFlowsFrom(head.get());
+};
+
+const cancelAllNotCompletedNodes = (head, cancelWorkflowTime) => {
+    if (!head.isPresent())
+        return Optional.empty();
+
+    function duplicateAndCancel(pos) {
+        const lastStatus = pos.nodeStatusesHistory[pos.nodeStatusesHistory.length - 1].status;
+        const isNodeFinished = lastStatus === activeFlowStatus.completed || lastStatus === activeFlowStatus.canceled;
+        return {
+            ...pos,
+            childs: pos.childs.map(duplicateAndCancel),
+            nodeStatusesHistory: isNodeFinished ?
+                pos.nodeStatusesHistory :
+                [
+                    ...pos.nodeStatusesHistory,
+                    {
+                        status: activeFlowStatus.canceled,
+                        time: cancelWorkflowTime
+                    }
+                ]
+        };
+    }
+
+    return Optional.of(duplicateAndCancel(head.get()));
+};
+
 export {
     initializeWorkflowGraph,
     updateCompletedNodeInGraph,
     findShouldStartNode,
     areAllFlowsCompleted,
-    getNodeParents
+    getNodeParents,
+    findAllLatestCompletedNodesInCanceledFlows,
+    cancelAllNotCompletedNodes
 };

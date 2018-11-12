@@ -1,5 +1,5 @@
 import createStore from '../../../src/createStore';
-import {startWorkflowAction} from '../../../src/actions';
+import {startWorkflowAction as startWorkflowActionCreator, cancelWorkflowAction} from '../../../src/actions';
 import readWorkflowsFile from '../../../src/json/parser';
 import workflowsJson from './workflows.json';
 import workflowsFunctions from './workflows.js';
@@ -9,4 +9,6 @@ const {workflowsDetails} = readWorkflowsFile(workflowsJson);
 
 const store = createStore(workflowsFunctions, workflowsDetails, middleware);
 
-store.dispatch(startWorkflowAction('createUser'));
+const startWorkflowAction = startWorkflowActionCreator('createUser');
+store.dispatch(startWorkflowAction);
+store.dispatch(cancelWorkflowAction(startWorkflowAction.workflowId));

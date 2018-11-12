@@ -6,6 +6,7 @@ import {
     START_WORKFLOW,
     CHANGE_FLOW_STATUS,
     COMPLETE_WORKFLOW,
+    CANCEL_WORKFLOW,
     changeFlowStatusAction,
     completeWorkflowAction as completeWorkflowActionCreator
 } from '../actions';
@@ -18,6 +19,8 @@ import {
     updateCompletedNodeInGraph,
     findShouldStartNode,
     areAllFlowsCompleted,
+    findAllLatestCompletedNodesInCanceledFlows,
+    cancelAllNotCompletedNodes
 } from './reducerGraphOperations';
 
 const initialState = {activeWorkflowsDetails: [], nonActiveWorkflowsDetails: []};
@@ -30,6 +33,8 @@ export default (functions, workflowsDetails) => (state = initialState, action) =
             return changeFlowStatus(state, action, functions);
         case COMPLETE_WORKFLOW:
             return completeWorkflow(state, action);
+        case CANCEL_WORKFLOW:
+            return cancelWorkflow(state, action, functions);
     }
     return state;
 };
@@ -53,15 +58,17 @@ const startWorkflow = (state, action, functions, workflowsDetails) => {
                 ...state,
                 activeWorkflowsDetails: [...state.activeWorkflowsDetails, activeWorkflowDetails],
             };
-            return generateNextTriggeredActionsAtStart(state, newState, action, functions, activeWorkflowDetails);
+            return generateNextTriggeredActionsAfterWorkflowStarted(state, newState, action, functions, activeWorkflowDetails);
         })
         .orElse(state);
 };
 
 const changeFlowStatus = (state, action, functions) => {
+    const getWorkflowStatus = workflow => workflow.workflowStatusesHistory[workflow.workflowStatusesHistory.length - 1].status;
     return getFirstIndexBy(state.activeWorkflowsDetails, workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId)
         .flatMap(activeWorkflowDetailsIndex =>
             Optional.of(state.activeWorkflowsDetails[activeWorkflowDetailsIndex])
+                .filter(activeWorkflowDetails => getWorkflowStatus(activeWorkflowDetails) === workflowStatuses.started)
                 .flatMap(activeWorkflowDetails =>
                     findShouldStartNode(activeWorkflowDetails.head, action.flowName, action.flowStatus)
                         .map(nodeToSetAsCompleted => updateCompletedNodeInGraph(activeWorkflowDetails.head, nodeToSetAsCompleted, action.flowStatusCompleteTime))
@@ -79,7 +86,7 @@ const changeFlowStatus = (state, action, functions) => {
                                 ]
                             };
 
-                            return generateNextTriggeredActionsAtMiddle(
+                            return generateNextTriggeredActionsAfterNodeCompleted(
                                 state,
                                 newState,
                                 action,
@@ -91,7 +98,9 @@ const changeFlowStatus = (state, action, functions) => {
 };
 
 const completeWorkflow = (state, action) => {
+    const getWorkflowStatus = workflow => workflow.workflowStatusesHistory[workflow.workflowStatusesHistory.length - 1].status;
     return getFirstBy(state.activeWorkflowsDetails, activeWorkflow => activeWorkflow.workflowId === action.workflowId)
+        .filter(activeWorkflowDetails => getWorkflowStatus(activeWorkflowDetails) === workflowStatuses.started)
         .filter(activeWorkflowDetails => areAllFlowsCompleted(activeWorkflowDetails.head))
         .map(activeWorkflowDetails => ({
             ...activeWorkflowDetails,
@@ -112,12 +121,37 @@ const completeWorkflow = (state, action) => {
         .orElse(state);
 };
 
+const cancelWorkflow = (state, action, functions) => {
+    const getWorkflowStatus = workflow => workflow.workflowStatusesHistory[workflow.workflowStatusesHistory.length - 1].status;
+    return getFirstBy(state.activeWorkflowsDetails, workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId)
+        .filter(activeWorkflowDetails => getWorkflowStatus(activeWorkflowDetails) === workflowStatuses.started)
+        .map(activeWorkflowDetails => ({
+            ...activeWorkflowDetails,
+            head: cancelAllNotCompletedNodes(activeWorkflowDetails.head, action.cancelWorkflowTime),
+            workflowStatusesHistory: [
+                ...activeWorkflowDetails.workflowStatusesHistory,
+                {
+                    status: workflowStatuses.canceled,
+                    time: action.cancelWorkflowTime
+                }
+            ]
+        }))
+        .map(updatedActiveWorkflowDetails => {
+            const newState = {
+                ...state,
+                activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
+                nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, updatedActiveWorkflowDetails]
+            };
+            return generateNextDispatchedActionsAfterCancel(state, newState, action, functions, updatedActiveWorkflowDetails);
+        })
+        .orElse(state);
+};
 
 /////////////////////////////////
 // helper functions
 /////////////////////////////////
 
-const generateNextTriggeredActionsAtStart = (oldState, newState, action, functions, updatedActiveWorkflowDetails) => {
+const generateNextTriggeredActionsAfterWorkflowStarted = (oldState, newState, action, functions, updatedActiveWorkflowDetails) => {
     const isNewActiveWorkflow = !oldState.activeWorkflowsDetails.some(activeWorkflowDetails => activeWorkflowDetails.workflowId === updatedActiveWorkflowDetails.workflowId);
     if (!isNewActiveWorkflow)
         return oldState;
@@ -135,7 +169,8 @@ const generateNextTriggeredActionsAtStart = (oldState, newState, action, functio
     const completeWorkflowCmd = completeWorkflowFunction.map(completeWorkflowFunction =>
         Cmd.run(completeWorkflowFunction, {
             successActionCreator: () => completeWorkflowAction,
-            args: [action.workflowId]
+            args: [action.workflowId],
+            forceSync: true
         }))
         .orElse(Cmd.action(completeWorkflowAction));
 
@@ -144,7 +179,8 @@ const generateNextTriggeredActionsAtStart = (oldState, newState, action, functio
         return startWorkflowFunction.map(startWorkflowFunction =>
             loop(newState, Cmd.list([Cmd.run(startWorkflowFunction, {
                 successActionCreator: () => startedActionInFirstFlow,
-                args: [action.workflowId]
+                args: [action.workflowId],
+                forceSync: true
             })])))
             .orElse(loop(newState, Cmd.list([Cmd.action(startedActionInFirstFlow)])));
     }
@@ -157,7 +193,7 @@ const generateNextTriggeredActionsAtStart = (oldState, newState, action, functio
         .orElse(loop(newState, Cmd.list([completeWorkflowCmd])));
 };
 
-const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functions, updatedActiveWorkflowDetails, nodesToStart) => {
+const generateNextTriggeredActionsAfterNodeCompleted = (oldState, newState, action, functions, updatedActiveWorkflowDetails, nodesToStart) => {
     const isNewActiveWorkflow = !oldState.activeWorkflowsDetails.some(activeWorkflowDetails => activeWorkflowDetails.workflowId === updatedActiveWorkflowDetails.workflowId);
 
     if (isNewActiveWorkflow)
@@ -172,7 +208,8 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functi
     const completeWorkflowCmd = completeWorkflowFunction.map(completeWorkflowFunction =>
         Cmd.run(completeWorkflowFunction, {
             successActionCreator: () => completeWorkflowAction,
-            args: [action.workflowId]
+            args: [action.workflowId],
+            forceSync: true
         }))
         .orElse(Cmd.action(completeWorkflowAction));
 
@@ -195,4 +232,31 @@ const generateNextTriggeredActionsAtMiddle = (oldState, newState, action, functi
             }));
 
     return loop(newState, Cmd.list(actionsToDispatch));
+};
+
+const generateNextDispatchedActionsAfterCancel = (state, newState, action, functions, activeWorkflowDetails) => {
+    const getCancellationFunction = flowDetails =>
+        Optional.ofNullable(functions.flows[flowDetails.flowName].cancellation)
+            .map(cancellationFunctions =>
+                flowDetails.status === flowStatuses.started ?
+                    cancellationFunctions.beforeSelfResolved :
+                    cancellationFunctions.beforeCompleted);
+
+    const workflowCancellationFunction = Optional.ofNullable(functions.workflows[activeWorkflowDetails.workflowName].cancellation)
+        .map(cancellationFunction => [Cmd.run(cancellationFunction, {
+            args: [action.workflowId]
+        })])
+        .orElse([]);
+
+    const latestCompletedNodes = findAllLatestCompletedNodesInCanceledFlows(activeWorkflowDetails.head);
+    const cancellationFunctionsToRun = latestCompletedNodes.map(node => node.flowDetails)
+        .filter(flowDetails => getCancellationFunction(flowDetails).isPresent())
+        .map(flowDetails => Cmd.run(getCancellationFunction(flowDetails).get(), {
+            args: [action.workflowId]
+        }));
+
+    return loop(newState, Cmd.list([
+        ...cancellationFunctionsToRun,
+        ...workflowCancellationFunction
+    ]));
 };
