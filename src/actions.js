@@ -1,34 +1,117 @@
+import {flowStatus} from './statuses';
+import {getFirstBy} from './utils';
+import {areAllFlowsCompleted, findNodesToDispatch} from './reducerGraphOperations';
+import isPromise from 'is-promise';
+
+// action constants
+
 const START_WORKFLOW = 'START_WORKFLOW';
 const CHANGE_FLOW_STATUS = 'CHANGE_FLOW_STATUS';
 const COMPLETE_WORKFLOW = 'COMPLETE_WORKFLOW';
 const CANCEL_WORKFLOW = 'CANCEL_WORKFLOW';
 
-const startWorkflowAction = workflowName => ({
-    type: START_WORKFLOW,
+const startWorkflowAction = (workflowName, startWorkflowTime) => ({
+    type: workflowName.toUpperCase() + '_' + START_WORKFLOW,
+    generalType: START_WORKFLOW,
     workflowId: Date.now() + '',
     workflowName,
-    startWorkflowTime: Date.now()
+    time: startWorkflowTime
 });
 
-const changeFlowStatusAction = (workflowId, flowName, flowStatus) => ({
-    type: CHANGE_FLOW_STATUS,
+const getKeyByValue = (object, value) => Object.keys(object).find(key => object[key] === value);
+
+// sync action creators
+
+const changeFlowStatusToSelfResolvedAction = (workflowId, flowName, flowStatusCompleteTime, flowFunction) => ({
+    type: flowName.toUpperCase() + '_' + CHANGE_FLOW_STATUS + '_' + getKeyByValue(flowStatus, flowStatus.selfResolved).toUpperCase(),
+    generalType: CHANGE_FLOW_STATUS,
     flowName,
     workflowId,
-    flowStatus,
-    flowStatusCompleteTime: Date.now()
+    flowStatus: flowStatus.selfResolved,
+    flowFunction,
+    time: flowStatusCompleteTime
 });
 
-const completeWorkflowAction = workflowId => ({
-    type: COMPLETE_WORKFLOW,
+const changeFlowStatusAction = (workflowId, flowName, flowStatusCompleteTime, flowStatusValue) => ({
+    type: flowName.toUpperCase() + '_' + CHANGE_FLOW_STATUS + '_' + getKeyByValue(flowStatus, flowStatusValue).toUpperCase(),
+    generalType: CHANGE_FLOW_STATUS,
+    flowName,
     workflowId,
-    completeWorkflowTime: Date.now()
+    flowStatus: flowStatusValue,
+    time: flowStatusCompleteTime
 });
 
-const cancelWorkflowAction = workflowId => ({
-    type: CANCEL_WORKFLOW,
+const completeWorkflowAction = (workflowId, workflowName, completeWorkflowTime) => ({
+    type: workflowName.toUpperCase() + '_' + COMPLETE_WORKFLOW,
+    generalType: COMPLETE_WORKFLOW,
     workflowId,
-    cancelWorkflowTime: Date.now()
+    workflowName,
+    time: completeWorkflowTime
 });
+
+// dispatch all flows in the given workflow (I assume the workflow has started but not completed).
+const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunctions, currentDispatchesTime) => {
+    const updatedActiveWorkflowDetails = getFirstBy(activeWorkflowsDetails,
+        activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
+
+    if (!updatedActiveWorkflowDetails.isPresent())
+        return [];
+
+    // note: if nodesToStart.length===0 it doesn't mean the workflow is succeed
+    // because it may mean that some nodes WILL be start async later!
+    if (areAllFlowsCompleted(updatedActiveWorkflowDetails.get().head))
+        return [];
+
+    const newHead = updatedActiveWorkflowDetails.get().head;
+
+    // I need to find all nodes that needs to be dispatched.
+    const actionsToDispatch = findNodesToDispatch(newHead)
+        .map(node => {
+            if (node.flowDetails.flowStatus === flowStatus.selfResolved) {
+                const flowFunction = flowsFunctions[node.flowDetails.flowName].task;
+                return changeFlowStatusToSelfResolvedAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, flowFunction);
+            }
+            return changeFlowStatusAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, node.flowDetails.flowStatus);
+        });
+
+    return actionsToDispatch;
+};
+
+// async action creators
+
+// it operates like BFS algorithm.
+const createRunWorkflowAction = (stateSelector, functions) => workflowName => (dispatch, getState) => {
+    const startAction = startWorkflowAction(workflowName, Date.now());
+
+    function dispatchNextLayer(lastState, lastActions, newState) {
+        if (newState === lastState)
+            return lastActions;
+
+        const actionsToDispatch = generateActionsToDispatch(
+            startAction.workflowId,
+            newState.activeWorkflowsDetails,
+            functions.flows,
+            Date.now()
+        );
+
+        const result = dispatch(actionsToDispatch);
+
+        if (isPromise(result))
+            return result.then(value => dispatchNextLayer(newState, value, stateSelector(getState())));
+
+        return dispatchNextLayer(newState, result, stateSelector(getState()));
+    }
+
+    // start workflow and dispatch all actions in the workflow (dispatch all flows in this workflow).
+    const emptyArray = dispatchNextLayer(stateSelector(getState()), [dispatch(startAction)], stateSelector(getState()));
+
+    // all nodes in workflow completed so complete workflow.
+    const completeAction = completeWorkflowAction(startAction.workflowId, startAction.workflowName, Date.now());
+    if (isPromise(emptyArray))
+        return emptyArray.then(() => dispatch(completeAction));
+
+    return dispatch(completeAction);
+};
 
 export {
     START_WORKFLOW,
@@ -36,7 +119,9 @@ export {
     COMPLETE_WORKFLOW,
     CANCEL_WORKFLOW,
     startWorkflowAction,
+    changeFlowStatusToSelfResolvedAction,
     changeFlowStatusAction,
     completeWorkflowAction,
-    cancelWorkflowAction
+    generateActionsToDispatch,
+    createRunWorkflowAction
 };

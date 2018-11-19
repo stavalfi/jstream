@@ -1,5 +1,5 @@
 import test from 'ava';
-import readWorkflowsFile from '../src/json/parser';
+import readWorkflowsFile from '../src/parser';
 import Optional from 'optional-js';
 /* eslint fp/no-nil:0 */
 

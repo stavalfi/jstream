@@ -1,14 +1,13 @@
-import createStore from '../../../src/createStore';
-import {startWorkflowAction as startWorkflowActionCreator, cancelWorkflowAction} from '../../../src/actions';
-import readWorkflowsFile from '../../../src/json/parser';
+import functions from './workflows.js';
 import workflowsJson from './workflows.json';
-import workflowsFunctions from './workflows.js';
-import middleware from './middleware';
+import configuration from '../../../src/index'
+import {logger} from 'redux-logger';
+import {applyMiddleware, createStore, combineReducers} from 'redux';
 
-const {workflowsDetails} = readWorkflowsFile(workflowsJson);
+const {reducer, middlewares, actions} =
+    configuration(workflowsJson, functions, state => state.libReducer);
 
-const store = createStore(workflowsFunctions, workflowsDetails, middleware);
+const middleware = applyMiddleware(...middlewares, logger);
+const store = createStore(combineReducers({libReducer: reducer}), middleware);
 
-const startWorkflowAction = startWorkflowActionCreator('createUser');
-store.dispatch(startWorkflowAction);
-store.dispatch(cancelWorkflowAction(startWorkflowAction.workflowId));
+store.dispatch(actions.runWorkflow('updateServer'));

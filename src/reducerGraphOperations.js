@@ -1,6 +1,6 @@
 import Optional from 'optional-js';
-import activeFlowStatus from '../statuses/activeFlowStatus';
-import {getFirstBy} from '../utils';
+import {activeFlowStatus} from './statuses';
+import {getFirstBy} from './utils';
 
 
 function initializeWorkflowGraph(head, startWorkflowTime) {
@@ -39,12 +39,12 @@ function initializeWorkflowGraph(head, startWorkflowTime) {
 }
 
 // why we need this function:
-// for every child of the node that we marked as completed,
+// for every child of the node that we marked as succeed,
 // we check that in the NEW graph, all it's parents are marked
-// as completed. if yes, then I trigger that child.
+// as succeed. if yes, then I trigger that child.
 // if not, I skip that child.
 // what does it do:
-// update node as completed and return the new head and the childs from the updated node that we should dispatch next.
+// update node as succeed and return the new head and the childs from the updated node that we should dispatch next.
 const updateCompletedNodeInGraph = (head, nodeToSetAsCompleted, flowStatusCompleteTime) => {
     if (!head.isPresent())
         return Optional.empty();
@@ -62,7 +62,7 @@ const updateCompletedNodeInGraph = (head, nodeToSetAsCompleted, flowStatusComple
         nodeStatusesHistory: [
             ...nodeToSetAsCompleted.nodeStatusesHistory,
             {
-                status: activeFlowStatus.completed,
+                status: activeFlowStatus.succeed,
                 time: flowStatusCompleteTime
             }
         ]
@@ -71,7 +71,7 @@ const updateCompletedNodeInGraph = (head, nodeToSetAsCompleted, flowStatusComple
     const newHead = generateNewGraphWithUpdates(head.get(), completedNode);
 
     const areParentsOfChildCompleted = child => getNodeParents(Optional.of(newHead), child)
-        .every(node => node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status === activeFlowStatus.completed);
+        .every(node => node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status === activeFlowStatus.succeed);
 
     const nodesToStart = completedNode.childs.filter(areParentsOfChildCompleted)
         .filter(child => child.nodeStatusesHistory[child.nodeStatusesHistory.length - 1].status === activeFlowStatus.notStarted)
@@ -122,7 +122,7 @@ const areAllFlowsCompleted = head => {
         return true;
 
     function areAllNodesCompleted(node) {
-        if (node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status !== activeFlowStatus.completed)
+        if (node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1].status !== activeFlowStatus.succeed)
             return false;
         if (node.childs.length === 0)
             return true;
@@ -133,7 +133,7 @@ const areAllFlowsCompleted = head => {
     return areAllNodesCompleted(head.get());
 };
 
-// search from all the nodes that should start, the node with the given flow name and flow status.
+// search from all the nodes the node that should start, the node with the given flow name and flow status.
 const findShouldStartNode = (head, flowName, flowStatus) => {
     if (!head.isPresent())
         return Optional.empty();
@@ -147,62 +147,25 @@ const findShouldStartNode = (head, flowName, flowStatus) => {
     }
 
     const node = find(head.get());
-    return node.length === 0 ? Optional.empty() : Optional.of(node[0]);
+    return node.length === 0 ?
+        Optional.empty() :
+        Optional.of(node[0]);
 };
 
-// return all nodes that completed but their sub*-child node (under the same flow) is canceled.
-const findAllLatestCompletedNodesInCanceledFlows = head => {
-    const isNodeCanceled = pos => pos.nodeStatusesHistory[pos.nodeStatusesHistory.length - 1].status === activeFlowStatus.canceled;
+const lastStatus = node => node.nodeStatusesHistory[node.nodeStatusesHistory.length - 1];
 
-    if (!head.isPresent() || isNodeCanceled(head.get()))
-        return [];
-
-    const isNodeNextStatusCanceled = node =>
-        // I assume that the given node status is not canceled and not completed.
-        (function findSubChild(pos) {
-            if (pos.flowDetails.flowName === node.flowDetails.flowName &&
-                pos.flowDetails.flowStatus === node.flowDetails.flowStatus + 1)
-                return isNodeCanceled(pos);
-            return findSubChild(pos.childs[0]);
-        })(node);
-
-    function findAllLatestCompletedNodesInCanceledFlowsFrom(pos) {
-        if (isNodeCanceled(pos) && isNodeNextStatusCanceled(pos))
-            return [...pos.childs.flatMap(findAllLatestCompletedNodesInCanceledFlowsFrom), pos];
-        //before I called findAllLatestCompletedNodesInCanceledFlows, I canceled every node that is not completed.
-        // it means that every node in the new graph is completed (from the old graph) or canceled (in the new graph).
-        // so if isNodeNextStatusCanceled(pos)==false, then the sub*-child of this node is completed.
-        if (isNodeCanceled(pos))
-            return pos.childs.flatMap(findAllLatestCompletedNodesInCanceledFlowsFrom);
-        return [];
-    }
-
-    return findAllLatestCompletedNodesInCanceledFlowsFrom(head.get());
-};
-
-const cancelAllNotCompletedNodes = (head, cancelWorkflowTime) => {
+const findNodesToDispatch = (head) => {
     if (!head.isPresent())
-        return Optional.empty();
+        return [];
 
-    function duplicateAndCancel(pos) {
-        const lastStatus = pos.nodeStatusesHistory[pos.nodeStatusesHistory.length - 1].status;
-        const isNodeFinished = lastStatus === activeFlowStatus.completed || lastStatus === activeFlowStatus.canceled;
-        return {
-            ...pos,
-            childs: pos.childs.map(duplicateAndCancel),
-            nodeStatusesHistory: isNodeFinished ?
-                pos.nodeStatusesHistory :
-                [
-                    ...pos.nodeStatusesHistory,
-                    {
-                        status: activeFlowStatus.canceled,
-                        time: cancelWorkflowTime
-                    }
-                ]
-        };
+    // find all nodes that changed from not_started to should_start status.
+    function find(newNode) {
+        if (lastStatus(newNode).status === activeFlowStatus.shouldStart)
+            return [newNode];
+        return newNode.childs.flatMap(find);
     }
 
-    return Optional.of(duplicateAndCancel(head.get()));
+    return find(head.get());
 };
 
 export {
@@ -211,6 +174,5 @@ export {
     findShouldStartNode,
     areAllFlowsCompleted,
     getNodeParents,
-    findAllLatestCompletedNodesInCanceledFlows,
-    cancelAllNotCompletedNodes
+    findNodesToDispatch
 };
