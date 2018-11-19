@@ -1,7 +1,6 @@
 import {flowStatus} from './statuses';
 import {getFirstBy} from './utils';
 import {areAllFlowsCompleted, findNodesToDispatch} from './reducerGraphOperations';
-import isPromise from 'is-promise';
 
 // action constants
 
@@ -10,12 +9,13 @@ const CHANGE_FLOW_STATUS = 'CHANGE_FLOW_STATUS';
 const COMPLETE_WORKFLOW = 'COMPLETE_WORKFLOW';
 const CANCEL_WORKFLOW = 'CANCEL_WORKFLOW';
 
-const startWorkflowAction = (workflowName, startWorkflowTime) => ({
+const startWorkflowAction = (workflowName, startWorkflowTime, userCustomParamsObject) => ({
     type: workflowName.toUpperCase() + '_' + START_WORKFLOW,
     generalType: START_WORKFLOW,
     workflowId: Date.now() + '',
     workflowName,
-    time: startWorkflowTime
+    time: startWorkflowTime,
+    userCustomParamsObject
 });
 
 const getKeyByValue = (object, value) => Object.keys(object).find(key => object[key] === value);
@@ -80,8 +80,8 @@ const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunc
 // async action creators
 
 // it operates like BFS algorithm.
-const createRunWorkflowAction = (stateSelector, functions) => workflowName => (dispatch, getState) => {
-    const startAction = startWorkflowAction(workflowName, Date.now());
+const createRunWorkflowAction = (stateSelector, functions) => (workflowName, userCustomParamsObject) => (dispatch, getState) => {
+    const startAction = startWorkflowAction(workflowName, Date.now(), userCustomParamsObject);
 
     function dispatchNextLayer(lastState, lastActions, newState) {
         if (newState === lastState)
@@ -94,21 +94,14 @@ const createRunWorkflowAction = (stateSelector, functions) => workflowName => (d
             Date.now()
         );
 
-        const result = dispatch(actionsToDispatch);
-
-        if (isPromise(result))
-            return result.then(value => dispatchNextLayer(newState, value, stateSelector(getState())));
-
-        return dispatchNextLayer(newState, result, stateSelector(getState()));
+        return dispatchNextLayer(newState, dispatch(actionsToDispatch), stateSelector(getState()));
     }
 
     // start workflow and dispatch all actions in the workflow (dispatch all flows in this workflow).
-    const emptyArray = dispatchNextLayer(stateSelector(getState()), [dispatch(startAction)], stateSelector(getState()));
+    dispatchNextLayer(stateSelector(getState()), [dispatch(startAction)], stateSelector(getState()));
 
     // all nodes in workflow completed so complete workflow.
     const completeAction = completeWorkflowAction(startAction.workflowId, startAction.workflowName, Date.now());
-    if (isPromise(emptyArray))
-        return emptyArray.then(() => dispatch(completeAction));
 
     return dispatch(completeAction);
 };

@@ -10,4 +10,4 @@ const {reducer, middlewares, actions} =
 const middleware = applyMiddleware(...middlewares, logger);
 const store = createStore(combineReducers({libReducer: reducer}), middleware);
 
-store.dispatch(actions.runWorkflow('updateServer'));
+store.dispatch(actions.runWorkflow('updateServer', {customParam: 'hi'}));

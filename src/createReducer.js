@@ -21,6 +21,7 @@ const startWorkflow = (state, action, workflowsDetails) => {
         .map(workflowDetails => ({
             workflowId: action.workflowId,
             workflowName: workflowDetails.workflowName,
+            userCustomParamsObject: action.userCustomParamsObject,
             head: initializeWorkflowGraph(workflowDetails.head, action.time),
             workflowStatusesHistory: [
                 {

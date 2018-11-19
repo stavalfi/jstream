@@ -1,16 +1,16 @@
 export default {
     flows: {
         createUser: {
-            task: customParams => console.log('Middle', customParams, 'createUser', 'start')
+            task: (workflowId, operations, userCustomParamObject) => console.log('Middle', workflowId, operations, userCustomParamObject, 'createUser', 'start')
         },
         removeUser: {
-            task: customParams => console.log('Middle', customParams, 'removeUser')
+            task: (workflowId, operations, userCustomParamObject) => console.log('Middle', workflowId, operations, userCustomParamObject, 'removeUser')
         },
         updateServer: {
-            task: customParams => console.log('Middle', customParams, 'updateServer')
+            task: (workflowId, operations, userCustomParamObject) => console.log('Middle', workflowId, operations, userCustomParamObject, 'updateServer')
         },
         getUser: {
-            task: customParams => console.log('Middle', customParams, 'getUser')
+            task: (workflowId, operations, userCustomParamObject) => console.log('Middle', workflowId, operations, userCustomParamObject, 'getUser')
         }
     }
 };
