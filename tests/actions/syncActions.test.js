@@ -1,271 +1,273 @@
 import test from 'ava';
+import createActiveWorkflow from '../utils/createActiveWorkflow/createActiveWorkflow';
+import {flowStatus} from '../../src/statuses';
+import workflowsJson from './workflows.json';
+import functions from './workflows.js';
 import {
-    changeFlowStatusToSelfResolvedAction,
     changeFlowStatusAction,
-    generateActionsToDispatch,
+    changeFlowStatusToSelfResolvedAction,
+    generateActionsToDispatch
 } from '../../src/actions';
-import Optional from 'optional-js';
-import {activeFlowStatus, flowStatus, workflowStatus} from '../../src/statuses';
 
 /* eslint fp/no-nil:0 */
-
-const flowFunctions = {
-    createUser: {
-        task: customParams => console.log('Middle', customParams, 'createUser', 'start')
-    },
-    removeUser: {
-        task: customParams => console.log('Middle', customParams, 'removeUser')
-    },
-    updateServer: {
-        task: customParams => console.log('Middle', customParams, 'updateServer')
-    },
-    getUser: {
-        task: customParams => console.log('Middle', customParams, 'getUser')
-    }
-};
+/* eslint fp/no-mutation:0 fp/no-let:0 */
 
 test('1. find what actions to dispatch now - the first node: workflowStatus.started', t => {
-    const activeWorkflowsDetails = [
-        {
-            workflowId: 'id1',
-            workflowName: 'createUser',
-            workflowStatusesHistory: [
-                {
-                    status: workflowStatus.started,
-                    time: 0
-                }
-            ],
-            head: Optional.of({
-                flowDetails: {
-                    flowName: 'createUser',
-                    flowStatus: flowStatus.started
-                },
-                nodeStatusesHistory: [
-                    {
-                        status: activeFlowStatus.notStarted,
-                        time: 0
-                    },
-                    {
-                        status: activeFlowStatus.shouldStart,
-                        time: 0
-                    }
-                ],
-                childs: [
-                    {
-                        flowDetails: {
-                            flowName: 'createUser',
-                            flowStatus: flowStatus.selfResolved
-                        },
-                        nodeStatusesHistory: [
-                            {
-                                status: activeFlowStatus.notStarted,
-                                time: 0
-                            }
-                        ],
-                        childs: [
-                            {
-                                flowDetails: {
-                                    flowName: 'createUser',
-                                    flowStatus: flowStatus.completed
-                                },
-                                nodeStatusesHistory: [
-                                    {
-                                        status: activeFlowStatus.notStarted,
-                                        time: 0
-                                    }
-                                ],
-                                childs: []
-                            }
-                        ]
-                    }
-                ]
-            })
-        }
-    ];
+    const activeWorkflowsDetails = [createActiveWorkflow(workflowsJson, 'a')];
 
     const dispatchTime = Date.now();
 
     const actualActionsToDispatch = generateActionsToDispatch(
-        'id1',
+        activeWorkflowsDetails[0].workflowId,
         activeWorkflowsDetails,
-        flowFunctions,
+        functions.flows,
         dispatchTime
     );
 
     const expectedActionsToDispatch = [
-        changeFlowStatusAction('id1', 'createUser', dispatchTime, flowStatus.started)
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.started)
     ];
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
 test('2. find what actions to dispatch now - the second node: workflowStatus.selfResolved', t => {
     const activeWorkflowsDetails = [
-        {
-            workflowId: 'id1',
-            workflowName: 'createUser',
-            workflowStatusesHistory: [
-                {
-                    status: workflowStatus.started,
-                    time: 0
-                }
-            ],
-            head: Optional.of({
-                flowDetails: {
-                    flowName: 'createUser',
-                    flowStatus: flowStatus.started
-                },
-                nodeStatusesHistory: [
-                    {
-                        status: activeFlowStatus.notStarted,
-                        time: 0
-                    },
-                    {
-                        status: activeFlowStatus.shouldStart,
-                        time: 0
-                    },
-                    {
-                        status: activeFlowStatus.completed,
-                        time: 1
-                    }
-                ],
-                childs: [
-                    {
-                        flowDetails: {
-                            flowName: 'createUser',
-                            flowStatus: flowStatus.selfResolved
-                        },
-                        nodeStatusesHistory: [
-                            {
-                                status: activeFlowStatus.notStarted,
-                                time: 0
-                            },
-                            {
-                                status: activeFlowStatus.shouldStart,
-                                time: 1
-                            }
-                        ],
-                        childs: [
-                            {
-                                flowDetails: {
-                                    flowName: 'createUser',
-                                    flowStatus: flowStatus.completed
-                                },
-                                nodeStatusesHistory: [
-                                    {
-                                        status: activeFlowStatus.notStarted,
-                                        time: 0
-                                    }
-                                ],
-                                childs: []
-                            }
-                        ]
-                    }
-                ]
-            })
-        }
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1_succeed',
+                'a_2',
+                'a_3'
+            ]
+        })
     ];
 
     const dispatchTime = Date.now();
 
     const actualActionsToDispatch = generateActionsToDispatch(
-        'id1',
+        activeWorkflowsDetails[0].workflowId,
         activeWorkflowsDetails,
-        flowFunctions,
+        functions.flows,
         dispatchTime
     );
 
     const expectedActionsToDispatch = [
-        changeFlowStatusToSelfResolvedAction('id1', 'createUser', dispatchTime, flowFunctions.createUser.task)
+        changeFlowStatusToSelfResolvedAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, functions.flows.a.task)
     ];
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('3. find what actions to dispatch now - the second node: workflowStatus.completed', t => {
+test('3. find what actions to dispatch now - the third node: workflowStatus.completed', t => {
     const activeWorkflowsDetails = [
-        {
-            workflowId: 'id1',
-            workflowName: 'createUser',
-            workflowStatusesHistory: [
-                {
-                    status: workflowStatus.started,
-                    time: 0
-                }
-            ],
-            head: Optional.of({
-                flowDetails: {
-                    flowName: 'createUser',
-                    flowStatus: flowStatus.started
-                },
-                nodeStatusesHistory: [
-                    {
-                        status: activeFlowStatus.notStarted,
-                        time: 0
-                    },
-                    {
-                        status: activeFlowStatus.shouldStart,
-                        time: 0
-                    },
-                    {
-                        status: activeFlowStatus.completed,
-                        time: 1
-                    }
-                ],
-                childs: [
-                    {
-                        flowDetails: {
-                            flowName: 'createUser',
-                            flowStatus: flowStatus.selfResolved
-                        },
-                        nodeStatusesHistory: [
-                            {
-                                status: activeFlowStatus.notStarted,
-                                time: 0
-                            },
-                            {
-                                status: activeFlowStatus.shouldStart,
-                                time: 1
-                            },
-                            {
-                                status: activeFlowStatus.completed,
-                                time: 2
-                            }
-                        ],
-                        childs: [
-                            {
-                                flowDetails: {
-                                    flowName: 'createUser',
-                                    flowStatus: flowStatus.completed
-                                },
-                                nodeStatusesHistory: [
-                                    {
-                                        status: activeFlowStatus.notStarted,
-                                        time: 0
-                                    },
-                                    {
-                                        status: activeFlowStatus.shouldStart,
-                                        time: 2
-                                    }
-                                ],
-                                childs: []
-                            }
-                        ]
-                    }
-                ]
-            })
-        }
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1',
+                'a_2_succeed',
+                'a_3'
+            ]
+        })
     ];
 
     const dispatchTime = Date.now();
 
     const actualActionsToDispatch = generateActionsToDispatch(
-        'id1',
+        activeWorkflowsDetails[0].workflowId,
         activeWorkflowsDetails,
-        flowFunctions,
+        functions.flows,
         dispatchTime
     );
 
     const expectedActionsToDispatch = [
-        changeFlowStatusAction('id1', 'createUser', dispatchTime, flowStatus.completed)
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.completed)
+    ];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('4. find what actions to dispatch now - after all nodes succeed -> there are no more nodes to start.', t => {
+    const activeWorkflowsDetails = [
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1',
+                'a_2',
+                'a_3_succeed'
+            ]
+        })
+    ];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        activeWorkflowsDetails[0].workflowId,
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('5. find what actions to dispatch now - the activeWorkflowDetails object is not found', t => {
+    const activeWorkflowsDetails = [];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        'not-exist-active-workflow-id',
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('6. find what actions to dispatch now - we need to trigger one node from different flow', t => {
+    const activeWorkflowsDetails = [
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1_succeed',
+                'b',
+                'a_2',
+                'a_3'
+            ]
+        })
+    ];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        activeWorkflowsDetails[0].workflowId,
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'b', dispatchTime, flowStatus.started)
+    ];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('7. find what actions to dispatch now - we need to trigger two nodes', t => {
+    const activeWorkflowsDetails = [
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1_succeed',
+                'b',
+                'c',
+                'a_2',
+                'a_3'
+            ]
+        })
+    ];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        activeWorkflowsDetails[0].workflowId,
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'b', dispatchTime, flowStatus.started),
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'c', dispatchTime, flowStatus.started)
+    ];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('8. find what actions to dispatch now - multiple inner flows completed - so we need to trigger the outer flow - selfResolved', t => {
+    const activeWorkflowsDetails = [
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1',
+                'b_succeed',
+                'c_succeed',
+                'a_2',
+                'a_3'
+            ]
+        })
+    ];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        activeWorkflowsDetails[0].workflowId,
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [
+        changeFlowStatusToSelfResolvedAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, functions.flows.a.task)
+    ];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('9. find what actions to dispatch now - multiple inner flows completed - so we need to trigger the outer flow - completed', t => {
+    const activeWorkflowsDetails = [
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1',
+                'a_2',
+                'b_succeed',
+                'c_succeed',
+                'a_3'
+            ]
+        })
+    ];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        activeWorkflowsDetails[0].workflowId,
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.completed)
+    ];
+    t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
+});
+
+test('9. find what actions to dispatch now - (same flows more then once) multiple inner flows completed - so we need to trigger the outer flow - completed', t => {
+    const activeWorkflowsDetails = [
+        createActiveWorkflow(workflowsJson, {
+            'workflowName': 'a',
+            'workflow': [
+                'a_1',
+                'b',
+                'c',
+                'a_2',
+                'b_succeed',
+                'c_succeed',
+                'a_3'
+            ]
+        })
+    ];
+
+    const dispatchTime = Date.now();
+
+    const actualActionsToDispatch = generateActionsToDispatch(
+        activeWorkflowsDetails[0].workflowId,
+        activeWorkflowsDetails,
+        functions.flows,
+        dispatchTime
+    );
+
+    const expectedActionsToDispatch = [
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.completed)
     ];
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });

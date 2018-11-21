@@ -1,89 +1,109 @@
-import {workflowStatus} from './statuses';
-import {
-    START_WORKFLOW,
-    CHANGE_FLOW_STATUS,
-    COMPLETE_WORKFLOW
-} from './actions';
-import {getFirstBy} from './utils';
-import {
-    initializeWorkflowGraph,
-    updateCompletedNodeInGraph,
-    findShouldStartNode,
-    areAllFlowsCompleted
-} from './reducerGraphOperations';
-import Optional from 'optional-js';
+import {activeFlowStatus, workflowStatus} from './statuses';
+import {START_WORKFLOW, CHANGE_FLOW_STATUS, COMPLETE_WORKFLOW} from './actions';
+import {updateNodeAsSucceedInGraph, getNodeActiveStatus} from './reducerGraphOperations';
 
 const getWorkflowStatus = workflowDetails => workflowDetails.workflowStatusesHistory[workflowDetails.workflowStatusesHistory.length - 1].status;
 
 const startWorkflow = (state, action, workflowsDetails) => {
-    return getFirstBy(workflowsDetails, workflow => workflow.workflowName === action.workflowName)
-        .filter(() => !state.activeWorkflowsDetails.some(workflowDetails => workflowDetails.workflowId === action.workflowId))
-        .map(workflowDetails => ({
-            workflowId: action.workflowId,
-            workflowName: workflowDetails.workflowName,
-            userCustomParamsObject: action.userCustomParamsObject,
-            head: initializeWorkflowGraph(workflowDetails.head, action.time),
-            workflowStatusesHistory: [
-                {
-                    status: workflowStatus.started,
-                    time: action.time
-                }
-            ]
-        }))
-        .map(activeWorkflowDetails => ({
-            ...state,
-            activeWorkflowsDetails: [...state.activeWorkflowsDetails, activeWorkflowDetails],
-        }))
-        .orElse(state);
+    const workflowDetailsIndex = workflowsDetails.findIndex(workflow => workflow.workflowName === action.workflowName);
+
+    if (workflowDetailsIndex === -1 ||
+        state.activeWorkflowsDetails.findIndex(workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId) > -1)
+        return state;
+
+    return {
+        ...state,
+        activeWorkflowsDetails: [
+            ...state.activeWorkflowsDetails,
+            {
+                workflowId: action.workflowId,
+                workflowName: workflowsDetails[workflowDetailsIndex].workflowName,
+                userCustomParamsObject: action.userCustomParamsObject,
+                graph: workflowsDetails[workflowDetailsIndex].graph.map((node, i) => i === 0 ?
+                    {
+                        ...node,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: action.time
+                            },
+                            {
+                                status: activeFlowStatus.shouldStart,
+                                time: action.time
+                            }
+                        ]
+                    } :
+                    {
+                        ...node,
+                        nodeStatusesHistory: [
+                            {
+                                status: activeFlowStatus.notStarted,
+                                time: action.time
+                            }
+                        ]
+                    }),
+                workflowStatusesHistory: [
+                    {
+                        status: workflowStatus.started,
+                        time: action.time
+                    }
+                ]
+            }
+        ],
+    };
 };
 
 const changeFlowStatus = (state, action) => {
-    return Optional.of(state.activeWorkflowsDetails.findIndex(workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId))
-        .flatMap(index => index > -1 ? Optional.of(index) : Optional.empty())
-        .flatMap(activeWorkflowDetailsIndex => {
-            const activeWorkflowDetails = state.activeWorkflowsDetails[activeWorkflowDetailsIndex];
+    const activeWorkflowDetailsIndex = state.activeWorkflowsDetails.findIndex(workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId);
+    if (activeWorkflowDetailsIndex === -1 ||
+        getWorkflowStatus(state.activeWorkflowsDetails[activeWorkflowDetailsIndex]) !== workflowStatus.started)
+        return state;
 
-            if (getWorkflowStatus(activeWorkflowDetails) !== workflowStatus.started)
-                return Optional.of(state);
+    const activeWorkflowDetails = state.activeWorkflowsDetails[activeWorkflowDetailsIndex];
 
-            return findShouldStartNode(activeWorkflowDetails.head, action.flowName, action.flowStatus)
-                .map(nodeToSetAsCompleted => updateCompletedNodeInGraph(activeWorkflowDetails.head, nodeToSetAsCompleted, action.time))
-                .map(({head}) => ({
-                    ...activeWorkflowDetails,
-                    head
-                }))
-                .map(updatedActiveWorkflowDetails => ({
-                    ...state,
-                    activeWorkflowsDetails: [
-                        ...state.activeWorkflowsDetails.slice(0, activeWorkflowDetailsIndex),
-                        updatedActiveWorkflowDetails,
-                        ...state.activeWorkflowsDetails.slice(activeWorkflowDetailsIndex + 1)
-                    ]
-                }));
-        })
-        .orElse(state);
+    // the node that the action is referring to.
+    const nodeIndexToSetAsSucceed = activeWorkflowDetails.graph.map((node, i) => i)
+        .find(i => getNodeActiveStatus(activeWorkflowDetails.graph[i]) === activeFlowStatus.shouldStart &&
+            activeWorkflowDetails.graph[i].flowDetails.flowName === action.flowName &&
+            activeWorkflowDetails.graph[i].flowDetails.flowStatus === action.flowStatus);
+
+    return {
+        ...state,
+        activeWorkflowsDetails: [
+            ...state.activeWorkflowsDetails.slice(0, activeWorkflowDetailsIndex),
+            {
+                ...activeWorkflowDetails,
+                graph: updateNodeAsSucceedInGraph(activeWorkflowDetails.graph, nodeIndexToSetAsSucceed, action.time)
+            },
+            ...state.activeWorkflowsDetails.slice(activeWorkflowDetailsIndex + 1)
+        ]
+    };
 };
 
 const completeWorkflow = (state, action) => {
-    return getFirstBy(state.activeWorkflowsDetails, activeWorkflow => activeWorkflow.workflowId === action.workflowId)
-        .filter(activeWorkflowDetails => getWorkflowStatus(activeWorkflowDetails) === workflowStatus.started)
-        .filter(activeWorkflowDetails => areAllFlowsCompleted(activeWorkflowDetails.head))
-        .map(activeWorkflowDetails => ({
-            ...activeWorkflowDetails,
-            workflowStatusesHistory: [
-                ...activeWorkflowDetails.workflowStatusesHistory,
-                {
-                    status: workflowStatus.completed,
-                    time: action.time
-                }
-            ]
-        }))
-        .map(updatedActiveWorkflowDetails => ({
-            ...state,
-            activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== updatedActiveWorkflowDetails.workflowId),
-            nonActiveWorkflowsDetails: [...state.nonActiveWorkflowsDetails, updatedActiveWorkflowDetails]
-        }))
-        .orElse(state);
+    const activeWorkflowDetailsIndex = state.activeWorkflowsDetails.findIndex(workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId);
+    if (activeWorkflowDetailsIndex === -1 ||
+        getWorkflowStatus(state.activeWorkflowsDetails[activeWorkflowDetailsIndex]) !== workflowStatus.started ||
+        state.activeWorkflowsDetails[activeWorkflowDetailsIndex].graph.some(node => getNodeActiveStatus(node) !== activeFlowStatus.succeed))
+        return state;
+
+    return {
+        ...state,
+        activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== action.workflowId),
+        nonActiveWorkflowsDetails: [
+            ...state.nonActiveWorkflowsDetails,
+            {
+                ...state.activeWorkflowsDetails[activeWorkflowDetailsIndex],
+                workflowStatusesHistory: [
+                    ...state.activeWorkflowsDetails[activeWorkflowDetailsIndex].workflowStatusesHistory,
+                    {
+                        status: workflowStatus.completed,
+                        time: action.time
+                    }
+                ]
+            }
+        ]
+    };
 };
 
 const initialState = {

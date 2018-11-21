@@ -1,0 +1,31 @@
+{
+  "flowsNames": [
+    "a",
+    "b",
+    "c",
+    "d"
+  ],
+  "workflowsDetails": [
+    "a",
+    "b",
+    {
+      "workflowName": "workflowC",
+      "workflow": [
+        "a_1",
+        "workflowD",
+        "a_2",
+        "a_3"
+      ]
+    },
+    {
+      "workflowName": "delete",
+      "workflow": [
+        "d_1",
+        "b",
+        "c",
+        "d_2",
+        "d_3"
+      ]
+    }
+  ]
+}

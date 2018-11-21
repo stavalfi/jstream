@@ -1,7 +1,7 @@
-import {of, empty} from 'optional-js';
+const mapIf = (predicate, mapper) => (element, i, array) => {
+    if (predicate(element, i, array))
+        return mapper(element, i, array);
+    return element;
+};
 
-const getFirstBy = (array, predicate) =>
-    of(array.findIndex(predicate))
-        .flatMap(index => index > -1 ? of(array[index]) : empty());
-
-export {getFirstBy};
+export {mapIf};

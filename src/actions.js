@@ -1,6 +1,5 @@
-import {flowStatus} from './statuses';
-import {getFirstBy} from './utils';
-import {areAllFlowsCompleted, findNodesToDispatch} from './reducerGraphOperations';
+import {activeFlowStatus, flowStatus} from './statuses';
+import {getNodeActiveStatus} from './reducerGraphOperations';
 
 // action constants
 
@@ -51,28 +50,26 @@ const completeWorkflowAction = (workflowId, workflowName, completeWorkflowTime) 
 
 // dispatch all flows in the given workflow (I assume the workflow has started but not completed).
 const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunctions, currentDispatchesTime) => {
-    const updatedActiveWorkflowDetails = getFirstBy(activeWorkflowsDetails,
-        activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
+    const activeWorkflowDetailsIndex = activeWorkflowsDetails.findIndex(activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
 
-    if (!updatedActiveWorkflowDetails.isPresent())
+    const workflowStatus = workflowDetails => workflowDetails.workflowStatusesHistory[workflowDetails.workflowStatusesHistory.length - 1].status;
+    if (activeWorkflowDetailsIndex === -1 ||
+        workflowStatus(activeWorkflowsDetails[activeWorkflowDetailsIndex]) === workflowStatus.completed)
         return [];
+
+    const updatedActiveWorkflowDetails = activeWorkflowsDetails[activeWorkflowDetailsIndex];
+    const graph = updatedActiveWorkflowDetails.graph;
 
     // note: if nodesToStart.length===0 it doesn't mean the workflow is succeed
     // because it may mean that some nodes WILL be start async later!
-    if (areAllFlowsCompleted(updatedActiveWorkflowDetails.get().head))
+    if (graph.every(node => getNodeActiveStatus(node) === activeFlowStatus.succeed))
         return [];
 
-    const newHead = updatedActiveWorkflowDetails.get().head;
-
     // I need to find all nodes that needs to be dispatched.
-    const actionsToDispatch = findNodesToDispatch(newHead)
-        .map(node => {
-            if (node.flowDetails.flowStatus === flowStatus.selfResolved) {
-                const flowFunction = flowsFunctions[node.flowDetails.flowName].task;
-                return changeFlowStatusToSelfResolvedAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, flowFunction);
-            }
-            return changeFlowStatusAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, node.flowDetails.flowStatus);
-        });
+    const actionsToDispatch = graph.filter(node => getNodeActiveStatus(node) === activeFlowStatus.shouldStart)
+        .map(node => node.flowDetails.flowStatus === flowStatus.selfResolved ?
+            changeFlowStatusToSelfResolvedAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, flowsFunctions[node.flowDetails.flowName].task) :
+            changeFlowStatusAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, node.flowDetails.flowStatus));
 
     return actionsToDispatch;
 };
