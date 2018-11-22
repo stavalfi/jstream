@@ -48,13 +48,13 @@ const completeWorkflowAction = (workflowId, workflowName, completeWorkflowTime) 
     time: completeWorkflowTime
 });
 
-// dispatch all flows in the given workflow (I assume the workflow has started but not completed).
+// dispatch all flows in the given workflow (I assume the workflow has started but not succeed).
 const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunctions, currentDispatchesTime) => {
     const activeWorkflowDetailsIndex = activeWorkflowsDetails.findIndex(activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
 
     const workflowStatus = workflowDetails => workflowDetails.workflowStatusesHistory[workflowDetails.workflowStatusesHistory.length - 1].status;
     if (activeWorkflowDetailsIndex === -1 ||
-        workflowStatus(activeWorkflowsDetails[activeWorkflowDetailsIndex]) === workflowStatus.completed)
+        workflowStatus(activeWorkflowsDetails[activeWorkflowDetailsIndex]) === workflowStatus.succeed)
         return [];
 
     const updatedActiveWorkflowDetails = activeWorkflowsDetails[activeWorkflowDetailsIndex];
@@ -97,7 +97,7 @@ const createRunWorkflowAction = (stateSelector, functions) => (workflowName, use
     // start workflow and dispatch all actions in the workflow (dispatch all flows in this workflow).
     dispatchNextLayer(stateSelector(getState()), [dispatch(startAction)], stateSelector(getState()));
 
-    // all nodes in workflow completed so complete workflow.
+    // all nodes in workflow succeed so complete workflow.
     const completeAction = completeWorkflowAction(startAction.workflowId, startAction.workflowName, Date.now());
 
     return dispatch(completeAction);

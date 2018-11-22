@@ -13,7 +13,8 @@ const flowStatus = {
 
 const workflowStatus = {
     started: 1,
-    completed: 2
+    succeed: 2,
+    failed: 3
 };
 
 export {activeFlowStatus, flowStatus, workflowStatus};

@@ -57,7 +57,7 @@ test('2. find what actions to dispatch now - the second node: workflowStatus.sel
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('3. find what actions to dispatch now - the third node: workflowStatus.completed', t => {
+test('3. find what actions to dispatch now - the third node: workflowStatus.succeed', t => {
     const activeWorkflowsDetails = [
         createActiveWorkflow(workflowsJson, {
             'workflowName': 'a',
@@ -183,7 +183,7 @@ test('7. find what actions to dispatch now - we need to trigger two nodes', t =>
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('8. find what actions to dispatch now - multiple inner flows completed - so we need to trigger the outer flow - selfResolved', t => {
+test('8. find what actions to dispatch now - multiple inner flows succeed - so we need to trigger the outer flow - selfResolved', t => {
     const activeWorkflowsDetails = [
         createActiveWorkflow(workflowsJson, {
             'workflowName': 'a',
@@ -212,7 +212,7 @@ test('8. find what actions to dispatch now - multiple inner flows completed - so
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('9. find what actions to dispatch now - multiple inner flows completed - so we need to trigger the outer flow - completed', t => {
+test('9. find what actions to dispatch now - multiple inner flows succeed - so we need to trigger the outer flow - succeed', t => {
     const activeWorkflowsDetails = [
         createActiveWorkflow(workflowsJson, {
             'workflowName': 'a',
@@ -241,7 +241,7 @@ test('9. find what actions to dispatch now - multiple inner flows completed - so
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('9. find what actions to dispatch now - (same flows more then once) multiple inner flows completed - so we need to trigger the outer flow - completed', t => {
+test('9. find what actions to dispatch now - (same flows more then once) multiple inner flows succeed - so we need to trigger the outer flow - succeed', t => {
     const activeWorkflowsDetails = [
         createActiveWorkflow(workflowsJson, {
             'workflowName': 'a',

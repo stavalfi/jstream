@@ -97,7 +97,7 @@ const completeWorkflow = (state, action) => {
                 workflowStatusesHistory: [
                     ...state.activeWorkflowsDetails[activeWorkflowDetailsIndex].workflowStatusesHistory,
                     {
-                        status: workflowStatus.completed,
+                        status: workflowStatus.succeed,
                         time: action.time
                     }
                 ]
