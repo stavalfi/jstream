@@ -64,7 +64,7 @@ const changeFlowStatus = (state, action) => {
             ...state.activeWorkflowsDetails.slice(0, activeWorkflowDetailsIndex),
             {
                 ...activeWorkflowDetails,
-                graph: updateNodeAsSucceedInGraph(activeWorkflowDetails.graph, nodeIndexToSetAsSucceed, action.time)
+                graph: updateNodeAsSucceedInGraph(activeWorkflowDetails.graph, nodeIndexToSetAsSucceed, action)
             },
             ...state.activeWorkflowsDetails.slice(activeWorkflowDetailsIndex + 1)
         ]

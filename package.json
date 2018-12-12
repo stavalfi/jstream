@@ -8,7 +8,6 @@
     "build": "cross-env NODE_ENV=deployment webpack",
     "eslint": "eslint src --fix",
     "test": "node $NODE_DEBUG_OPTION node_modules/.bin/ava",
-    "cucumber": "cucumber-js --require-module @babel/register tests"
   },
   "keywords": [],
   "author": "stav alfi",
