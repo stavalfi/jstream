@@ -1,4 +1,4 @@
-import {activeFlowStatus, flowStatus} from './statuses';
+import {nodeStatus, flowStatus} from './statuses';
 import {getNodeActiveStatus} from './reducerGraphOperations';
 
 // action constants
@@ -52,9 +52,7 @@ const completeWorkflowAction = (workflowId, workflowName, completeWorkflowTime) 
 const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunctions, currentDispatchesTime) => {
     const activeWorkflowDetailsIndex = activeWorkflowsDetails.findIndex(activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
 
-    const workflowStatus = workflowDetails => workflowDetails.workflowStatusesHistory[workflowDetails.workflowStatusesHistory.length - 1].status;
-    if (activeWorkflowDetailsIndex === -1 ||
-        workflowStatus(activeWorkflowsDetails[activeWorkflowDetailsIndex]) === workflowStatus.succeed)
+    if (activeWorkflowDetailsIndex === -1)
         return [];
 
     const updatedActiveWorkflowDetails = activeWorkflowsDetails[activeWorkflowDetailsIndex];
@@ -62,11 +60,11 @@ const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunc
 
     // note: if nodesToStart.length===0 it doesn't mean the workflow is succeed
     // because it may mean that some nodes WILL be start async later!
-    if (graph.every(node => getNodeActiveStatus(node) === activeFlowStatus.succeed))
+    if (graph.every(node => getNodeActiveStatus(node) === nodeStatus.succeed))
         return [];
 
     // I need to find all nodes that needs to be dispatched.
-    const actionsToDispatch = graph.filter(node => getNodeActiveStatus(node) === activeFlowStatus.shouldStart)
+    const actionsToDispatch = graph.filter(node => getNodeActiveStatus(node) === nodeStatus.shouldStart)
         .map(node => node.flowDetails.flowStatus === flowStatus.selfResolved ?
             changeFlowStatusToSelfResolvedAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, flowsFunctions[node.flowDetails.flowName].task) :
             changeFlowStatusAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, node.flowDetails.flowStatus));

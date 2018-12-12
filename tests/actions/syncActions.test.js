@@ -12,7 +12,7 @@ import {
 /* eslint fp/no-nil:0 */
 /* eslint fp/no-mutation:0 fp/no-let:0 */
 
-test('1. find what actions to dispatch now - the first node: workflowStatus.started', t => {
+test('1. find what actions to dispatch now - the first node: flowStatus.started', t => {
     const activeWorkflowsDetails = [createActiveWorkflow(workflowsJson, 'a')];
 
     const dispatchTime = Date.now();
@@ -30,7 +30,7 @@ test('1. find what actions to dispatch now - the first node: workflowStatus.star
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('2. find what actions to dispatch now - the second node: workflowStatus.selfResolved', t => {
+test('2. find what actions to dispatch now - the second node: flowStatus.selfResolved', t => {
     const activeWorkflowsDetails = [
         createActiveWorkflow(workflowsJson, {
             'workflowName': 'a',
@@ -57,7 +57,7 @@ test('2. find what actions to dispatch now - the second node: workflowStatus.sel
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
 
-test('3. find what actions to dispatch now - the third node: workflowStatus.succeed', t => {
+test('3. find what actions to dispatch now - the third node: flowStatus.succeed', t => {
     const activeWorkflowsDetails = [
         createActiveWorkflow(workflowsJson, {
             'workflowName': 'a',
@@ -79,7 +79,7 @@ test('3. find what actions to dispatch now - the third node: workflowStatus.succ
     );
 
     const expectedActionsToDispatch = [
-        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.completed)
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.succeed)
     ];
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
@@ -236,7 +236,7 @@ test('9. find what actions to dispatch now - multiple inner flows succeed - so w
     );
 
     const expectedActionsToDispatch = [
-        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.completed)
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.succeed)
     ];
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });
@@ -267,7 +267,7 @@ test('9. find what actions to dispatch now - (same flows more then once) multipl
     );
 
     const expectedActionsToDispatch = [
-        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.completed)
+        changeFlowStatusAction(activeWorkflowsDetails[0].workflowId, 'a', dispatchTime, flowStatus.succeed)
     ];
     t.deepEqual(actualActionsToDispatch, expectedActionsToDispatch);
 });

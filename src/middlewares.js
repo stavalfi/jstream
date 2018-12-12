@@ -1,5 +1,5 @@
 import {CHANGE_FLOW_STATUS} from './actions';
-import {activeFlowStatus, flowStatus} from './statuses';
+import {nodeStatus, flowStatus} from './statuses';
 import createUserGraphOperations from './createUserGraphOperations';
 import thunk from 'redux-thunk';
 
@@ -29,7 +29,7 @@ const createFlowSelfResolvedMiddleware = stateSelector => store => next => actio
             workflowId: action.workflowId,
             flowStatus: action.flowStatus,
             time: action.time,
-            activeFlowStatus: activeFlowStatus.succeed,
+            activeFlowStatus: nodeStatus.succeed,
             flowFunctionResult: result
         });
     }

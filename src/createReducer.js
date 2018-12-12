@@ -1,8 +1,6 @@
-import {activeFlowStatus, workflowStatus} from './statuses';
+import {nodeStatus} from './statuses';
 import {START_WORKFLOW, CHANGE_FLOW_STATUS, COMPLETE_WORKFLOW} from './actions';
 import {updateNodeAsSucceedInGraph, getNodeActiveStatus} from './reducerGraphOperations';
-
-const getWorkflowStatus = workflowDetails => workflowDetails.workflowStatusesHistory[workflowDetails.workflowStatusesHistory.length - 1].status;
 
 const startWorkflow = (state, action, workflowsDetails) => {
     const workflowDetailsIndex = workflowsDetails.findIndex(workflow => workflow.workflowName === action.workflowName);
@@ -24,11 +22,11 @@ const startWorkflow = (state, action, workflowsDetails) => {
                         ...node,
                         nodeStatusesHistory: [
                             {
-                                status: activeFlowStatus.notStarted,
+                                status: nodeStatus.notStarted,
                                 time: action.time
                             },
                             {
-                                status: activeFlowStatus.shouldStart,
+                                status: nodeStatus.shouldStart,
                                 time: action.time
                             }
                         ]
@@ -37,17 +35,11 @@ const startWorkflow = (state, action, workflowsDetails) => {
                         ...node,
                         nodeStatusesHistory: [
                             {
-                                status: activeFlowStatus.notStarted,
+                                status: nodeStatus.notStarted,
                                 time: action.time
                             }
                         ]
-                    }),
-                workflowStatusesHistory: [
-                    {
-                        status: workflowStatus.started,
-                        time: action.time
-                    }
-                ]
+                    })
             }
         ],
     };
@@ -55,15 +47,14 @@ const startWorkflow = (state, action, workflowsDetails) => {
 
 const changeFlowStatus = (state, action) => {
     const activeWorkflowDetailsIndex = state.activeWorkflowsDetails.findIndex(workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId);
-    if (activeWorkflowDetailsIndex === -1 ||
-        getWorkflowStatus(state.activeWorkflowsDetails[activeWorkflowDetailsIndex]) !== workflowStatus.started)
+    if (activeWorkflowDetailsIndex === -1)
         return state;
 
     const activeWorkflowDetails = state.activeWorkflowsDetails[activeWorkflowDetailsIndex];
 
     // the node that the action is referring to.
     const nodeIndexToSetAsSucceed = activeWorkflowDetails.graph.map((node, i) => i)
-        .find(i => getNodeActiveStatus(activeWorkflowDetails.graph[i]) === activeFlowStatus.shouldStart &&
+        .find(i => getNodeActiveStatus(activeWorkflowDetails.graph[i]) === nodeStatus.shouldStart &&
             activeWorkflowDetails.graph[i].flowDetails.flowName === action.flowName &&
             activeWorkflowDetails.graph[i].flowDetails.flowStatus === action.flowStatus);
 
@@ -83,8 +74,7 @@ const changeFlowStatus = (state, action) => {
 const completeWorkflow = (state, action) => {
     const activeWorkflowDetailsIndex = state.activeWorkflowsDetails.findIndex(workflowDetails => workflowDetails.workflowId === workflowDetails.workflowId);
     if (activeWorkflowDetailsIndex === -1 ||
-        getWorkflowStatus(state.activeWorkflowsDetails[activeWorkflowDetailsIndex]) !== workflowStatus.started ||
-        state.activeWorkflowsDetails[activeWorkflowDetailsIndex].graph.some(node => getNodeActiveStatus(node) !== activeFlowStatus.succeed))
+        state.activeWorkflowsDetails[activeWorkflowDetailsIndex].graph.some(node => getNodeActiveStatus(node) !== nodeStatus.succeed))
         return state;
 
     return {
@@ -92,16 +82,7 @@ const completeWorkflow = (state, action) => {
         activeWorkflowsDetails: state.activeWorkflowsDetails.filter(activeWorkflowDetails => activeWorkflowDetails.workflowId !== action.workflowId),
         nonActiveWorkflowsDetails: [
             ...state.nonActiveWorkflowsDetails,
-            {
-                ...state.activeWorkflowsDetails[activeWorkflowDetailsIndex],
-                workflowStatusesHistory: [
-                    ...state.activeWorkflowsDetails[activeWorkflowDetailsIndex].workflowStatusesHistory,
-                    {
-                        status: workflowStatus.succeed,
-                        time: action.time
-                    }
-                ]
-            }
+            state.activeWorkflowsDetails[activeWorkflowDetailsIndex]
         ]
     };
 };

@@ -1,4 +1,4 @@
-const activeFlowStatus = {
+const nodeStatus = {
     notStarted: 1,
     shouldStart: 2,
     succeed: 3,
@@ -8,13 +8,7 @@ const activeFlowStatus = {
 const flowStatus = {
     started: 1,
     selfResolved: 2,
-    completed: 3
+    succeed: 3
 };
 
-const workflowStatus = {
-    started: 1,
-    succeed: 2,
-    failed: 3
-};
-
-export {activeFlowStatus, flowStatus, workflowStatus};
+export {nodeStatus, flowStatus};

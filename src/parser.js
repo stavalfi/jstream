@@ -82,7 +82,7 @@ const findParents = (flowDetailsArray, indexOfFlowDetails) => {
                         return {result: [i], shouldStop: true};
                     else
                         return {result, shouldStop: true};
-                if (flowDetailsArray[i].flowStatus === flowStatus.completed)
+                if (flowDetailsArray[i].flowStatus === flowStatus.succeed)
                     return {result: [...result, i], shouldStop};
                 return {result, shouldStop};
             }, {result: [], shouldStop: false}).result;
@@ -95,7 +95,7 @@ const findParents = (flowDetailsArray, indexOfFlowDetails) => {
     // we need to return a_i.
 
     for (let i = indexOfFlowDetails - 1; i >= 0; i--) {
-        if (flowDetailsArray[i].flowStatus !== flowStatus.completed)
+        if (flowDetailsArray[i].flowStatus !== flowStatus.succeed)
             return [i];
         const flowToSkip = flowDetailsArray[i];
         // if the given node is c1, then skip b3,b2,b1 (hold in b1)
@@ -109,7 +109,7 @@ const findChilds = (flowDetailsArray, indexOfFlowDetails) => {
     if (indexOfFlowDetails === flowDetailsArray.length - 1)
         return [];
 
-    if (flowDetailsArray[indexOfFlowDetails].flowStatus !== flowStatus.completed) {
+    if (flowDetailsArray[indexOfFlowDetails].flowStatus !== flowStatus.succeed) {
         return flowDetailsArray.reduce(({result, shouldStop}, flowDetails, i) => {
             if (shouldStop)
                 return {result, shouldStop};
@@ -153,7 +153,7 @@ const findChilds = (flowDetailsArray, indexOfFlowDetails) => {
         const flowToSkip = flowDetailsArray[i];
         // if the given node is x1, then skip a1,a2,a3 (hold in a3)
         // and in the next iteration of the loop, come to y_i+1.
-        while (flowDetailsArray[i].flowName !== flowToSkip.flowName || flowDetailsArray[i].flowStatus !== flowStatus.completed)
+        while (flowDetailsArray[i].flowName !== flowToSkip.flowName || flowDetailsArray[i].flowStatus !== flowStatus.succeed)
             i++;
     }
 };
