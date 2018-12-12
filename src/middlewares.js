@@ -3,12 +3,6 @@ import {nodeStatus, flowStatus} from './statuses';
 import createUserGraphOperations from './createUserGraphOperations';
 import thunk from 'redux-thunk';
 
-const arrayMiddleware = store => next => action => {
-    if (Array.isArray(action))
-        return action.map(store.dispatch);
-    return next(action);
-};
-
 const createFlowSelfResolvedMiddleware = stateSelector => store => next => action => {
     if (action.generalType === CHANGE_FLOW_STATUS &&
         action.hasOwnProperty('flowStatus') &&
@@ -36,4 +30,4 @@ const createFlowSelfResolvedMiddleware = stateSelector => store => next => actio
     return next(action);
 };
 
-export {thunk, arrayMiddleware, createFlowSelfResolvedMiddleware};
+export {thunk, createFlowSelfResolvedMiddleware};

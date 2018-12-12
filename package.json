@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=development webpack-serve",
     "build": "cross-env NODE_ENV=deployment webpack",
     "eslint": "eslint src --fix",
-    "test": "node $NODE_DEBUG_OPTION node_modules/.bin/ava",
+    "test": "node $NODE_DEBUG_OPTION node_modules/.bin/ava"
   },
   "keywords": [],
   "author": "stav alfi",

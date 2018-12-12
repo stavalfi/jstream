@@ -49,27 +49,18 @@ const completeWorkflowAction = (workflowId, workflowName, completeWorkflowTime) 
 });
 
 // dispatch all flows in the given workflow (I assume the workflow has started but not succeed).
-const generateActionsToDispatch = (workflowId, activeWorkflowsDetails, flowsFunctions, currentDispatchesTime) => {
-    const activeWorkflowDetailsIndex = activeWorkflowsDetails.findIndex(activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
+const generateActionToDispatch = (workflowId, activeWorkflowsDetails, flowsFunctions, currentDispatchesTime) => {
+    const updatedActiveWorkflowDetails = activeWorkflowsDetails.find(activeWorkflowDetails => activeWorkflowDetails.workflowId === workflowId);
 
-    if (activeWorkflowDetailsIndex === -1)
-        return [];
+    const nodeToDispatch = updatedActiveWorkflowDetails &&
+        updatedActiveWorkflowDetails.graph.filter(node => getNodeActiveStatus(node) !== nodeStatus.succeed)
+            .find(node => node.parents.every(i => getNodeActiveStatus(updatedActiveWorkflowDetails.graph[i]) === nodeStatus.succeed));
 
-    const updatedActiveWorkflowDetails = activeWorkflowsDetails[activeWorkflowDetailsIndex];
-    const graph = updatedActiveWorkflowDetails.graph;
-
-    // note: if nodesToStart.length===0 it doesn't mean the workflow is succeed
-    // because it may mean that some nodes WILL be start async later!
-    if (graph.every(node => getNodeActiveStatus(node) === nodeStatus.succeed))
-        return [];
-
-    // I need to find all nodes that needs to be dispatched.
-    const actionsToDispatch = graph.filter(node => getNodeActiveStatus(node) === nodeStatus.shouldStart)
-        .map(node => node.flowDetails.flowStatus === flowStatus.selfResolved ?
-            changeFlowStatusToSelfResolvedAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, flowsFunctions[node.flowDetails.flowName].task) :
-            changeFlowStatusAction(workflowId, node.flowDetails.flowName, currentDispatchesTime, node.flowDetails.flowStatus));
-
-    return actionsToDispatch;
+    return nodeToDispatch && (
+        nodeToDispatch.flowDetails.flowStatus === flowStatus.selfResolved
+            ? changeFlowStatusToSelfResolvedAction(workflowId, nodeToDispatch.flowDetails.flowName, currentDispatchesTime, flowsFunctions[nodeToDispatch.flowDetails.flowName].task)
+            : changeFlowStatusAction(workflowId, nodeToDispatch.flowDetails.flowName, currentDispatchesTime, nodeToDispatch.flowDetails.flowStatus)
+    );
 };
 
 // async action creators
@@ -82,18 +73,21 @@ const createRunWorkflowAction = (stateSelector, functions) => (workflowName, use
         if (newState === lastState)
             return lastActions;
 
-        const actionsToDispatch = generateActionsToDispatch(
+        const actionToDispatch = generateActionToDispatch(
             startAction.workflowId,
             newState.activeWorkflowsDetails,
             functions.flows,
             Date.now()
         );
 
-        return dispatchNextLayer(newState, dispatch(actionsToDispatch), stateSelector(getState()));
+        if (!actionToDispatch)
+            return lastState;
+
+        return dispatchNextLayer(newState, dispatch(actionToDispatch), stateSelector(getState()));
     }
 
     // start workflow and dispatch all actions in the workflow (dispatch all flows in this workflow).
-    dispatchNextLayer(stateSelector(getState()), [dispatch(startAction)], stateSelector(getState()));
+    dispatchNextLayer(stateSelector(getState()), dispatch(startAction), stateSelector(getState()));
 
     // all nodes in workflow succeed so complete workflow.
     const completeAction = completeWorkflowAction(startAction.workflowId, startAction.workflowName, Date.now());
@@ -110,6 +104,6 @@ export {
     changeFlowStatusToSelfResolvedAction,
     changeFlowStatusAction,
     completeWorkflowAction,
-    generateActionsToDispatch,
+    generateActionToDispatch,
     createRunWorkflowAction
 };
