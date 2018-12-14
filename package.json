@@ -1,6 +1,6 @@
 {
   "name": "workflow.js",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "Manage unidirectional async workflows",
   "main": "index.js",
   "scripts": {
