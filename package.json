@@ -41,5 +41,10 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "compose-function": "^3.0.3",
+    "identity-function": "^1.0.0",
+    "kindof": "^2.0.0",
+    "prettyjson": "^1.2.1"
+  }
 }
