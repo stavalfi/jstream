@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {compose} from 'redux'
 
 function kindof(obj) {
@@ -221,16 +222,16 @@ function getFlowParent(defaultTransition, head, {node}) {
                 // the workflow and the flowStateGraph contains a single string. there are is parent.
                 return {};
             case 'array':
-                for (const index in pos)
-                    if (pos[index] === node) {
-                        const {stateName: posStateName} = destructString({
-                            node: pos,
-                            key: index
-                        }, {expectedToFind: true});
-                        if (posStateName === firstStateNameInFlow)
-                            return {foundFlowParent: true, foundNode: true, flowParentNode: pos, flowParentKey: index};
-                        return {foundNode: true};
-                    }
+                const element = _.find(pos, index => index === node);
+                if (element) {
+                    const {stateName: posStateName} = destructString({
+                        node: pos,
+                        key: element
+                    }, {expectedToFind: true});
+                    if (posStateName === firstStateNameInFlow)
+                        return {foundFlowParent: true, foundNode: true, flowParentNode: pos, flowParentKey: index};
+                    return {foundNode: true};
+                }
                 for (const index in pos) {
                     const {foundFlowParent, foundNode, flowParentNode, flowParentKey, flowParentIsKey} = find(pos[index]);
                     if (foundFlowParent)
