@@ -45,6 +45,7 @@
     "compose-function": "^3.0.3",
     "identity-function": "^1.0.0",
     "kindof": "^2.0.0",
+    "parse-json": "^4.0.0",
     "prettyjson": "^1.2.1"
   }
 }

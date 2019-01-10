@@ -1,8 +1,10 @@
 export default {
-    priorityFlowStateMachine: {
-        'shouldStart': 'succeed'
-    },
-    defaultTransition: (currentWorkflowState, workflowStateMachine, currentLogicState, logicStateMachine) =>
+    // NOTE: there are no repeats of stateNames inside flowStateMachine (for supporting unidirectional flows).
+    // it means that when checking who are the children of a leaf in the real graph,
+    // i only need to check if the leaf is the leaf in this graph and if yes,
+    // i will check by the rules. if not, he doesn't have childs.
+    defaultTransition: ['start', 'succeed'],
+    defaultTransitionLogic: (currentWorkflowState, workflowStateMachine, currentLogicState, logicStateMachine) =>
         (workflowId, state, workflowParam) =>
             flowLogic => ({
                 result: flowLogic(workflowId, state, workflowParam),
@@ -11,13 +13,15 @@ export default {
                 nextLogicState: logicStateMachine[currentLogicState],
             }),
     // conditions for flowStateMachine:
-    // flowStateMachine must be well formatted.
-    // it must have one head.
-    // no repeats.
-    // one node can have multiple childs but multiple node can't have the same child
-    // it must have head and at least one child
+    // 1. flowStateMachine must be well formatted. it means: arrays only in the leafs.
+    // 2. it must have one head but a child is not mandatory..
+    // 3. no repeats. -> because we want unidirectional flows && workflows ONLY
     flowStateMachine: {
-        'shouldStart': ['failed', 'canceled', 'succeed']
+        'shouldStart': [
+            'failed',
+            'canceled',
+            'succeed',
+        ]
     },
     workflowStateMachine: [
         {
@@ -37,7 +41,16 @@ export default {
             children: []
         }
     ],
-    flow: [
+    flows: [
+        {
+            name: 'manageUser',
+            statesLogic: [
+                {
+                    stateName: 'shouldStart',
+                    logic: (workflowId, state, workflowParam) => console.log(workflowId, state, workflowParam)
+                }
+            ]
+        },
         {
             name: 'createUser',
             statesLogic: [
@@ -76,17 +89,17 @@ export default {
         }
     ],
     workflows: [
-        // 'createUser',
+        'createUser',
         // {
         //     name: 'removeUser',
         //     workflow: 'removeUser'
         // },
-        {
-            name: 'removeUser',
-            workflow: {
-                'removeUser_shouldStart': ['removeUser_failed', 'removeUser_canceled', 'removeUser_succeed']
-            }
-        },
+        // {
+        //     name: 'removeUser',
+        //     workflow: {
+        //         'removeUser_shouldStart': ['removeUser_failed', 'removeUser_canceled', 'removeUser_succeed']
+        //     }
+        // },
         // {
         //     name: 'manageUser',
         //     workflow: {
@@ -125,28 +138,39 @@ export default {
         //     }
         // },
         // {
-        //     name: 'createUser6',
+        //     name: 'createUser5',
         //     workflow: {
-        //         [['createUser_shouldStart']]: {
-        //             [['createUser_succeed']]: {
-        //                 [['manageUser']]: 'searchUser'
+        //         'createUser_shouldStart': [
+        //             {
+        //                 'a_2': [
+        //                     {
+        //                         'a_3': 'a_4' // dad === 'a_4'
+        //                     }
+        //                 ]
         //             },
-        //             [['createUser_failed']]: {
-        //                 [['manageUser', 'searchUser']]: 'updateUser'
+        //             {
+        //                 'createUser_succeed': {
+        //                     'manageUser': 'searchUser'
+        //                 },
         //             },
-        //             [['createUser_canceled']]: {
-        //                 [['manageUser', {
-        //                     [['manageUser_shouldStart']]: 'manageUser_succeed'
-        //                 }]]: {
-        //                     [['searchUser']]: {
-        //                         [['manageUser_shouldStart']]: {
-        //                             [['manageUser_succeed']]: 'searchUser',
-        //                             [['manageUser_failed']]: 'searchUser'
+        //             {
+        //                 'createUser_failed': {
+        //                     [['manageUser', 'searchUser']]: 'updateUser'
+        //                 },
+        //             },
+        //             {
+        //                 'createUser_canceled': {
+        //                     'manageUser': {
+        //                         'searchUser': {
+        //                             'manageUser_shouldStart': {
+        //                                 'manageUser_succeed': 'searchUser',
+        //                                 'manageUser_failed': 'searchUser'
+        //                             }
         //                         }
         //                     }
         //                 }
         //             }
-        //         }
+        //         ]
         //     }
         // }
     ]
