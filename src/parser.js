@@ -1,18 +1,5 @@
 import {compose} from 'redux';
-import {kindof} from 'utils';
-
-const identifierToString = ({node, key, isKey}) => {
-    switch (kindof(node)) {
-        case 'string':
-            return node;
-        case 'array':
-            return node[key];
-        case 'map':
-            if (isKey)
-                return key;
-            return node.get(key);
-    }
-};
+import {identifierToString, kindof} from 'utils';
 
 const destructString = (identifier, {expectedToFind = false, expectedFlowName, expectedStateName, flows, throwError: throwIfErrors = true}) => {
     const str = identifierToString(identifier);

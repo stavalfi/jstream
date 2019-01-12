@@ -21,3 +21,16 @@ export function kindof(obj) {
             return typeof obj;
     }
 }
+
+export function identifierToString({node, key, isKey}) {
+    switch (kindof(node)) {
+        case 'string':
+            return node;
+        case 'array':
+            return node[key];
+        case 'map':
+            if (isKey)
+                return key;
+            return node.get(key);
+    }
+};
