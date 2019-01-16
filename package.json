@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.1.5",
-    "@babel/core": "^7.1.5",
+    "babel-core": "^7.0.0-bridge.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.5",
     "@babel/register": "^7.0.0",
@@ -41,9 +41,6 @@
   "peerDependencies": {
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
-  },
-  "resolutions": {
-    "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
     "compose-function": "^3.0.3",
