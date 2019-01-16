@@ -7,7 +7,6 @@
     "start": "cross-env NODE_ENV=development webpack-serve",
     "build": "cross-env NODE_ENV=deployment webpack",
     "eslint": "eslint src --fix",
-    "test1": "node $NODE_DEBUG_OPTION node_modules/.bin/ava",
     "test": "jest",
     "debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
@@ -20,7 +19,6 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.5",
     "@babel/register": "^7.0.0",
-    "ava": "1.0.0-rc.1",
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^0.1.19",
     "cross-env": "^5.2.0",
