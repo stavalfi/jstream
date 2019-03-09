@@ -1,4 +1,5 @@
-src/parser.js
+src/
+tests/
 webpack.config.js
 examples/example1/src/index.js
-src/v2
+examples/example1/src/*.workflows.js

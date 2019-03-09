@@ -1,4 +1,5 @@
 module.exports = {
+    "parser": "babel-eslint",
     "globals": {},
     "env": {
         "browser": true,
@@ -7,9 +8,15 @@ module.exports = {
         "jest": true
     },
     "plugins": [
-        "fp"
+        "fp",
+        "import"
     ],
-    "extends": ["eslint:recommended", "plugin:fp/recommended"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:fp/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+    ],
     "parserOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module"
