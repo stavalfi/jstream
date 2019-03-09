@@ -10,28 +10,41 @@
     "test": "jest",
     "debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
+  "jest": {
+    "setupTestFrameworkScriptFile": "jest-expect-message"
+  },
   "keywords": [],
   "author": "stav alfi",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.1.5",
-    "babel-core": "^7.0.0-bridge.0",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.5",
     "@babel/register": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^0.1.19",
     "cross-env": "^5.2.0",
+    "deep-equal": "^1.0.1",
     "eslint": "^5.7.0",
     "eslint-plugin-fp": "^2.3.0",
+    "eslint-plugin-import": "^2.14.0",
     "file-loader": "^2.0.0",
     "git-revision-webpack-plugin": "^3.0.3",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.6.0",
+    "jest-expect-message": "^1.0.2",
+    "json-stringify-pretty-compact": "^2.0.0",
+    "object-path": "^0.11.4",
+    "pretty-print-json": "0.0.6",
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "table": "^5.2.3",
     "url-loader": "^1.1.1",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.0",
@@ -43,10 +56,11 @@
     "redux-thunk": "^2.3.0"
   },
   "dependencies": {
-    "compose-function": "^3.0.3",
-    "identity-function": "^1.0.0",
+    "is-promise": "^2.1.0",
     "kindof": "^2.0.0",
-    "parse-json": "^4.0.0",
-    "prettyjson": "^1.2.1"
+    "lodash": "^4.17.11",
+    "prettier": "^1.16.4",
+    "rxjs": "^6.4.0",
+    "uuid": "^3.3.2"
   }
 }
