@@ -1,5 +1,7 @@
 import {parseGraph} from './graph-parser';
 import {fixAndExtendGraph} from './fix-flow-graph';
+import {parseRules} from './rules-parser';
+import {parseSideEffects} from './side-effects-parser';
 import {
   extractUniqueFlowsNamesFromGraph,
   graphNodeToDisplayName,
@@ -56,18 +58,31 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
     ),
   );
 
+  const updatedParsedGraph = fixAndExtendGraph(
+    parsedFlowsUntilNow,
+    extendedParsedFlow,
+    parsedGraph,
+    flowToParse.name,
+  );
+
   const parsedFlow = {
     ...(flowToParse.name && {name: flowToParse.name}),
     ...(flowToParse.defaultFlowName && {
       defaultFlowName: flowToParse.defaultFlowName,
     }),
     ...(extendedParsedFlow && {extendedParsedFlow}),
-    graph: fixAndExtendGraph(
-      parsedFlowsUntilNow,
-      extendedParsedFlow,
-      parsedGraph,
-      flowToParse.name,
-    ),
+    graph: updatedParsedGraph,
+    ...(flowToParse.hasOwnProperty('rules') && {
+      rules: parseRules(splitters)(
+        parsedFlowsUntilNow,
+        extendedParsedFlow,
+        updatedParsedGraph,
+        flowToParse.rules,
+      ),
+    }),
+    ...(flowToParse.hasOwnProperty('side_effects') && {
+      side_effects: parseSideEffects(flowToParse.side_effects),
+    }),
   };
 
   const result = flowToParse.extendsFlows
@@ -124,4 +139,6 @@ const cleanPropertiesFromParsedFlow = parsedFlow => ({
     defaultFlowName: parsedFlow.defaultFlowName,
   }),
   graph: parsedFlow.graph,
+  ...(parsedFlow.hasOwnProperty('rules') && {rules: parsedFlow.rules}),
+  ...(parsedFlow.hasOwnProperty('side_effects') && {side_effects: parsedFlow.side_effects}),
 });

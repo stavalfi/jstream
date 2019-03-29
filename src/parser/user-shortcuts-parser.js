@@ -57,6 +57,8 @@ export const flattenUserFlowShortcuts = splitters => (parsedFlows, extendedParse
           ...nameObject,
           extendsFlows: flow.extends_flows || [],
           ...defaultFlowNameObject,
+          ...(flow.hasOwnProperty('rules') && {rules: flow.rules}),
+          ...(flow.hasOwnProperty('side_effects') && {side_effects: flow.side_effects}),
         };
         return [flowToParse];
     }

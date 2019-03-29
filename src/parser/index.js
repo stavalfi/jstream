@@ -26,10 +26,17 @@ import {parseMultipleFlows} from './flows-parser';
 export const parse = config => {
   const flows = parseMultipleFlows(config.flows, config.splitters);
   return {
-    flows: config.flows ? flows : [],
+    flows: config.hasOwnProperty('flows') ? flows : [],
     workflows:
-      config.flows && config.workflows
+      config.hasOwnProperty('flows') && config.hasOwnProperty('workflows')
         ? parseMultipleFlows(config.workflows, config.splitters, flows)
         : [],
+    ...(config.hasOwnProperty('flows') &&
+      config.hasOwnProperty('workflows') &&
+      config.hasOwnProperty('default_workflow_state_machine') && {
+        default_workflow_state_machine: flows.find(
+          flow => flow.name === config.default_workflow_state_machine,
+        ),
+      }),
   };
 };
