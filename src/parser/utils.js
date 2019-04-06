@@ -56,27 +56,23 @@ export const graphNodeToDisplayName = splitters => flowNode => {
   }
 };
 
-export const displayNameToGraphNode = splitters => (
+export const displayNameToFullGraphNode = splitters => (
   parsedFlows,
+  flowName,
   extendedParsedFlow,
 ) => displayName => {
   const {partialPath, identifier} = distractDisplayNameBySplitters(splitters, displayName);
-  const path = fillPartialPath(parsedFlows, extendedParsedFlow, partialPath);
+  const path = fillPartialPath(parsedFlows, flowName, extendedParsedFlow, partialPath);
   return {
     path,
     ...(identifier && {identifier}),
   };
 };
 
-function areSameParsedFlows(flow1, flow2) {
-  return flow1 && flow2 && flow1.id === flow2.id;
-}
-
-function fillPartialPath(parsedFlows, extendedParsedFlow, partialPath) {
-  const flowName = partialPath[0];
-  const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === flowName);
+function fillPartialPath(parsedFlows, flowName, extendedParsedFlow, partialPath) {
+  const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === partialPath[0]);
   if (!parsedFlow) {
-    // we re trying to parse a graph with a single node and this flow will be used in other flows.
+    // we are trying to parse a graph with a single node and this flow will be used in other flows.
     const {newPath} = fillPartialPathBy(extendedParsedFlow, partialPath, 1, [partialPath[0]]);
     return newPath;
   }
@@ -96,6 +92,10 @@ function fillPartialPath(parsedFlows, extendedParsedFlow, partialPath) {
 
   // fill path by extendedParsedFlow path:
   return fillPartialPathBy(extendedParsedFlow, partialPath, i, newPath).newPath;
+}
+
+function areSameParsedFlows(flow1, flow2) {
+  return flow1 && flow2 && flow1.id === flow2.id;
 }
 
 function fillPartialPathBy(extendedParsedFlow, partialPath, i, newPathUntilNow) {

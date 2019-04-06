@@ -5,7 +5,7 @@ function getGraph(flow) {
   return kindof(flow.graph) === 'array' ? flow.graph : [flow.graph];
 }
 
-function getFlowNameObject(splitters, parsedFlows, flow, extendedParsedFlow) {
+function getFlowNameObject(splitters, flow) {
   if (flow.name) {
     return {name: flow.name};
   }
@@ -29,7 +29,7 @@ function getFlowNameObject(splitters, parsedFlows, flow, extendedParsedFlow) {
   }
 }
 
-export const flattenUserFlowShortcuts = splitters => (parsedFlows, extendedParsedFlow) =>
+export const flattenUserFlowShortcuts = splitters => () =>
   function flatten(flow) {
     switch (kindof(flow)) {
       case 'string':
@@ -37,18 +37,16 @@ export const flattenUserFlowShortcuts = splitters => (parsedFlows, extendedParse
           {
             graph: [flow],
           },
-          extendedParsedFlow,
         );
       case 'array':
         return flatten(
           {
             graph: flow,
           },
-          extendedParsedFlow,
         );
       case 'object':
         const graph = getGraph(flow);
-        const nameObject = getFlowNameObject(splitters, parsedFlows, flow, extendedParsedFlow);
+        const nameObject = getFlowNameObject(splitters, flow);
         const defaultFlowNameObject = flow.default_flow_name && {
           defaultFlowName: flow.default_flow_name,
         };
@@ -57,7 +55,6 @@ export const flattenUserFlowShortcuts = splitters => (parsedFlows, extendedParse
           ...nameObject,
           extendsFlows: flow.extends_flows || [],
           ...defaultFlowNameObject,
-          ...(flow.hasOwnProperty('rules') && {rules: flow.rules}),
           ...(flow.hasOwnProperty('side_effects') && {side_effects: flow.side_effects}),
         };
         return [flowToParse];

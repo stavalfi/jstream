@@ -803,3 +803,33 @@ test('34', () => {
 
   assertEqualFlows(expectedFlows, actualFlows);
 });
+
+// todo: make this test work
+// test('35', () => {
+//   const flowsConfig = graph => ({
+//     splitters: {
+//       extends: '_',
+//     },
+//     flows: ['a', graph],
+//   });
+//
+//   const actual = {
+//     name: 'flow1',
+//     graph: 'flow1_a',
+//   };
+//   const expected = [
+//     {
+//       name: 'a',
+//       graph: [{a: [[], []]}],
+//     },
+//     {
+//       name: 'flow1',
+//       graph: [{flow1_a: [[], []]}],
+//     },
+//   ];
+//
+//   const actualFlows = createFlows(actual, flowsConfig);
+//   const expectedFlows = createExpected(expected, flowsConfig(actual));
+//
+//   assertEqualFlows(expectedFlows, actualFlows);
+// });

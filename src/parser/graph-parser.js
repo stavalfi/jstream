@@ -1,9 +1,9 @@
 import {compose} from 'redux';
 import kindof from 'kindof';
 
-export const parseGraph = (graphNodeToDisplayName, displayNameToGraphNode, graphToParse) => {
+export const parseGraph = (graphNodeToDisplayName, displayNameToFullGraphNode, graphToParse) => {
   const graph = kindof(graphToParse) === 'array' ? graphToParse : [graphToParse];
-  return graph.reduce(parseSubGraph(graphNodeToDisplayName, displayNameToGraphNode), []);
+  return graph.reduce(parseSubGraph(graphNodeToDisplayName, displayNameToFullGraphNode), []);
 };
 
 const parseSubGraph = (nodeToDisplayName, displayNameToNode) =>

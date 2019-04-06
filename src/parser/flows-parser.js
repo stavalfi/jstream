@@ -1,17 +1,17 @@
 import {parseGraph} from './graph-parser';
 import {fixAndExtendGraph} from './fix-flow-graph';
-import {parseRules} from './rules-parser';
 import {parseSideEffects} from './side-effects-parser';
 import {
   extractUniqueFlowsNamesFromGraph,
   graphNodeToDisplayName,
-  displayNameToGraphNode,
+  displayNameToFullGraphNode,
 } from './utils';
 import {validateFlowToParse} from './flow-validator';
 import {flattenUserFlowShortcuts} from './user-shortcuts-parser';
+import uuid from 'uuid/v1';
 
-export const parseSingleFlow = (flow, splitters, parsedFlowsUntilNow = []) => {
-  const parsedFlows = flattenUserFlowShortcuts(splitters)(parsedFlowsUntilNow)(flow)
+const parseSingleFlow = (flow, splitters, parsedFlowsUntilNow = []) => {
+  const parsedFlows = flattenUserFlowShortcuts(splitters)()(flow)
     .map(validateFlowToParse(splitters)(parsedFlowsUntilNow))
     .filter(
       flowToParse =>
@@ -29,16 +29,23 @@ export const parseSingleFlow = (flow, splitters, parsedFlowsUntilNow = []) => {
         flowToParse,
       );
       return [...acc, ...missingParsedFlows, ...parsedFlows];
-    }, [])
-    .map(cleanPropertiesFromParsedFlow);
+    }, []);
   return parsedFlows;
 };
 
 export const parseMultipleFlows = (flows = [], splitters, parsedFlowsUntilNow = []) => {
-  const result = flows.reduce((acc, userFlow) => {
-    const parsedFlows = parseSingleFlow(userFlow, splitters, acc);
-    return [...acc, ...parsedFlows];
-  }, parsedFlowsUntilNow);
+  const result = flows
+    .reduce((acc, userFlow) => {
+      const parsedFlows = parseSingleFlow(userFlow, splitters, acc);
+      return [...acc, ...parsedFlows];
+    }, parsedFlowsUntilNow)
+    .map((parsedFlow, i, parsedFlows) => ({
+      ...parsedFlow,
+      ...(parsedFlow.hasOwnProperty('extendedFlowId') && {
+        extendedFlowIndex: parsedFlows.findIndex(flow => flow.id === parsedFlow.extendedFlowId),
+      }),
+    }))
+    .map(cleanPropertiesFromParsedFlow);
   return result;
 };
 
@@ -53,7 +60,7 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
   const parsedGraph = removePointersFromNodeToHimSelf(
     parseGraph(
       graphNodeToDisplayName(splitters),
-      displayNameToGraphNode(splitters)(parsedFlowsUntilNow, extendedParsedFlow),
+      displayNameToFullGraphNode(splitters)(parsedFlowsUntilNow, flowToParse.name, extendedParsedFlow),
       flowToParse.graph,
     ),
   );
@@ -66,27 +73,26 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
   );
 
   const parsedFlow = {
+    id: uuid(),
+    ...(extendedParsedFlow && {extendedFlowId: extendedParsedFlow.id}),
     ...(flowToParse.name && {name: flowToParse.name}),
     ...(flowToParse.defaultFlowName && {
       defaultFlowName: flowToParse.defaultFlowName,
     }),
     ...(extendedParsedFlow && {extendedParsedFlow}),
     graph: updatedParsedGraph,
-    ...(flowToParse.hasOwnProperty('rules') && {
-      rules: parseRules(splitters)(
-        parsedFlowsUntilNow,
-        extendedParsedFlow,
-        updatedParsedGraph,
-        flowToParse.rules,
-      ),
-    }),
     ...(flowToParse.hasOwnProperty('side_effects') && {
-      side_effects: parseSideEffects(flowToParse.side_effects),
+      side_effects: parseSideEffects(splitters)(
+        parsedFlowsUntilNow,
+        flowToParse.name,
+        extendedParsedFlow,
+        flowToParse.side_effects,
+      ),
     }),
   };
 
   const result = flowToParse.extendsFlows
-    .flatMap(flattenUserFlowShortcuts(splitters)(parsedFlowsUntilNow, parsedFlow))
+    .flatMap(flattenUserFlowShortcuts(splitters)())
     .map(validateFlowToParse(splitters)(parsedFlowsUntilNow, parsedFlow))
     .reduce(
       (extendedParsedFlowsUntilNow, extendedFlowToParse) => {
@@ -121,7 +127,7 @@ const findMissingFlowsFromDisplayName = splitters => (
     // i send empty parsedFlows array because I want to get the names of the
     // missing flows as I ever first parsed them (or i will get name: undefined)
     // and then i remove all the flows and I already parsed by flowName.
-    .flatMap(flattenUserFlowShortcuts(splitters)([], extendedParsedFlow))
+    .flatMap(flattenUserFlowShortcuts(splitters)())
     .map(validateFlowToParse(splitters)([], extendedParsedFlow))
     .filter(({name}) => parsedFlows.every(flow => flow.name !== name))
     .filter(({name}) => flowToParse.name !== name)
@@ -134,11 +140,13 @@ const findMissingFlowsFromDisplayName = splitters => (
 };
 
 const cleanPropertiesFromParsedFlow = parsedFlow => ({
+  ...(parsedFlow.hasOwnProperty('extendedFlowIndex') && {
+    extendedFlowIndex: parsedFlow.extendedFlowIndex,
+  }),
   ...(parsedFlow.name && {name: parsedFlow.name}),
   ...(parsedFlow.defaultFlowName && {
     defaultFlowName: parsedFlow.defaultFlowName,
   }),
   graph: parsedFlow.graph,
-  ...(parsedFlow.hasOwnProperty('rules') && {rules: parsedFlow.rules}),
-  ...(parsedFlow.hasOwnProperty('side_effects') && {side_effects: parsedFlow.side_effects}),
+  ...(parsedFlow.hasOwnProperty('side_effects') && {sideEffects: parsedFlow.side_effects}),
 });

@@ -4,8 +4,6 @@ import {distractDisplayNameBySplitters, graphNodeToDisplayName} from '../../src/
 import {table} from 'table';
 import deepEqual from 'deep-equal';
 
-
-
 export const declareFlows = (n, path, extendsSplitter) =>
   [...Array(n).keys()].map(i => ({
     name: `${path[0]}${i}`,
@@ -18,34 +16,25 @@ export const declareFlows = (n, path, extendsSplitter) =>
 
 export const createExpected = (expectedFlowsArrays, flowsConfig) => {
   return expectedFlowsArrays.map(flowToParse => ({
-    ...(flowToParse.hasOwnProperty('name') && {name: flowToParse.name}),
-    ...(flowToParse.hasOwnProperty('defaultFlowName') && {
-      defaultFlowName: flowToParse.defaultFlowName,
-    }),
+    ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
   }));
 };
 
 const convertExpectedFlowGraphArray = (expectedFlowGraphArray, flowsConfig) => {
   return expectedFlowGraphArray.map(node => {
-    const {partialPath, identifier} = distractDisplayNameBySplitters(
-      flowsConfig.splitters,
-      Object.keys(node)[0],
-    );
+    const displayNode = distractDisplayNameBySplitters(flowsConfig.splitters, Object.keys(node)[0]);
     return {
       parentsIndexes: Object.values(node)[0][0],
       childrenIndexes: Object.values(node)[0][1],
-      path: partialPath,
-      ...(identifier && {identifier}), // todo: replace with hasOwnProperty
+      path: displayNode.partialPath,
+      ...(displayNode.hasOwnProperty('identifier') && {identifier: displayNode.identifier}),
     };
   });
 };
 
 export const createFlows = (actualFlowGraph, flowsConfig) =>
   parse(flowsConfig(actualFlowGraph)).flows;
-
-export const createWorkflows = (actualFlowGraph, flowsConfig) =>
-  parse(flowsConfig(actualFlowGraph)).workflows;
 
 function graphToMatrix(graph) {
   const sortedGraph = sortGraph(graph);
@@ -150,9 +139,26 @@ export function assertEqualFlows(expectedFlowsArray, actualFlowsArray, count = 0
         \n\n good guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
         \n${graphToString(actualFlowsArray[i].graph)}`,
     ).toBeDefined();
+    if ((count = 0 && expectedFlow.hasOwnProperty('extendedFlowIndex'))) {
+      const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex];
+      const actualExtendedFlow = actualFlowsArray[actualFlow.extendedFlowIndex];
+      const isEqual =
+        expectedExtendedFlow.name === actualExtendedFlow.name &&
+        expectedExtendedFlow.defaultFlowName === actualExtendedFlow.defaultFlowName &&
+        deepEqual(
+          graphToMatrix(expectedExtendedFlow.graph),
+          graphToMatrix(actualExtendedFlow.graph),
+        );
+      expect(
+        isEqual,
+        `${count === 0 ? 'expected' : 'actual'} flow: ${
+          expectedFlow.name
+        } - has different extended flow`,
+      ).toBe(true);
+    }
   });
 
-  assertEqualFlows(actualFlowsArray, expectedFlowsArray, count + 1);
+  // assertEqualFlows(actualFlowsArray, expectedFlowsArray, count + 1);
 }
 
 function findFlowByFlow(flowsArray, flowToSearch) {

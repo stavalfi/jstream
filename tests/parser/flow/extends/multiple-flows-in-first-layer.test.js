@@ -31,6 +31,7 @@ test('1', () => {
     {
       name: 'flow0',
       graph: [{flow0_a: [[], [1]]}, {flow0_b: [[0], []]}],
+      extendedFlowIndex: 2,
     },
   ];
 
@@ -642,10 +643,12 @@ test('14', () => {
     {
       name: 'flow0',
       graph: [{flow0_a: [[1], [1]]}, {flow0_b: [[0], [0]]}],
+      extendedFlowIndex: 2,
     },
     {
       name: 'flow1',
       graph: [{flow1_a: [[1], [1]]}, {flow1_b: [[0], [0]]}],
+      extendedFlowIndex: 2,
     },
     {
       graph: [
@@ -654,6 +657,7 @@ test('14', () => {
         {flow1_a: [[1, 3], [3]]}, // 2
         {flow1_b: [[2], [2, 0]]}, // 3
       ],
+      extendedFlowIndex: 2,
     },
   ];
 
