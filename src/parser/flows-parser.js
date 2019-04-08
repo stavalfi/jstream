@@ -60,7 +60,11 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
   const parsedGraph = removePointersFromNodeToHimSelf(
     parseGraph(
       graphNodeToDisplayName(splitters),
-      displayNameToFullGraphNode(splitters)(parsedFlowsUntilNow, flowToParse.name, extendedParsedFlow),
+      displayNameToFullGraphNode(splitters)(
+        parsedFlowsUntilNow,
+        flowToParse.name,
+        extendedParsedFlow,
+      ),
       flowToParse.graph,
     ),
   );
@@ -69,7 +73,6 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
     parsedFlowsUntilNow,
     extendedParsedFlow,
     parsedGraph,
-    flowToParse.name,
   );
 
   const parsedFlow = {

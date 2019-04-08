@@ -1,24 +1,23 @@
 import {graphByIndexesToObjects, transformToArrayGraph, groupGraphByFlows} from './utils';
 
-export const fixAndExtendGraph = (parsedFlows, extendedParsedFlow, graph, flowName) => {
-  const newGraph1 = replaceParsedFlows(parsedFlows, graph, flowName);
-  const newGraph2 = extendGraph(parsedFlows, extendedParsedFlow, newGraph1, flowName);
+export const fixAndExtendGraph = (parsedFlows, extendedParsedFlow, graph) => {
+  const newGraph1 = replaceParsedFlows(parsedFlows, graph);
+  const newGraph2 = extendGraph(parsedFlows, extendedParsedFlow, newGraph1);
   return newGraph2;
 };
 
-function replaceParsedFlows(parsedFlows, graph, flowName) {
+function replaceParsedFlows(parsedFlows, graph) {
   const head = graphByIndexesToObjects(graph);
   const {initialFlowId, flowMembersByFlowId} = groupGraphByFlows(parsedFlows, head);
   const fullFlowMembersByFlowId = replaceFlowMembersByFlowId(
     parsedFlows,
     flowMembersByFlowId,
-    flowName,
   );
   const result = transformToArrayGraph(fullFlowMembersByFlowId.get(initialFlowId)[0]);
   return result;
 }
 
-function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId, flowName) {
+function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId) {
   const flowMembersByFlowIdValues = [...flowMembersByFlowId.values()];
   if (flowMembersByFlowIdValues.length === 1) {
     const flowName = flowMembersByFlowIdValues[0][0].path[0];
@@ -33,13 +32,12 @@ function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId, flowName) 
   [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
     const subFlowName = flowMembers[0].path[0];
     const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === subFlowName);
-    const shouldSubFlowNameBeAddedToPath = flowName && subFlowName !== flowName;
     const replacedGraph =
       parsedFlow &&
       parsedFlow.graph
         .map(pos => ({
           ...(flowMembers[0].identifier && {identifier: flowMembers[0].identifier}),
-          path: shouldSubFlowNameBeAddedToPath ? [flowName, ...pos.path] : pos.path,
+          path: pos.path,
           subFlowId: subFlowId,
           children: [],
           parents: [],
@@ -53,11 +51,9 @@ function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId, flowName) 
   });
 
   [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
-    const subFlowName = flowMembers[0].path[0];
-    const shouldSubFlowNameBeAddedToPath = flowName && subFlowName !== flowName;
     const fullFlowMembers = fullFlowMembersByFlowId.get(subFlowId);
     flowMembers.forEach(oldNode => {
-      const oldPath = shouldSubFlowNameBeAddedToPath ? [flowName, ...oldNode.path] : oldNode.path;
+      const oldPath = oldNode.path;
       const newNode = fullFlowMembers.find(node => arePathsEqual(node.path, oldPath));
       newNode &&
         oldNode.children

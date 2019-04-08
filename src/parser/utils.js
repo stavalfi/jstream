@@ -62,18 +62,26 @@ export const displayNameToFullGraphNode = splitters => (
   extendedParsedFlow,
 ) => displayName => {
   const {partialPath, identifier} = distractDisplayNameBySplitters(splitters, displayName);
-  const path = fillPartialPath(parsedFlows, flowName, extendedParsedFlow, partialPath);
+  const path = fillPartialPath(
+    parsedFlows,
+    extendedParsedFlow,
+    partialPath[0] === flowName ? partialPath.slice(1) : partialPath,
+  );
   return {
-    path,
+    path: flowName ? [flowName, ...path] : path,
     ...(identifier && {identifier}),
   };
 };
 
-function fillPartialPath(parsedFlows, flowName, extendedParsedFlow, partialPath) {
+function fillPartialPath(parsedFlows, extendedParsedFlow, partialPath) {
+  if (partialPath.length === 0) {
+    const {newPath} = fillPartialPathBy(extendedParsedFlow, partialPath, 0, []);
+    return newPath;
+  }
   const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === partialPath[0]);
   if (!parsedFlow) {
-    // we are trying to parse a graph with a single node and this flow will be used in other flows.
-    const {newPath} = fillPartialPathBy(extendedParsedFlow, partialPath, 1, [partialPath[0]]);
+    // partialPath contains a subset of the extendedParsedFlow path.
+    const {newPath} = fillPartialPathBy(extendedParsedFlow, partialPath, 0, []);
     return newPath;
   }
 
@@ -88,8 +96,6 @@ function fillPartialPath(parsedFlows, flowName, extendedParsedFlow, partialPath)
   if (areSameParsedFlows(parsedFlow.extendedParsedFlow, extendedParsedFlow)) {
     return newPath;
   }
-  // todo: make test that comes here!! it's hard to think about test like this.
-
   // fill path by extendedParsedFlow path:
   return fillPartialPathBy(extendedParsedFlow, partialPath, i, newPath).newPath;
 }
@@ -100,14 +106,16 @@ function areSameParsedFlows(flow1, flow2) {
 
 function fillPartialPathBy(extendedParsedFlow, partialPath, i, newPathUntilNow) {
   const newPath = [...newPathUntilNow];
-  let extendedFlow = extendedParsedFlow;
-  while (extendedFlow) {
-    if (extendedFlow.graph.some(node => node.path[0] === partialPath[i])) {
+  while (extendedParsedFlow) {
+    if (
+      i < partialPath.length &&
+      extendedParsedFlow.graph.some(node => node.path[0] === partialPath[i])
+    ) {
       newPath.push(partialPath[i++]);
     } else {
-      newPath.push(extendedFlow.defaultFlowName || extendedFlow.name);
+      newPath.push(extendedParsedFlow.defaultFlowName || extendedParsedFlow.name);
     }
-    extendedFlow = extendedFlow.extendedParsedFlow;
+    extendedParsedFlow = extendedParsedFlow.extendedParsedFlow;
   }
   return {
     i,
