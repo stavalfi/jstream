@@ -139,7 +139,7 @@ export function assertEqualFlows(expectedFlowsArray, actualFlowsArray, count = 0
         \n\n good guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
         \n${graphToString(actualFlowsArray[i].graph)}`,
     ).toBeDefined();
-    if ((count = 0 && expectedFlow.hasOwnProperty('extendedFlowIndex'))) {
+    if ((count === 0 && expectedFlow.hasOwnProperty('extendedFlowIndex'))) {
       const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex];
       const actualExtendedFlow = actualFlowsArray[actualFlow.extendedFlowIndex];
       const isEqual =
@@ -158,7 +158,7 @@ export function assertEqualFlows(expectedFlowsArray, actualFlowsArray, count = 0
     }
   });
 
-  // assertEqualFlows(actualFlowsArray, expectedFlowsArray, count + 1);
+  assertEqualFlows(actualFlowsArray, expectedFlowsArray, count + 1);
 }
 
 function findFlowByFlow(flowsArray, flowToSearch) {

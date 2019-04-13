@@ -1,23 +1,24 @@
 import {graphByIndexesToObjects, transformToArrayGraph, groupGraphByFlows} from './utils';
 
-export const fixAndExtendGraph = (parsedFlows, extendedParsedFlow, graph) => {
-  const newGraph1 = replaceParsedFlows(parsedFlows, graph);
+export const fixAndExtendGraph = (parsedFlows, extendedParsedFlow, graph, flowName) => {
+  const newGraph1 = replaceParsedFlows(parsedFlows, graph, flowName);
   const newGraph2 = extendGraph(parsedFlows, extendedParsedFlow, newGraph1);
   return newGraph2;
 };
 
-function replaceParsedFlows(parsedFlows, graph) {
+function replaceParsedFlows(parsedFlows, graph, flowName) {
   const head = graphByIndexesToObjects(graph);
   const {initialFlowId, flowMembersByFlowId} = groupGraphByFlows(parsedFlows, head);
   const fullFlowMembersByFlowId = replaceFlowMembersByFlowId(
     parsedFlows,
     flowMembersByFlowId,
+    flowName,
   );
   const result = transformToArrayGraph(fullFlowMembersByFlowId.get(initialFlowId)[0]);
   return result;
 }
 
-function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId) {
+function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId, flowName) {
   const flowMembersByFlowIdValues = [...flowMembersByFlowId.values()];
   if (flowMembersByFlowIdValues.length === 1) {
     const flowName = flowMembersByFlowIdValues[0][0].path[0];
@@ -30,14 +31,15 @@ function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId) {
   const fullFlowMembersByFlowId = new Map();
 
   [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
-    const subFlowName = flowMembers[0].path[0];
+    const isFlowNameOnPath = flowMembers[0].path[0] === flowName;
+    const subFlowName = isFlowNameOnPath ? flowMembers[0].path[1] : flowMembers[0].path[0];
     const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === subFlowName);
     const replacedGraph =
       parsedFlow &&
       parsedFlow.graph
         .map(pos => ({
           ...(flowMembers[0].identifier && {identifier: flowMembers[0].identifier}),
-          path: pos.path,
+          path: flowName ? [flowName, ...pos.path] : pos.path,
           subFlowId: subFlowId,
           children: [],
           parents: [],
@@ -87,8 +89,10 @@ function extendFlowMembersByFlowId(extendedParsedFlow, flowMembersByFlowId) {
   const fullFlowMembersByFlowId = new Map();
 
   [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
+    // remove all flowNames that appears on the extendedParsedFlow's graph.
     const nodePathWithoutExtendedFlows = flowMembers[0].path.filter(
-      flowName => !isExtendedFlowName(flowName, extendedParsedFlow),
+      flowName =>
+        !extendedParsedFlow || !extendedParsedFlow.graph.some(node => node.path.includes(flowName)),
     );
     const identifierObject = flowMembers[0].identifier && {identifier: flowMembers[0].identifier};
     const extendedNodeGraph = extendedParsedFlow.graph
@@ -140,13 +144,3 @@ export const arePathsEqual = (path1, path2) => {
     }
   return true;
 };
-
-function isExtendedFlowName(flowName, extendedParsedFlow) {
-  if (!extendedParsedFlow) {
-    return false;
-  }
-  if ((extendedParsedFlow.graph || []).map(node => node.path[0]).includes(flowName)) {
-    return true;
-  }
-  return isExtendedFlowName(flowName, (extendedParsedFlow || {}).extendedParsedFlow);
-}

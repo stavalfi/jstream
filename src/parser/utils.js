@@ -62,65 +62,70 @@ export const displayNameToFullGraphNode = splitters => (
   extendedParsedFlow,
 ) => displayName => {
   const {partialPath, identifier} = distractDisplayNameBySplitters(splitters, displayName);
-  const path = fillPartialPath(
-    parsedFlows,
-    extendedParsedFlow,
-    partialPath[0] === flowName ? partialPath.slice(1) : partialPath,
-  );
+  const path = fillUserPath(parsedFlows, flowName, extendedParsedFlow, partialPath);
   return {
-    path: flowName ? [flowName, ...path] : path,
+    path,
     ...(identifier && {identifier}),
   };
 };
 
-function fillPartialPath(parsedFlows, extendedParsedFlow, partialPath) {
-  if (partialPath.length === 0) {
-    const {newPath} = fillPartialPathBy(extendedParsedFlow, partialPath, 0, []);
-    return newPath;
-  }
-  const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === partialPath[0]);
+function fillUserPath(parsedFlows, flowName, extendedParsedFlow, userPath) {
+  userPath = userPath[0] === flowName ? userPath.slice(1) : userPath;
+  const newPath = flowName ? [flowName] : [];
+  const parsedFlow =
+    parsedFlows.find(parsedFlow => userPath.length > 0 && parsedFlow.name === userPath[0]) ||
+    extendedParsedFlow;
   if (!parsedFlow) {
-    // partialPath contains a subset of the extendedParsedFlow path.
-    const {newPath} = fillPartialPathBy(extendedParsedFlow, partialPath, 0, []);
     return newPath;
   }
-
-  // fill path by parsedFlow path:
-  const {i, newPath} = fillPartialPathBy(parsedFlow.extendedParsedFlow, partialPath, 1, [
-    partialPath[0],
-  ]);
-
-  if (!parsedFlow.extendedParsedFlow && i < partialPath.length) {
-    return [...newPath, ...partialPath.slice(i)];
-  }
-  if (areSameParsedFlows(parsedFlow.extendedParsedFlow, extendedParsedFlow)) {
-    return newPath;
-  }
-  // fill path by extendedParsedFlow path:
-  return fillPartialPathBy(extendedParsedFlow, partialPath, i, newPath).newPath;
-}
-
-function areSameParsedFlows(flow1, flow2) {
-  return flow1 && flow2 && flow1.id === flow2.id;
-}
-
-function fillPartialPathBy(extendedParsedFlow, partialPath, i, newPathUntilNow) {
-  const newPath = [...newPathUntilNow];
-  while (extendedParsedFlow) {
-    if (
-      i < partialPath.length &&
-      extendedParsedFlow.graph.some(node => node.path[0] === partialPath[i])
-    ) {
-      newPath.push(partialPath[i++]);
+  const options = parsedFlow.graph
+    .map(node => node.path)
+    .filter(path => isSubsetOf(userPath, path));
+  if (options.length > 1) {
+    const lastParsedFlow = (() => {
+      const lastFlowName = userPath[userPath.length - 1];
+      const lastParsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === lastFlowName);
+      if (lastParsedFlow) {
+        return lastParsedFlow;
+      } else {
+        let extended = extendedParsedFlow;
+        while (extended.name !== lastFlowName) {
+          extended = extended.extendedParsedFlow;
+        }
+        return extended;
+      }
+    })();
+    if (lastParsedFlow.graph.length > 1) {
+      const defaultFlowName = (() => {
+        let parsedFlow = lastParsedFlow;
+        while (!parsedFlow.hasOwnProperty('defaultFlowName')) {
+          parsedFlow = parsedFlow.extendedParsedFlow;
+        }
+        return parsedFlow.defaultFlowName;
+      })();
+      const path = options.find(path => path.includes(defaultFlowName));
+      return [...newPath, ...path];
     } else {
-      newPath.push(extendedParsedFlow.defaultFlowName || extendedParsedFlow.name);
+      const path = options.find(path => isSubsetOf(lastParsedFlow.graph[0].path, path));
+      return [...newPath, ...path];
     }
-    extendedParsedFlow = extendedParsedFlow.extendedParsedFlow;
+  } else {
+    return [...newPath, ...options[0]];
   }
-  return {
-    i,
-    newPath,
-  };
+}
+
+function isSubsetOf(subsetPath, fullPath) {
+  let i = 0,
+    j = 0;
+  while (i <= j && i < subsetPath.length && j < fullPath.length) {
+    if (subsetPath[i] === fullPath[j]) {
+      i++;
+      j++;
+    } else {
+      j++;
+    }
+  }
+  return i === subsetPath.length;
 }
 
 export function graphByIndexesToObjects(graph) {

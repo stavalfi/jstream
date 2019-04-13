@@ -177,3 +177,55 @@ test('4', () => {
 
   assertEqualFlows(expectedFlows, actualFlows);
 });
+
+test('5', () => {
+  const flowsConfig = graph => ({
+    splitters: {
+      extends: '_',
+    },
+    flows: [
+      'a',
+      {
+        name: 'b',
+        graph: 'a',
+        extends_flows: ['flow1', 'flow2', graph],
+      },
+    ],
+  });
+  const actual = {
+    name: 'composed-flow',
+    graph: ['flow1:flow2'],
+    default_flow_name: 'flow2',
+  };
+  const expected = [
+    {
+      name: 'a',
+      graph: [{a: [[], []]}],
+    },
+    {
+      name: 'b',
+      graph: [{b_a: [[], []]}],
+    },
+    {
+      name: 'flow1',
+      graph: [{flow1_b_a: [[], []]}],
+      extendedFlowIndex: 1,
+    },
+    {
+      name: 'flow2',
+      graph: [{flow2_b_a: [[], []]}],
+      extendedFlowIndex: 1,
+    },
+    {
+      name: 'composed-flow',
+      defaultFlowName: 'flow2',
+      graph: [{'composed-flow_flow1_b_a': [[], [1]]}, {'composed-flow_flow2_b_a': [[0], []]}],
+      extendedFlowIndex: 1,
+    },
+  ];
+
+  const actualFlows = createFlows(actual, flowsConfig);
+  const expectedFlows = createExpected(expected, flowsConfig(actual));
+
+  assertEqualFlows(expectedFlows, actualFlows);
+});

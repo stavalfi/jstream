@@ -6,7 +6,7 @@ function getGraph(flow) {
 }
 
 function getFlowNameObject(splitters, flow) {
-  if (flow.name) {
+  if (flow.hasOwnProperty('name')) {
     return {name: flow.name};
   }
   const graph = getGraph(flow);

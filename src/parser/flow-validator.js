@@ -9,7 +9,7 @@ export const validateFlowToParse = splitters => (
   extendedParsedFlow,
 ) => flowToParse => {
   if (Object.keys(flowToParse).length === 0) {
-    throw new Error(`flow can't have zero properties.`);
+    throw new Error('flow can\'t have zero properties.');
   }
 
   if (flowToParse.graph) {
@@ -21,7 +21,7 @@ export const validateFlowToParse = splitters => (
     }
     const flows = extractUniqueFlowsNamesFromGraph(splitters)(flowToParse.graph);
     if (flows.length === 0) {
-      throw new Error(`flow can't have zero flows in his graph.`);
+      throw new Error('flow can\'t have zero flows in his graph.');
     }
     if (flows.length === 1) {
       if (flowToParse.defaultFlowName) {
@@ -37,7 +37,7 @@ export const validateFlowToParse = splitters => (
         ) {
           return flowToParse;
         } else {
-          throw new Error(`flow with a single flow in his graph, must have a unique name property.`);
+          throw new Error('flow with a single flow in his graph, must have a unique name property.');
         }
       }
     }
@@ -58,7 +58,7 @@ export const validateFlowToParse = splitters => (
         return flowToParse;
       } else {
         throw new Error(
-          `flow with multiple flows in his graph, must have a default_flow_name property.`,
+          'flow with multiple flows in his graph, must have a default_flow_name property.',
         );
       }
     } else {

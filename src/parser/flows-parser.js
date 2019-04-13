@@ -73,6 +73,7 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
     parsedFlowsUntilNow,
     extendedParsedFlow,
     parsedGraph,
+    flowToParse.name
   );
 
   const parsedFlow = {
@@ -100,13 +101,13 @@ function parseFlow(splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFl
     .reduce(
       (extendedParsedFlowsUntilNow, extendedFlowToParse) => {
         const missingParsedFlows = findMissingFlowsFromDisplayName(splitters)(
-          parsedFlowsUntilNow,
+          extendedParsedFlowsUntilNow,
           extendedFlowToParse,
           parsedFlow,
         );
         const parsedFlows = parseFlow(
           splitters,
-          [...parsedFlowsUntilNow, ...missingParsedFlows],
+          [...extendedParsedFlowsUntilNow, ...missingParsedFlows],
           extendedFlowToParse,
           parsedFlow,
         );
@@ -130,7 +131,10 @@ const findMissingFlowsFromDisplayName = splitters => (
     // i send empty parsedFlows array because I want to get the names of the
     // missing flows as I ever first parsed them (or i will get name: undefined)
     // and then i remove all the flows and I already parsed by flowName.
-    .flatMap(flattenUserFlowShortcuts(splitters)())
+    .flatMap(flowToParse => {
+      const result = flattenUserFlowShortcuts(splitters)()(flowToParse);
+      return result;
+    })
     .map(validateFlowToParse(splitters)([], extendedParsedFlow))
     .filter(({name}) => parsedFlows.every(flow => flow.name !== name))
     .filter(({name}) => flowToParse.name !== name)
