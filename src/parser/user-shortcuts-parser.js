@@ -5,7 +5,7 @@ function getGraph(flow) {
   return kindof(flow.graph) === 'array' ? flow.graph : [flow.graph];
 }
 
-function getFlowNameObject(splitters, flow) {
+function getFlowNameObject(splitters, parsedFlowsUntilNow, flow) {
   if (flow.hasOwnProperty('name')) {
     return {name: flow.name};
   }
@@ -22,31 +22,31 @@ function getFlowNameObject(splitters, flow) {
     } else {
       const possibleName = distractDisplayNameBySplitters(splitters, flowsInGraph[0])
         .partialPath[0];
-      return {name: possibleName};
+      if (parsedFlowsUntilNow.some(flow => flow.name === possibleName)) {
+        return {};
+      } else {
+        return {name: possibleName};
+      }
     }
   } else {
     return {};
   }
 }
 
-export const flattenUserFlowShortcuts = splitters => () =>
+export const flattenUserFlowShortcuts = splitters => parsedFlowsUntilNow =>
   function flatten(flow) {
     switch (kindof(flow)) {
       case 'string':
-        return flatten(
-          {
-            graph: [flow],
-          },
-        );
+        return flatten({
+          graph: [flow],
+        });
       case 'array':
-        return flatten(
-          {
-            graph: flow,
-          },
-        );
+        return flatten({
+          graph: flow,
+        });
       case 'object':
         const graph = getGraph(flow);
-        const nameObject = getFlowNameObject(splitters, flow);
+        const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flow);
         const defaultFlowNameObject = flow.default_flow_name && {
           defaultFlowName: flow.default_flow_name,
         };

@@ -1,110 +1,126 @@
-import {graphByIndexesToObjects, transformToArrayGraph, groupGraphByFlows} from './utils';
+import {arePathsEqual} from './utils';
 
-export const fixAndExtendGraph = (parsedFlows, extendedParsedFlow, graph, flowName) => {
-  const newGraph1 = replaceParsedFlows(parsedFlows, graph, flowName);
-  const newGraph2 = extendGraph(parsedFlows, extendedParsedFlow, newGraph1);
-  return newGraph2;
-};
-
-function replaceParsedFlows(parsedFlows, graph, flowName) {
-  const head = graphByIndexesToObjects(graph);
-  const {initialFlowId, flowMembersByFlowId} = groupGraphByFlows(parsedFlows, head);
-  const fullFlowMembersByFlowId = replaceFlowMembersByFlowId(
-    parsedFlows,
-    flowMembersByFlowId,
-    flowName,
-  );
-  const result = transformToArrayGraph(fullFlowMembersByFlowId.get(initialFlowId)[0]);
-  return result;
-}
-
-function replaceFlowMembersByFlowId(parsedFlows, flowMembersByFlowId, flowName) {
-  const flowMembersByFlowIdValues = [...flowMembersByFlowId.values()];
-  if (flowMembersByFlowIdValues.length === 1) {
-    const flowName = flowMembersByFlowIdValues[0][0].path[0];
-    const isFlowParsed = parsedFlows.some(parsedFlow => parsedFlow.name === flowName);
-    if (!isFlowParsed) {
-      return flowMembersByFlowId;
+export function fixAndExtendGraph({parsedFlows, flowToParse, parsedGraph, extendedParsedFlow}) {
+  if (
+    parsedGraph.length === 1 &&
+    parsedGraph[0].path.length === 1 &&
+    parsedGraph[0].path[0] === flowToParse.name
+  ) {
+    if (extendedParsedFlow) {
+      return extendedParsedFlow.graph.map(node => ({
+        ...node,
+        path: [flowToParse.name, ...node.path],
+      }));
+    } else {
+      return parsedGraph;
     }
   }
 
-  const fullFlowMembersByFlowId = new Map();
+  const copiedParsedGraph = parsedGraph.map(node => ({...node}));
 
-  [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
-    const isFlowNameOnPath = flowMembers[0].path[0] === flowName;
-    const subFlowName = isFlowNameOnPath ? flowMembers[0].path[1] : flowMembers[0].path[0];
-    const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === subFlowName);
-    const replacedGraph =
-      parsedFlow &&
-      parsedFlow.graph
-        .map(pos => ({
-          ...(flowMembers[0].identifier && {identifier: flowMembers[0].identifier}),
-          path: flowName ? [flowName, ...pos.path] : pos.path,
-          subFlowId: subFlowId,
-          children: [],
-          parents: [],
-        }))
-        .map((pos, j, array) => {
-          pos.parents = parsedFlow.graph[j].parentsIndexes.map(parentIndex => array[parentIndex]);
-          pos.children = parsedFlow.graph[j].childrenIndexes.map(childIndex => array[childIndex]);
-          return pos;
-        });
-    fullFlowMembersByFlowId.set(subFlowId, replacedGraph || flowMembers);
-  });
+  const differentFlowNames = copiedParsedGraph.reduce(
+    ({acc, groupIndex}, node, i) => {
+      const flowName = getUsedFlowName(flowToParse)(node.path);
+      if (i === 0 || acc[groupIndex - 1] !== flowName) {
+        node.groupIndex = groupIndex;
+        return {acc: [...acc, flowName], groupIndex: groupIndex + 1};
+      } else {
+        node.groupIndex = groupIndex - 1;
+        return {acc, groupIndex};
+      }
+    },
+    {acc: [], groupIndex: 0},
+  ).acc;
 
-  [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
-    const fullFlowMembers = fullFlowMembersByFlowId.get(subFlowId);
-    flowMembers.forEach(oldNode => {
-      const oldPath = oldNode.path;
-      const newNode = fullFlowMembers.find(node => arePathsEqual(node.path, oldPath));
-      newNode &&
-        oldNode.children
-          .filter(child => child.subFlowId !== subFlowId)
-          .map(child => child.subFlowId)
-          .map(childFlowId => fullFlowMembersByFlowId.get(childFlowId)[0])
-          .forEach(newHead => {
-            newNode.children.push(newHead);
-            newHead.parents.push(newNode);
-          });
-    });
-  });
-  return fullFlowMembersByFlowId;
-}
-
-function extendGraph(parsedFlows, extendedParsedFlow, graph) {
-  const head = graphByIndexesToObjects(graph);
-  const {initialFlowId, flowMembersByFlowId} = groupGraphByFlows(parsedFlows, head);
-  const fullFlowMembersByFlowId = extendFlowMembersByFlowId(
-    extendedParsedFlow,
-    flowMembersByFlowId,
-  );
-  const result = transformToArrayGraph(fullFlowMembersByFlowId.get(initialFlowId)[0]);
-  return result;
-}
-
-function extendFlowMembersByFlowId(extendedParsedFlow, flowMembersByFlowId) {
-  if (!extendedParsedFlow) {
-    return flowMembersByFlowId;
+  if (
+    differentFlowNames.length === 1 &&
+    extendedParsedFlow &&
+    differentFlowNames[0] === extendedParsedFlow.name
+  ) {
+    return extendedParsedFlow.graph.map(node => ({
+      ...node,
+      path: [flowToParse.name, ...node.path],
+    }));
   }
-  const fullFlowMembersByFlowId = new Map();
 
-  [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
-    // remove all flowNames that appears on the extendedParsedFlow's graph.
-    const nodePathWithoutExtendedFlows = flowMembers[0].path.filter(
-      flowName =>
-        !extendedParsedFlow || !extendedParsedFlow.graph.some(node => node.path.includes(flowName)),
-    );
-    const identifierObject = flowMembers[0].identifier && {identifier: flowMembers[0].identifier};
-    const extendedNodeGraph = extendedParsedFlow.graph
-      .map(pos => {
-        return {
-          ...identifierObject,
-          path: [...nodePathWithoutExtendedFlows, ...pos.path],
-          subFlowId: subFlowId,
-          children: [],
-          parents: [],
-        };
-      })
+  const extendedFlowsInGraphByFlowName = differentFlowNames
+    .map(flowName => parsedFlows.find(parsedFlow => parsedFlow.name === flowName))
+    .map(parsedFlow => ({
+      ...parsedFlow,
+      graph: parsedFlow.graph.map(addFlowName(flowToParse)),
+    }))
+    .map(parsedFlow => ({
+      ...parsedFlow,
+      graph: graphByIndexesToObjects(parsedFlow.graph),
+    }))
+    .map(parsedFlow => extendGraph(extendedParsedFlow)(parsedFlow));
+
+  const getNewNode = (groupIndex, oldNode) => {
+    const newGraph = extendedFlowsInGraphByFlowName[groupIndex];
+    return newGraph.find(node => arePathsEqual(node.path, oldNode.path));
+  };
+
+  for (const oldNode of copiedParsedGraph) {
+    const flowNameNode = getUsedFlowName(flowToParse)(oldNode.path);
+    const newNode = getNewNode(oldNode.groupIndex, oldNode);
+    oldNode.childrenIndexes
+      .map(i => copiedParsedGraph[i])
+      .forEach(oldChid => {
+        const flowNameChild = getUsedFlowName(flowToParse)(oldChid.path);
+        if (flowNameNode === flowNameChild) {
+          const newChild = getNewNode(oldChid.groupIndex, oldChid);
+          if (!newNode.children.includes(newChild)) {
+            newNode.children.push(newChild);
+            newChild.parents.push(newNode);
+          }
+        } else {
+          const headOfNewChildGraph = extendedFlowsInGraphByFlowName[oldChid.groupIndex][0];
+          if (!newNode.children.includes(headOfNewChildGraph)) {
+            newNode.children.push(headOfNewChildGraph);
+            headOfNewChildGraph.parents.push(newNode);
+          }
+        }
+      });
+  }
+
+  const newGraph = transformToArrayGraph(
+    extendedFlowsInGraphByFlowName[copiedParsedGraph[0].groupIndex][0],
+  );
+  return newGraph;
+}
+
+const getUsedFlowName = flowToParse => path => {
+  if (path.length > 1) {
+    if (flowToParse.hasOwnProperty('name')) {
+      return path[1];
+    } else {
+      return path[0];
+    }
+  } else {
+    return path[0];
+  }
+};
+
+const addFlowName = flowToParse => node =>
+  flowToParse.hasOwnProperty('name') ? {...node, path: [flowToParse.name, ...node.path]} : node;
+
+const extendGraph = extendedParsedFlow => parsedFlow => {
+  if (!extendedParsedFlow) {
+    return parsedFlow.graph;
+  }
+  if (parsedFlow.extendedParsedFlow && parsedFlow.extendedParsedFlow.id === extendedParsedFlow.id) {
+    return parsedFlow.graph;
+  }
+
+  const oldToExtended = new Map();
+
+  for (const oldNode of parsedFlow.graph) {
+    const extendedFlowMember = extendedParsedFlow.graph
+      .map(pos => ({
+        path: [...oldNode.path, ...pos.path],
+        children: [],
+        parents: [],
+      }))
       .map((pos, j, array) => {
         pos.parents = extendedParsedFlow.graph[j].parentsIndexes.map(
           parentIndex => array[parentIndex],
@@ -114,33 +130,82 @@ function extendFlowMembersByFlowId(extendedParsedFlow, flowMembersByFlowId) {
         );
         return pos;
       });
-    fullFlowMembersByFlowId.set(subFlowId, extendedNodeGraph);
-  });
+    oldToExtended.set(oldNode, extendedFlowMember);
+  }
 
-  [...flowMembersByFlowId.entries()].forEach(([subFlowId, flowMembers]) => {
-    const fullFlowMembers = fullFlowMembersByFlowId.get(subFlowId);
-    flowMembers.forEach(oldNode => {
-      const newNode = fullFlowMembers.find(node => arePathsEqual(node.path, oldNode.path));
-      oldNode.children
-        .filter(child => child.subFlowId !== subFlowId)
-        .map(child => child.subFlowId)
-        .map(childFlowId => fullFlowMembersByFlowId.get(childFlowId)[0])
-        .forEach(newHead => {
-          newNode.children.push(newHead);
-          newHead.parents.push(newNode);
-        });
+  for (const oldNode of parsedFlow.graph) {
+    const newNode = oldToExtended.get(oldNode)[extendedParsedFlow.defaultNodeIndex];
+    oldNode.children
+      .map(oldChild => oldToExtended.get(oldChild))
+      .filter(Boolean)
+      .map(extended => extended[0])
+      .forEach(newChild => {
+        newNode.children.push(newChild);
+        newChild.parents.push(newNode);
+      });
+  }
+
+  // put new graph in array
+  const newGraph = [];
+  const visited = new Map();
+  let stack = [oldToExtended.get(parsedFlow.graph[0])[0]];
+  while (stack.length > 0) {
+    const newNode = stack.pop();
+    if (!visited.get(newNode)) {
+      visited.set(newNode, true);
+      newGraph.push(newNode);
+      stack = [...newNode.children, ...stack];
+    }
+  }
+
+  return newGraph;
+};
+
+function graphByIndexesToObjects(graph) {
+  const extendedNodeGraph = graph
+    .map(pos => {
+      const subFlowIdObject = pos.subFlowId && {subFlowId: pos.subFlowId};
+      const identifierObject = pos.identifier && {identifier: pos.identifier};
+      return {
+        ...identifierObject,
+        path: pos.path,
+        ...subFlowIdObject,
+        children: [],
+        parents: [],
+      };
+    })
+    .map((pos, j, array) => {
+      pos.parents = graph[j].parentsIndexes.map(parentIndex => array[parentIndex]);
+      pos.children = graph[j].childrenIndexes.map(childIndex => array[childIndex]);
+      return pos;
     });
-  });
-  return fullFlowMembersByFlowId;
+
+  return extendedNodeGraph;
 }
 
-export const arePathsEqual = (path1, path2) => {
-  if (path1.length !== path2.length) {
-    return false;
-  }
-  for (let i = 0; i < path1.length; i++)
-    if (path1[i] !== path2[i]) {
-      return false;
+function transformToArrayGraph(head) {
+  const visited = new Map();
+  const graph = [];
+  let i = 0;
+
+  function addIndexes(pos) {
+    if (!visited.get(pos)) {
+      visited.set(pos, true);
+      graph.push(pos);
+      pos.index = i++;
+      pos.children.filter(child => !visited.get(child)).forEach(child => addIndexes(child));
     }
-  return true;
-};
+  }
+
+  addIndexes(head);
+
+  return graph.map(node => {
+    const identifierObject = node.identifier && {identifier: node.identifier};
+    return {
+      ...identifierObject,
+      path: node.path,
+      childrenIndexes: node.children.map(child => child.index),
+      parentsIndexes: node.parents.map(parent => parent.index),
+    };
+  });
+}

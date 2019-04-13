@@ -12,16 +12,40 @@ const flowsConfig = graph => ({
   ],
 });
 
+test('0', () => {
+  const flowsConfig = graph => ({
+    splitters: {
+      extends: '_',
+    },
+    flows: [graph],
+  });
+  const actual = 'a';
+  const expected = [
+    {
+      name: 'a',
+      graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+  ];
+
+  const actualFlows = createFlows(actual, flowsConfig);
+  const expectedFlows = createExpected(expected, flowsConfig(actual));
+
+  assertEqualFlows(expectedFlows, actualFlows);
+});
+
 test('1', () => {
   const actual = 'flow0';
   const expected = [
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
 
@@ -37,10 +61,12 @@ test('2', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -55,10 +81,12 @@ test('3', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -73,10 +101,12 @@ test('4', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -91,10 +121,12 @@ test('5', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -109,10 +141,12 @@ test('6', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -127,10 +161,12 @@ test('7', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -148,14 +184,17 @@ test('8', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'composed-flow',
       graph: [{'composed-flow_flow0_a': [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -173,14 +212,17 @@ test('9', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'composed-flow',
       graph: [{'composed-flow_flow0_a': [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -195,6 +237,7 @@ test('10', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -217,6 +260,7 @@ test('11', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -240,6 +284,7 @@ test('12', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -263,6 +308,7 @@ test('13', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -286,6 +332,7 @@ test('14', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(4, ['flow', 'a'], '_'),
     {
@@ -314,6 +361,7 @@ test('15', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(5, ['flow', 'a'], '_'),
     {
@@ -343,6 +391,7 @@ test('16', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(3, ['flow', 'a'], '_'),
     {
@@ -370,6 +419,7 @@ test('17', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(4, ['flow', 'a'], '_'),
     {
@@ -398,6 +448,7 @@ test('18', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(4, ['flow', 'a'], '_'),
     {
@@ -426,6 +477,7 @@ test('19', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -452,6 +504,7 @@ test('20', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -480,6 +533,7 @@ test('21', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(8, ['flow', 'a'], '_'),
     {
@@ -511,10 +565,12 @@ test('22', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
       graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -531,6 +587,7 @@ test('23', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(3, ['flow', 'a'], '_'),
     {
@@ -556,6 +613,7 @@ test('24', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(4, ['flow', 'a'], '_'),
     {
@@ -582,6 +640,7 @@ test('25', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(6, ['flow', 'a'], '_'),
     {
@@ -610,6 +669,7 @@ test('26', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(6, ['flow', 'a'], '_'),
     {
@@ -638,6 +698,7 @@ test('27', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(3, ['flow', 'a'], '_'),
     {
@@ -663,6 +724,7 @@ test('28', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(4, ['flow', 'a'], '_'),
     {
@@ -689,6 +751,7 @@ test('29', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(5, ['flow', 'a'], '_'),
     {
@@ -716,6 +779,7 @@ test('30', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
   ];
@@ -735,11 +799,13 @@ test('31', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
     {
       name: 'composed-flow',
       graph: [{'composed-flow_flow0_a': [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
 
@@ -758,11 +824,13 @@ test('32', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
     {
       name: 'composed-flow',
       graph: [{'composed-flow_flow0_a': [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
 
@@ -778,6 +846,7 @@ test('33', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
   ];
@@ -794,6 +863,7 @@ test('34', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
   ];
@@ -814,16 +884,117 @@ test('35', () => {
 
   const actual = {
     name: 'flow1',
-    graph: 'flow1_a',
+    graph: 'flow1',
   };
   const expected = [
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     {
       name: 'flow1',
-      graph: [{flow1_a: [[], []]}],
+      graph: [{flow1: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+  ];
+
+  const actualFlows = createFlows(actual, flowsConfig);
+  const expectedFlows = createExpected(expected, flowsConfig(actual));
+
+  assertEqualFlows(expectedFlows, actualFlows);
+});
+
+test('36', () => {
+  const flowsConfig = graph => ({
+    splitters: {
+      extends: '_',
+    },
+    flows: [graph],
+  });
+
+  const actual = 'a:b';
+  const expected = [
+    {
+      name: 'a',
+      graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      name: 'b',
+      graph: [{b: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      graph: [{a: [[], [1]]}, {b: [[0], []]}],
+    },
+  ];
+
+  const actualFlows = createFlows(actual, flowsConfig);
+  const expectedFlows = createExpected(expected, flowsConfig(actual));
+
+  assertEqualFlows(expectedFlows, actualFlows);
+});
+
+test('37', () => {
+  const actual = {
+    name: 'flow0',
+    graph: 'a',
+  };
+  const expected = [
+    {
+      name: 'a',
+      graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      name: 'flow0',
+      graph: [{flow0_a: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+  ];
+
+  const actualFlows = createFlows(actual, flowsConfig);
+  const expectedFlows = createExpected(expected, flowsConfig(actual));
+
+  assertEqualFlows(expectedFlows, actualFlows);
+});
+
+test('38', () => {
+  const flowsConfig = graph => ({
+    splitters: {
+      extends: '_',
+    },
+    flows: graph,
+  });
+
+  const actual = ['a:b', 'flow0:flow1'];
+  const expected = [
+    {
+      name: 'a',
+      graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      name: 'b',
+      graph: [{b: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      graph: [{a: [[], [1]]}, {b: [[0], []]}],
+    },
+    {
+      name: 'flow0',
+      graph: [{flow0: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      name: 'flow1',
+      graph: [{flow1: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      graph: [{flow0: [[], [1]]}, {flow1: [[0], []]}],
     },
   ];
 

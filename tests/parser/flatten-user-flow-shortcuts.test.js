@@ -288,7 +288,6 @@ test('18', () => {
   const actual = 'a';
   const expectedUserFlows = [
     {
-      name: 'a',
       graph: ['a'],
       extendsFlows: [],
     },
