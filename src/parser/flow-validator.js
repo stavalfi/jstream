@@ -1,7 +1,4 @@
-import {
-  distractDisplayNameBySplitters,
-  extractUniqueFlowsNamesFromGraph,
-} from './utils';
+import {distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph} from './utils';
 import kindof from 'kindof';
 
 export const validateFlowToParse = splitters => (
@@ -9,7 +6,7 @@ export const validateFlowToParse = splitters => (
   extendedParsedFlow,
 ) => flowToParse => {
   if (Object.keys(flowToParse).length === 0) {
-    throw new Error(`flow can't have zero properties.`);
+    throw new Error("flow can't have zero properties.");
   }
 
   if (flowToParse.graph) {
@@ -21,25 +18,14 @@ export const validateFlowToParse = splitters => (
     }
     const flows = extractUniqueFlowsNamesFromGraph(splitters)(flowToParse.graph);
     if (flows.length === 0) {
-      throw new Error(`flow can't have zero flows in his graph.`);
+      throw new Error("flow can't have zero flows in his graph.");
     }
     if (flows.length === 1) {
       if (flowToParse.defaultFlowName) {
         throw new Error(`flow with a graph containing a single 
         flow can't have a default_flow_name property.`);
       }
-      if (flowToParse.name) {
-        return flowToParse;
-      } else {
-        if (
-          splitters.identifier &&
-          flowToParse.graph.some(subGraph => subGraph.indexOf(splitters.identifier) > -1)
-        ) {
-          return flowToParse;
-        } else {
-          throw new Error(`flow with a single flow in his graph, must have a unique name property.`);
-        }
-      }
+      return flowToParse;
     }
     if (flowToParse.extendsFlows.length === 0) {
       return flowToParse;
@@ -54,14 +40,9 @@ export const validateFlowToParse = splitters => (
           );
         }
       }
-      if (flowToParse.defaultFlowName) {
-        return flowToParse;
-      } else {
-        throw new Error(
-          `flow with multiple flows in his graph, must have a default_flow_name property.`,
-        );
-      }
+      return flowToParse;
     } else {
+      return flowToParse;
     }
   } else {
     return flowToParse;

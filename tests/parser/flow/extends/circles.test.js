@@ -21,6 +21,7 @@ test('1', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -43,6 +44,7 @@ test('2', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -65,6 +67,7 @@ test('3', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -87,6 +90,7 @@ test('3', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -109,6 +113,7 @@ test('4', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -131,6 +136,7 @@ test('5', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(2, ['flow', 'a'], '_'),
     {
@@ -153,11 +159,13 @@ test('6', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
     {
       name: 'composed-flow',
       graph: [{'composed-flow_flow0_a': [[], []]}],
+      defaultNodeIndex: 0,
     },
   ];
   const actualFlows = createFlows(actual, flowsConfig);
@@ -175,6 +183,7 @@ test('7', () => {
     {
       name: 'a',
       graph: [{a: [[], []]}],
+      defaultNodeIndex: 0,
     },
     ...declareFlows(1, ['flow', 'a'], '_'),
   ];

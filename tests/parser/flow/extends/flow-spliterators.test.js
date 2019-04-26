@@ -18,11 +18,11 @@ test('1', () => {
   const expected = [
     {
       name: 'a',
-      graph: [{a: [[], []]}],
+      graph: [{a: [[], []]}],defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
-      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],
+      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],defaultNodeIndex: 0,
     },
   ];
 
@@ -40,11 +40,11 @@ test('2', () => {
   const expected = [
     {
       name: 'a',
-      graph: [{a: [[], []]}],
+      graph: [{a: [[], []]}],defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
-      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],
+      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],defaultNodeIndex: 0,
     },
   ];
 
@@ -62,11 +62,11 @@ test('3', () => {
   const expected = [
     {
       name: 'a',
-      graph: [{a: [[], []]}],
+      graph: [{a: [[], []]}],defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
-      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],
+      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],defaultNodeIndex: 0,
     },
   ];
 
@@ -84,11 +84,11 @@ test('4', () => {
   const expected = [
     {
       name: 'a',
-      graph: [{a: [[], []]}],
+      graph: [{a: [[], []]}],defaultNodeIndex: 0,
     },
     {
       name: 'flow0',
-      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],
+      graph: [{[`flow0${splitters.extends}a`]: [[], []]}],defaultNodeIndex: 0,
     },
   ];
 

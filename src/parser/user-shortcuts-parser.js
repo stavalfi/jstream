@@ -5,8 +5,8 @@ function getGraph(flow) {
   return kindof(flow.graph) === 'array' ? flow.graph : [flow.graph];
 }
 
-function getFlowNameObject(splitters, parsedFlows, flow, extendedParsedFlow) {
-  if (flow.name) {
+function getFlowNameObject(splitters, parsedFlowsUntilNow, flow) {
+  if (flow.hasOwnProperty('name')) {
     return {name: flow.name};
   }
   const graph = getGraph(flow);
@@ -22,33 +22,31 @@ function getFlowNameObject(splitters, parsedFlows, flow, extendedParsedFlow) {
     } else {
       const possibleName = distractDisplayNameBySplitters(splitters, flowsInGraph[0])
         .partialPath[0];
-      return {name: possibleName};
+      if (parsedFlowsUntilNow.some(flow => flow.name === possibleName)) {
+        return {};
+      } else {
+        return {name: possibleName};
+      }
     }
   } else {
     return {};
   }
 }
 
-export const flattenUserFlowShortcuts = splitters => (parsedFlows, extendedParsedFlow) =>
+export const flattenUserFlowShortcuts = splitters => parsedFlowsUntilNow =>
   function flatten(flow) {
     switch (kindof(flow)) {
       case 'string':
-        return flatten(
-          {
-            graph: [flow],
-          },
-          extendedParsedFlow,
-        );
+        return flatten({
+          graph: [flow],
+        });
       case 'array':
-        return flatten(
-          {
-            graph: flow,
-          },
-          extendedParsedFlow,
-        );
+        return flatten({
+          graph: flow,
+        });
       case 'object':
         const graph = getGraph(flow);
-        const nameObject = getFlowNameObject(splitters, parsedFlows, flow, extendedParsedFlow);
+        const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flow);
         const defaultFlowNameObject = flow.default_flow_name && {
           defaultFlowName: flow.default_flow_name,
         };
@@ -57,7 +55,6 @@ export const flattenUserFlowShortcuts = splitters => (parsedFlows, extendedParse
           ...nameObject,
           extendsFlows: flow.extends_flows || [],
           ...defaultFlowNameObject,
-          ...(flow.hasOwnProperty('rules') && {rules: flow.rules}),
           ...(flow.hasOwnProperty('side_effects') && {side_effects: flow.side_effects}),
         };
         return [flowToParse];

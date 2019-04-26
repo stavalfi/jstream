@@ -2,9 +2,6 @@ import {parse} from '../../src/parser';
 import '../';
 import {distractDisplayNameBySplitters, graphNodeToDisplayName} from '../../src/parser/utils';
 import {table} from 'table';
-import deepEqual from 'deep-equal';
-
-
 
 export const declareFlows = (n, path, extendsSplitter) =>
   [...Array(n).keys()].map(i => ({
@@ -14,29 +11,24 @@ export const declareFlows = (n, path, extendsSplitter) =>
         [`${path[0]}${i}${extendsSplitter}${path.slice(1).join(extendsSplitter)}`]: [[], []],
       },
     ],
+    defaultNodeIndex: 0,
   }));
 
 export const createExpected = (expectedFlowsArrays, flowsConfig) => {
   return expectedFlowsArrays.map(flowToParse => ({
-    ...(flowToParse.hasOwnProperty('name') && {name: flowToParse.name}),
-    ...(flowToParse.hasOwnProperty('defaultFlowName') && {
-      defaultFlowName: flowToParse.defaultFlowName,
-    }),
+    ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
   }));
 };
 
 const convertExpectedFlowGraphArray = (expectedFlowGraphArray, flowsConfig) => {
   return expectedFlowGraphArray.map(node => {
-    const {partialPath, identifier} = distractDisplayNameBySplitters(
-      flowsConfig.splitters,
-      Object.keys(node)[0],
-    );
+    const displayNode = distractDisplayNameBySplitters(flowsConfig.splitters, Object.keys(node)[0]);
     return {
       parentsIndexes: Object.values(node)[0][0],
       childrenIndexes: Object.values(node)[0][1],
-      path: partialPath,
-      ...(identifier && {identifier}), // todo: replace with hasOwnProperty
+      path: displayNode.partialPath,
+      ...(displayNode.hasOwnProperty('identifier') && {identifier: displayNode.identifier}),
     };
   });
 };
@@ -44,33 +36,21 @@ const convertExpectedFlowGraphArray = (expectedFlowGraphArray, flowsConfig) => {
 export const createFlows = (actualFlowGraph, flowsConfig) =>
   parse(flowsConfig(actualFlowGraph)).flows;
 
-export const createWorkflows = (actualFlowGraph, flowsConfig) =>
-  parse(flowsConfig(actualFlowGraph)).workflows;
-
-function graphToMatrix(graph) {
-  const sortedGraph = sortGraph(graph);
-
-  // i === row number
-  // j === column number
-  // [i][j] === edge from i to j
-  const childrenMatrix = sortedGraph.map(() => sortedGraph.map(() => false));
-  sortedGraph.forEach((node, i) => {
-    node.childrenIndexes.forEach(j => (childrenMatrix[i][j] = true));
-  });
-  const parentsMatrix = sortedGraph.map(() => sortedGraph.map(() => false));
-  sortedGraph.forEach((node, i) => {
-    node.parentsIndexes.forEach(j => (parentsMatrix[i][j] = true));
-  });
-  const nodes = sortedGraph.map(node => ({
-    path: node.path,
-    ...(node.hasOwnProperty('identifier') && {identifier: node.identifier}),
-  }));
-  return {
-    nodes,
-    parentsMatrix,
-    childrenMatrix,
-  };
-}
+const compareNodes = splitters => (node1, node2) => {
+  if (node1.identifier < node2.identifier) {
+    return -1;
+  }
+  if (node1.identifier > node2.identifier) {
+    return 1;
+  }
+  if (node1.path.join(splitters.extends) < node2.path.join(splitters.extends)) {
+    return -1;
+  }
+  if (node1.path.join(splitters.extends) > node2.path.join(splitters.extends)) {
+    return 1;
+  }
+  return 0;
+};
 
 function sortGraph(graph, splitters = {extends: '_', identifier: '/'}) {
   const newGraph = graph
@@ -98,68 +78,89 @@ function sortGraph(graph, splitters = {extends: '_', identifier: '/'}) {
   }));
 }
 
-export function graphToString(graph, splitters) {
-  const sortedGraph = sortGraph(graph, splitters);
-
-  // i === row number
-  // j === column number
-  // [i][j] === edge from i to j
-  const matrix = [false, ...sortedGraph].map(() => [false, ...sortedGraph].map(() => ' '));
-  sortedGraph
-    .map(node => node.displayName)
-    .forEach((displayName, i) => {
-      matrix[i + 1][0] = displayName;
-      matrix[0][i + 1] = displayName;
-    });
-  sortedGraph.forEach((node, i) => {
-    node.childrenIndexes.forEach(j => (matrix[i + 1][j + 1] = 'T'));
-  });
-  sortedGraph.forEach((node, i) => {
-    node.childrenIndexes.forEach(j => (matrix[i + 1][0] = node.displayName));
-  });
-  return table(matrix);
-}
-
-const compareNodes = splitters => (node1, node2) => {
-  if (node1.identifier < node2.identifier) {
-    return -1;
-  }
-  if (node1.identifier > node2.identifier) {
-    return 1;
-  }
-  if (node1.path.join(splitters.extends) < node2.path.join(splitters.extends)) {
-    return -1;
-  }
-  if (node1.path.join(splitters.extends) > node2.path.join(splitters.extends)) {
-    return 1;
-  }
-  return 0;
-};
-
 export function assertEqualFlows(expectedFlowsArray, actualFlowsArray, count = 0) {
+  expectedFlowsArray = expectedFlowsArray.map(flow => ({
+    ...flow,
+    graph: sortGraph(flow.graph),
+  }));
+  actualFlowsArray = actualFlowsArray.map(flow => ({
+    ...flow,
+    graph: sortGraph(flow.graph),
+  }));
   if (count > 1) {
     return;
   }
   expectedFlowsArray.forEach((expectedFlow, i) => {
     const actualFlow = findFlowByFlow(actualFlowsArray, expectedFlow);
-    expect(
-      actualFlow,
-      `${count === 0 ? 'expected' : 'actual'} flow: ${
-        expectedFlow.name
-      } - does not exist: \n${graphToString(expectedFlow.graph)}
-        \n\n good guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
-        \n${graphToString(actualFlowsArray[i].graph)}`,
-    ).toBeDefined();
+    const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
+      expectedFlow.name
+    } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
+        \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
+        \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`;
+    expect(actualFlow, errorMessage).toBeDefined();
+    expect(actualFlow.graph, errorMessage).toEqual(expectedFlow.graph);
+    expect(actualFlow.defaultNodeIndex, errorMessage).toEqual(expectedFlow.defaultNodeIndex);
+    if (count === 0 && expectedFlow.hasOwnProperty('extendedFlowIndex')) {
+      const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex];
+      const actualExtendedFlow = actualFlowsArray[actualFlow.extendedFlowIndex];
+      const isEqual =
+        expectedExtendedFlow.name === actualExtendedFlow.name &&
+        expectedExtendedFlow.defaultNodeIndex === actualExtendedFlow.defaultNodeIndex &&
+        graphToString(expectedExtendedFlow.graph) === graphToString(actualExtendedFlow.graph);
+      expect(
+        isEqual,
+        `${count === 0 ? 'expected' : 'actual'} flow: ${
+          expectedFlow.name
+        } - has different extended flow`,
+      ).toBe(true);
+    }
   });
 
   assertEqualFlows(actualFlowsArray, expectedFlowsArray, count + 1);
 }
 
 function findFlowByFlow(flowsArray, flowToSearch) {
-  return flowsArray.find(
-    flow =>
-      flow.name === flowToSearch.name &&
-      flow.defaultFlowName === flowToSearch.defaultFlowName &&
-      deepEqual(graphToMatrix(flow.graph), graphToMatrix(flowToSearch.graph)),
-  );
+  return flowsArray.find(flow => {
+    return (
+      (flow.hasOwnProperty('name') &&
+        flowToSearch.hasOwnProperty('name') &&
+        flow.name === flowToSearch.name) ||
+      (flow.defaultNodeIndex === flowToSearch.defaultNodeIndex &&
+        graphToString(flow.graph) === graphToString(flowToSearch.graph))
+    );
+  });
+}
+
+function flowToString(flow) {
+  let str = '';
+  if (flow.hasOwnProperty('name')) {
+    str += 'name: ' + flow.name + '\n';
+  }
+  if (flow.hasOwnProperty('extendedFlowIndex')) {
+    str += 'extendedFlowIndex: ' + flow.extendedFlowIndex + '\n';
+  }
+  if (flow.hasOwnProperty('defaultNodeIndex')) {
+    str += 'defaultNodeIndex: ' + flow.defaultNodeIndex;
+  }
+  return str;
+}
+
+export function graphToString(graph) {
+  // i === row number
+  // j === column number
+  // [i][j] === edge from i to j
+  const matrix = [false, ...graph].map(() => [false, ...graph].map(() => ' '));
+  graph
+    .map(node => node.displayName)
+    .forEach((displayName, i) => {
+      matrix[i + 1][0] = displayName;
+      matrix[0][i + 1] = displayName;
+    });
+  graph.forEach((node, i) => {
+    node.childrenIndexes.forEach(j => (matrix[i + 1][j + 1] = 'T'));
+  });
+  graph.forEach((node, i) => {
+    node.childrenIndexes.forEach(j => (matrix[i + 1][0] = node.displayName));
+  });
+  return table(matrix);
 }
