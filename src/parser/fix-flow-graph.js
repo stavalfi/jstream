@@ -21,11 +21,13 @@ export function fixAndExtendGraph({parsedFlows, flowToParse, parsedGraph, extend
   const differentFlowNames = copiedParsedGraph.reduce(
     ({acc, groupIndex}, node, i) => {
       const flowName = getUsedFlowName(flowToParse)(node.path);
-      if (i === 0 || acc[groupIndex - 1] !== flowName) {
+      if (i === 0 || !acc.includes(flowName)) {
         node.groupIndex = groupIndex;
         return {acc: [...acc, flowName], groupIndex: groupIndex + 1};
       } else {
-        node.groupIndex = groupIndex - 1;
+        node.groupIndex = copiedParsedGraph
+          .slice(0, i)
+          .find(node => getUsedFlowName(flowToParse)(node.path) === flowName).groupIndex;
         return {acc, groupIndex};
       }
     },

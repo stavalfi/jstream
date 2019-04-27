@@ -1,5 +1,10 @@
-import {getActiveNodesIndexes, areNodesEqual} from './utils';
-import {graphNodeToDisplayName, displayNameToFullGraphNode} from '../parser/utils';
+import {
+  getActiveNodesIndexes,
+  areNodesEqual,
+  getSideEffects,
+  userInputNodeToNodeIndex,
+} from './utils';
+import {displayNameToFullGraphNode, isSubsetOf} from '../parser/utils';
 import isObservable from 'is-observable';
 import isPromise from 'is-promise';
 import uuid from 'uuid/v1';
@@ -20,18 +25,20 @@ const executeFlow = payload => {
   };
 };
 
-const advanceFlow = payload => ({
+export const advanceFlow = payload => ({
   type: ADVANCE_FLOW,
   payload,
 });
 
 export const executeFlowCreator = reducerSelector => flowName => (dispatch, getState) => {
-  const {payload} = dispatch(executeFlow({flowName, id: uuid()}));
-  const {splitters, activeFlows} = reducerSelector(getState());
-  const activeFlow = activeFlows.find(activeFlow => activeFlow.id === payload.id);
-  const headNode = graphNodeToDisplayName(splitters)(activeFlow.graph[0]);
+  const action = dispatch(executeFlow({flowName, id: uuid()}));
+  const {activeFlows} = reducerSelector(getState());
+  const activeFlow = activeFlows.find(activeFlow => activeFlow.id === action.payload.id);
+  if (!activeFlow) {
+    return action;
+  }
   return dispatch(
-    advanceGraph(reducerSelector)(advanceFlow({flowName, id: payload.id, toNode: headNode})),
+    advanceGraph(reducerSelector)(advanceFlow({flowName, id: action.payload.id, toNodeIndex: 0})),
   );
 };
 
@@ -43,54 +50,71 @@ export const advanceGraph = reducerSelector =>
       const activeFlow = activeFlows.find(activeFlow => activeFlow.id === payload.id);
       const extendedFlow =
         activeFlow.hasOwnProperty('extendedFlowIndex') && flows[activeFlow.extendedFlowIndex];
-      const toNodeObject = displayNameToFullGraphNode(splitters)(flows, activeFlow.name, extendedFlow)(
-        payload.toNode,
-      );
+
+      const userNodeToNodeObject = userInputNodeToNodeIndex({
+        stringToNode: displayNameToFullGraphNode(splitters)(flows, activeFlow.name, extendedFlow),
+        graph: activeFlow.graph,
+      });
 
       const activeNodeIndex =
         getActiveNodesIndexes(activeFlow.graph).find(i =>
-          areNodesEqual(activeFlow.graph[i], toNodeObject),
+          areNodesEqual(activeFlow.graph[i], activeFlow.graph[payload.toNodeIndex]),
         ) || 0;
       const activeNode = activeFlow.graph[activeNodeIndex];
-      const sideEffect = activeFlow.sideEffects.find(sideEffect =>
-        areNodesEqual(sideEffect.node, activeNode),
+      const sideEffects = getSideEffects(flows, activeFlow);
+      const sideEffect = sideEffects.find(sideEffect =>
+        isSubsetOf(sideEffect.node.path, activeNode.path),
       );
-      if (sideEffect && sideEffect.sideEffectFunc) {
-        const result = sideEffect.sideEffectFunc(activeFlow)(activeNode);
-        if (isObservable(result)) {
-          return result.subscribe({
-            next: nextNode =>
-              nextNode &&
-              dispatch(
-                advance(
-                  advanceFlow({
-                    ...payload,
-                    fromNode: payload.toNode,
-                    toNode: nextNode,
-                  }),
-                ),
+
+      if (!sideEffect || !sideEffect.hasOwnProperty('sideEffectFunc')) {
+        return action;
+      }
+
+      const result = sideEffect.sideEffectFunc(activeFlow)(activeNode);
+
+      if (isObservable(result)) {
+        return result.subscribe({
+          next: nextNode =>
+            nextNode &&
+            dispatch(
+              advance(
+                advanceFlow({
+                  ...payload,
+                  fromNodeIndex: payload.toNodeIndex,
+                  toNodeIndex: userNodeToNodeObject(payload.toNodeIndex)(nextNode),
+                }),
               ),
-          });
-        }
-        if (isPromise(result)) {
-          return result.then(
-            nextNode =>
-              nextNode &&
-              dispatch(
-                advance(
-                  advanceFlow({
-                    ...payload,
-                    fromNode: payload.toNode,
-                    toNode: nextNode,
-                  }),
-                ),
+            ),
+        });
+      }
+      if (isPromise(result)) {
+        return result.then(
+          nextNode =>
+            nextNode &&
+            dispatch(
+              advance(
+                advanceFlow({
+                  ...payload,
+                  fromNodeIndex: payload.toNodeIndex,
+                  toNodeIndex: userNodeToNodeObject(payload.toNodeIndex)(nextNode),
+                }),
               ),
-          );
-        }
-        return (
-          result &&
-          dispatch(advance(advanceFlow({...payload, fromNode: payload.toNode, toNode: result})))
+            ),
         );
       }
+
+      const toNodeIndex = userNodeToNodeObject(payload.toNodeIndex)(result);
+      return (
+        result &&
+        dispatch(
+          advance(
+            advanceFlow({
+              ...payload,
+              fromNodeIndex: payload.toNodeIndex,
+              toNodeIndex: toNodeIndex,
+            }),
+          ),
+        )
+      );
     };
   };

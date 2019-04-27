@@ -183,12 +183,12 @@ function parseFlow({splitters, parsedFlowsUntilNow, flowToParse, extendedParsedF
     ...defaultNodeIndexObject,
     graph: updatedParsedGraph,
     ...(flowToParse.hasOwnProperty('side_effects') && {
-      side_effects: parseSideEffects(splitters)(
+      side_effects: parseSideEffects(splitters)({
         parsedFlowsUntilNow,
-        flowToParse.name,
         extendedParsedFlow,
-        flowToParse.side_effects,
-      ),
+        flowName: flowToParse.name,
+        sideEffects: flowToParse.side_effects,
+      }),
     }),
   };
 

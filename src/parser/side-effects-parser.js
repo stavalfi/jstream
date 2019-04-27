@@ -1,10 +1,10 @@
 import {displayNameToFullGraphNode} from './utils';
 
 export const parseSideEffects = splitters => (
-  parsedFlowsUntilNow,
+  {parsedFlowsUntilNow,
   extendedParsedFlow,
   flowName,
-  sideEffects,
+  sideEffects},
 ) => {
   const toNode = displayNameToFullGraphNode(splitters)(parsedFlowsUntilNow,flowName, extendedParsedFlow);
   const result = sideEffects.map(({node_name, side_effect}) => {
