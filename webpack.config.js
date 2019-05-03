@@ -41,7 +41,48 @@ module.exports = {
                         babelrc: true
                     }
                 }
-            }
+            },
+            {
+                test: /\.svg$/,
+                loader: 'svg-inline-loader'
+            },
+            {
+                test: /\.(jpg|jpeg)$/,
+                use: {
+                    // will accept imports of the above files (usually images) and if they are equal/less then the option-limit I specified, then those files
+                    // will transform to strings and will be added to the JS bundle. If they are bigger then this loader will invoke file-loader (if no fall-back is defined) which will
+                    // copy the file as it is a specified location.
+                    // it is for making the browser to make less calls to different files other the js bundle file.
+                    loader: "url-loader",
+                    options: {
+                        // it is for preventing the js bundle file to be too big and then the browser will need much time to load it.
+                        limit: 500000
+                    }
+                }
+            },
+            {
+                test: /\.(png)$/,
+                use: {
+                    // will copy the file to a specified location under the output directory I specified and I need to find this file from code in there (when using imports).
+                    // requirement: every file main-project-folder/X/Y/Z.abc needs to be in output-dir/X/Y/Z.abc and in the code I need to locate, relatively the this location.
+                        loader: "file-loader",
+                    options: {
+                        name: "[path][name].[hash].[ext]",
+                    }
+                }
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    // style-loader injects all the css styles inside the js code using element.style.
+                    // is it a requirement for HMR so there won't be any refresh of the page.
+                    // in production it is a bad idea because if the css are inside some JS bundles, then the main page can't be loaded until all the css files are downloaded by the browser.
+                    // most of the time the css files are small and should load seperatly by the browser for fast first loading.
+                    // MiniCssExtractPlugin.loader extract all the css to a different bundle.
+                    'style-loader',
+                    "css-loader"
+                ]
+            },
         ]
     },
     plugins: [

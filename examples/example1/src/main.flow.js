@@ -4,21 +4,34 @@ export default () => ({
   },
   flows: [
     {
-      graph: 'flow0',
+      name: 'state',
+      graph: 'should_start:failed,canceled,succeed,[waiting:failed,canceled,succeed]',
+      default_flow_name: 'succeed',
       extends_flows: [
         {
-          name: 'flow1',
-          graph: 'a:b',
-          default_flow_name: 'b',
+          name: 'download',
+          graph: [
+            'start_download:resume_download:paused_download,completed_download',
+            'paused_download:resume_download',
+            'start_download,resume_download,paused_download,completed_download:remove_file:start_download',
+          ],
+          default_flow_name: 'completed_download',
         },
         {
-          name: 'flow2',
-          graph: 'c:d',
-          default_flow_name: 'd',
+          name: 'upload',
+          graph: [
+            'start_upload:resume_upload:pause_upload:resume_upload',
+            'start_upload,resume_upload,pause_upload:remove_file',
+          ],
+          default_flow_name: 'resume_upload',
         },
         {
-          name: 'composed-flow',
-          graph: 'flow1:flow2',
+          name: 'upload_after_download',
+          graph: 'download',
+        },
+        {
+          name: 'download_and_upload_concurrently',
+          graph: 'download/resume_download:upload',
         },
       ],
     },
