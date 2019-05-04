@@ -4,7 +4,7 @@ import 'brace/mode/json';
 import 'brace/theme/github';
 import Jsonic from 'jsonic';
 import dJSON from 'dirty-json';
-import {parse} from '../../../src/index';
+import {parse} from '../../../src';
 
 export default class FlowsEditor extends React.Component {
   constructor(props) {
@@ -26,15 +26,15 @@ export default class FlowsEditor extends React.Component {
     try {
       const json = stringToObject(newConfig);
       const configObject = parse(json);
-      return this.setState(
-        {config: newConfig, error: false},
-        this.props.onConfigChange(configObject),
-      );
+      return this.setState({config: newConfig, error: false}, () => {
+        console.log('configuration: ', configObject);
+        this.props.onConfigChange(configObject);
+      });
     } catch (e) {
       if (retryCount < 1) {
         return this.onChange(newConfig, dJSON.parse.bind(dJSON), retryCount + 1);
       }
-      return this.setState({config: newConfig, error: e});
+      return this.setState({config: newConfig, error: e}, () => console.log(e));
     }
   };
 
@@ -45,7 +45,7 @@ export default class FlowsEditor extends React.Component {
         if (lastState.error) {
           return {};
         } else {
-          const config = JSON.stringify(Jsonic(lastState.config), null, '\t\t');
+          const config = JSON.stringify(Jsonic(lastState.config), null, '\t');
           return {config};
         }
       });
@@ -62,7 +62,7 @@ export default class FlowsEditor extends React.Component {
           theme="github"
           name="blah2"
           editorProps={{$blockScrolling: true}}
-          onChange={this.onChange}
+          onChange={change => this.onChange(change)}
           fontSize={14}
           showPrintMargin={true}
           showGutter={true}

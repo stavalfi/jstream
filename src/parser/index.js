@@ -21,13 +21,35 @@ const initializeConfig = config => {
         flows: [config],
       };
     case 'object':
-      const splitters =
-        config.hasOwnProperty('splitters') && config.splitters.hasOwnProperty('extends')
-          ? config.splitters
-          : {
-              extends: '/',
-            };
-      const flows = config.hasOwnProperty('flows') ? config.flows : [];
-      return {splitters, flows};
+      if (
+        config.hasOwnProperty('graph') ||
+        config.hasOwnProperty('name') ||
+        config.hasOwnProperty('default_flow_name') ||
+        config.hasOwnProperty('side_effects') ||
+        config.hasOwnProperty('extends_flows')
+      ) {
+        return {
+          splitters: {
+            extends: '/',
+          },
+          flows: [config],
+        };
+      } else {
+        const splitters =
+          config.hasOwnProperty('splitters') && config.splitters.hasOwnProperty('extends')
+            ? config.splitters
+            : {
+                extends: '/',
+              };
+        const flows = config.hasOwnProperty('flows') ? config.flows : [];
+        return {splitters, flows};
+      }
+    case 'array':
+      return {
+        splitters: {
+          extends: '/',
+        },
+        flows: config,
+      };
   }
 };

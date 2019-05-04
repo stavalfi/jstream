@@ -41,7 +41,6 @@ export default class DrawFlow extends React.Component {
   }
 
   render() {
-    console.log('rendering');
     return <svg key={JSON.stringify(this.props.config)} ref={'mySvg'} />;
   }
 }
