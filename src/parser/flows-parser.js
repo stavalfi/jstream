@@ -105,12 +105,27 @@ function computeDefaultNodeIndexObject({
   if (parsedGraph.length === 1) {
     return {defaultNodeIndex: 0};
   }
+
   if (flowToParse.hasOwnProperty('defaultFlowName')) {
-    return {
-      defaultNodeIndex: parsedGraph.findIndex(node =>
-        node.path.includes(flowToParse.defaultFlowName),
-      ),
-    };
+    const options = parsedGraph
+      .map((node, i) => i)
+      .filter(i => parsedGraph[i].path.includes(flowToParse.defaultFlowName));
+
+    if (options.length === 1) {
+      return {
+        defaultNodeIndex: options[0],
+      };
+    } else {
+      const option = options.find(i =>
+        isSubsetOf(
+          extendedParsedFlow.graph[extendedParsedFlow.defaultNodeIndex].path,
+          parsedGraph[i].path,
+        ),
+      );
+      return {
+        defaultNodeIndex: option,
+      };
+    }
   }
 
   const flowsIndex = flowToParse.hasOwnProperty('name') ? 1 : 0;

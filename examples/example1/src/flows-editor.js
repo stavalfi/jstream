@@ -34,7 +34,7 @@ export default class FlowsEditor extends React.Component {
       if (retryCount < 1) {
         return this.onChange(newConfig, dJSON.parse.bind(dJSON), retryCount + 1);
       }
-      return this.setState({config: newConfig, error: e});
+      return this.setState({config: newConfig, error: e}, () => console.log(e));
     }
   };
 
@@ -45,7 +45,7 @@ export default class FlowsEditor extends React.Component {
         if (lastState.error) {
           return {};
         } else {
-          const config = JSON.stringify(Jsonic(lastState.config), null, '\t\t');
+          const config = JSON.stringify(Jsonic(lastState.config), null, '\t');
           return {config};
         }
       });
@@ -62,7 +62,7 @@ export default class FlowsEditor extends React.Component {
           theme="github"
           name="blah2"
           editorProps={{$blockScrolling: true}}
-          onChange={this.onChange}
+          onChange={change => this.onChange(change)}
           fontSize={14}
           showPrintMargin={true}
           showGutter={true}

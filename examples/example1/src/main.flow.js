@@ -1,4 +1,4 @@
-export default () => ({
+const json = {
   splitters: {
     extends: '/',
   },
@@ -26,7 +26,7 @@ export default () => ({
           default_flow_name: 'resume_upload',
         },
         {
-          name: 'upload_after_download',
+          namse: 'upload_after_download',
           graph: 'download',
         },
         {
@@ -36,4 +36,6 @@ export default () => ({
       ],
     },
   ],
-});
+};
+
+export default () => json;

@@ -67,7 +67,7 @@ export function updateChart({svgReact, config, flow, height, width}) {
           .id(function(d) {
             return d.id;
           })
-          .distance(50)
+          .distance(100)
           .strength(1),
       )
       .on('tick', ticked);
