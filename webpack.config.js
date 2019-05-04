@@ -10,7 +10,7 @@ module.exports = {
   entry: [
     '@babel/polyfill',
     path.join(__dirname, 'examples', 'example1', 'src', 'index.js'),
-    path.join(__dirname, 'node_modules', 'core-js', 'fn', 'array', 'flat-map'),
+    path.join(__dirname, 'node_modules', 'core-js', 'features', 'array', 'flat-map'),
   ],
   output: {
     filename: isDevelopmentMode ? '[hash].bundle.js' : '[contenthash].bundle.js',

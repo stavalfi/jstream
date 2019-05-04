@@ -17,7 +17,6 @@ function toLinks({splitters, graph}) {
 
 export function updateChart({svgReact, config, flow, height, width}) {
   [...svgReact.children].forEach(x => svgReact.removeChild(x));
-  console.log('calculating data');
 
   let nodes = toNodes({splitters: config.splitters, graph: flow.graph});
   let links = toLinks({splitters: config.splitters, graph: flow.graph});

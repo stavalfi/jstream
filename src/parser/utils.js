@@ -78,6 +78,8 @@ const onlyIncludeExtendedFlows = (path, extendedParsedFlow) =>
     ? path.filter(flowName => extendedParsedFlow.graph.some(node => node.path.includes(flowName)))
     : [];
 
+function isDirectChild(parsedFlows, parentFlowName, childFlowName) {}
+
 function fillUserPath(parsedFlows, flowName, extendedParsedFlow, userPath) {
   let newPath = flowName ? [flowName] : [];
   const filteredUserPath = userPath[0] === flowName ? userPath.slice(1) : userPath;
@@ -101,15 +103,24 @@ function fillUserPath(parsedFlows, flowName, extendedParsedFlow, userPath) {
       }
       return false;
     })();
+    const userPath = isExtendingTheSameFlow ? filteredUserPath : subPathNotExtendedFlows;
     const options = parsedFlow.graph
       .map(node => node.path)
-      .filter(path =>
-        isSubsetOf(isExtendingTheSameFlow ? filteredUserPath : subPathNotExtendedFlows, path),
-      );
+      .filter(path => isSubsetOf(userPath, path));
     if (options.length === 1) {
       newPath = newPath.concat(options[0]);
     } else {
-      newPath = newPath.concat(parsedFlow.graph[parsedFlow.defaultNodeIndex].path);
+      if (isSubsetOf(userPath, parsedFlow.graph[parsedFlow.defaultNodeIndex].path)) {
+        newPath = newPath.concat(parsedFlow.graph[parsedFlow.defaultNodeIndex].path);
+      } else {
+        const lastParsedFlow = parsedFlows.find(
+          parsedFlow => parsedFlow.name === userPath[userPath.length - 1],
+        );
+        const option = options.find(path =>
+          isSubsetOf(lastParsedFlow.graph[lastParsedFlow.defaultNodeIndex].path, path),
+        );
+        newPath = newPath.concat(option);
+      }
     }
 
     if (isExtendingTheSameFlow) {

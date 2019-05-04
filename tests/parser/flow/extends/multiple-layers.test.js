@@ -775,100 +775,100 @@ test('13', () => {
   assertEqualFlows(expectedFlows, actualFlows);
 });
 
-  test('14', () => {
-    const flowsConfig = graph => ({
-      splitters: {
-        extends: '_',
-      },
-      flows: [
-        {
-          name: 'f',
-          graph: 'start:complete',
-          default_flow_name: 'complete',
-          extends_flows: [
-            {
-              name: 'flow0',
-              graph: 'a:b',
-              default_flow_name: 'b',
-            },
-            {
-              name: 'flow1',
-              graph: 'a:b',
-              default_flow_name: 'a',
-            },
-            graph,
-          ],
-        },
-      ],
-    });
-    const actual = {
-      name: 'composedflow',
-      graph: 'flow0_a:flow1',
-    };
-    const expected = [
-      {
-        name: 'start',
-        graph: [{start: [[], []]}],
-        defaultNodeIndex: 0,
-      },
-      {
-        name: 'complete',
-        graph: [{complete: [[], []]}],
-        defaultNodeIndex: 0,
-      },
+test('14', () => {
+  const flowsConfig = graph => ({
+    splitters: {
+      extends: '_',
+    },
+    flows: [
       {
         name: 'f',
-        graph: [{f_start: [[], [1]]}, {f_complete: [[0], []]}],
-        defaultNodeIndex: 1,
-      },
-      {
-        name: 'a',
-        graph: [{a_f_start: [[], [1]]}, {a_f_complete: [[0], []]}],
-        defaultNodeIndex: 1,
-      },
-      {
-        name: 'b',
-        graph: [{b_f_start: [[], [1]]}, {b_f_complete: [[0], []]}],
-        defaultNodeIndex: 1,
-      },
-      {
-        name: 'flow0',
-        graph: [
-          {flow0_a_f_start: [[], [1]]},
-          {flow0_a_f_complete: [[0], [2]]},
-          {flow0_b_f_start: [[1], [3]]},
-          {flow0_b_f_complete: [[2], []]},
-        ],
-        defaultNodeIndex: 3,
-      },
-      {
-        name: 'flow1',
-        graph: [
-          {flow1_a_f_start: [[], [1]]},
-          {flow1_a_f_complete: [[0], [2]]},
-          {flow1_b_f_start: [[1], [3]]},
-          {flow1_b_f_complete: [[2], []]},
-        ],
-        defaultNodeIndex: 1,
-      },
-      {
-        name: 'composedflow',
-        graph: [
-          {composedflow_flow0_a_f_start: [[], [1]]}, // 0
-          {composedflow_flow0_a_f_complete: [[0], [2, 4]]}, // 1
-          {composedflow_flow0_b_f_start: [[1], [3]]}, // 2
-          {composedflow_flow0_b_f_complete: [[2], []]}, // 3
-
-          {composedflow_flow1_a_f_start: [[1], [5]]}, // 4
-          {composedflow_flow1_a_f_complete: [[4], [6]]}, // 5
-          {composedflow_flow1_b_f_start: [[5], [7]]}, // 6
-          {composedflow_flow1_b_f_complete: [[6], []]}, // 7
+        graph: 'start:complete',
+        default_flow_name: 'complete',
+        extends_flows: [
+          {
+            name: 'flow0',
+            graph: 'a:b',
+            default_flow_name: 'b',
+          },
+          {
+            name: 'flow1',
+            graph: 'a:b',
+            default_flow_name: 'a',
+          },
+          graph,
         ],
       },
-    ];
-
-    const actualFlows = createFlows(actual, flowsConfig);
-    const expectedFlows = createExpected(expected, flowsConfig(actual));
-
-    assertEqualFlows(expectedFlows, actualFlows);
+    ],
   });
+  const actual = {
+    name: 'composedflow',
+    graph: 'flow0_a:flow1',
+  };
+  const expected = [
+    {
+      name: 'start',
+      graph: [{start: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      name: 'complete',
+      graph: [{complete: [[], []]}],
+      defaultNodeIndex: 0,
+    },
+    {
+      name: 'f',
+      graph: [{f_start: [[], [1]]}, {f_complete: [[0], []]}],
+      defaultNodeIndex: 1,
+    },
+    {
+      name: 'a',
+      graph: [{a_f_start: [[], [1]]}, {a_f_complete: [[0], []]}],
+      defaultNodeIndex: 1,
+    },
+    {
+      name: 'b',
+      graph: [{b_f_start: [[], [1]]}, {b_f_complete: [[0], []]}],
+      defaultNodeIndex: 1,
+    },
+    {
+      name: 'flow0',
+      graph: [
+        {flow0_a_f_start: [[], [1]]},
+        {flow0_a_f_complete: [[0], [2]]},
+        {flow0_b_f_start: [[1], [3]]},
+        {flow0_b_f_complete: [[2], []]},
+      ],
+      defaultNodeIndex: 3,
+    },
+    {
+      name: 'flow1',
+      graph: [
+        {flow1_a_f_start: [[], [1]]},
+        {flow1_a_f_complete: [[0], [2]]},
+        {flow1_b_f_start: [[1], [3]]},
+        {flow1_b_f_complete: [[2], []]},
+      ],
+      defaultNodeIndex: 1,
+    },
+    {
+      name: 'composedflow',
+      graph: [
+        {composedflow_flow0_a_f_start: [[], [1]]}, // 0
+        {composedflow_flow0_a_f_complete: [[0], [2, 4]]}, // 1
+        {composedflow_flow0_b_f_start: [[1], [3]]}, // 2
+        {composedflow_flow0_b_f_complete: [[2], []]}, // 3
+
+        {composedflow_flow1_a_f_start: [[1], [5]]}, // 4
+        {composedflow_flow1_a_f_complete: [[4], [6]]}, // 5
+        {composedflow_flow1_b_f_start: [[5], [7]]}, // 6
+        {composedflow_flow1_b_f_complete: [[6], []]}, // 7
+      ],
+    },
+  ];
+
+  const actualFlows = createFlows(actual, flowsConfig);
+  const expectedFlows = createExpected(expected, flowsConfig(actual));
+
+  assertEqualFlows(expectedFlows, actualFlows);
+});
