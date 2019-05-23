@@ -97,6 +97,7 @@ const removePointersFromNodeToHimSelf = graph =>
   }));
 
 function computeDefaultNodeIndexObject({
+  splitters,
   parsedFlowsUntilNow,
   flowToParse,
   parsedGraph,
@@ -107,9 +108,15 @@ function computeDefaultNodeIndexObject({
   }
 
   if (flowToParse.hasOwnProperty('defaultFlowName')) {
+    const defaultNode = displayNameToFullGraphNode(splitters)(
+      parsedFlowsUntilNow,
+      flowToParse.name,
+      extendedParsedFlow,
+    )(flowToParse.defaultFlowName);
+
     const options = parsedGraph
       .map((node, i) => i)
-      .filter(i => parsedGraph[i].path.includes(flowToParse.defaultFlowName));
+      .filter(i => arePathsEqual(parsedGraph[i].path, defaultNode.path));
 
     if (options.length === 1) {
       return {
@@ -184,6 +191,7 @@ function parseFlow({splitters, parsedFlowsUntilNow, flowToParse, extendedParsedF
   });
 
   const defaultNodeIndexObject = computeDefaultNodeIndexObject({
+    splitters,
     parsedFlowsUntilNow,
     flowToParse,
     parsedGraph: updatedParsedGraph,

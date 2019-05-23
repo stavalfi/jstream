@@ -10,7 +10,7 @@ export default class FlowsEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      config: '',
+      config: '   ',
     };
   }
 
