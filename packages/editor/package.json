@@ -1,0 +1,41 @@
+{
+  "name": "@flow/editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.html",
+  "scripts": {
+    "start": "yarn run exec b:start",
+    "build:prod": "yarn run exec b:build:prod",
+    "test": "yarn run exec b:test",
+    "test:unit": "yarn run exec b:test:unit",
+    "test:watch": "yarn run exec b:test:watch",
+    "lint-staged": "yarn run exec b:lint-staged",
+    "clean": "rm -rf dist",
+    "clean:all": "yarn run clean && rm -rf node_modules",
+    "exec": "WEBAPP=true FOLDER=editor yarn workspace @flow/build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@flow/parser": "^1.0.0",
+    "d3": "^5.9.2",
+    "deep-equal": "^1.0.1",
+    "dirty-json": "^0.7.0",
+    "jsonic": "^0.3.1",
+    "kindof": "^2.0.0",
+    "lodash": "^4.17.11",
+    "react": "^16.8.6",
+    "react-ace": "^6.5.0",
+    "react-dom": "^16.8.6",
+    "react-hot-keys": "^1.3.1",
+    "react-hot-loader": "^4.8.6",
+    "redux": "^4.0.1",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/deep-equal": "^1.0.1",
+    "karma": "^4.1.0",
+    "pkg-ok": "^2.3.1"
+  }
+}
