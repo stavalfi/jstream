@@ -1,0 +1,33 @@
+{
+  "name": "@flow/parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build:dev": "yarn run exec b:build:dev --watch",
+    "build:prod": "yarn run exec b:build:prod",
+    "test": "yarn run exec b:test",
+    "test:unit": "yarn run exec b:test:unit",
+    "test:watch": "yarn run exec b:test:watch",
+    "lint-staged": "pkg-ok && yarn run exec b:lint-staged",
+    "clean": "rm -rf dist",
+    "clean:all": "yarn run clean && rm -rf node_modules",
+    "exec": "WEBAPP=false FOLDER=parser yarn workspace @flow/build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "lodash": "^4.17.11"
+  },
+  "dependencies": {
+    "is-observable": "^1.1.0",
+    "is-promise": "^2.1.0",
+    "lodash": "^4.17.11",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "pkg-ok": "^2.3.1"
+  }
+}

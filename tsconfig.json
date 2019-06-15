@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2017",
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "lib": ["esnext", "dom"],
+    "module": "esnext"
+  },
+  "exclude": ["node_modules"],
+  "references": [
+    {
+      "path": "packages/parser"
+    },
+    {
+      "path": "packages/editor"
+    }
+  ]
+}

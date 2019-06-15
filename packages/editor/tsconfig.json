@@ -1,0 +1,21 @@
+// for fork-ts-plugin and IDE - (IDE reason:) I can't tell him to use different settings for tests/dev enviroments
+// so i will have to create 2 different tsconfig.json files.
+// in webpack, i will link to ./.config/main-tsconfig.json file. (never to this file)
+// now it's for fork-ts-plugin - temporarly !!
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*", "test/*", "node_modules/*", "../../node_modules/*"]
+    },
+    "allowJs": true,
+    "checkJs": false,
+    "composite": false,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "listFiles": false
+  },
+  "include": ["src", "test"],
+  "exclude": ["dist", "node_modules", "../../node_modules"]
+}

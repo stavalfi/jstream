@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*", "node_modules/*", "../../node_modules/*"]
+    },
+    "allowJs": false,
+    "checkJs": false,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "dist",
+    "noImplicitAny": true,
+    "listFiles": false
+  },
+  "include": ["src"],
+  "exclude": ["test", "dist", "node_modules", "../../node_modules"]
+}

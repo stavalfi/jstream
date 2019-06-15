@@ -1,5 +1,0 @@
-src/
-tests/
-webpack.config.js
-examples/example1/src/index.js
-examples/example1/src/*.workflows.js

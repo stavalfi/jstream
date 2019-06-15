@@ -1,0 +1,20 @@
+module.exports = {
+  files: ['./symphony-font/*.svg'],
+  fontName: 'symphony',
+  classPrefix: 'sf-',
+  baseClass: 'sf',
+  fixedWidth: true,
+  includePaths: ['./symphony-font'],
+  codepoints: {
+    drop_down_arrow: 0xe001,
+    check: 0xe002,
+    tenant: 0xe003,
+    tree_icons_network: 0xe004,
+    folder: 0xe005,
+    alarm: 0xe006,
+    'right-arrow': 0xe007,
+    pencil: 0xe008,
+    close: 0xe009,
+    bond: 0xe010,
+  },
+}
