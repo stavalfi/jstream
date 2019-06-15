@@ -1,6 +1,6 @@
 {
   "name": "@flow/main",
-  "private": false,
+  "private": true,
   "scripts": {
     "start": "yarn --cwd ./packages/editor start",
     "clean": "lerna run clean --parallel",
