@@ -17,7 +17,7 @@ export default class FlowsEditor extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       nextProps.onConfigChange !== this.props.onConfigChange ||
-      nextProps.onSelectedFlowIndexChange !== this.props.onSelectedFlowIndexChange ||
+      nextProps.config !== this.props.config ||
       nextState.config !== this.state.config
     )
   }
@@ -27,6 +27,7 @@ export default class FlowsEditor extends React.Component {
       const json = stringToObject(newConfig)
       const configObject = parse(json)
       return this.setState({ config: newConfig, error: false }, () => {
+        console.log(configObject)
         this.props.onConfigChange(configObject)
       })
     } catch (e) {
@@ -51,9 +52,27 @@ export default class FlowsEditor extends React.Component {
     }
   }
 
+  getFlowName = (flow, index) => {
+    if (flow.hasOwnProperty('name')) {
+      return flow.name
+    }
+    return `composed-flow${index}`
+  }
+
+  renderButtons = () => {
+    return (
+      <div>
+        {this.props.config.flows.map((flow, i) => (
+          <button onClick={() => this.props.onSelectedFlowIndexChange(i)}>{this.getFlowName(flow, i)}</button>
+        ))}
+      </div>
+    )
+  }
+
   render() {
     return (
       <div tabIndex={0} onKeyDown={this.handleKeyDown}>
+        {this.renderButtons()}
         <AceEditor
           height={'90vh'}
           width={'45vw'}
