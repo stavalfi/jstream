@@ -29,7 +29,6 @@ export default class Home extends React.Component<{}, State> {
   render() {
     return (
       <div className={'home'}>
-        <i className="sf sf-critical" />
         <div className={'draw-flow-section'}>
           <DrawFlow
             height={600}
@@ -43,7 +42,11 @@ export default class Home extends React.Component<{}, State> {
           />
         </div>
         <div className={'flows-editor-section'}>
-          <FlowsEditor onConfigChange={this.setConfig} onSelectedFlowIndexChange={this.setSelectedFlowIndex} />
+          <FlowsEditor
+            config={this.state.config}
+            onConfigChange={this.setConfig}
+            onSelectedFlowIndexChange={this.setSelectedFlowIndex}
+          />
         </div>
       </div>
     )
