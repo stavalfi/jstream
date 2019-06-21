@@ -45,7 +45,7 @@ const initializeConfig: InitializeConfig = config => {
     if (
       config.hasOwnProperty('graph') ||
       config.hasOwnProperty('name') ||
-      config.hasOwnProperty('default_flow_name') ||
+      config.hasOwnProperty('default_path') ||
       config.hasOwnProperty('side_effects') ||
       config.hasOwnProperty('extends_flows')
     ) {

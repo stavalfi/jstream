@@ -211,7 +211,7 @@ describe('multiple-layers', () => {
     const actual = {
       name: 'composed-flow',
       graph: ['flow1:flow2'],
-      default_flow_name: 'flow2',
+      default_path: 'flow2',
     }
     const expected: ExpectedFlow[] = [
       {
@@ -302,7 +302,7 @@ describe('multiple-layers', () => {
         {
           name: 'flow0',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: ['flow1', graph],
         },
       ],
@@ -359,12 +359,12 @@ describe('multiple-layers', () => {
             {
               name: 'flow1',
               graph: 'a:b',
-              default_flow_name: 'b',
+              default_path: 'b',
             },
             {
               name: 'flow2',
               graph: 'c:d',
-              default_flow_name: 'd',
+              default_path: 'd',
             },
             graph,
           ],
@@ -480,7 +480,7 @@ describe('multiple-layers', () => {
         {
           name: 'composed-flow',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -525,12 +525,12 @@ describe('multiple-layers', () => {
         {
           name: 'flow0',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
         },
         {
           name: 'composed-flow',
           graph: 'flow1:flow2',
-          default_flow_name: 'flow1',
+          default_path: 'flow1',
           extends_flows: [graph],
         },
       ],
@@ -594,12 +594,12 @@ describe('multiple-layers', () => {
         {
           name: 'flow0',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
         },
         {
           name: 'composed-flow',
           graph: 'flow1:flow2',
-          default_flow_name: 'flow1',
+          default_path: 'flow1',
           extends_flows: [graph],
         },
       ],
@@ -664,12 +664,12 @@ describe('multiple-layers', () => {
         {
           name: 'flow0',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
         },
         {
           name: 'flow1',
           graph: 'a:b',
-          default_flow_name: 'a',
+          default_path: 'a',
         },
         graph,
       ],
@@ -725,12 +725,12 @@ describe('multiple-layers', () => {
         {
           name: 'flow0',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
         },
         {
           name: 'flow1',
           graph: 'a:b',
-          default_flow_name: 'a',
+          default_path: 'a',
         },
         graph,
       ],
@@ -786,17 +786,17 @@ describe('multiple-layers', () => {
         {
           name: 'f',
           graph: 'start:complete',
-          default_flow_name: 'complete',
+          default_path: 'complete',
           extends_flows: [
             {
               name: 'flow0',
               graph: 'a:b',
-              default_flow_name: 'b',
+              default_path: 'b',
             },
             {
               name: 'flow1',
               graph: 'a:b',
-              default_flow_name: 'a',
+              default_path: 'a',
             },
             graph,
           ],

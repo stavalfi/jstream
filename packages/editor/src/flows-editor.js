@@ -41,7 +41,7 @@ export default class FlowsEditor extends React.Component {
       `UserFlow: {
       name?: string
       graph: UserGraph
-      default_flow_name?: string
+      default_path?: string
       extends_flows?: UserFlow[]
     }`,
     )

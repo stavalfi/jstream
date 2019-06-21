@@ -39,7 +39,7 @@ export type UserSideEffects = { node_name: string; side_effect: Function }[]
 export type UserFlowObject = Pick<ParsedFlow, 'name'> & {
   graph: UserGraph
   extends_flows?: UserFlow[]
-  default_flow_name?: string
+  default_path?: string
   side_effects?: UserSideEffects
 }
 export type UserFlow = UserGraph | UserFlowObject
@@ -48,7 +48,7 @@ export type ParsedUserFlow = {
   graph: UserGraph
   name?: string
   extends_flows?: UserFlow[]
-  defaultFlowName?: string
+  defaultPath?: string[]
   side_effects?: UserSideEffects
   extendsFlows?: UserFlow[]
 }

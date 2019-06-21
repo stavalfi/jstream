@@ -45,14 +45,13 @@ export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUn
     const flowObject = flow as UserFlowObject
     const graph = getGraph(flowObject)
     const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flowObject)
-    const defaultFlowNameObject = flowObject.default_flow_name && {
-      defaultFlowName: flowObject.default_flow_name,
-    }
     const flowToParse = {
       graph,
       ...nameObject,
       extendsFlows: flowObject.extends_flows || [],
-      ...defaultFlowNameObject,
+      ...(flowObject.default_path && {
+        defaultPath: flowObject.default_path.split(splitters.extends),
+      }),
       ...(flowObject.hasOwnProperty('side_effects') && {
         side_effects: flowObject.side_effects,
       }),

@@ -10,7 +10,7 @@ describe('multiple-flows-in-first-layer', () => {
       {
         name: 'c',
         graph: ['a:b'],
-        default_flow_name: 'b',
+        default_path: 'b',
         extends_flows: [graph],
       },
     ],
@@ -88,7 +88,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -281,7 +281,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b:a'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -325,7 +325,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -381,7 +381,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -442,7 +442,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -503,7 +503,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -556,7 +556,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'e',
           graph: ['a:b,c:d'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -630,7 +630,7 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'c',
           graph: ['a:b:a'],
-          default_flow_name: 'b',
+          default_path: 'b',
           extends_flows: [graph],
         },
       ],
@@ -690,13 +690,69 @@ describe('multiple-flows-in-first-layer', () => {
         {
           name: 'flow1',
           graph: 'a:b',
-          default_flow_name: 'b',
+          default_path: 'b',
         },
         'flow2',
         {
           name: 'flow3',
           graph: 'flow1:flow2',
-          default_flow_name: 'flow1',
+          default_path: 'flow1',
+        },
+      ],
+    })
+    const expected: ExpectedFlow[] = [
+      {
+        name: 'a',
+        graph: [{ a: [[], []] }],
+        defaultNodeIndex: 0,
+      },
+      {
+        name: 'b',
+        graph: [{ b: [[], []] }],
+        defaultNodeIndex: 0,
+      },
+      {
+        name: 'flow1',
+        graph: [{ flow1_a: [[], [1]] }, { flow1_b: [[0], []] }],
+        defaultNodeIndex: 1,
+      },
+      {
+        name: 'flow2',
+        graph: [{ flow2: [[], []] }],
+        defaultNodeIndex: 0,
+      },
+      {
+        graph: [
+          { flow3_flow1_a: [[], [1]] }, // 0
+          { flow3_flow1_b: [[0], [2]] }, // 1
+          { flow3_flow2: [[1], []] }, // 2
+        ],
+        defaultNodeIndex: 1,
+      },
+    ]
+
+    const actualFlows = createFlows(undefined, flowsConfig)
+    const expectedFlows = createExpected(expected, flowsConfig())
+
+    assertEqualFlows(expectedFlows, actualFlows)
+  })
+
+  it('15', () => {
+    const flowsConfig = () => ({
+      splitters: {
+        extends: '_',
+      },
+      flows: [
+        {
+          name: 'flow1',
+          graph: 'a:b',
+          default_path: 'b',
+        },
+        'flow2',
+        {
+          name: 'flow3',
+          graph: 'flow1:flow2',
+          default_path: 'flow1_b',
         },
       ],
     })

@@ -21,9 +21,9 @@ export const validateFlowToParse = (splitters: Splitters) => (
       throw new Error("flow can't have zero flows in his graph.")
     }
     if (flows.length === 1) {
-      if (flowToParse.defaultFlowName) {
+      if (flowToParse.defaultPath) {
         throw new Error(`flow with a graph containing a single 
-        flow can't have a default_flow_name property.`)
+        flow can't have a default_path property.`)
       }
       return flowToParse
     }

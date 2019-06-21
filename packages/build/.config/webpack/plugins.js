@@ -11,7 +11,6 @@ const _startCase = require('lodash/startCase')
 module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI } = constants
   const { linterTsconfigPath, indexHtmlPath } = paths
-
   const productionPlugins = [
     new MiniCssExtractPlugin({
       filename: '[chunkhash].css',
@@ -39,6 +38,7 @@ module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: false,
+      formatter: 'codeframe',
     }),
     ...(isDevelopmentMode ? developmentPlugins : productionPlugins),
     ...(isTestMode ? [new CleanWebpackPlugin()] : []),
