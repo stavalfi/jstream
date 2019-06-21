@@ -1,7 +1,7 @@
 import { parse } from 'index'
 import { distractDisplayNameBySplitters, graphNodeToDisplayName } from 'utils'
 import { table } from 'table'
-import { Graph, Node, Omit, ParsedFlow, Path, Splitters, UserConfigurationObject } from 'types'
+import { Graph, Node, ParsedFlow, ParsedFlowOptionalFields, Path, Splitters, UserConfigurationObject } from 'types'
 import { expect } from 'chai'
 
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
@@ -98,9 +98,9 @@ function sortGraph(graph: Graph, splitters = { extends: '_', identifier: '/' }):
     }))
 }
 
-type ParsedFlowWithDisplyName = Omit<ParsedFlow, 'id' | 'sideEffects' | 'graph'> & {
+type ParsedFlowWithDisplyName = {
   graph: (Node & { displayName?: string })[]
-}
+} & ParsedFlowOptionalFields
 
 export function assertEqualFlows(
   expectedFlowsArray1: ParsedFlowWithDisplyName[],
@@ -121,23 +121,33 @@ export function assertEqualFlows(
   expectedFlowsArray.forEach((expectedFlow, i) => {
     const actualFlow = findFlowByFlow(actualFlowsArray, expectedFlow)
     const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
-      expectedFlow.name
+      'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
     } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
         \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
         \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
     expect(actualFlow, errorMessage).to.be.a('object')
     if (actualFlow) {
       expect(actualFlow.graph, errorMessage).deep.equal(expectedFlow.graph)
-      expect(actualFlow.defaultNodeIndex, errorMessage).deep.equal(expectedFlow.defaultNodeIndex)
-      if (count === 0 && expectedFlow.hasOwnProperty('extendedFlowIndex')) {
+      if ('defaultNodeIndex' in expectedFlow) {
+        expect('defaultNodeIndex' in actualFlow, errorMessage).deep.equal(true)
+        // @ts-ignore   -> i have expect in the previous line.
+        expect(actualFlow.defaultNodeIndex, errorMessage).deep.equal(expectedFlow.defaultNodeIndex)
+      }
+      if (count === 0 && 'extendedFlowIndex' in expectedFlow) {
         const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex as number]
+        expect('extendedFlowIndex' in actualFlow, errorMessage).deep.equal(true)
+        // @ts-ignore   -> i have expect in the previous line.
         const actualExtendedFlow = actualFlowsArray[actualFlow.extendedFlowIndex as number]
+
         const isEqual =
+          // @ts-ignore
           expectedExtendedFlow.name === actualExtendedFlow.name &&
+          // @ts-ignore
           expectedExtendedFlow.defaultNodeIndex === actualExtendedFlow.defaultNodeIndex &&
           graphToString(expectedExtendedFlow.graph) === graphToString(actualExtendedFlow.graph)
         expect(
           isEqual,
+          // @ts-ignore
           `${count === 0 ? 'expected' : 'actual'} flow: ${expectedFlow.name} - has different extended flow`,
         ).deep.equal(true)
       }
@@ -152,7 +162,8 @@ function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: Pa
     let stringToFind = graphToString(flowToSearch.graph)
     let stringNow = graphToString(flow.graph)
     return (
-      (flow.hasOwnProperty('name') && flowToSearch.hasOwnProperty('name') && flow.name === flowToSearch.name) ||
+      ('name' in flow && 'name' in flowToSearch && flow.name === flowToSearch.name) ||
+      // @ts-ignore
       (flow.defaultNodeIndex === flowToSearch.defaultNodeIndex && stringNow === stringToFind)
     )
   })
@@ -160,13 +171,13 @@ function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: Pa
 
 function flowToString(flow: ParsedFlowWithDisplyName) {
   let str = ''
-  if (flow.hasOwnProperty('name')) {
+  if ('name' in flow) {
     str += `name: ${flow.name}\n`
   }
-  if (flow.hasOwnProperty('extendedFlowIndex')) {
+  if ('extendedFlowIndex' in flow) {
     str += `extendedFlowIndex: ${flow.extendedFlowIndex}\n`
   }
-  if (flow.hasOwnProperty('defaultNodeIndex')) {
+  if ('defaultNodeIndex' in flow) {
     str += `defaultNodeIndex: ${flow.defaultNodeIndex}`
   }
   return str
