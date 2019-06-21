@@ -52,12 +52,13 @@ const getFriendlyErrorsWebpackPluginOptions = ({
 }) => {
   const mode = isDevelopmentMode ? 'Development' : 'Production'
   const link = `${devServerHttpProtocol ? 'http' : 'https'}://${devServerHost}:${devServerPort}`
-  const coloredLink = terminalLink('WebApp', chalk.blueBright(link))
   return {
     ...(!isCI && {
       compilationSuccessInfo: {
         notes: [
-          `${chalk.bold(_startCase(packageDirectoryName))} - ${mode}${isWebApp ? `: ${coloredLink}` : ''}\n\n`,
+          `${chalk.bold(_startCase(packageDirectoryName))} - ${mode}${
+            isWebApp ? `: ${chalk.blueBright(link)}` : ''
+          }\n\n`,
           ...(isTestMode ? ['Test Mode'] : []),
         ],
       },

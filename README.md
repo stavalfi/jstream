@@ -1,6 +1,5 @@
-<center><h1>Flow</h1></center>
-<center><h4>Represent graphs, differently</h4></center>
-
+<h1 align="center">Flow</h1>
+<p align="center">Represent graphs, differently</p>
 
 ## Table of Contents
 
@@ -11,7 +10,6 @@
 5. [Support](#support)
 
 <h2 align="center">Install</h2>
-
 
 Install with npm:
 
