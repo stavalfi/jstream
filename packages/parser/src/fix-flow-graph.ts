@@ -1,5 +1,5 @@
 import { arePathsEqual } from 'utils'
-import { Graph, Node, Omit, ParsedFlow, Path, UserFlowObject } from 'types'
+import { AlgorithmParsedFlow, Graph, Node, Path, UserFlowObject } from 'types'
 
 type AlgorithmNode = {
   path: Path
@@ -15,17 +15,22 @@ type FixAndExtendGraph = ({
   parsedGraph,
   extendedParsedFlow,
 }: {
-  parsedFlows: ParsedFlow[]
+  parsedFlows: AlgorithmParsedFlow[]
   flowToParse: UserFlowObject
   parsedGraph: Graph
-  extendedParsedFlow?: ParsedFlow
+  extendedParsedFlow?: AlgorithmParsedFlow
 }) => Graph
 export const fixAndExtendGraph: FixAndExtendGraph = ({ parsedFlows, flowToParse, parsedGraph, extendedParsedFlow }) => {
-  if (parsedGraph.length === 1 && parsedGraph[0].path.length === 1 && parsedGraph[0].path[0] === flowToParse.name) {
+  if (
+    parsedGraph.length === 1 &&
+    parsedGraph[0].path.length === 1 &&
+    'name' in flowToParse &&
+    parsedGraph[0].path[0] === flowToParse.name
+  ) {
     if (extendedParsedFlow) {
       return extendedParsedFlow.graph.map(node => ({
         ...node,
-        path: [flowToParse.name as string, ...node.path],
+        path: [flowToParse.name, ...node.path],
       }))
     } else {
       return parsedGraph
@@ -48,15 +53,23 @@ export const fixAndExtendGraph: FixAndExtendGraph = ({ parsedFlows, flowToParse,
     { acc: [], groupIndex: 0 },
   ).acc
 
-  if (differentFlowNames.length === 1 && extendedParsedFlow && differentFlowNames[0] === extendedParsedFlow.name) {
+  if (
+    differentFlowNames.length === 1 &&
+    extendedParsedFlow &&
+    'name' in extendedParsedFlow &&
+    differentFlowNames[0] === extendedParsedFlow.name
+  ) {
     return extendedParsedFlow.graph.map(node => ({
       ...node,
-      path: [flowToParse.name as string, ...node.path],
+      path: 'name' in flowToParse ? [flowToParse.name, ...node.path] : node.path,
     }))
   }
 
   const extendedFlowsInGraphByFlowName = differentFlowNames
-    .map(flowName => parsedFlows.find(parsedFlow => parsedFlow.name === flowName) as ParsedFlow)
+    .map(
+      flowName =>
+        parsedFlows.find(parsedFlow => 'name' in parsedFlow && parsedFlow.name === flowName) as AlgorithmParsedFlow,
+    )
     .map(parsedFlow => ({
       ...parsedFlow,
       graph: parsedFlow.graph.map(addFlowName(flowToParse)),
@@ -111,16 +124,17 @@ const getUsedFlowName = (flowToParse: UserFlowObject) => (path: Path) => {
 }
 
 const addFlowName = (flowToParse: UserFlowObject) => (node: Node): Node => {
-  return flowToParse.hasOwnProperty('name') ? { ...node, path: [flowToParse.name as string, ...node.path] } : node
+  return 'name' in flowToParse ? { ...node, path: [flowToParse.name, ...node.path] } : node
 }
 
-const extendGraph = (extendedParsedFlow?: ParsedFlow) => (
-  parsedFlow: Omit<ParsedFlow, 'graph'> & { graph: AlgorithmNode[] },
+const extendGraph = (extendedParsedFlow?: AlgorithmParsedFlow) => (
+  parsedFlow: Omit<AlgorithmParsedFlow, 'graph'> & { graph: AlgorithmNode[] },
 ): AlgorithmNode[] => {
   if (!extendedParsedFlow) {
     return parsedFlow.graph
   }
-  if (parsedFlow.extendedParsedFlow && parsedFlow.extendedParsedFlow.id === extendedParsedFlow.id) {
+  // @ts-ignore https://github.com/microsoft/TypeScript/issues/32030
+  if ('extendedParsedFlow' in parsedFlow && parsedFlow.extendedParsedFlow.id === extendedParsedFlow.id) {
     return parsedFlow.graph
   }
 
@@ -144,9 +158,7 @@ const extendGraph = (extendedParsedFlow?: ParsedFlow) => (
   for (const oldNode of parsedFlow.graph) {
     const algorithmNodes = oldToExtended.get(oldNode)
     const newNode =
-      extendedParsedFlow.hasOwnProperty('defaultNodeIndex') &&
-      algorithmNodes &&
-      algorithmNodes[extendedParsedFlow.defaultNodeIndex as number]
+      'defaultNodeIndex' in extendedParsedFlow && algorithmNodes && algorithmNodes[extendedParsedFlow.defaultNodeIndex]
     newNode &&
       oldNode.children
         .map(oldChild => oldToExtended.get(oldChild))

@@ -6,7 +6,7 @@ function getGraph(flow: UserFlowObject) {
 }
 
 function getFlowNameObject(splitters: Splitters, parsedFlowsUntilNow: ParsedFlow[], flow: UserFlowObject) {
-  if (flow.hasOwnProperty('name')) {
+  if ('name' in flow) {
     return { name: flow.name }
   }
   const graph = getGraph(flow)
@@ -18,7 +18,7 @@ function getFlowNameObject(splitters: Splitters, parsedFlowsUntilNow: ParsedFlow
       return {}
     } else {
       const possibleName = distractDisplayNameBySplitters(splitters, flowsInGraph[0]).partialPath[0]
-      if (parsedFlowsUntilNow.some(flow => flow.name === possibleName)) {
+      if (parsedFlowsUntilNow.some(flow1 => 'name' in flow1 && flow1.name === possibleName)) {
         return {}
       } else {
         return { name: possibleName }

@@ -4,7 +4,7 @@
   "scripts": {
     "start": "yarn --cwd ./packages/editor start",
     "clean": "lerna run clean --parallel",
-    "clean:all": "lerna run clean --parallel && rm -rf node_modules",
+    "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "prepare": "yarn run clean && lerna run build:prod --scope @flow/parser && lerna bootstrap",
     "prepublishOnly": "yarn prepare && lerna run build:prod --ignore @flow/parser --parallel && lerna exec --parallel -- pkg-ok && lerna run test --parallel"
   },

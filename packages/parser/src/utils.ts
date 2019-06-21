@@ -1,5 +1,5 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
-import { Node, ParsedFlow, Path, Splitters } from 'types'
+import { AlgorithmParsedFlow, Node, ParsedFlow, Path, Splitters } from 'types'
 
 export const distractDisplayNameBySplitters = (
   splitters: Splitters,
@@ -89,9 +89,9 @@ function fillUserPath({
   extendedParsedFlow,
   userPath,
 }: {
-  parsedFlows: ParsedFlow[]
+  parsedFlows: AlgorithmParsedFlow[]
   flowName?: string
-  extendedParsedFlow?: ParsedFlow
+  extendedParsedFlow?: AlgorithmParsedFlow
   userPath: Path
 }) {
   let newPath = flowName ? [flowName] : []
@@ -101,13 +101,16 @@ function fillUserPath({
   const subPathExtendedFlows = onlyIncludeExtendedFlows(filteredUserPath, extendedParsedFlow)
 
   if (subPathNotExtendedFlows.length > 0) {
-    const parsedFlow = parsedFlows.find(parsedFlow => parsedFlow.name === subPathNotExtendedFlows[0]) as ParsedFlow
+    const parsedFlow = parsedFlows.find(
+      parsedFlow => 'name' in parsedFlow && parsedFlow.name === subPathNotExtendedFlows[0],
+    ) as AlgorithmParsedFlow
 
     const isExtendingTheSameFlow = (() => {
       if (extendedParsedFlow) {
-        const extended = parsedFlow.extendedParsedFlow
-        while (extended) {
-          if (extended.name === extendedParsedFlow.name) {
+        const extended = 'extendedParsedFlow' in parsedFlow && parsedFlow.extendedParsedFlow
+        // TODO: Critical BUG!!!! fast solution: replaced while(extended) => if(extended)
+        if (extended) {
+          if ('name' in extended && 'name' in extendedParsedFlow && extended.name === extendedParsedFlow.name) {
             return true
           }
         }
@@ -119,12 +122,14 @@ function fillUserPath({
     if (options.length === 1) {
       newPath = newPath.concat(options[0])
     } else {
-      if (isSubsetOf(userPath, parsedFlow.graph[parsedFlow.defaultNodeIndex as number].path)) {
-        newPath = newPath.concat(parsedFlow.graph[parsedFlow.defaultNodeIndex as number].path)
+      // else: options.length > 10
+      const parsedFlowWithDefaultNodeIndex = parsedFlow as AlgorithmParsedFlow & { defaultNodeIndex: number }
+      if (isSubsetOf(userPath, parsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)) {
+        newPath = newPath.concat(parsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)
       } else {
         const lastParsedFlow = parsedFlows.find(
-          parsedFlow => parsedFlow.name === userPath[userPath.length - 1],
-        ) as ParsedFlow
+          parsedFlow => 'name' in parsedFlow && parsedFlow.name === userPath[userPath.length - 1],
+        ) as AlgorithmParsedFlow & { defaultNodeIndex: number }
         const option = options.find(path =>
           isSubsetOf(lastParsedFlow.graph[lastParsedFlow.defaultNodeIndex as number].path, path),
         ) as Path
@@ -144,7 +149,8 @@ function fillUserPath({
     if (options.length === 1) {
       newPath = newPath.concat(options[0])
     } else {
-      newPath = newPath.concat(extendedParsedFlow.graph[extendedParsedFlow.defaultNodeIndex as number].path)
+      const parsedFlowWithDefaultNodeIndex = extendedParsedFlow as AlgorithmParsedFlow & { defaultNodeIndex: number }
+      newPath = newPath.concat(extendedParsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)
     }
   }
 

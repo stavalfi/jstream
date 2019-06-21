@@ -1,5 +1,3 @@
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-
 export type Splitters = {
   extends: string
   identifier?: string
@@ -19,13 +17,47 @@ export type Graph = Node[]
 export type ParsedFlow = {
   id: string
   graph: Graph
-  extendedFlowId?: string
-  extendedFlowIndex?: number
-  extendedParsedFlow?: ParsedFlow
-  name?: string
-  defaultNodeIndex?: number
   sideEffects: SideEffect[]
-}
+} & ParsedFlowOptionalFields
+
+export type ParsedFlowOptionalFields =
+  | {}
+  | {
+      name: string
+    }
+  | {
+      extendedFlowIndex: number
+    }
+  | {
+      defaultNodeIndex: number
+    }
+  | {
+      name: string
+      extendedFlowIndex: number
+    }
+  | {
+      extendedFlowIndex: number
+      defaultNodeIndex: number
+    }
+  | {
+      name: string
+      defaultNodeIndex: number
+    }
+  | {
+      name: string
+      extendedFlowIndex: number
+      defaultNodeIndex: number
+    }
+
+export type AlgorithmParsedFlow = ParsedFlow &
+  (
+    | {
+        extendedFlowId: string
+        extendedParsedFlow: AlgorithmParsedFlow
+      }
+    | { extendedFlowId: string }
+    | { extendedParsedFlow: AlgorithmParsedFlow }
+    | {})
 
 export type SideEffect = {
   node: { path: Path; identifier?: string }
@@ -36,12 +68,17 @@ export type UserGraph = string | string[]
 
 export type UserSideEffects = { node_name: string; side_effect: Function }[]
 
-export type UserFlowObject = Pick<ParsedFlow, 'name'> & {
+export type UserFlowObject = {
   graph: UserGraph
   extends_flows?: UserFlow[]
   default_path?: string
   side_effects?: UserSideEffects
-}
+} & (
+  | {}
+  | {
+      name: string
+    })
+
 export type UserFlow = UserGraph | UserFlowObject
 
 export type ParsedUserFlow = {
