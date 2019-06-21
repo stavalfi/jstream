@@ -155,12 +155,23 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
         defaultNodeIndex: options[0],
       }
     } else {
-      const option = options.find(i => {
-        // @ts-ignore
-        return isSubsetOf(extendedParsedFlow.graph[extendedParsedFlow.defaultNodeIndex].path, parsedGraph[i].path)
-      })
-      return {
-        defaultNodeIndex: option,
+      const defaultFlow = parsedFlowsUntilNow.find(flow => flow.name === flowToParse.defaultFlowName) || {}
+      if (defaultFlow && defaultFlow.hasOwnProperty('defaultNodeIndex')) {
+        const option = options.find(i => {
+          // @ts-ignore
+          return isSubsetOf(defaultFlow.graph[defaultFlow.defaultNodeIndex].path, parsedGraph[i].path)
+        })
+        return {
+          defaultNodeIndex: option,
+        }
+      } else {
+        const option = options.find(i => {
+          // @ts-ignore
+          return isSubsetOf(extendedParsedFlow.graph[extendedParsedFlow.defaultNodeIndex].path, parsedGraph[i].path)
+        })
+        return {
+          defaultNodeIndex: option,
+        }
       }
     }
   }

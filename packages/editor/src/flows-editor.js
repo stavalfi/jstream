@@ -22,18 +22,37 @@ export default class FlowsEditor extends React.Component {
     )
   }
 
-  onChange = (newConfig, stringToObject = Jsonic, retryCount = 0) => {
+  stringToObject = newConfig => {
     try {
-      const json = stringToObject(newConfig)
+      return Jsonic(newConfig)
+    } catch (e) {
+      try {
+        return dJSON.parse(newConfig)
+      } catch (e1) {
+        return ''
+      }
+    }
+  }
+
+  onChange = newConfig => {
+    console.log('newConfig: ', newConfig)
+    console.log(
+      'allowed props in flow: \n',
+      `UserFlow: {
+      name?: string
+      graph: UserGraph
+      default_flow_name?: string
+      extends_flows?: UserFlow[]
+    }`,
+    )
+    try {
+      const json = this.stringToObject(newConfig)
       const configObject = parse(json)
       return this.setState({ config: newConfig, error: false }, () => {
         console.log(configObject)
         this.props.onConfigChange(configObject)
       })
     } catch (e) {
-      if (retryCount < 1) {
-        return this.onChange(newConfig, dJSON.parse.bind(dJSON), retryCount + 1)
-      }
       return this.setState({ config: newConfig, error: e }, () => console.log(e))
     }
   }
@@ -45,7 +64,7 @@ export default class FlowsEditor extends React.Component {
         if (lastState.error) {
           return {}
         } else {
-          const config = JSON.stringify(Jsonic(lastState.config), null, '\t')
+          const config = JSON.stringify(this.stringToObject(lastState.config), null, '\t')
           return { config }
         }
       })
@@ -63,7 +82,9 @@ export default class FlowsEditor extends React.Component {
     return (
       <div>
         {this.props.config.flows.map((flow, i) => (
-          <button onClick={() => this.props.onSelectedFlowIndexChange(i)}>{this.getFlowName(flow, i)}</button>
+          <button key={flow.id} onClick={() => this.props.onSelectedFlowIndexChange(i)}>
+            {this.getFlowName(flow, i)}
+          </button>
         ))}
       </div>
     )

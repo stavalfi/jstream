@@ -41,7 +41,6 @@ export type UserFlowObject = Pick<ParsedFlow, 'name'> & {
   extends_flows?: UserFlow[]
   default_flow_name?: string
   side_effects?: UserSideEffects
-  name?: string
 }
 export type UserFlow = UserGraph | UserFlowObject
 
