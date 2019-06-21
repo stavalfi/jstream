@@ -145,22 +145,32 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
     return { defaultNodeIndex: 0 }
   }
 
-  if (flowToParse.hasOwnProperty('defaultFlowName')) {
-    const options = parsedGraph
-      .map((node, i) => i)
-      .filter(i => parsedGraph[i].path.includes(flowToParse.defaultFlowName as string))
+  if (flowToParse.defaultPath) {
+    const { defaultPath } = flowToParse
+    const options = parsedGraph.map((node, i) => i).filter(i => isSubsetOf(defaultPath, parsedGraph[i].path))
 
     if (options.length === 1) {
       return {
         defaultNodeIndex: options[0],
       }
     } else {
-      const option = options.find(i => {
-        // @ts-ignore
-        return isSubsetOf(extendedParsedFlow.graph[extendedParsedFlow.defaultNodeIndex].path, parsedGraph[i].path)
-      })
-      return {
-        defaultNodeIndex: option,
+      const defaultFlow = parsedFlowsUntilNow.find(flow => flow.name === defaultPath[defaultPath.length - 1]) || {}
+      if (defaultFlow && defaultFlow.hasOwnProperty('defaultNodeIndex')) {
+        const option = options.find(i => {
+          // @ts-ignore
+          return isSubsetOf(defaultFlow.graph[defaultFlow.defaultNodeIndex].path, parsedGraph[i].path)
+        })
+        return {
+          defaultNodeIndex: option,
+        }
+      } else {
+        const option = options.find(i => {
+          // @ts-ignores
+          return isSubsetOf(extendedParsedFlow.graph[extendedParsedFlow.defaultNodeIndex].path, parsedGraph[i].path)
+        })
+        return {
+          defaultNodeIndex: option,
+        }
       }
     }
   }

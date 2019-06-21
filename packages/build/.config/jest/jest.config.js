@@ -14,12 +14,12 @@ const { isCI } = constants
 module.exports = {
   ...(isCI && { maxConcurrency: 1 }),
   projects: [
-    {
-      displayName: 'lint',
-      runner: 'jest-runner-eslint',
-      testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
-      roots: [mainTestsFolderPath, srcPath],
-    },
+    // {
+    //   displayName: 'lint',
+    //   runner: 'jest-runner-eslint',
+    //   testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
+    //   roots: [mainTestsFolderPath, srcPath],
+    // },
     {
       displayName: 'test',
       preset: 'ts-jest/presets/js-with-ts',

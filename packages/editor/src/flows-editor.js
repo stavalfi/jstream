@@ -17,22 +17,42 @@ export default class FlowsEditor extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       nextProps.onConfigChange !== this.props.onConfigChange ||
-      nextProps.onSelectedFlowIndexChange !== this.props.onSelectedFlowIndexChange ||
+      nextProps.config !== this.props.config ||
       nextState.config !== this.state.config
     )
   }
 
-  onChange = (newConfig, stringToObject = Jsonic, retryCount = 0) => {
+  stringToObject = newConfig => {
     try {
-      const json = stringToObject(newConfig)
+      return Jsonic(newConfig)
+    } catch (e) {
+      try {
+        return dJSON.parse(newConfig)
+      } catch (e1) {
+        return ''
+      }
+    }
+  }
+
+  onChange = newConfig => {
+    console.log('newConfig: ', newConfig)
+    console.log(
+      'allowed props in flow: \n',
+      `UserFlow: {
+      name?: string
+      graph: UserGraph
+      default_path?: string
+      extends_flows?: UserFlow[]
+    }`,
+    )
+    try {
+      const json = this.stringToObject(newConfig)
       const configObject = parse(json)
       return this.setState({ config: newConfig, error: false }, () => {
+        console.log(configObject)
         this.props.onConfigChange(configObject)
       })
     } catch (e) {
-      if (retryCount < 1) {
-        return this.onChange(newConfig, dJSON.parse.bind(dJSON), retryCount + 1)
-      }
       return this.setState({ config: newConfig, error: e }, () => console.log(e))
     }
   }
@@ -44,16 +64,36 @@ export default class FlowsEditor extends React.Component {
         if (lastState.error) {
           return {}
         } else {
-          const config = JSON.stringify(Jsonic(lastState.config), null, '\t')
+          const config = JSON.stringify(this.stringToObject(lastState.config), null, '\t')
           return { config }
         }
       })
     }
   }
 
+  getFlowName = (flow, index) => {
+    if (flow.hasOwnProperty('name')) {
+      return flow.name
+    }
+    return `composed-flow${index}`
+  }
+
+  renderButtons = () => {
+    return (
+      <div>
+        {this.props.config.flows.map((flow, i) => (
+          <button key={flow.id} onClick={() => this.props.onSelectedFlowIndexChange(i)}>
+            {this.getFlowName(flow, i)}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   render() {
     return (
       <div tabIndex={0} onKeyDown={this.handleKeyDown}>
+        {this.renderButtons()}
         <AceEditor
           height={'90vh'}
           width={'45vw'}

@@ -11,7 +11,6 @@ const _startCase = require('lodash/startCase')
 module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI } = constants
   const { linterTsconfigPath, indexHtmlPath } = paths
-
   const productionPlugins = [
     new MiniCssExtractPlugin({
       filename: '[chunkhash].css',
@@ -39,6 +38,7 @@ module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: false,
+      formatter: 'codeframe',
     }),
     ...(isDevelopmentMode ? developmentPlugins : productionPlugins),
     ...(isTestMode ? [new CleanWebpackPlugin()] : []),
@@ -52,12 +52,13 @@ const getFriendlyErrorsWebpackPluginOptions = ({
 }) => {
   const mode = isDevelopmentMode ? 'Development' : 'Production'
   const link = `${devServerHttpProtocol ? 'http' : 'https'}://${devServerHost}:${devServerPort}`
-  const coloredLink = terminalLink('WebApp', chalk.blueBright(link))
   return {
     ...(!isCI && {
       compilationSuccessInfo: {
         notes: [
-          `${chalk.bold(_startCase(packageDirectoryName))} - ${mode}${isWebApp ? `: ${coloredLink}` : ''}\n\n`,
+          `${chalk.bold(_startCase(packageDirectoryName))} - ${mode}${
+            isWebApp ? `: ${chalk.blueBright(link)}` : ''
+          }\n\n`,
           ...(isTestMode ? ['Test Mode'] : []),
         ],
       },
