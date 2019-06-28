@@ -1,24 +1,10 @@
-import 'fonts/my-symphony.font.js'
-
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from 'app'
-
-// @ts-ignore
-ReactDOM.render(<App />, document.getElementById('app'))
-
-import {
-  updateConfigActionCreator,
-  executeFlowThunkCreator,
-  reducer,
-  FlowAction,
-  FlowReducerSelector,
-  FlowState,
-} from '@flow/redux-extention'
+import * as actionCreators from 'actions'
+import reducer from 'reducer'
 import { parse } from '@flow/parser'
 import { logger } from 'redux-logger'
 import { applyMiddleware, createStore, combineReducers } from 'redux'
 import thunk, { ThunkDispatch } from 'redux-thunk'
+import { ExecuteFlowThunk, FlowAction, FlowReducerSelector, FlowState } from 'types'
 
 const middleware = applyMiddleware<ThunkDispatch<FlowState, undefined, FlowAction>, FlowState>(thunk, logger)
 const store = createStore(combineReducers({ libReducer: reducer }), middleware)
@@ -29,5 +15,11 @@ const config = parse({
   graph: 'a:b:c',
 })
 
-store.dispatch(updateConfigActionCreator(config))
-store.dispatch(executeFlowThunkCreator(libSelector)('flow1'))
+describe('circle', () => {
+  it('1', () => {
+    store.dispatch(actionCreators.updateConfigActionCreator(config))
+    const executeFlowThunkCreator: ExecuteFlowThunk = actionCreators.executeFlowThunkCreator(libSelector)('flow1')
+
+    store.dispatch(executeFlowThunkCreator)
+  })
+})

@@ -2,11 +2,13 @@
   "name": "@flow/main",
   "private": true,
   "scripts": {
-    "start": "yarn --cwd ./packages/editor start",
+    "editor": "yarn --cwd ./packages/editor start",
+    "parser": "yarn --cwd ./packages/parser build:dev",
+    "redux": "yarn --cwd ./packages/redux-extension build:dev",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
-    "prepare": "yarn run clean && lerna run build:prod --scope @flow/parser && lerna bootstrap",
-    "prepublishOnly": "yarn prepare && lerna run build:prod --ignore @flow/parser --parallel && lerna exec --parallel -- pkg-ok && lerna run test --parallel"
+    "prepare1": "yarn run clean && lerna run build:prod --scope @flow/parser && lerna bootstrap",
+    "prepublishOnly1": "yarn prepare && lerna run build:prod --ignore @flow/parser --parallel && lerna exec --parallel -- pkg-ok && lerna run test --parallel"
   },
   "devDependencies": {
     "husky": "^2.3.0",

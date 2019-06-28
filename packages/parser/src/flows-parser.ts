@@ -227,7 +227,11 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
   const parsedGraph = removePointersFromNodeToHimSelf(
     parseGraph(
       graphNodeToDisplayName(splitters),
-      displayNameToFullGraphNode(splitters)(parsedFlowsUntilNow, flowToParse.name, extendedParsedFlow),
+      displayNameToFullGraphNode(splitters)({
+        parsedFlows: parsedFlowsUntilNow,
+        ...('name' in flowToParse && { flowName: flowToParse.name }),
+        extendedParsedFlow: extendedParsedFlow,
+      }),
       flowToParse.graph,
     ),
   )

@@ -10,4 +10,8 @@ module.exports = [
     packageDirectoryName: 'editor',
     isWebApp: true,
   },
+  {
+    packageDirectoryName: 'redux-extension',
+    isWebApp: false,
+  },
 ]

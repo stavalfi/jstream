@@ -1,7 +1,7 @@
 import { parse } from 'index'
 import { distractDisplayNameBySplitters, graphNodeToDisplayName } from 'utils'
 import { table } from 'table'
-import { Graph, Node, ParsedFlow, ParsedFlowOptionalFields, Path, Splitters, UserConfigurationObject } from 'types'
+import { Graph, Node, ParsedFlow, ParsedFlowOptionalFields, Path, Splitters, Configuration, UserFlow } from 'types'
 import { expect } from 'chai'
 
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
@@ -27,7 +27,7 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
 
 export const createExpected = (
   expectedFlowsArrays: ExpectedFlow[],
-  flowsConfig: Required<UserConfigurationObject>,
+  flowsConfig: Required<Configuration<UserFlow>>,
 ): Omit<ParsedFlow, 'id' | 'sideEffects'>[] =>
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
@@ -36,7 +36,7 @@ export const createExpected = (
 
 const convertExpectedFlowGraphArray = (
   expectedFlowGraphArray: ExpectedFlowGraphNode[],
-  flowsConfig: Required<UserConfigurationObject>,
+  flowsConfig: Required<Configuration<UserFlow>>,
 ) => {
   return expectedFlowGraphArray.map(node => {
     const displayNode = distractDisplayNameBySplitters(flowsConfig.splitters, Object.keys(node)[0])
@@ -51,7 +51,7 @@ const convertExpectedFlowGraphArray = (
 
 export const createFlows = <T>(
   actualFlowGraph: T,
-  flowsConfig: (actualFlowGraph: T) => Required<UserConfigurationObject>,
+  flowsConfig: (actualFlowGraph: T) => Required<Configuration<UserFlow>>,
 ) => parse(flowsConfig(actualFlowGraph)).flows
 
 const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {

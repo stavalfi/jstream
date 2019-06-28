@@ -21,7 +21,11 @@ export const parseSideEffects: ParseSideEffects = splitters => ({
   flowName,
   sideEffects = [],
 }) => {
-  const toNode = displayNameToFullGraphNode(splitters)(parsedFlowsUntilNow, flowName, extendedParsedFlow)
+  const toNode = displayNameToFullGraphNode(splitters)({
+    parsedFlows: parsedFlowsUntilNow,
+    flowName,
+    extendedParsedFlow,
+  })
   return sideEffects.map(({ node_name, side_effect }) => {
     return {
       node: toNode(node_name),

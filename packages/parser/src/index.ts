@@ -79,5 +79,14 @@ const initializeConfig: InitializeConfig = config => {
   }
 }
 
-export { graphNodeToDisplayName } from 'utils'
-export { UserConfigurationObject, ParsedUserConfigurationObject } from 'types'
+export { graphNodeToDisplayName, isSubsetOf, displayNameToFullGraphNode } from 'utils'
+export {
+  Configuration,
+  ParsedUserConfigurationObject,
+  Node,
+  ParsedFlow,
+  Graph,
+  SideEffect,
+  Path,
+  Splitters,
+} from 'types'

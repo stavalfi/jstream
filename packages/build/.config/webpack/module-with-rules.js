@@ -29,6 +29,8 @@ module.exports = ({
                   context: packageJsonFolderPath,
                   configFile: libTsconfigFilePath,
                   experimentalFileCaching: true,
+                  // to speed up build: we can set to true when this fixed: https://github.com/TypeStrong/ts-loader/issues/957
+                  transpileOnly: false,
                 },
               },
               {

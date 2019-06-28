@@ -58,17 +58,23 @@ export const graphNodeToDisplayName: GraphNodeToDisplayName = splitters => flowN
 export type DisplayNameToFullGraphNode = (
   splitters: Splitters,
 ) => (
-  parsedFlows: ParsedFlow[],
-  flowName?: string,
-  extendedParsedFlow?: ParsedFlow,
+  params: {
+    parsedFlows: ParsedFlow[]
+  } & (
+    | {}
+    | { flowName: string }
+    | { extendedParsedFlow: ParsedFlow }
+    | { flowName: string; extendedParsedFlow: ParsedFlow }),
 ) => (displayName: string) => { path: Path; identifier?: string }
-export const displayNameToFullGraphNode: DisplayNameToFullGraphNode = splitters => (
-  parsedFlows,
-  flowName,
-  extendedParsedFlow,
-) => displayName => {
+
+export const displayNameToFullGraphNode: DisplayNameToFullGraphNode = splitters => params => displayName => {
   const { partialPath, identifier } = distractDisplayNameBySplitters(splitters, displayName)
-  const path = fillUserPath({ parsedFlows, flowName, extendedParsedFlow, userPath: partialPath })
+  const path = fillUserPath({
+    parsedFlows: params.parsedFlows,
+    ...('flowName' in params && { flowName: params.flowName }),
+    ...('extendedParsedFlow' in params && { extendedParsedFlow: params.extendedParsedFlow }),
+    userPath: partialPath,
+  })
   return {
     path,
     ...(identifier && { identifier }),

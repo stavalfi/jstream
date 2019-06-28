@@ -59,14 +59,16 @@ export type AlgorithmParsedFlow = ParsedFlow &
     | { extendedParsedFlow: AlgorithmParsedFlow }
     | {})
 
+export type SideEffectFunction = (activeFlow: ParsedFlow) => (activeNode: Node) => string | PromiseLike<string>
+
 export type SideEffect = {
   node: { path: Path; identifier?: string }
-  sideEffectFunc: Function
+  sideEffectFunc: SideEffectFunction
 }
 
 export type UserGraph = string | string[]
 
-export type UserSideEffects = { node_name: string; side_effect: Function }[]
+export type UserSideEffects = { node_name: string; side_effect: SideEffectFunction }[]
 
 export type UserFlowObject = {
   graph: UserGraph
@@ -90,11 +92,11 @@ export type ParsedUserFlow = {
   extendsFlows?: UserFlow[]
 }
 
-export type UserConfigurationObject = {
+export type Configuration<Flow> = {
   splitters?: Splitters
-  flows: UserFlow[]
+  flows: Flow[]
 }
 
-export type ParsedUserConfigurationObject = Required<UserConfigurationObject>
+export type ParsedUserConfigurationObject = Required<Configuration<UserFlow>>
 
-export type UserConfiguration = UserFlow | UserFlow[] | UserConfigurationObject
+export type UserConfiguration = UserFlow | UserFlow[] | Configuration<UserFlow>
