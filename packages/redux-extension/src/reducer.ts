@@ -1,34 +1,32 @@
-import { areNodesEqual, getActiveNodesIndexes } from 'utils'
 import { FlowActionType, FlowReducer, FlowState } from 'types'
-import { Graph } from '@flow/parser'
 
-const initialState: FlowState = { activeFlows: [], nonActiveWorkflows: [], flows: [] }
+const initialState: FlowState = { flows: [], activeFlows: [] }
 
 const reducer: FlowReducer = (lastState = initialState, action) => {
-  const { activeFlows, flows } = lastState
+  const { flows, activeFlows } = lastState
   switch (action.type) {
     case FlowActionType.updateConfig:
       return {
         ...lastState,
         ...action.payload,
-        activeFlows: lastState.activeFlows,
-        nonActiveWorkflows: lastState.nonActiveWorkflows,
       }
     case FlowActionType.executeFlow: {
-      const { flowName, id } = action.payload
+      const { id, flowName } = action.payload
       const flow = flows.find(flow => 'name' in flow && flow.name === flowName)
       if (!flow) {
         return lastState
       } else {
         return {
           ...lastState,
-          activeFlows: activeFlows.concat([
+          activeFlows: [
+            ...activeFlows,
             {
-              ...flow,
               id,
-              graph: flow.graph,
+              flowName,
+              flowId: flow.id,
+              activeNodesIndexes: [],
             },
-          ]),
+          ],
         }
       }
     }
@@ -45,7 +43,12 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
           ...lastState.activeFlows.slice(0, activeFlowIndex),
           {
             ...activeFlows[activeFlowIndex],
-            graph: advance({ graph: activeFlows[activeFlowIndex].graph, ...payload }),
+            activeNodesIndexes: [
+              ...('fromNodeIndex' in payload
+                ? activeFlows[activeFlowIndex].activeNodesIndexes.filter(index => index !== payload.fromNodeIndex)
+                : activeFlows[activeFlowIndex].activeNodesIndexes),
+              payload.toNodeIndex,
+            ],
           },
           ...lastState.activeFlows.slice(activeFlowIndex + 1),
         ],
@@ -53,48 +56,6 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
     }
   }
   return lastState
-}
-
-type GetToActiveNodeIndex = (
-  params: { graph: Graph; toNodeIndex: number } & ({} | { fromNodeIndex: number }),
-) => { toActiveNodeIndex: number } & ({} | { fromActiveNodeIndex: number })
-
-const getToActiveNodeIndex: GetToActiveNodeIndex = ({ graph, toNodeIndex, ...rest }) => {
-  if ('fromNodeIndex' in rest) {
-    const fromActiveNodeIndex = getActiveNodesIndexes(graph).findIndex(activeNodeIndex =>
-      areNodesEqual(graph[activeNodeIndex], graph[rest.fromNodeIndex]),
-    )
-    const toActiveNodeIndex = graph[fromActiveNodeIndex].childrenIndexes.find(childIndex =>
-      areNodesEqual(graph[childIndex], graph[toNodeIndex]),
-    ) as number
-    return { fromActiveNodeIndex, toActiveNodeIndex }
-  } else {
-    return {
-      toActiveNodeIndex: graph.findIndex(activeNode => areNodesEqual(activeNode, graph[toNodeIndex])),
-    }
-  }
-}
-
-export type Advance = (params: { graph: Graph; toNodeIndex: number } & ({} | { fromNodeIndex: number })) => Graph
-
-const advance: Advance = ({ graph, toNodeIndex, ...rest }) => {
-  const activeNodeIndexes = getToActiveNodeIndex({ graph, toNodeIndex, ...rest })
-
-  return graph.map((node, i) => {
-    if ('fromActiveNodeIndex' in activeNodeIndexes && i === activeNodeIndexes.fromActiveNodeIndex) {
-      return {
-        ...node,
-        status: 'non-active',
-      }
-    }
-    if (i === activeNodeIndexes.toActiveNodeIndex) {
-      return {
-        ...node,
-        status: 'active',
-      }
-    }
-    return node
-  })
 }
 
 export default reducer

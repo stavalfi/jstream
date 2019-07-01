@@ -9,8 +9,6 @@ module.exports = (env = {}, argv = {}) => {
   const publicPath = '/'
 
   return {
-    cache: isDevelopmentMode,
-
     stats: isDevelopmentMode ? 'none' : 'normal',
 
     devtool: isDevelopmentMode ? 'source-map' : 'none',

@@ -1,8 +1,8 @@
 import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from 'utils/utils'
-import { UserFlow } from 'types'
+import { Configuration, UserFlow } from 'types'
 
 describe('multiple-flows-in-first-layer', () => {
-  const flowsConfig = (graph: UserFlow) => ({
+  const flowsConfig = (graph: UserFlow): Required<Configuration<UserFlow>> => ({
     splitters: {
       extends: '_',
     },

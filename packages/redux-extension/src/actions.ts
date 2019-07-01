@@ -9,8 +9,8 @@ import {
   UpdateConfigActionCreator,
 } from 'types'
 import uuid from 'uuid/v1'
-import { areNodesEqual, getActiveNodesIndexes, getSideEffects, userInputNodeToNodeIndex } from 'utils'
-import { displayNameToFullGraphNode, isSubsetOf } from '@flow/parser'
+import { userInputNodeToNodeIndex } from 'utils'
+import { isSubsetOf } from '@flow/parser'
 import isPromise from 'is-promise'
 
 export const updateConfigActionCreator: UpdateConfigActionCreator = payload => ({
@@ -30,15 +30,10 @@ export const advanceFlowActionCreator: AdvanceFlowActionCreator = payload => ({
   payload,
 })
 
-export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowName => (dispatch, getState) => {
+export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowName => dispatch => {
   const action = dispatch(executeFlowActionCreator({ flowName, id: uuid() }))
-  const { activeFlows } = reducerSelector(getState())
-  const activeFlow = activeFlows.find(activeFlow => activeFlow.id === action.payload.id)
-  if (!activeFlow) {
-    return action
-  }
   return dispatch(
-    advanceGraphThunk(reducerSelector)(advanceFlowActionCreator({ flowName, id: action.payload.id, toNodeIndex: 0 })),
+    advanceGraphThunk(reducerSelector)(advanceFlowActionCreator({ id: action.payload.id, toNodeIndex: 0 })),
   )
 }
 
@@ -53,34 +48,29 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
       const { splitters } = restOfState
       const { payload } = action
       const activeFlow = activeFlows.find(activeFlow => activeFlow.id === action.payload.id)
-
       if (!activeFlow) {
-        return action // todo: return or throw something else
+        return action
       }
-
-      const userNodeToNodeObject = userInputNodeToNodeIndex({
-        stringToNode: displayNameToFullGraphNode(splitters)({
-          parsedFlows: flows,
-          ...('name' in activeFlow && { name: activeFlow.name }),
-          ...('extendedFlowIndex' in activeFlow && { extendedFlowIndex: flows[activeFlow.extendedFlowIndex] }),
-        }),
-        graph: activeFlow.graph,
-      })
-
-      const activeNodeIndex =
-        getActiveNodesIndexes(activeFlow.graph).find(i =>
-          areNodesEqual(activeFlow.graph[i], activeFlow.graph[action.payload.toNodeIndex]),
-        ) || 0
-
-      const activeNode = activeFlow.graph[activeNodeIndex]
-      const sideEffects = getSideEffects(flows, activeFlow)
-      const sideEffect = sideEffects.find(sideEffect => isSubsetOf(sideEffect.node.path, activeNode.path))
-
-      if (!sideEffect || !sideEffect.hasOwnProperty('sideEffectFunc')) {
+      const flow = flows.find(flow => flow.id === activeFlow.flowId)
+      if (!flow) {
         return action
       }
 
-      const result = sideEffect.sideEffectFunc(activeFlow)(activeNode)
+      const sideEffect = flow.sideEffects.find(sideEffect =>
+        isSubsetOf(sideEffect.node.path, flow.graph[action.payload.toNodeIndex].path),
+      )
+
+      if (!sideEffect || !('sideEffectFunc' in sideEffect)) {
+        return action
+      }
+
+      const result = sideEffect.sideEffectFunc(flow)(flow.graph[action.payload.toNodeIndex])
+
+      const userNodeToNodeObject = userInputNodeToNodeIndex({
+        splitters,
+        flows,
+        flow,
+      })
 
       if (isPromise<string>(result)) {
         return result.then(nextNode => {
@@ -90,7 +80,7 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
                 advanceFlowActionCreator({
                   ...payload,
                   fromNodeIndex: payload.toNodeIndex,
-                  toNodeIndex: userNodeToNodeObject(activeNodeIndex)(nextNode),
+                  toNodeIndex: userNodeToNodeObject(action.payload.toNodeIndex)(nextNode),
                 }),
               ),
             )
@@ -105,8 +95,8 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
             advance(
               advanceFlowActionCreator({
                 ...payload,
-                fromNodeIndex: activeNodeIndex,
-                toNodeIndex: userNodeToNodeObject(activeNodeIndex)(result),
+                fromNodeIndex: action.payload.toNodeIndex,
+                toNodeIndex: userNodeToNodeObject(action.payload.toNodeIndex)(result),
               }),
             ),
           )

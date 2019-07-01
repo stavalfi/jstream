@@ -63,8 +63,7 @@ export type SideEffectFunction = (activeFlow: ParsedFlow) => (activeNode: Node) 
 
 export type SideEffect = {
   node: { path: Path; identifier?: string }
-  sideEffectFunc: SideEffectFunction
-}
+} & ({} | { sideEffectFunc: SideEffectFunction })
 
 export type UserGraph = string | string[]
 

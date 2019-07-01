@@ -15,4 +15,5 @@ module.exports = {
   filesExt,
   testFilesExt,
   ...envVariables,
+  packagesProperties: require('./packages-properties'),
 }

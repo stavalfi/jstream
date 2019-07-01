@@ -18,7 +18,7 @@ export type ExecuteFlowAction = Action<FlowActionType.executeFlow> & { payload: 
 
 export type ExecuteFlowActionCreator = (payload: ExecuteFlowPayload) => ExecuteFlowAction
 
-export type AdvanceFlowPayload = ExecuteFlowPayload &
+export type AdvanceFlowPayload = Pick<ExecuteFlowPayload, 'id'> &
   ({ toNodeIndex: number } | { fromNodeIndex: number; toNodeIndex: number })
 
 export type AdvanceFlowAction = Action<FlowActionType.advanceFlowGraph> & { payload: AdvanceFlowPayload }
@@ -26,8 +26,6 @@ export type AdvanceFlowAction = Action<FlowActionType.advanceFlowGraph> & { payl
 export type AdvanceFlowActionCreator = (payload: AdvanceFlowPayload) => AdvanceFlowAction
 
 export type FlowAction = AdvanceFlowAction | ExecuteFlowAction | UpdateConfigAction
-
-export type FlowDispatchedActions = FlowAction | AdvanceGraphThunk | ExecuteFlowThunk
 
 export type AdvanceGraphThunk = ThunkAction<
   AdvanceFlowAction | PromiseLike<AdvanceFlowAction>,
@@ -40,10 +38,16 @@ export type ExecuteFlowThunk = FlowThunkAction<FlowAction | PromiseLike<AdvanceF
 
 export type ExecuteFlowThunkCreator = (reducerSelector: FlowReducerSelector) => (flowName: string) => ExecuteFlowThunk
 
+export type ActiveFlow = {
+  id: string
+  flowName: string
+  flowId: string
+  activeNodesIndexes: number[]
+}
+
 export type FlowState = {
-  activeFlows: ParsedFlow[]
-  nonActiveWorkflows: ParsedFlow[]
   flows: ParsedFlow[]
+  activeFlows: ActiveFlow[]
 } & ({} | { splitters: Splitters })
 
 export type FlowReducer = Reducer<FlowState, FlowAction>
