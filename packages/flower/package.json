@@ -1,5 +1,5 @@
 {
-  "name": "@flow/redux-extention",
+  "name": "@flow/flower",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
     "lint-staged": "pkg-ok && yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "WEBAPP=false FOLDER=redux-extension yarn workspace @flow/build"
+    "exec": "WEBAPP=false FOLDER=flower yarn workspace @flow/build"
   },
   "keywords": [],
   "author": "",

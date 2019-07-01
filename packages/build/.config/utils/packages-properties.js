@@ -11,7 +11,7 @@ module.exports = [
     isWebApp: true,
   },
   {
-    packageDirectoryName: 'redux-extension',
+    packageDirectoryName: 'flower',
     isWebApp: false,
   },
 ]

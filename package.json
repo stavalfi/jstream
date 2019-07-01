@@ -4,7 +4,7 @@
   "scripts": {
     "editor": "yarn --cwd ./packages/editor start",
     "parser": "yarn --cwd ./packages/parser build:dev",
-    "redux": "yarn --cwd ./packages/redux-extension build:dev",
+    "redux": "yarn --cwd packages/flower build:dev",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "prepare1": "yarn run clean && lerna run build:prod --scope @flow/parser && lerna bootstrap",

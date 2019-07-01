@@ -17,7 +17,7 @@
       "path": "packages/editor"
     },
     {
-      "path": "packages/redux-extension"
+      "path": "packages/flower"
     }
   ]
 }
