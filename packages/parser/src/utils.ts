@@ -1,5 +1,5 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
-import { AlgorithmParsedFlow, Node, ParsedFlow, Path, Splitters } from 'types'
+import { AlgorithmParsedFlow, Node, ParsedFlow, Path, Splitters } from '@parser/types'
 
 export const distractDisplayNameBySplitters = (
   splitters: Splitters,

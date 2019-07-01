@@ -1,5 +1,5 @@
-import { extractUniqueFlowsNamesFromGraph } from 'utils'
-import { ParsedFlow, ParsedUserFlow, Splitters } from 'types'
+import { extractUniqueFlowsNamesFromGraph } from '@parser/utils'
+import { ParsedFlow, ParsedUserFlow, Splitters } from '@parser/types'
 
 export const validateFlowToParse = (splitters: Splitters) => (
   parsedFlowsUntilNow: ParsedFlow[],

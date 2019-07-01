@@ -1,5 +1,5 @@
-import { displayNameToFullGraphNode } from 'utils'
-import { ParsedFlow, SideEffect, Splitters, UserSideEffects } from 'types'
+import { displayNameToFullGraphNode } from '@parser/utils'
+import { ParsedFlow, SideEffect, Splitters, UserSideEffects } from '@parser/types'
 
 type ParseSideEffects = (
   splitters: Splitters,

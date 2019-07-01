@@ -5,7 +5,6 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
-const terminalLink = require('terminal-link')
 const _startCase = require('lodash/startCase')
 
 module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {

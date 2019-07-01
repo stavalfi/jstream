@@ -1,17 +1,17 @@
-import { parseGraph } from 'graph-parser'
-import { fixAndExtendGraph } from 'fix-flow-graph'
-import { parseSideEffects } from 'side-effects-parser'
+import { parseGraph } from '@parser/graph-parser'
+import { fixAndExtendGraph } from '@parser/fix-flow-graph'
+import { parseSideEffects } from '@parser/side-effects-parser'
 import {
   arePathsEqual,
   displayNameToFullGraphNode,
   extractUniqueFlowsNamesFromGraph,
   graphNodeToDisplayName,
   isSubsetOf,
-} from 'utils'
-import { validateFlowToParse } from 'flow-validator'
-import { flattenUserFlowShortcuts } from 'user-shortcuts-parser'
+} from '@parser/utils'
+import { validateFlowToParse } from '@parser/flow-validator'
+import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import uuid from 'uuid/v1'
-import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from 'types'
+import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
 
 type ParseMultipleFlows = ({
   userFlows,

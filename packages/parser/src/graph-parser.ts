@@ -1,5 +1,5 @@
 import { compose } from 'redux'
-import { Graph, Node, Path, UserGraph } from 'types'
+import { Graph, Node, Path, UserGraph } from '@parser/types'
 
 type ToDisplayName = (flowNode: Node) => string
 type ToNode = (displayName: string) => { path: Path; identifier?: string }

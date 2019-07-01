@@ -1,4 +1,4 @@
-import { FlowActionType, FlowReducer, FlowState } from 'types'
+import { FlowActionType, FlowReducer, FlowState } from '@flower/types'
 
 const initialState: FlowState = { flows: [], activeFlows: [] }
 

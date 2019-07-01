@@ -7,9 +7,9 @@ import {
   FlowActionType,
   FlowReducerSelector,
   UpdateConfigActionCreator,
-} from 'types'
+} from '@flower/types'
 import uuid from 'uuid/v1'
-import { userInputNodeToNodeIndex } from 'utils'
+import { userInputNodeToNodeIndex } from '@flower/utils'
 import { isSubsetOf } from '@flow/parser'
 import isPromise from 'is-promise'
 

@@ -1,5 +1,3 @@
-export * from 'types'
-export * from 'actions'
-export { default as reducer } from 'reducer'
-
-throw new Error('124')
+export * from '@flower/types'
+export * from '@flower/actions'
+export { default as reducer } from '@flower/reducer'
