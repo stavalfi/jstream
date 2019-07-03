@@ -37,14 +37,17 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
       tsconfig: linterTsconfigPath,
       async: false,
       formatter: 'codeframe',
-      compilerOptions: getCompilerOptions({ isDevelopmentMode, constants, paths }),
+      compilerOptions: getCompilerOptions(isDevelopmentMode, { isDevelopmentMode, constants, paths }),
     }),
     ...(isDevelopmentMode ? developmentPlugins : productionPlugins),
     new CleanWebpackPlugin(),
   ]
 }
 
-const getCompilerOptions = ({ constants: { packagesProperties }, paths: { packagesPath, mainTestsFolderPath } }) => ({
+const getCompilerOptions = (
+  isDevelopmentMode,
+  { constants: { packagesProperties, mainProjectDirName }, paths: { packagesPath, mainTestsFolderPath } },
+) => ({
   baseUrl: packagesPath,
   paths: {
     '*': ['../node_modules/*'].concat(
@@ -55,9 +58,17 @@ const getCompilerOptions = ({ constants: { packagesProperties }, paths: { packag
     ...packagesProperties
       .map(packageProperties => ({
         [`@${packageProperties.packageDirectoryName}/*`]: [`${packageProperties.packageDirectoryName}/src/*`],
-        [`@test/*`]: path.resolve(mainTestsFolderPath, `*`),
+        [`@${packageProperties.packageDirectoryName}-test/*`]: [`${packageProperties.packageDirectoryName}/test/*`],
       }))
       .reduce((acc, obj) => ({ ...acc, ...obj }), {}),
+    ...(isDevelopmentMode &&
+      packagesProperties
+        .map(packageProperties => ({
+          [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: [
+            `${packageProperties.packageDirectoryName}/src/${packageProperties.isWebApp ? 'index.tsx' : 'index.ts'}`,
+          ],
+        }))
+        .reduce((acc, obj) => ({ ...acc, ...obj }), {})),
   },
 })
 

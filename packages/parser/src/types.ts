@@ -61,13 +61,18 @@ export type AlgorithmParsedFlow = ParsedFlow &
 
 export type SideEffectFunction = (activeFlow: ParsedFlow) => (activeNode: Node) => string | PromiseLike<string>
 
-export type SideEffect = {
-  node: { path: Path; identifier?: string }
-} & ({} | { sideEffectFunc: SideEffectFunction })
+export type SideEffect =
+  | { sideEffectFunc: SideEffectFunction }
+  | {
+      node: { path: Path; identifier?: string }
+      sideEffectFunc: SideEffectFunction
+    }
 
 export type UserGraph = string | string[]
 
-export type UserSideEffects = { node_name: string; side_effect: SideEffectFunction }[]
+export type UserSideEffects = (
+  | { side_effect: SideEffectFunction }
+  | { node_name: string; side_effect: SideEffectFunction })[]
 
 export type UserFlowObject = {
   graph: UserGraph

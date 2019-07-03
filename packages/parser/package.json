@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "start": "yarn run exec b:build:dev --watch",
     "build:dev": "yarn run exec b:build:dev",
     "build:prod": "yarn run exec b:build:prod",
     "test": "yarn run exec b:test",

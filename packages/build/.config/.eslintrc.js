@@ -52,7 +52,7 @@ module.exports = {
     'getter-return': 0,
     curly: 'error',
     'react-hooks/rules-of-hooks': 'error',
-    'import/no-unresolved': 'error',
+    'import/no-unresolved': 'off', // import-rule doesn't read (as good as it should) webpack.resolve.alias configurations so he can't resolve them in some cases.
     'import/named': 'error',
     'import/default': 'error',
   },

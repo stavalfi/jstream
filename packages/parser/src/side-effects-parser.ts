@@ -26,10 +26,10 @@ export const parseSideEffects: ParseSideEffects = splitters => ({
     flowName,
     extendedParsedFlow,
   })
-  return sideEffects.map(({ node_name, side_effect }) => {
+  return sideEffects.map(sideEffect => {
     return {
-      node: toNode(node_name),
-      sideEffectFunc: side_effect,
+      ...('node_name' in sideEffect && { node: toNode(sideEffect.node_name) }),
+      sideEffectFunc: sideEffect.side_effect,
     }
   })
 }

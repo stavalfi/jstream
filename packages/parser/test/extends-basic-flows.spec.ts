@@ -1,4 +1,4 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow, declareFlows } from '@test/utils/utils'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow, declareFlows } from '@parser-test/utils/utils'
 import { UserFlow } from '@parser/types'
 
 describe('extends-basic-flows', () => {

@@ -33,4 +33,4 @@ const prodAlias = ({ packagesPath, packagesProperties }) =>
         'src',
       ),
     }))
-    .reduce((acc, alias) => ({ ...acc, ...alias }), {})
+    .reduce((acc, alias) => ({ ...acc, ...alias }), { 'react-dom': '@hot-loader/react-dom' })

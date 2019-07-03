@@ -15,143 +15,147 @@ module.exports = ({
     packagesPath,
     mainTestsFolderPath,
   },
-}) => {
-  return {
-    rules: [
-      {
-        test: /\.(ts|js)x?$/,
-        exclude: /(node_module|dist|my-symphony.font.js)/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true,
-              ...require(babelRcPath),
+}) => ({
+  rules: [
+    {
+      test: /\.(ts|js)x?$/,
+      exclude: /(node_module|dist|my-symphony.font.js)/,
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            ...require(babelRcPath),
+          },
+        },
+        ...(isWebApp || isDevelopmentMode
+          ? []
+          : [
+              {
+                loader: 'ts-loader',
+                options: {
+                  context: packageJsonFolderPath,
+                  configFile: libTsconfigFilePath,
+                  experimentalFileCaching: true,
+                  // to speed up build: we can set to true when this fixed: https://github.com/TypeStrong/ts-loader/issues/957
+                  transpileOnly: false,
+                },
+              },
+              {
+                loader: '@stavalfi/babel-plugin-module-resolver-loader',
+                options: {
+                  cwd: srcPath,
+                  root: [srcPath],
+                  extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
+                  alias: isDevelopmentMode
+                    ? developmentAlias({
+                        mainProjectDirName,
+                        packagesPath,
+                        packagesProperties,
+                        mainTestsFolderPath,
+                        srcPath,
+                      })
+                    : prodAlias({ packagesPath, packagesProperties, mainTestsFolderPath, srcPath }),
+                },
+              },
+            ]),
+        {
+          loader: 'eslint-loader',
+          options: {
+            failOnError: true,
+            failOnWarning: isDevelopmentMode,
+            configFile: eslintRcPath,
+            fix: false,
+            // eslint import will remmember sometimes failures from last run and won't re-check imports.
+            cache: false,
+            formatter: require('eslint-formatter-friendly'),
+          },
+        },
+      ],
+    },
+    {
+      test: /\.css$/,
+      loaders: [isDevelopmentMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
+    },
+    {
+      test: /\.(jpe?g|png|gif)$/i,
+      loaders: [
+        {
+          loader: 'file-loader',
+          options: {
+            query: {
+              name: 'assets/[hash].[name].[ext]',
             },
           },
-          ...(isWebApp
-            ? []
-            : [
-                {
-                  loader: 'ts-loader',
-                  options: {
-                    context: packageJsonFolderPath,
-                    configFile: libTsconfigFilePath,
-                    experimentalFileCaching: true,
-                    // to speed up build: we can set to true when this fixed: https://github.com/TypeStrong/ts-loader/issues/957
-                    transpileOnly: false,
-                  },
-                },
-                {
-                  loader: '@stavalfi/babel-plugin-module-resolver-loader',
-                  options: {
-                    cwd: srcPath,
-                    root: [srcPath],
-                    extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
-                    alias: isDevelopmentMode
-                      ? developmentAlias({ mainProjectDirName, packagesPath, packagesProperties })
-                      : prodAlias({ packagesPath, packagesProperties, mainTestsFolderPath }),
-                  },
-                },
-              ]),
-          {
-            loader: 'eslint-loader',
-            options: {
-              failOnError: true,
-              failOnWarning: isDevelopmentMode,
-              configFile: eslintRcPath,
-              fix: false,
-              // eslint import will remmember sometimes failures from last run and won't re-check imports.
-              cache: false,
-              formatter: require('eslint-formatter-friendly'),
-            },
-          },
-        ],
-      },
-      {
-        test: /\.css$/,
-        loaders: [isDevelopmentMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
-      },
-      {
-        test: /\.(jpe?g|png|gif)$/i,
-        loaders: [
-          {
-            loader: 'file-loader',
-            options: {
-              query: {
-                name: 'assets/[hash].[name].[ext]',
+        },
+        {
+          loader: 'image-webpack-loader',
+          options: {
+            query: {
+              mozjpeg: {
+                progressive: true,
+              },
+              gifsicle: {
+                interlaced: true,
+              },
+              optipng: {
+                optimizationLevel: 7,
               },
             },
           },
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              query: {
-                mozjpeg: {
-                  progressive: true,
-                },
-                gifsicle: {
-                  interlaced: true,
-                },
-                optipng: {
-                  optimizationLevel: 7,
-                },
-              },
-            },
+        },
+      ],
+    },
+    {
+      test: /\.font\.js$/,
+      loaders: [
+        'style-loader',
+        'css-loader',
+        {
+          loader: 'webfonts-loader',
+          options: {
+            types: 'ttf',
+            publicPath,
+            baseSelector: '.sf',
           },
-        ],
-      },
-      {
-        test: /\.font\.js$/,
-        loaders: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'webfonts-loader',
-            options: {
-              types: 'ttf',
-              publicPath,
-              baseSelector: '.sf',
-            },
+        },
+      ],
+    },
+    {
+      test: /\.svg(\?.*)?$/,
+      loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
+    },
+    {
+      test: /\.ttf(\?.*)?$/,
+      loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+    },
+    {
+      test: /\.(woff|woff2)(\?.*)?$/,
+      loader: 'url-loader?limit=10000&mimetype=application/font-woff',
+    },
+    {
+      test: /\.eot(\?.*)?$/,
+      loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
+    },
+    {
+      test: /\.(scss|sass)$/,
+      exclude: /(node_modules)/,
+      use: [
+        'style-loader',
+        'css-loader',
+        {
+          loader: 'sass-loader',
+          options: {
+            indentedSyntax: true,
+            importer: jsonImporter,
           },
-        ],
-      },
-      {
-        test: /\.svg(\?.*)?$/,
-        loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
-      },
-      {
-        test: /\.ttf(\?.*)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
-      },
-      {
-        test: /\.(woff|woff2)(\?.*)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/font-woff',
-      },
-      {
-        test: /\.eot(\?.*)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
-      },
-      {
-        test: /\.(scss|sass)$/,
-        exclude: /(node_modules)/,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              indentedSyntax: true,
-              importer: jsonImporter,
-            },
-          },
-        ],
-      },
-    ],
-  }
-}
+        },
+      ],
+    },
+  ],
+})
 
-const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties }) =>
+const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties, mainTestsFolderPath, srcPath }) =>
   packagesProperties
     .map(packageProperties => ({
       [`^@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
@@ -161,16 +165,27 @@ const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties
         packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
       ),
     }))
-    .reduce((acc, alias) => {
-      return { ...acc, ...alias }
-    }, prodAlias({ packagesProperties }))
+    .reduce(
+      (acc, alias) => ({ ...acc, ...alias }),
+      prodAlias({
+        packagesProperties,
+        mainTestsFolderPath,
+        srcPath,
+        packagesPath,
+      }),
+    )
 
-const prodAlias = ({ packagesProperties, mainTestsFolderPath }) =>
+const prodAlias = ({ packagesProperties, mainTestsFolderPath, srcPath, packagesPath }) =>
   packagesProperties
-    .map(packageProperties => ({
-      [`^@${packageProperties.packageDirectoryName}/(.+)`]: `./\\1`,
-      [`@test/(.+)`]: path.resolve(mainTestsFolderPath, `\\1`),
-    }))
-    .reduce((acc, alias) => {
-      return { ...acc, ...alias }
-    }, {})
+    .map(packageProperties => {
+      const packageSrcFolderPath = path.resolve(packagesPath, packageProperties.packageDirectoryName, 'src')
+      return {
+        [`^@${packageProperties.packageDirectoryName}/(.+)`]:
+          srcPath === packageSrcFolderPath ? `./\\1` : path.resolve(packageSrcFolderPath, '\\1'),
+        [`^@${packageProperties.packageDirectoryName}-test/(.+)`]:
+          srcPath === packageSrcFolderPath
+            ? `./\\1`
+            : path.resolve(packagesPath, packageProperties.packageDirectoryName, 'test', '\\1'),
+      }
+    })
+    .reduce((acc, alias) => ({ ...acc, ...alias }), {})

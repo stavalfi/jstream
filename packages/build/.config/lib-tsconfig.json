@@ -8,7 +8,36 @@
     "declarationMap": true,
     "declarationDir": "dist",
     "noImplicitAny": true,
-    "listFiles": false
+    "listFiles": false,
+    "noEmit": false,
+    "baseUrl": "../../",
+    "paths": {
+      "*": [
+        "../node_modules/*",
+        "parser/src/*",
+        "editor/src/*",
+        "flower/src/*",
+        "build/src/*",
+        "parser/test/*",
+        "editor/test/*",
+        "flower/test/*",
+        "build/test/*",
+        "parser/node_modules/*",
+        "editor/node_modules/*",
+        "flower/node_modules/*",
+        "build/node_modules/*"
+      ],
+      "@parser/*": ["parser/src/*"],
+      "@editor/*": ["editor/src/*"],
+      "@flower/*": ["flower/src/*"],
+      "@parser-test/*": ["parser/test/*"],
+      "@editor-test/*": ["editor/test/*"],
+      "@flower-test/*": ["flower/test/*"],
+      "@flow/parser": ["parser/src/index.ts"],
+      "@flow/editor": ["editor/src/index.tsx"],
+      "@flow/flower": ["flower/src/index.ts"],
+      "@flow/build": ["build/src/index.ts"]
+    }
   },
   "include": ["src"],
   "exclude": ["test", "dist", "node_modules", "../../node_modules"]

@@ -1,4 +1,4 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@test/utils/utils'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@parser-test/utils/utils'
 import { Splitters, UserFlow } from '@parser/types'
 
 describe('flow-spliterators', () => {

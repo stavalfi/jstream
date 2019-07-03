@@ -1,4 +1,4 @@
-import { assertEqualFlows, createFlows, createExpected, declareFlows, ExpectedFlow } from '@test/utils/utils'
+import { assertEqualFlows, createFlows, createExpected, declareFlows, ExpectedFlow } from '@parser-test/utils/utils'
 import { UserFlow } from '@parser/types'
 
 describe('circle', () => {

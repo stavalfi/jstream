@@ -57,10 +57,11 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
       }
 
       const sideEffect = flow.sideEffects.find(sideEffect =>
-        isSubsetOf(sideEffect.node.path, flow.graph[action.payload.toNodeIndex].path),
+        'node' in sideEffect
+          ? isSubsetOf(sideEffect.node.path, flow.graph[action.payload.toNodeIndex].path)
+          : sideEffect,
       )
-
-      if (!sideEffect || !('sideEffectFunc' in sideEffect)) {
+      if (!sideEffect) {
         return action
       }
 

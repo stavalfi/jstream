@@ -1,4 +1,4 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@test/utils/utils'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@parser-test/utils/utils'
 import { Configuration, UserFlow } from '@parser/types'
 
 describe('multiple-flows-in-first-layer', () => {

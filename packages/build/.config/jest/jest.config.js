@@ -22,7 +22,12 @@ const prodAlias = ({ packagesPath, packagesProperties, test }) =>
         'src',
         `$1`,
       ),
-      [`@test/(.+)`]: path.resolve(mainTestsFolderPath, `$1`),
+      [`@${packageProperties.packageDirectoryName}-test/(.+)`]: path.resolve(
+        packagesPath,
+        packageProperties.packageDirectoryName,
+        'test',
+        `$1`,
+      ),
     }))
     .reduce((acc, alias) => ({ ...acc, ...alias }), {})
 
