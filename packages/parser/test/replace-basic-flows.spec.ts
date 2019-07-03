@@ -1,5 +1,5 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from 'utils/utils'
-import { UserFlow } from 'types'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@test/utils/utils'
+import { UserFlow } from '@parser/types'
 
 describe('replace-basic-flows', () => {
   it('1', () => {

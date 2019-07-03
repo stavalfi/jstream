@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { flattenUserFlowShortcuts } from 'user-shortcuts-parser'
+import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 
 describe('flatten-user-flow-shortcuts', () => {
   const splitters = {

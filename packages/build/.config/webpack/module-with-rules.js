@@ -4,10 +4,17 @@ const path = require('path')
 
 module.exports = ({
   isDevelopmentMode,
-  isTestMode,
   constants: { isWebApp, mainProjectDirName, packagesProperties },
   publicPath = '.',
-  paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath, packagesPath },
+  paths: {
+    srcPath,
+    eslintRcPath,
+    libTsconfigFilePath,
+    babelRcPath,
+    packageJsonFolderPath,
+    packagesPath,
+    mainTestsFolderPath,
+  },
 }) => {
   return {
     rules: [
@@ -22,7 +29,7 @@ module.exports = ({
               ...require(babelRcPath),
             },
           },
-          ...(isWebApp || isTestMode
+          ...(isWebApp
             ? []
             : [
                 {
@@ -43,7 +50,7 @@ module.exports = ({
                     extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
                     alias: isDevelopmentMode
                       ? developmentAlias({ mainProjectDirName, packagesPath, packagesProperties })
-                      : prodAlias({ packagesPath, packagesProperties }),
+                      : prodAlias({ packagesPath, packagesProperties, mainTestsFolderPath }),
                   },
                 },
               ]),
@@ -51,7 +58,7 @@ module.exports = ({
             loader: 'eslint-loader',
             options: {
               failOnError: true,
-              failOnWarning: isDevelopmentMode || isTestMode,
+              failOnWarning: isDevelopmentMode,
               configFile: eslintRcPath,
               fix: false,
               // eslint import will remmember sometimes failures from last run and won't re-check imports.
@@ -158,10 +165,11 @@ const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties
       return { ...acc, ...alias }
     }, prodAlias({ packagesProperties }))
 
-const prodAlias = ({ packagesProperties }) =>
+const prodAlias = ({ packagesProperties, mainTestsFolderPath }) =>
   packagesProperties
     .map(packageProperties => ({
       [`^@${packageProperties.packageDirectoryName}/(.+)`]: `./\\1`,
+      [`@test/(.+)`]: path.resolve(mainTestsFolderPath, `\\1`),
     }))
     .reduce((acc, alias) => {
       return { ...acc, ...alias }

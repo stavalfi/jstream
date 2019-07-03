@@ -8,16 +8,5 @@
     "lib": ["esnext", "dom"],
     "module": "esnext"
   },
-  "exclude": ["node_modules"],
-  "references": [
-    {
-      "path": "packages/parser"
-    },
-    {
-      "path": "packages/editor"
-    },
-    {
-      "path": "packages/flower"
-    }
-  ]
+  "exclude": ["node_modules"]
 }

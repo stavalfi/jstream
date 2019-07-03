@@ -1,5 +1,5 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow, declareFlows } from 'utils/utils'
-import { UserFlow } from 'types'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow, declareFlows } from '@test/utils/utils'
+import { UserFlow } from '@parser/types'
 
 describe('extends-basic-flows', () => {
   const flowsConfig = (graph: UserFlow) => ({

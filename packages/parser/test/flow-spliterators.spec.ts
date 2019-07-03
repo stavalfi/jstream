@@ -1,5 +1,5 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from 'utils/utils'
-import { Splitters, UserFlow } from 'types'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@test/utils/utils'
+import { Splitters, UserFlow } from '@parser/types'
 
 describe('flow-spliterators', () => {
   const flowsConfig = (splitters: Splitters) => (graph: UserFlow) => ({

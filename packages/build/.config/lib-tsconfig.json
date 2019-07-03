@@ -1,13 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "*": ["src/*", "node_modules/*", "../../node_modules/*"],
-      "@parser/*": ["src/*"],
-      "@editor/*": ["src/*"],
-      "@flower/*": ["src/*"]
-    },
     "allowJs": false,
     "checkJs": false,
     "composite": true,

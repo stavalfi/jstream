@@ -1,5 +1,5 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from 'utils/utils'
-import { Configuration, UserFlow } from 'types'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@test/utils/utils'
+import { Configuration, UserFlow } from '@parser/types'
 
 describe('multiple-flows-in-first-layer', () => {
   const flowsConfig = (graph: UserFlow): Required<Configuration<UserFlow>> => ({

@@ -6,8 +6,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
+const _flatMap = require('lodash/flatMap')
 
-module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {
+module.exports = ({ isDevelopmentMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI } = constants
   const { linterTsconfigPath, indexHtmlPath } = paths
   const productionPlugins = [
@@ -31,22 +32,37 @@ module.exports = ({ isDevelopmentMode, isTestMode, constants, paths }) => {
           }),
         ]
       : []),
-    new FriendlyErrorsWebpackPlugin(
-      getFriendlyErrorsWebpackPluginOptions({ isDevelopmentMode, isTestMode, constants, paths }),
-    ),
+    new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ isDevelopmentMode, constants, paths })),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: false,
       formatter: 'codeframe',
+      compilerOptions: getCompilerOptions({ isDevelopmentMode, constants, paths }),
     }),
     ...(isDevelopmentMode ? developmentPlugins : productionPlugins),
-    ...(isTestMode ? [new CleanWebpackPlugin()] : []),
+    new CleanWebpackPlugin(),
   ]
 }
 
+const getCompilerOptions = ({ constants: { packagesProperties }, paths: { packagesPath, mainTestsFolderPath } }) => ({
+  baseUrl: packagesPath,
+  paths: {
+    '*': ['../node_modules/*'].concat(
+      _flatMap(['src', 'test', 'node_modules'], subFolder =>
+        packagesProperties.map(packageProperties => `${packageProperties.packageDirectoryName}/${subFolder}/*`),
+      ),
+    ),
+    ...packagesProperties
+      .map(packageProperties => ({
+        [`@${packageProperties.packageDirectoryName}/*`]: [`${packageProperties.packageDirectoryName}/src/*`],
+        [`@test/*`]: path.resolve(mainTestsFolderPath, `*`),
+      }))
+      .reduce((acc, obj) => ({ ...acc, ...obj }), {}),
+  },
+})
+
 const getFriendlyErrorsWebpackPluginOptions = ({
   isDevelopmentMode,
-  isTestMode,
   constants: { isWebApp, packageDirectoryName, isCI, devServerHost, devServerPort, devServerHttpProtocol },
 }) => {
   const mode = isDevelopmentMode ? 'Development' : 'Production'
@@ -58,7 +74,6 @@ const getFriendlyErrorsWebpackPluginOptions = ({
           `${chalk.bold(_startCase(packageDirectoryName))} - ${mode}${
             isWebApp ? `: ${chalk.blueBright(link)}` : ''
           }\n\n`,
-          ...(isTestMode ? ['Test Mode'] : []),
         ],
       },
     }),
