@@ -10,6 +10,7 @@
     "b:test:unit": "test=true jest --config ./.config/jest/jest.config.js",
     "b:test:watch": "yarn run b:test --watch",
     "b:lint-staged": "lint-staged --config .config/lint-staged.config.js",
+    "lint-staged": "FOLDER=build yarn run b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules"
   },

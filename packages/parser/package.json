@@ -13,7 +13,7 @@
     "lint-staged": "pkg-ok && yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "WEBAPP=false FOLDER=parser yarn workspace @flow/build"
+    "exec": "FOLDER=parser yarn workspace @flow/build"
   },
   "keywords": [],
   "author": "",

@@ -8,17 +8,12 @@ const packageDirectoryName = packageProperties
   ? packageProperties.packageDirectoryName
   : process.env.FOLDER || process.env['FOLDER']
 
-const isWebApp = packageProperties
-  ? packageProperties.isWebApp
-  : stringToBoolean(process.env.WEBAPP || process.env['WEBAPP'])
-
 const isCI = stringToBoolean(process.env.CI || process.env['CI'])
 
 const isTestMode = stringToBoolean(process.env.test || process.env['test'])
 
 module.exports = {
   packageDirectoryName,
-  isWebApp,
   isCI,
   isTestMode,
 }
