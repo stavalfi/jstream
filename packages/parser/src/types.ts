@@ -59,7 +59,9 @@ export type AlgorithmParsedFlow = ParsedFlow &
     | { extendedParsedFlow: AlgorithmParsedFlow }
     | {})
 
-export type SideEffectFunction = (activeFlow: ParsedFlow) => (activeNode: Node) => string | PromiseLike<string>
+export type SideEffectFunction = (
+  flow: ParsedFlow,
+) => (node: Node, i?: number, graph?: Node[]) => (result?: any, userInput?: any) => string | PromiseLike<string>
 
 export type SideEffect =
   | { sideEffectFunc: SideEffectFunction }

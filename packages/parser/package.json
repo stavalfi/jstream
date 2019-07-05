@@ -11,7 +11,7 @@
     "test": "yarn run exec b:test",
     "test:unit": "yarn run exec b:test:unit",
     "test:watch": "yarn run exec b:test:watch",
-    "lint-staged": "pkg-ok && yarn run exec b:lint-staged",
+    "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
     "exec": "FOLDER=parser yarn workspace @flow/build"

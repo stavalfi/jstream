@@ -31,13 +31,13 @@ const config = parse({
   side_effects: [
     {
       node_name: 'a',
-      side_effect: activeFlow => activeNode => {
+      side_effect: activeFlow => activeNode => (result, userInput) => {
         return 'b'
       },
     },
     {
       node_name: 'b',
-      side_effect: activeFlow => activeNode => {
+      side_effect: activeFlow => activeNode => (result, userInput) => {
         return 'c'
       },
     },

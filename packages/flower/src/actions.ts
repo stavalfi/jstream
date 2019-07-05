@@ -65,7 +65,7 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
         return action
       }
 
-      const result = sideEffect.sideEffectFunc(flow)(flow.graph[action.payload.toNodeIndex])
+      const result = sideEffect.sideEffectFunc(flow)(flow.graph[action.payload.toNodeIndex])()
 
       const userNodeToNodeObject = userInputNodeToNodeIndex({
         splitters,
