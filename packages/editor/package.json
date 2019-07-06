@@ -18,6 +18,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@flow/utils": "^1.0.0",
     "@flow/parser": "^1.0.0",
     "@flow/flower": "^1.0.0",
     "d3": "^5.9.2",

@@ -1,12 +1,11 @@
 {
-  "name": "@flow/flower",
+  "name": "@flow/utils",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "yarn run exec b:build:dev --watch",
-    "build:dev": "yarn run exec b:build:dev",
+    "start": "yarn run exec b:start",
     "build:prod": "yarn run exec b:build:prod",
     "test": "yarn run exec b:test",
     "test:unit": "yarn run exec b:test:unit",
@@ -14,28 +13,15 @@
     "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "FOLDER=flower yarn workspace @flow/build"
+    "exec": "FOLDER=utils yarn workspace @flow/build"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "peerDependencies": {
+  "dependencies": {
     "lodash": "^4.17.11"
   },
-  "dependencies": {
-    "@flow/utils": "^1.0.0",
-    "@flow/parser": "^1.0.0",
-    "is-observable": "^1.1.0",
-    "is-promise": "^2.1.0",
-    "lodash": "^4.17.11",
-    "redux": "^4.0.1",
-    "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0",
-    "uuid": "^3.3.2"
-  },
   "devDependencies": {
-    "@types/redux-logger": "^3.0.7",
-    "@types/uuid": "^3.4.4",
     "pkg-ok": "^2.3.1",
     "typescript": "^3.5.2"
   }

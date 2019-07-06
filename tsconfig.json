@@ -20,25 +20,31 @@
         "editor/src/*",
         "flower/src/*",
         "build/src/*",
+        "utils/src/*",
         "parser/test/*",
         "editor/test/*",
         "flower/test/*",
         "build/test/*",
+        "utils/test/*",
         "parser/node_modules/*",
         "editor/node_modules/*",
         "flower/node_modules/*",
-        "build/node_modules/*"
+        "build/node_modules/*",
+        "utils/node_modules/*"
       ],
       "@parser/*": ["parser/src/*"],
       "@editor/*": ["editor/src/*"],
       "@flower/*": ["flower/src/*"],
+      "@utils/*": ["utils/src/*"],
       "@parser-test/*": ["parser/test/*"],
       "@editor-test/*": ["editor/test/*"],
       "@flower-test/*": ["flower/test/*"],
+      "@utils-test/*": ["utils/test/*"],
       "@flow/parser": ["parser/src/index.ts"],
       "@flow/editor": ["editor/src/index.tsx"],
       "@flow/flower": ["flower/src/index.ts"],
-      "@flow/build": ["build/src/index.ts"]
+      "@flow/build": ["build/src/index.ts"],
+      "@flow/utils": ["utils/src/index.ts"]
     }
   },
   "files": ["packages/declerations/declerations.d.ts"],

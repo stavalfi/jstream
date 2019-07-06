@@ -15,4 +15,8 @@ module.exports = [
     packageDirectoryName: 'build',
     isWebApp: false,
   },
+  {
+    packageDirectoryName: 'utils',
+    isWebApp: false,
+  },
 ]
