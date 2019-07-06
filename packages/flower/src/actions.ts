@@ -10,8 +10,9 @@ import {
 } from '@flower/types'
 import uuid from 'uuid/v1'
 import { userInputNodeToNodeIndex } from '@flower/utils'
-import { isSubsetOf } from '@flow/parser'
+import { isSubsetOf, Node, Path } from '@flow/parser'
 import isPromise from 'is-promise'
+import { Combinations } from '@flow/utils'
 
 export const updateConfigActionCreator: UpdateConfigActionCreator = payload => ({
   type: FlowActionType.updateConfig,
@@ -56,16 +57,40 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
         return action
       }
 
-      const sideEffect = flow.sideEffects.find(sideEffect =>
-        'node' in sideEffect
-          ? isSubsetOf(sideEffect.node.path, flow.graph[action.payload.toNodeIndex].path)
-          : sideEffect,
-      )
+      const toNodeIndex = action.payload.toNodeIndex
+      const toNode = flow.graph[toNodeIndex]
+      const sideEffect = findByNodeOrDefault(flow.sideEffects, toNode)
       if (!sideEffect) {
         return action
       }
 
-      const result = sideEffect.sideEffectFunc(flow)(flow.graph[action.payload.toNodeIndex])()
+      // const rule = findByNodeOrDefault(flow.rules, toNode)
+      //
+      // try {
+      //   const resultContainer = sideEffect.sideEffectFunc(flow)(toNode)()
+      //   if (!rule) {
+      //     return action
+      //   }
+      //   if (isPromise<string>(resultContainer)) {
+      //     return resultContainer.then(result => {
+      //       const nextNode = rule.
+      //       if (nextNode) {
+      //         return dispatch(
+      //           advance(
+      //             advanceFlowActionCreator({
+      //               ...payload,
+      //               fromNodeIndex: payload.toNodeIndex,
+      //               toNodeIndex: userNodeToNodeObject(action.payload.toNodeIndex)(nextNode),
+      //             }),
+      //           ),
+      //         )
+      //       } else {
+      //         return action
+      //       }
+      //     })
+      //   }
+      // } catch (e) {}
+      const result = sideEffect.side_effect(flow)(toNode, toNodeIndex, flow.graph)()
 
       const userNodeToNodeObject = userInputNodeToNodeIndex({
         splitters,
@@ -96,11 +121,22 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
             advance(
               advanceFlowActionCreator({
                 ...payload,
-                fromNodeIndex: action.payload.toNodeIndex,
-                toNodeIndex: userNodeToNodeObject(action.payload.toNodeIndex)(result),
+                fromNodeIndex: toNodeIndex,
+                toNodeIndex: userNodeToNodeObject(toNodeIndex)(result),
               }),
             ),
           )
         : action
     }
   }
+
+function findByNodeOrDefault<T>(
+  array: (T & Combinations<{ node: { path: Path } }>)[],
+  node: Node,
+): (T & Combinations<{ node: { path: Path } }>) | undefined {
+  const element = array.find(e => 'node' in e && isSubsetOf(e.node.path, node.path))
+  if (element) {
+    return element
+  }
+  return array.find(element => !('node' in element))
+}

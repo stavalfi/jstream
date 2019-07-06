@@ -12,6 +12,7 @@ import { validateFlowToParse } from '@parser/flow-validator'
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import uuid from 'uuid/v1'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
+import { parseRules } from '@parser/rules-parser'
 
 type ParseMultipleFlows = ({
   userFlows,
@@ -48,6 +49,7 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           }),
           graph: parsedFlow.graph,
           sideEffects: parsedFlow.sideEffects,
+          rules: parsedFlow.rules,
         }))
     },
   })
@@ -262,6 +264,12 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
       flowName: flowToParse.name,
       extendedParsedFlow,
       sideEffects: flowToParse.side_effects,
+    }),
+    rules: parseRules(splitters)({
+      parsedFlowsUntilNow,
+      flowName: flowToParse.name,
+      extendedParsedFlow,
+      rules: flowToParse.rules,
     }),
   }
 

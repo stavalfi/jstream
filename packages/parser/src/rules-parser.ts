@@ -1,34 +1,35 @@
 import { displayNameToFullGraphNode } from '@parser/utils'
-import { ParsedFlow, SideEffect, Splitters, UserSideEffects } from '@parser/types'
+import { ParsedFlow, Path, Rule, Splitters } from '@parser/types'
 
-type ParseSideEffects = (
+type ParseRules = (
   splitters: Splitters,
 ) => ({
   parsedFlowsUntilNow,
   extendedParsedFlow,
   flowName,
-  sideEffects,
+  rules,
 }: {
   parsedFlowsUntilNow: ParsedFlow[]
   extendedParsedFlow?: ParsedFlow
   flowName?: string
-  sideEffects?: UserSideEffects
-}) => SideEffect[]
+  rules?: Rule<{ node_name: string }>[]
+}) => Rule<{ node: { path: Path } }>[]
 
-export const parseSideEffects: ParseSideEffects = splitters => ({
+export const parseRules: ParseRules = splitters => ({
   parsedFlowsUntilNow,
   extendedParsedFlow,
   flowName,
-  sideEffects = [],
+  rules = [],
 }) => {
   const toNode = displayNameToFullGraphNode(splitters)({
     parsedFlows: parsedFlowsUntilNow,
     flowName,
     extendedParsedFlow,
   })
-  let result: SideEffect[] = sideEffects.map(sideEffect => ({
-    ...('node_name' in sideEffect && { node: toNode(sideEffect.node_name) }),
-    ...sideEffect,
-  }))
-  return result
+  return rules.map(rule => {
+    return {
+      ...('node_name' in rule && { node: toNode(rule.node_name) }),
+      ...rule,
+    }
+  })
 }
