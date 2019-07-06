@@ -1,3 +1,5 @@
+import { Combinations } from '@flow/utils'
+
 export type Splitters = {
   extends: string
   identifier?: string
@@ -20,34 +22,11 @@ export type ParsedFlow = {
   sideEffects: SideEffect[]
 } & ParsedFlowOptionalFields
 
-export type ParsedFlowOptionalFields =
-  | {}
-  | {
-      name: string
-    }
-  | {
-      extendedFlowIndex: number
-    }
-  | {
-      defaultNodeIndex: number
-    }
-  | {
-      name: string
-      extendedFlowIndex: number
-    }
-  | {
-      extendedFlowIndex: number
-      defaultNodeIndex: number
-    }
-  | {
-      name: string
-      defaultNodeIndex: number
-    }
-  | {
-      name: string
-      extendedFlowIndex: number
-      defaultNodeIndex: number
-    }
+export type ParsedFlowOptionalFields = Combinations<{
+  name: string
+  extendedFlowIndex: number
+  defaultNodeIndex: number
+}>
 
 export type AlgorithmParsedFlow = ParsedFlow &
   (
@@ -63,12 +42,9 @@ export type SideEffectFunction = (
   flow: ParsedFlow,
 ) => (node: Node, i?: number, graph?: Node[]) => (result?: any, userInput?: any) => string | PromiseLike<string>
 
-export type SideEffect =
-  | { sideEffectFunc: SideEffectFunction }
-  | {
-      node: { path: Path; identifier?: string }
-      sideEffectFunc: SideEffectFunction
-    }
+export type SideEffect = { sideEffectFunc: SideEffectFunction } & Combinations<{
+  node: { path: Path; identifier?: string }
+}>
 
 export type UserGraph = string | string[]
 
@@ -81,11 +57,7 @@ export type UserFlowObject = {
   extends_flows?: UserFlow[]
   default_path?: string
   side_effects?: UserSideEffects
-} & (
-  | {}
-  | {
-      name: string
-    })
+} & Combinations<{ name: string }>
 
 export type UserFlow = UserGraph | UserFlowObject
 

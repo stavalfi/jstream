@@ -37,12 +37,7 @@
       "@parser-test/*": ["parser/test/*"],
       "@editor-test/*": ["editor/test/*"],
       "@flower-test/*": ["flower/test/*"],
-      "@utils-test/*": ["utils/test/*"],
-      "@flow/parser": ["parser/src/index.ts"],
-      "@flow/editor": ["editor/src/index.tsx"],
-      "@flow/flower": ["flower/src/index.ts"],
-      "@flow/build": ["build/src/index.ts"],
-      "@flow/utils": ["utils/src/index.ts"]
+      "@utils-test/*": ["utils/test/*"]
     }
   },
   "include": ["src"],
