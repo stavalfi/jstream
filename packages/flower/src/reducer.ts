@@ -1,17 +1,17 @@
-import { FlowActionType, FlowReducer, FlowState } from '@flower/types'
+import { FlowReducer, FlowState } from '@flower/types'
 
 const initialState: FlowState = { splitters: { extends: '__defaultDelimiter1__' }, flows: [], activeFlows: [] }
 
 const reducer: FlowReducer = (lastState = initialState, action) => {
   const { flows, activeFlows } = lastState
   switch (action.type) {
-    case FlowActionType.updateConfig:
+    case 'updateConfig':
       return {
         ...lastState,
         ...action.payload,
         activeFlows: lastState.activeFlows,
       }
-    case FlowActionType.executeFlow: {
+    case 'executeFlow': {
       const { id, flowName } = action.payload
       const flow = flows.find(flow => 'name' in flow && flow.name === flowName)
       if (!flow) {
@@ -31,7 +31,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
         }
       }
     }
-    case FlowActionType.advanceFlowGraph: {
+    case 'advanceFlowGraph': {
       const { id, ...payload } = action.payload
       const activeFlowIndex = activeFlows.findIndex(activeFlow => activeFlow.id === id)
       if (activeFlowIndex === -1) {

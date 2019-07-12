@@ -1,38 +1,35 @@
 import {
-  AdvanceFlowAction,
-  AdvanceFlowActionCreator,
   AdvanceGraphThunk,
-  ExecuteFlowActionCreator,
   ExecuteFlowThunkCreator,
-  FinishFlowActionCreator,
+  FlowActionByType,
+  FlowActionCreator,
   FlowActionType,
   FlowReducerSelector,
-  UpdateConfigActionCreator,
 } from '@flower/types'
 import uuid from 'uuid/v1'
 import { userInputNodeToNodeIndex } from '@flower/utils'
 import { isSubsetOf, Node, Path } from '@flow/parser'
 import { Combinations } from '@flow/utils'
 
-export const updateConfigActionCreator: UpdateConfigActionCreator = payload => ({
+export const updateConfigActionCreator: FlowActionCreator<FlowActionType.updateConfig> = payload => ({
   type: FlowActionType.updateConfig,
   payload,
 })
 
-export const advanceFlowActionCreator: AdvanceFlowActionCreator = payload => ({
+export const advanceFlowActionCreator: FlowActionCreator<FlowActionType.advanceFlowGraph> = payload => ({
   type: FlowActionType.advanceFlowGraph,
   payload,
 })
 
 // it is exported only to test the reducer.
-export const executeFlowActionCreator: ExecuteFlowActionCreator = payload => {
+export const executeFlowActionCreator: FlowActionCreator<FlowActionType.executeFlow> = payload => {
   return {
     type: FlowActionType.executeFlow,
     payload,
   }
 }
 
-export const finishFlowActionCreator: FinishFlowActionCreator = payload => {
+export const finishFlowActionCreator: FlowActionCreator<FlowActionType.finishFlow> = payload => {
   return {
     type: FlowActionType.finishFlow,
     payload,
@@ -47,7 +44,7 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
 }
 
 export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
-  function advance(action: AdvanceFlowAction): AdvanceGraphThunk {
+  function advance(action: FlowActionByType[FlowActionType.advanceFlowGraph]): AdvanceGraphThunk {
     return (dispatch, getState) => {
       dispatch(action)
       const { flows, activeFlows, ...restOfState } = reducerSelector(getState())

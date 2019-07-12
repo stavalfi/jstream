@@ -1,9 +1,9 @@
 import {
-  updateConfigActionCreator,
   advanceFlowActionCreator,
   executeFlowActionCreator,
-  FlowActionType,
   finishFlowActionCreator,
+  FlowActionType,
+  updateConfigActionCreator,
 } from '@flower/index'
 import { parse } from '@flow/parser'
 import { expect } from 'chai'

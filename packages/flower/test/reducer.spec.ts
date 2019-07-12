@@ -1,10 +1,4 @@
-import {
-  updateConfigActionCreator,
-  advanceFlowActionCreator,
-  executeFlowActionCreator,
-  FlowActionType,
-  reducer,
-} from '@flower/index'
+import { reducer, updateConfigActionCreator } from '@flower/index'
 import { parse } from '@flow/parser'
 import { expect } from 'chai'
 

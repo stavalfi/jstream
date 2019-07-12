@@ -3,45 +3,39 @@ import { Configuration, ParsedFlow, Splitters } from '@flow/parser'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 
 export enum FlowActionType {
-  updateConfig = 'update-config',
-  executeFlow = 'execute-flow',
-  advanceFlowGraph = 'advance-flow-graph',
-  finishFlow = 'finish-flow',
+  updateConfig = 'updateConfig',
+  executeFlow = 'executeFlow',
+  advanceFlowGraph = 'advanceFlowGraph',
+  finishFlow = 'finishFlow',
 }
 
-export type UpdateConfigAction = Action<FlowActionType.updateConfig> & { payload: Configuration<ParsedFlow> }
+type FlowActionPayload = {
+  updateConfig: Configuration<ParsedFlow>
+  executeFlow: { id: string; flowName: string }
+  advanceFlowGraph: { id: String } & ({ toNodeIndex: number } | { fromNodeIndex: number; toNodeIndex: number })
+  finishFlow: { id: String }
+}
 
-export type UpdateConfigActionCreator = (payload: Configuration<ParsedFlow>) => UpdateConfigAction
+export type FlowActionCreator<ActionType extends keyof FlowActionPayload> = (
+  payload: FlowActionPayload[ActionType],
+) => Action<ActionType> & { payload: FlowActionPayload[ActionType] }
 
-export type ExecuteFlowPayload = { id: string; flowName: string }
+export type FlowActionByType = {
+  [ActionType in keyof FlowActionPayload]: Action<ActionType> & { payload: FlowActionPayload[ActionType] }
+}
 
-export type ExecuteFlowAction = Action<FlowActionType.executeFlow> & { payload: ExecuteFlowPayload }
-
-export type ExecuteFlowActionCreator = (payload: ExecuteFlowPayload) => ExecuteFlowAction
-
-export type AdvanceFlowPayload = Pick<ExecuteFlowPayload, 'id'> &
-  ({ toNodeIndex: number } | { fromNodeIndex: number; toNodeIndex: number })
-
-export type AdvanceFlowAction = Action<FlowActionType.advanceFlowGraph> & { payload: AdvanceFlowPayload }
-
-export type AdvanceFlowActionCreator = (payload: AdvanceFlowPayload) => AdvanceFlowAction
-
-export type FinishFlowPayload = Pick<ExecuteFlowPayload, 'id'>
-
-export type FinishFlowAction = Action<FlowActionType.finishFlow> & { payload: FinishFlowPayload }
-
-export type FinishFlowActionCreator = (payload: FinishFlowPayload) => FinishFlowAction
-
-export type FlowAction = AdvanceFlowAction | ExecuteFlowAction | UpdateConfigAction | FinishFlowAction
+export type FlowAction = FlowActionByType[keyof FlowActionPayload]
 
 export type AdvanceGraphThunk = ThunkAction<
-  AdvanceFlowAction | Promise<AdvanceFlowAction>,
+  FlowActionByType[FlowActionType.advanceFlowGraph] | Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>,
   FlowState,
   undefined,
-  AdvanceFlowAction
+  FlowActionByType[FlowActionType.advanceFlowGraph]
 >
 
-export type ExecuteFlowThunk = FlowThunkAction<AdvanceFlowAction | Promise<AdvanceFlowAction>>
+export type ExecuteFlowThunk = FlowThunkAction<
+  FlowActionByType[FlowActionType.advanceFlowGraph] | Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>
+>
 
 export type ExecuteFlowThunkCreator = (reducerSelector: FlowReducerSelector) => (flowName: string) => ExecuteFlowThunk
 
