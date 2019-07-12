@@ -286,6 +286,7 @@ describe('flatten-user-flow-shortcuts', () => {
         ],
         id: '1',
         sideEffects: [],
+        rules: [],
       },
     ]
     const actual = 'a'
@@ -313,6 +314,7 @@ describe('flatten-user-flow-shortcuts', () => {
         ],
         id: '1',
         sideEffects: [],
+        rules: [],
       },
     ]
     const actual = 'flow1_a'
@@ -341,6 +343,7 @@ describe('flatten-user-flow-shortcuts', () => {
         ],
         id: '1',
         sideEffects: [],
+        rules: [],
       },
     ]
     const actual = 'flow1_a:flow1'

@@ -6,6 +6,7 @@ export enum FlowActionType {
   updateConfig = 'update-config',
   executeFlow = 'execute-flow',
   advanceFlowGraph = 'advance-flow-graph',
+  finishFlow = 'finish-flow',
 }
 
 export type UpdateConfigAction = Action<FlowActionType.updateConfig> & { payload: Configuration<ParsedFlow> }
@@ -25,16 +26,22 @@ export type AdvanceFlowAction = Action<FlowActionType.advanceFlowGraph> & { payl
 
 export type AdvanceFlowActionCreator = (payload: AdvanceFlowPayload) => AdvanceFlowAction
 
-export type FlowAction = AdvanceFlowAction | ExecuteFlowAction | UpdateConfigAction
+export type FinishFlowPayload = Pick<ExecuteFlowPayload, 'id'>
+
+export type FinishFlowAction = Action<FlowActionType.finishFlow> & { payload: FinishFlowPayload }
+
+export type FinishFlowActionCreator = (payload: FinishFlowPayload) => FinishFlowAction
+
+export type FlowAction = AdvanceFlowAction | ExecuteFlowAction | UpdateConfigAction | FinishFlowAction
 
 export type AdvanceGraphThunk = ThunkAction<
-  AdvanceFlowAction | PromiseLike<AdvanceFlowAction>,
+  AdvanceFlowAction | Promise<AdvanceFlowAction>,
   FlowState,
   undefined,
   AdvanceFlowAction
 >
 
-export type ExecuteFlowThunk = FlowThunkAction<FlowAction | PromiseLike<AdvanceFlowAction>>
+export type ExecuteFlowThunk = FlowThunkAction<AdvanceFlowAction | Promise<AdvanceFlowAction>>
 
 export type ExecuteFlowThunkCreator = (reducerSelector: FlowReducerSelector) => (flowName: string) => ExecuteFlowThunk
 
@@ -46,9 +53,10 @@ export type ActiveFlow = {
 }
 
 export type FlowState = {
+  splitters: Splitters
   flows: ParsedFlow[]
   activeFlows: ActiveFlow[]
-} & ({} | { splitters: Splitters })
+}
 
 export type FlowReducer = Reducer<FlowState, FlowAction>
 

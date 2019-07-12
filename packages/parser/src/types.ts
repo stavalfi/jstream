@@ -41,9 +41,9 @@ export type AlgorithmParsedFlow = ParsedFlow &
 
 export type SideEffectFunction = (
   flow: ParsedFlow,
-) => (toNode: Node, i?: number, graph?: Node[]) => (context?: any, userInput?: any) => string | PromiseLike<string>
+) => (toNode: Node, i?: number, graph?: Node[]) => (context?: any) => any | Promise<any>
 
-export type SideEffect = { side_effect: SideEffectFunction } & Combinations<{
+export type SideEffect = { sideEffectFunc: SideEffectFunction } & Combinations<{
   node: { path: Path; identifier?: string }
 }>
 
@@ -58,20 +58,19 @@ export type UserFlowObject = {
   extends_flows?: UserFlow[]
   default_path?: string
   side_effects?: UserSideEffects
+  rules?: Rule<{ node_name: string }>[]
 } & Combinations<{ name: string }>
 
 export type UserFlow = UserGraph | UserFlowObject
 
 export type NextFunctionRule = (
-  toNode: Node,
-  i?: number,
-  graph?: Node[],
-) => (result: any, userInput: any) => string | string[]
+  flow: ParsedFlow,
+) => (toNode: Node, i?: number, graph?: Node[]) => (result: any) => string | string[]
+
 export type ErrorFunctionRule = (
-  toNode: Node,
-  i?: number,
-  graph?: Node[],
-) => (error: any, userInput: any) => string | string[]
+  flow: ParsedFlow,
+) => (toNode: Node, i?: number, graph?: Node[]) => (error: any) => string | string[]
+
 export type Rule<Node> = (
   | { next: NextFunctionRule; error: ErrorFunctionRule }
   | { next: NextFunctionRule }

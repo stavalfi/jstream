@@ -4,6 +4,7 @@ import {
   AdvanceGraphThunk,
   ExecuteFlowActionCreator,
   ExecuteFlowThunkCreator,
+  FinishFlowActionCreator,
   FlowActionType,
   FlowReducerSelector,
   UpdateConfigActionCreator,
@@ -11,7 +12,6 @@ import {
 import uuid from 'uuid/v1'
 import { userInputNodeToNodeIndex } from '@flower/utils'
 import { isSubsetOf, Node, Path } from '@flow/parser'
-import isPromise from 'is-promise'
 import { Combinations } from '@flow/utils'
 
 export const updateConfigActionCreator: UpdateConfigActionCreator = payload => ({
@@ -19,17 +19,25 @@ export const updateConfigActionCreator: UpdateConfigActionCreator = payload => (
   payload,
 })
 
-const executeFlowActionCreator: ExecuteFlowActionCreator = payload => {
+export const advanceFlowActionCreator: AdvanceFlowActionCreator = payload => ({
+  type: FlowActionType.advanceFlowGraph,
+  payload,
+})
+
+// it is exported only to test the reducer.
+export const executeFlowActionCreator: ExecuteFlowActionCreator = payload => {
   return {
     type: FlowActionType.executeFlow,
     payload,
   }
 }
 
-export const advanceFlowActionCreator: AdvanceFlowActionCreator = payload => ({
-  type: FlowActionType.advanceFlowGraph,
-  payload,
-})
+export const finishFlowActionCreator: FinishFlowActionCreator = payload => {
+  return {
+    type: FlowActionType.finishFlow,
+    payload,
+  }
+}
 
 export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowName => dispatch => {
   const action = dispatch(executeFlowActionCreator({ flowName, id: uuid() }))
@@ -47,7 +55,6 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
         return action
       }
       const { splitters } = restOfState
-      const { payload } = action
       const activeFlow = activeFlows.find(activeFlow => activeFlow.id === action.payload.id)
       if (!activeFlow) {
         return action
@@ -60,73 +67,35 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
       const toNodeIndex = action.payload.toNodeIndex
       const toNode = flow.graph[toNodeIndex]
       const sideEffect = findByNodeOrDefault(flow.sideEffects, toNode)
-      if (!sideEffect) {
-        return action
-      }
 
-      // const rule = findByNodeOrDefault(flow.rules, toNode)
-      //
-      // try {
-      //   const resultContainer = sideEffect.sideEffectFunc(flow)(toNode)()
-      //   if (!rule) {
-      //     return action
-      //   }
-      //   if (isPromise<string>(resultContainer)) {
-      //     return resultContainer.then(result => {
-      //       const nextNode = rule.
-      //       if (nextNode) {
-      //         return dispatch(
-      //           advance(
-      //             advanceFlowActionCreator({
-      //               ...payload,
-      //               fromNodeIndex: payload.toNodeIndex,
-      //               toNodeIndex: userNodeToNodeObject(action.payload.toNodeIndex)(nextNode),
-      //             }),
-      //           ),
-      //         )
-      //       } else {
-      //         return action
-      //       }
-      //     })
-      //   }
-      // } catch (e) {}
-      const result = sideEffect.side_effect(flow)(toNode, toNodeIndex, flow.graph)()
+      const rule = findByNodeOrDefault(flow.rules, toNode)
 
-      const userNodeToNodeObject = userInputNodeToNodeIndex({
-        splitters,
-        flows,
-        flow,
+      return new Promise((res, rej) => {
+        try {
+          res(sideEffect && sideEffect.sideEffectFunc(flow)(toNode)())
+        } catch (e) {
+          rej(e)
+        }
       })
-
-      if (isPromise<string>(result)) {
-        return result.then(nextNode => {
-          if (nextNode) {
-            return dispatch(
-              advance(
-                advanceFlowActionCreator({
-                  ...payload,
-                  fromNodeIndex: payload.toNodeIndex,
-                  toNodeIndex: userNodeToNodeObject(action.payload.toNodeIndex)(nextNode),
-                }),
+        .then(result => rule && 'next' in rule && rule.next(flow)(toNode, toNodeIndex, flow.graph)(result))
+        .catch(error => rule && 'error' in rule && rule.error(flow)(toNode, toNodeIndex, flow.graph)(error))
+        .then(nextNode =>
+          !nextNode
+            ? action
+            : dispatch(
+                advance(
+                  advanceFlowActionCreator({
+                    id: action.payload.id,
+                    fromNodeIndex: toNodeIndex,
+                    toNodeIndex: userInputNodeToNodeIndex({
+                      splitters,
+                      flows,
+                      flow,
+                    })(toNodeIndex)(nextNode),
+                  }),
+                ),
               ),
-            )
-          } else {
-            return action
-          }
-        })
-      }
-
-      return result
-        ? dispatch(
-            advance(
-              advanceFlowActionCreator({
-                ...payload,
-                fromNodeIndex: toNodeIndex,
-                toNodeIndex: userNodeToNodeObject(toNodeIndex)(result),
-              }),
-            ),
-          )
-        : action
+        )
     }
   }
 

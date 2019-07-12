@@ -1,3 +1,3 @@
 declare module 'is-promise' {
-  export default function<T>(obj: any): obj is PromiseLike<T>
+  export default function<T>(obj: any): obj is Promise<T>
 }

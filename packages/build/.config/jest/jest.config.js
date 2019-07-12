@@ -11,7 +11,7 @@ const {
   packagesPath,
 } = paths
 
-const { isCI, packagesProperties } = constants
+const { isCI, packagesProperties, mainProjectDirName } = constants
 
 const prodAlias = ({ packagesPath, packagesProperties, test }) =>
   packagesProperties
@@ -21,6 +21,12 @@ const prodAlias = ({ packagesPath, packagesProperties, test }) =>
         packageProperties.packageDirectoryName,
         'src',
         `$1`,
+      ),
+      [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
+        packagesPath,
+        packageProperties.packageDirectoryName,
+        'src',
+        packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
       ),
       [`@${packageProperties.packageDirectoryName}-test/(.+)`]: path.resolve(
         packagesPath,
@@ -34,12 +40,12 @@ const prodAlias = ({ packagesPath, packagesProperties, test }) =>
 module.exports = {
   ...(isCI && { maxConcurrency: 1 }),
   projects: [
-    {
-      displayName: 'lint',
-      runner: 'jest-runner-eslint',
-      testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
-      roots: [mainTestsFolderPath, srcPath],
-    },
+    // {
+    //   displayName: 'lint',
+    //   runner: 'jest-runner-eslint',
+    //   testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
+    //   roots: [mainTestsFolderPath, srcPath],
+    // },
     {
       displayName: 'test',
       preset: 'ts-jest/presets/js-with-ts',
@@ -55,6 +61,7 @@ module.exports = {
           tsConfig: linterTsconfigPath,
           babelConfig: require(babelRcPath),
         },
+        window: {},
       },
     },
   ],

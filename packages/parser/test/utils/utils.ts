@@ -37,7 +37,7 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
 export const createExpected = (
   expectedFlowsArrays: ExpectedFlow[],
   flowsConfig: Required<Configuration<UserFlow>>,
-): Omit<ParsedFlow, 'id' | 'sideEffects'>[] =>
+): Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules'>[] =>
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),

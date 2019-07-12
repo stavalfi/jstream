@@ -28,7 +28,7 @@ export const parseSideEffects: ParseSideEffects = splitters => ({
   })
   let result: SideEffect[] = sideEffects.map(sideEffect => ({
     ...('node_name' in sideEffect && { node: toNode(sideEffect.node_name) }),
-    ...sideEffect,
+    sideEffectFunc: sideEffect.side_effect,
   }))
   return result
 }

@@ -1,6 +1,6 @@
 import { FlowActionType, FlowReducer, FlowState } from '@flower/types'
 
-const initialState: FlowState = { flows: [], activeFlows: [] }
+const initialState: FlowState = { splitters: { extends: '__defaultDelimiter1__' }, flows: [], activeFlows: [] }
 
 const reducer: FlowReducer = (lastState = initialState, action) => {
   const { flows, activeFlows } = lastState
@@ -9,6 +9,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
       return {
         ...lastState,
         ...action.payload,
+        activeFlows: lastState.activeFlows,
       }
     case FlowActionType.executeFlow: {
       const { id, flowName } = action.payload

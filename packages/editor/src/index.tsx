@@ -28,18 +28,14 @@ const libSelector: FlowReducerSelector = state => state.libReducer
 const config = parse({
   name: 'flow1',
   graph: 'a:b:c',
-  side_effects: [
+  rules: [
     {
       node_name: 'a',
-      side_effect: activeFlow => activeNode => (result, userInput) => {
-        return 'b'
-      },
+      next: flow => toNode => result => 'b',
     },
     {
       node_name: 'b',
-      side_effect: activeFlow => activeNode => (result, userInput) => {
-        return 'c'
-      },
+      next: flow => toNode => result => 'c',
     },
   ],
 })
