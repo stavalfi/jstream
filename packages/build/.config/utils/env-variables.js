@@ -14,8 +14,10 @@ const packageDirectoryName =
   process.env.FOLDER || process.env['FOLDER'] || packageProperties.packageDirectoryName || defaultPackageDirectoryName
 
 const isCI = stringToBoolean(process.env.CI || process.env['CI'])
+const isManualRun = stringToBoolean(process.env.MANUAL_RUN || process.env['MANUAL_RUN'])
 
 module.exports = {
   packageDirectoryName,
   isCI,
+  isManualRun,
 }

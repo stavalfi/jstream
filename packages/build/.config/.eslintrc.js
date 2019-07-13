@@ -55,6 +55,7 @@ module.exports = {
     'import/no-unresolved': 'error',
     'import/named': 'error',
     'import/default': 'error',
+    'import/no-extraneous-dependencies': 'error',
   },
   settings: {
     'import/resolver': {

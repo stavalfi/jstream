@@ -5,7 +5,7 @@ import {
   FlowActionCreator,
   FlowActionType,
   FlowReducerSelector,
-} from '@flower/types'
+} from '@flow/flower'
 import uuid from 'uuid/v1'
 import { userInputNodeToNodeIndex } from '@flower/utils'
 import { isSubsetOf, Node, Path } from '@flow/parser'

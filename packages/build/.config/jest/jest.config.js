@@ -11,7 +11,7 @@ const {
   packagesPath,
 } = paths
 
-const { isCI, packagesProperties, mainProjectDirName } = constants
+const { isCI, isManualRun, packagesProperties, mainProjectDirName } = constants
 
 const prodAlias = ({ packagesPath, packagesProperties, test }) =>
   packagesProperties
@@ -40,12 +40,17 @@ const prodAlias = ({ packagesPath, packagesProperties, test }) =>
 module.exports = {
   ...(isCI && { maxConcurrency: 1 }),
   projects: [
-    // {
-    //   displayName: 'lint',
-    //   runner: 'jest-runner-eslint',
-    //   testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
-    //   roots: [mainTestsFolderPath, srcPath],
-    // },
+    // webstorm doesn't support running multiple projects when clicking on jest buttons in the IDE.
+    ...(isManualRun
+      ? [
+          {
+            displayName: 'lint',
+            runner: 'jest-runner-eslint',
+            testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
+            roots: [mainTestsFolderPath, srcPath],
+          },
+        ]
+      : []),
     {
       displayName: 'test',
       preset: 'ts-jest/presets/js-with-ts',

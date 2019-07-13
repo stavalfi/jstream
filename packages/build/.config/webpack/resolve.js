@@ -17,10 +17,6 @@ module.exports = ({
       ),
     }))
     .reduce((acc, alias) => ({ ...acc, ...alias }), {})
-  console.log({
-    ...baseAlias,
-    ...otherAlias,
-  })
   return {
     extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
     modules: resolveModulesPathsArray,
