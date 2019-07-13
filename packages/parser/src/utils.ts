@@ -1,5 +1,5 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
-import { AlgorithmParsedFlow, Node, ParsedFlow, Path, Splitters } from '@parser/types'
+import { AlgorithmParsedFlow, ParsedFlow, Path, Splitters } from '@parser/types'
 
 export const distractDisplayNameBySplitters = (
   splitters: Splitters,
@@ -42,7 +42,7 @@ export const extractUniqueFlowsNamesFromGraph = (splitters: Splitters) =>
     return [...new Set(result)]
   }
 
-export type GraphNodeToDisplayName = (splitters: Splitters) => (flowNode: Node) => string
+export type GraphNodeToDisplayName = (splitters: Splitters) => (flowNode: { path: Path; identifier?: string }) => string
 export const graphNodeToDisplayName: GraphNodeToDisplayName = splitters => flowNode => {
   if (flowNode.path.length === 1) {
     return flowNode.path[0]
