@@ -66,8 +66,7 @@ module.exports = ({
             failOnWarning: isDevelopmentMode,
             configFile: eslintRcPath,
             fix: false,
-            // eslint import will remmember sometimes failures from last run and won't re-check imports.
-            cache: false,
+            cache: true,
             formatter: require('eslint-formatter-friendly'),
           },
         },

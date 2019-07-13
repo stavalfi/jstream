@@ -5,7 +5,7 @@ const { distPath, appEntryFilePaths } = paths
 const { isWebApp } = constants
 
 module.exports = (env = {}, argv = {}) => {
-  const isDevelopmentMode = argv.mode === 'development' || env.devServer
+  const isDevelopmentMode = env.devServer || argv.mode !== 'production'
   const publicPath = '/'
   return {
     stats: isDevelopmentMode ? 'none' : 'normal',

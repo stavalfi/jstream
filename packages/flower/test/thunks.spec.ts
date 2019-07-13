@@ -1,13 +1,13 @@
 import { getStore, libSelector } from '@flower-test/utils'
-import { advanceFlowActionCreator, advanceGraphThunk, FlowActionByType, FlowActionType, FlowState } from '@flower/index'
+import { advanceFlowActionCreator, advanceGraphThunk } from '@flower/index'
 
-const state = (state: FlowState) => state
+// const state = (state: FlowState) => state
 
 describe('thunks', () => {
   describe('advanceGraphThunk', () => {
-    const actions = ({ actions }: { actions: FlowActionByType[FlowActionType.advanceFlowGraph][] }) => {
-      return actions
-    }
+    // const actions = ({ actions }: { actions: FlowActionByType[FlowActionType.advanceFlowGraph][] }) => {
+    //   return actions
+    // }
     it('1 - try to advance non-existing flow', () => {
       const store = getStore()
       return store
