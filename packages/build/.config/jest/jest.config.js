@@ -1,4 +1,4 @@
-const path = require('path')
+const { jestResolver } = require('../utils/paths-resolving-strategies')
 const { paths, constants } = require('../utils')
 
 const {
@@ -8,35 +8,9 @@ const {
   srcPath,
   linterTsconfigPath,
   babelRcPath,
-  packagesPath,
 } = paths
 
-const { isCI, isManualRun, packagesProperties, mainProjectDirName, packageDirectoryName } = constants
-const prodAlias = ({ packagesPath, packagesProperties, test }) =>
-  packagesProperties
-    .map(packageProperties => ({
-      [`@${packageProperties.packageDirectoryName}/(.+)`]: path.resolve(
-        packagesPath,
-        packageProperties.packageDirectoryName,
-        'src',
-        `$1`,
-      ),
-      ...(packageProperties.packageDirectoryName !== packageDirectoryName && {
-        [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
-          packagesPath,
-          packageProperties.packageDirectoryName,
-          'src',
-          packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
-        ),
-      }),
-      [`@${packageProperties.packageDirectoryName}-test/(.+)`]: path.resolve(
-        packagesPath,
-        packageProperties.packageDirectoryName,
-        'test',
-        `$1`,
-      ),
-    }))
-    .reduce((acc, alias) => ({ ...acc, ...alias }), {})
+const { isCI, isManualRun } = constants
 
 module.exports = {
   ...(isCI && { maxConcurrency: 1 }),
@@ -57,7 +31,7 @@ module.exports = {
       preset: 'ts-jest/presets/js-with-ts',
       testEnvironment: 'node',
       modulePaths: resolveModulesPathsArray,
-      moduleNameMapper: prodAlias({ packagesPath, packagesProperties }),
+      moduleNameMapper: jestResolver,
       testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
       roots: [mainTestsFolderPath, srcPath],
       testPathIgnorePatterns: ['node_modules'],

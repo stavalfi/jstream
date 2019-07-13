@@ -20,6 +20,7 @@ module.exports = {
     node: true,
     mocha: true,
     'jest/globals': true,
+    jest: true,
   },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'json', 'import', 'jest'],
   extends: [

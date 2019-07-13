@@ -1,20 +1,13 @@
+const { babelDevelopmentAlias, babelProdAlias } = require('../utils/paths-resolving-strategies')
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const jsonImporter = require('node-sass-json-importer')
-const path = require('path')
 
 module.exports = ({
   isDevelopmentMode,
-  constants: { isWebApp, mainProjectDirName, packagesProperties, packageDirectoryName },
+  constants: { isWebApp },
   publicPath = '.',
-  paths: {
-    srcPath,
-    eslintRcPath,
-    libTsconfigFilePath,
-    babelRcPath,
-    packageJsonFolderPath,
-    packagesPath,
-    mainTestsFolderPath,
-  },
+  paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
 }) => ({
   rules: [
     {
@@ -47,16 +40,7 @@ module.exports = ({
                   cwd: srcPath,
                   root: [srcPath],
                   extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
-                  alias: isDevelopmentMode
-                    ? developmentAlias({
-                        mainProjectDirName,
-                        packagesPath,
-                        packagesProperties,
-                        mainTestsFolderPath,
-                        srcPath,
-                        packageDirectoryName,
-                      })
-                    : prodAlias({ packagesPath, packagesProperties, mainTestsFolderPath, srcPath }),
+                  alias: isDevelopmentMode ? babelDevelopmentAlias : babelProdAlias,
                 },
               },
             ]),
@@ -154,46 +138,3 @@ module.exports = ({
     },
   ],
 })
-
-const developmentAlias = ({
-  mainProjectDirName,
-  packagesPath,
-  packagesProperties,
-  mainTestsFolderPath,
-  srcPath,
-  packageDirectoryName,
-}) =>
-  packagesProperties
-    .filter(packageProperties => packageProperties.packageDirectoryName !== packageDirectoryName)
-    .map(packageProperties => ({
-      [`^@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
-        packagesPath,
-        packageProperties.packageDirectoryName,
-        'src',
-        packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
-      ),
-    }))
-    .reduce(
-      (acc, alias) => ({ ...acc, ...alias }),
-      prodAlias({
-        packagesProperties,
-        mainTestsFolderPath,
-        srcPath,
-        packagesPath,
-      }),
-    )
-
-const prodAlias = ({ packagesProperties, srcPath, packagesPath }) =>
-  packagesProperties
-    .map(packageProperties => {
-      const packageSrcFolderPath = path.resolve(packagesPath, packageProperties.packageDirectoryName, 'src')
-      return {
-        [`^@${packageProperties.packageDirectoryName}/(.+)`]:
-          srcPath === packageSrcFolderPath ? `./\\1` : path.resolve(packageSrcFolderPath, '\\1'),
-        [`^@${packageProperties.packageDirectoryName}-test/(.+)`]:
-          srcPath === packageSrcFolderPath
-            ? `./\\1`
-            : path.resolve(packagesPath, packageProperties.packageDirectoryName, 'test', '\\1'),
-      }
-    })
-    .reduce((acc, alias) => ({ ...acc, ...alias }), {})
