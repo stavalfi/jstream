@@ -1,3 +1,4 @@
+const { jestResolver } = require('../utils/paths-resolving-strategies')
 const { paths, constants } = require('../utils')
 
 const {
@@ -9,22 +10,28 @@ const {
   babelRcPath,
 } = paths
 
-const { isCI } = constants
+const { isCI, isManualRun } = constants
 
 module.exports = {
   ...(isCI && { maxConcurrency: 1 }),
   projects: [
-    // {
-    //   displayName: 'lint',
-    //   runner: 'jest-runner-eslint',
-    //   testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
-    //   roots: [mainTestsFolderPath, srcPath],
-    // },
+    // webstorm doesn't support running multiple projects when clicking on jest buttons in the IDE.
+    ...(isManualRun
+      ? [
+          {
+            displayName: 'lint',
+            runner: 'jest-runner-eslint',
+            testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
+            roots: [mainTestsFolderPath, srcPath],
+          },
+        ]
+      : []),
     {
       displayName: 'test',
       preset: 'ts-jest/presets/js-with-ts',
       testEnvironment: 'node',
       modulePaths: resolveModulesPathsArray,
+      moduleNameMapper: jestResolver,
       testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
       roots: [mainTestsFolderPath, srcPath],
       testPathIgnorePatterns: ['node_modules'],
@@ -34,6 +41,7 @@ module.exports = {
           tsConfig: linterTsconfigPath,
           babelConfig: require(babelRcPath),
         },
+        window: {},
       },
     },
   ],

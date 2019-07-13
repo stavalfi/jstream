@@ -1,17 +1,18 @@
-import { parseGraph } from 'graph-parser'
-import { fixAndExtendGraph } from 'fix-flow-graph'
-import { parseSideEffects } from 'side-effects-parser'
+import { parseGraph } from '@parser/graph-parser'
+import { fixAndExtendGraph } from '@parser/fix-flow-graph'
+import { parseSideEffects } from '@parser/side-effects-parser'
 import {
   arePathsEqual,
   displayNameToFullGraphNode,
   extractUniqueFlowsNamesFromGraph,
   graphNodeToDisplayName,
   isSubsetOf,
-} from 'utils'
-import { validateFlowToParse } from 'flow-validator'
-import { flattenUserFlowShortcuts } from 'user-shortcuts-parser'
+} from '@parser/utils'
+import { validateFlowToParse } from '@parser/flow-validator'
+import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import uuid from 'uuid/v1'
-import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from 'types'
+import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
+import { parseRules } from '@parser/rules-parser'
 
 type ParseMultipleFlows = ({
   userFlows,
@@ -48,6 +49,7 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           }),
           graph: parsedFlow.graph,
           sideEffects: parsedFlow.sideEffects,
+          rules: parsedFlow.rules,
         }))
     },
   })
@@ -227,7 +229,11 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
   const parsedGraph = removePointersFromNodeToHimSelf(
     parseGraph(
       graphNodeToDisplayName(splitters),
-      displayNameToFullGraphNode(splitters)(parsedFlowsUntilNow, flowToParse.name, extendedParsedFlow),
+      displayNameToFullGraphNode(splitters)({
+        parsedFlows: parsedFlowsUntilNow,
+        ...('name' in flowToParse && { flowName: flowToParse.name }),
+        extendedParsedFlow: extendedParsedFlow,
+      }),
       flowToParse.graph,
     ),
   )
@@ -258,6 +264,12 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
       flowName: flowToParse.name,
       extendedParsedFlow,
       sideEffects: flowToParse.side_effects,
+    }),
+    rules: parseRules(splitters)({
+      parsedFlowsUntilNow,
+      flowName: flowToParse.name,
+      extendedParsedFlow,
+      rules: flowToParse.rules,
     }),
   }
 

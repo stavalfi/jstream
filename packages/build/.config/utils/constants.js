@@ -1,10 +1,16 @@
 const envVariables = require('./env-variables')
+const packagesProperties = require('./packages-properties')
 
 const mainProjectDirName = 'flow'
 const packagesDirName = 'packages'
 
 const filesExt = ['ts', 'tsx', 'js', 'jsx']
 const testFilesExt = 'spec'
+
+const currentPackageProperties =
+  packagesProperties.find(
+    packageProperties => packageProperties.packageDirectoryName === envVariables.packageDirectoryName,
+  ) || {}
 
 module.exports = {
   mainProjectDirName,
@@ -15,4 +21,6 @@ module.exports = {
   filesExt,
   testFilesExt,
   ...envVariables,
+  packagesProperties,
+  isWebApp: currentPackageProperties.isWebApp,
 }

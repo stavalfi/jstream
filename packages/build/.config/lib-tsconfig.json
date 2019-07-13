@@ -1,10 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "*": ["src/*", "node_modules/*", "../../node_modules/*"]
-    },
     "allowJs": false,
     "checkJs": false,
     "composite": true,
@@ -12,7 +8,37 @@
     "declarationMap": true,
     "declarationDir": "dist",
     "noImplicitAny": true,
-    "listFiles": false
+    "listFiles": false,
+    "noEmit": false,
+    "baseUrl": "../../",
+    "paths": {
+      "*": [
+        "../node_modules/*",
+        "parser/src/*",
+        "editor/src/*",
+        "flower/src/*",
+        "build/src/*",
+        "utils/src/*",
+        "parser/test/*",
+        "editor/test/*",
+        "flower/test/*",
+        "build/test/*",
+        "utils/test/*",
+        "parser/node_modules/*",
+        "editor/node_modules/*",
+        "flower/node_modules/*",
+        "build/node_modules/*",
+        "utils/node_modules/*"
+      ],
+      "@parser/*": ["parser/src/*"],
+      "@editor/*": ["editor/src/*"],
+      "@flower/*": ["flower/src/*"],
+      "@utils/*": ["utils/src/*"],
+      "@parser-test/*": ["parser/test/*"],
+      "@editor-test/*": ["editor/test/*"],
+      "@flower-test/*": ["flower/test/*"],
+      "@utils-test/*": ["utils/test/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["test", "dist", "node_modules", "../../node_modules"]

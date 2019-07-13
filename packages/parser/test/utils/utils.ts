@@ -1,8 +1,16 @@
-import { parse } from 'index'
-import { distractDisplayNameBySplitters, graphNodeToDisplayName } from 'utils'
+import { parse } from '@parser/index'
+import { distractDisplayNameBySplitters, graphNodeToDisplayName } from '@parser/utils'
 import { table } from 'table'
-import { Graph, Node, ParsedFlow, ParsedFlowOptionalFields, Path, Splitters, UserConfigurationObject } from 'types'
-import { expect } from 'chai'
+import {
+  Graph,
+  Node,
+  ParsedFlow,
+  ParsedFlowOptionalFields,
+  Path,
+  Splitters,
+  Configuration,
+  UserFlow,
+} from '@parser/types'
 
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
 export type ExpectedFlow = {
@@ -27,8 +35,8 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
 
 export const createExpected = (
   expectedFlowsArrays: ExpectedFlow[],
-  flowsConfig: Required<UserConfigurationObject>,
-): Omit<ParsedFlow, 'id' | 'sideEffects'>[] =>
+  flowsConfig: Required<Configuration<UserFlow>>,
+): Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules'>[] =>
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
@@ -36,7 +44,7 @@ export const createExpected = (
 
 const convertExpectedFlowGraphArray = (
   expectedFlowGraphArray: ExpectedFlowGraphNode[],
-  flowsConfig: Required<UserConfigurationObject>,
+  flowsConfig: Required<Configuration<UserFlow>>,
 ) => {
   return expectedFlowGraphArray.map(node => {
     const displayNode = distractDisplayNameBySplitters(flowsConfig.splitters, Object.keys(node)[0])
@@ -51,7 +59,7 @@ const convertExpectedFlowGraphArray = (
 
 export const createFlows = <T>(
   actualFlowGraph: T,
-  flowsConfig: (actualFlowGraph: T) => Required<UserConfigurationObject>,
+  flowsConfig: (actualFlowGraph: T) => Required<Configuration<UserFlow>>,
 ) => parse(flowsConfig(actualFlowGraph)).flows
 
 const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {
@@ -120,22 +128,22 @@ export function assertEqualFlows(
   }
   expectedFlowsArray.forEach((expectedFlow, i) => {
     const actualFlow = findFlowByFlow(actualFlowsArray, expectedFlow)
-    const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
-      'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
-    } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
-        \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
-        \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
-    expect(actualFlow, errorMessage).to.be.a('object')
+    // todo: understand how to print this error message when a test fails.
+    // const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
+    //   'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
+    // } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
+    //     \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
+    //     \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
     if (actualFlow) {
-      expect(actualFlow.graph, errorMessage).deep.equal(expectedFlow.graph)
+      expect(actualFlow.graph).toEqual(expectedFlow.graph)
       if ('defaultNodeIndex' in expectedFlow) {
-        expect('defaultNodeIndex' in actualFlow, errorMessage).deep.equal(true)
+        expect('defaultNodeIndex' in actualFlow).toEqual(true)
         // @ts-ignore   -> i have expect in the previous line.
-        expect(actualFlow.defaultNodeIndex, errorMessage).deep.equal(expectedFlow.defaultNodeIndex)
+        expect(actualFlow.defaultNodeIndex).toEqual(expectedFlow.defaultNodeIndex)
       }
       if (count === 0 && 'extendedFlowIndex' in expectedFlow) {
         const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex as number]
-        expect('extendedFlowIndex' in actualFlow, errorMessage).deep.equal(true)
+        expect('extendedFlowIndex' in actualFlow).toEqual(true)
         // @ts-ignore   -> i have expect in the previous line.
         const actualExtendedFlow = actualFlowsArray[actualFlow.extendedFlowIndex as number]
 
@@ -147,9 +155,9 @@ export function assertEqualFlows(
           graphToString(expectedExtendedFlow.graph) === graphToString(actualExtendedFlow.graph)
         expect(
           isEqual,
-          // @ts-ignore
-          `${count === 0 ? 'expected' : 'actual'} flow: ${expectedFlow.name} - has different extended flow`,
-        ).deep.equal(true)
+          // // @ts-ignore
+          // `${count === 0 ? 'expected' : 'actual'} flow: ${expectedFlow.name} - has different extended flow`,
+        ).toEqual(true)
       }
     }
   })

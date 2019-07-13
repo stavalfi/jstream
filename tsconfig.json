@@ -6,15 +6,13 @@
     "strict": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    "module": "esnext"
+    "module": "esnext",
+    "allowJs": true,
+    "checkJs": false,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "listFiles": false
   },
-  "exclude": ["node_modules"],
-  "references": [
-    {
-      "path": "packages/parser"
-    },
-    {
-      "path": "packages/editor"
-    }
-  ]
+  "files": ["packages/declerations/declerations.d.ts"],
+  "exclude": ["node_modules"]
 }

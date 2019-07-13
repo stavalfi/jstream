@@ -1,5 +1,5 @@
-import { parseMultipleFlows } from 'flows-parser'
-import { ParsedFlow, Splitters, UserConfiguration, UserFlow, UserFlowObject } from 'types'
+import { parseMultipleFlows } from '@parser/flows-parser'
+import { ParsedFlow, Splitters, UserConfiguration, UserFlow, UserFlowObject } from '@parser/types'
 
 type Parse = (
   userConfiguration: UserConfiguration,
@@ -79,5 +79,14 @@ const initializeConfig: InitializeConfig = config => {
   }
 }
 
-export { graphNodeToDisplayName } from 'utils'
-export { UserConfigurationObject, ParsedUserConfigurationObject } from 'types'
+export { graphNodeToDisplayName, isSubsetOf, displayNameToFullGraphNode } from '@parser/utils'
+export {
+  Configuration,
+  ParsedUserConfigurationObject,
+  Node,
+  ParsedFlow,
+  Graph,
+  SideEffect,
+  Path,
+  Splitters,
+} from '@parser/types'

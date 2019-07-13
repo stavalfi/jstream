@@ -1,20 +1,22 @@
-// for fork-ts-plugin and IDE - (IDE reason:) I can't tell him to use different settings for tests/dev enviroments
-// so i will have to create 2 different tsconfig.json files.
-// in webpack, i will link to ./.config/main-tsconfig.json file. (never to this file)
-// now it's for fork-ts-plugin - temporarly !!
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "..",
     "paths": {
-      "*": ["src/*", "test/*", "node_modules/*", "../../node_modules/*"]
-    },
-    "allowJs": true,
-    "checkJs": false,
-    "composite": false,
-    "noImplicitAny": true,
-    "noEmit": true,
-    "listFiles": false
+      "*": ["editor/node_modules/*", "../node_modules/*"],
+      "@parser/*": ["parser/src/*"],
+      "@editor/*": ["editor/src/*"],
+      "@flower/*": ["flower/src/*"],
+      "@utils/*": ["utils/src/*"],
+      "@parser-test/*": ["parser/test/*"],
+      "@editor-test/*": ["editor/test/*"],
+      "@flower-test/*": ["flower/test/*"],
+      "@utils-test/*": ["utils/test/*"],
+      "@flow/parser": ["parser/src/index.ts"],
+      "@flow/flower": ["flower/src/index.ts"],
+      "@flow/build": ["build/src/index.ts"],
+      "@flow/utils": ["utils/src/index.ts"]
+    }
   },
   "include": ["src", "test"],
   "exclude": ["dist", "node_modules", "../../node_modules"]

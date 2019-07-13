@@ -1,5 +1,4 @@
-import { expect } from 'chai'
-import { flattenUserFlowShortcuts } from 'user-shortcuts-parser'
+import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 
 describe('flatten-user-flow-shortcuts', () => {
   const splitters = {
@@ -18,7 +17,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('2', () => {
@@ -32,7 +31,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('3', () => {
@@ -45,7 +44,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('4', () => {
@@ -58,7 +57,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('5', () => {
@@ -71,7 +70,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('6', () => {
@@ -84,7 +83,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('7', () => {
@@ -97,7 +96,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('8', () => {
@@ -110,7 +109,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('9', () => {
@@ -127,7 +126,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('10', () => {
@@ -144,7 +143,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('11', () => {
@@ -159,7 +158,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('12', () => {
@@ -175,7 +174,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('13', () => {
@@ -190,7 +189,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('14', () => {
@@ -207,7 +206,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('15', () => {
@@ -224,7 +223,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('16', () => {
@@ -241,7 +240,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('17', () => {
@@ -256,7 +255,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('18', () => {
@@ -270,7 +269,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('19', () => {
@@ -286,6 +285,7 @@ describe('flatten-user-flow-shortcuts', () => {
         ],
         id: '1',
         sideEffects: [],
+        rules: [],
       },
     ]
     const actual = 'a'
@@ -297,7 +297,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('20', () => {
@@ -313,6 +313,7 @@ describe('flatten-user-flow-shortcuts', () => {
         ],
         id: '1',
         sideEffects: [],
+        rules: [],
       },
     ]
     const actual = 'flow1_a'
@@ -325,7 +326,7 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 
   it('21', () => {
@@ -341,6 +342,7 @@ describe('flatten-user-flow-shortcuts', () => {
         ],
         id: '1',
         sideEffects: [],
+        rules: [],
       },
     ]
     const actual = 'flow1_a:flow1'
@@ -353,6 +355,6 @@ describe('flatten-user-flow-shortcuts', () => {
     ]
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
-    expect(actualUserFlows).deep.equal(expectedUserFlows)
+    expect(actualUserFlows).toEqual(expectedUserFlows)
   })
 })

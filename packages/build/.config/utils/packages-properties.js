@@ -1,6 +1,3 @@
-// this file exists because karma-websotrm-plugin doesn't
-// specify any information on where the user is running the tests from.
-
 module.exports = [
   {
     packageDirectoryName: 'parser',
@@ -9,5 +6,17 @@ module.exports = [
   {
     packageDirectoryName: 'editor',
     isWebApp: true,
+  },
+  {
+    packageDirectoryName: 'flower',
+    isWebApp: false,
+  },
+  {
+    packageDirectoryName: 'build',
+    isWebApp: false,
+  },
+  {
+    packageDirectoryName: 'utils',
+    isWebApp: false,
   },
 ]

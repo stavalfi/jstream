@@ -26,29 +26,29 @@ const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
 const webpackConfigPath = path.resolve(webpackFolderPath, 'webpack.config.js')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
-const resolveModulesPathsArray = [srcPath, mainTestsFolderPath, nodeModulesPath, mainNodeModulesPath]
+const resolveModulesPathsArray = [nodeModulesPath, mainNodeModulesPath]
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 module.exports = {
-  testPolyfillsFilePath,
-  jestConfigFilePath,
-  packagesPath,
-  packageJsonFolderPath,
-  libTsconfigFilePath,
-  srcPath,
+  allTestsFolders,
+  appEntryFilePaths,
   babelRcPath,
-  nodeModulesPath,
+  distPath,
+  eslintIgnorePath,
+  eslintRcPath,
+  indexHtmlPath,
+  jestConfigFilePath,
+  libTsconfigFilePath,
   linterTsconfigPath,
   mainNodeModulesPath,
-  eslintRcPath,
-  eslintIgnorePath,
-  distPath,
-  appEntryFilePaths,
-  resolveModulesPathsArray,
   mainTestsFolderPath,
-  indexHtmlPath,
-  webpackFolderPath,
-  webpackConfigPath,
-  allTestsFolders,
+  nodeModulesPath,
+  packageJsonFolderPath,
+  packagesPath,
+  resolveModulesPathsArray,
+  srcPath,
   testPolyfillFilePath,
+  testPolyfillsFilePath,
+  webpackConfigPath,
+  webpackFolderPath,
 }

@@ -2,20 +2,22 @@ const stringToBoolean = require('boolean')
 const packagesProperties = require('./packages-properties')
 
 const pwd = process.env.PWD || process.env['PWD'] || ''
-const packageProperties = packagesProperties.find(({ packageDirectoryName }) => pwd.endsWith(packageDirectoryName))
+const packageProperties =
+  packagesProperties.find(({ packageDirectoryName }) => pwd.endsWith(packageDirectoryName)) || {}
 
-const packageDirectoryName = packageProperties
-  ? packageProperties.packageDirectoryName
-  : process.env.FOLDER || process.env['FOLDER']
+// it will be used when ide-tools try to run this code. i must specify packageDirectoryName or else,
+// we will get errors in other files in this package.
+// also, the value i specify here won't be used by the ide so it's just a valid value, not more then that.
+const defaultPackageDirectoryName = 'utils'
 
-const isWebApp = packageProperties
-  ? packageProperties.isWebApp
-  : stringToBoolean(process.env.WEBAPP || process.env['WEBAPP'])
+const packageDirectoryName =
+  process.env.FOLDER || process.env['FOLDER'] || packageProperties.packageDirectoryName || defaultPackageDirectoryName
 
 const isCI = stringToBoolean(process.env.CI || process.env['CI'])
+const isManualRun = stringToBoolean(process.env.MANUAL_RUN || process.env['MANUAL_RUN'])
 
 module.exports = {
   packageDirectoryName,
-  isWebApp,
   isCI,
+  isManualRun,
 }

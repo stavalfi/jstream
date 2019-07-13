@@ -5,15 +5,16 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build:dev": "yarn run exec b:build:dev --watch",
+    "start": "yarn run exec b:build:dev --watch",
+    "build:dev": "yarn run exec b:build:dev",
     "build:prod": "yarn run exec b:build:prod",
     "test": "yarn run exec b:test",
     "test:unit": "yarn run exec b:test:unit",
     "test:watch": "yarn run exec b:test:watch",
-    "lint-staged": "pkg-ok && yarn run exec b:lint-staged",
+    "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "WEBAPP=false FOLDER=parser yarn workspace @flow/build"
+    "exec": "FOLDER=parser yarn workspace @flow/build"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "lodash": "^4.17.11"
   },
   "dependencies": {
+    "@flow/utils": "^1.0.0",
     "is-observable": "^1.1.0",
     "is-promise": "^2.1.0",
     "lodash": "^4.17.11",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "pkg-ok": "^2.3.1",
+    "table": "^5.4.1",
     "typescript": "^3.5.2"
   }
 }

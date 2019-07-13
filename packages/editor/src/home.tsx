@@ -1,8 +1,8 @@
 import React from 'react'
 // @ts-ignore
-import DrawFlow from 'draw-flow'
+import DrawFlow from '@editor/draw-flow'
 // @ts-ignore
-import FlowsEditor from 'flows-editor'
+import FlowsEditor from '@editor/flows-editor'
 import { ParsedUserConfigurationObject } from '@flow/parser'
 
 interface State {

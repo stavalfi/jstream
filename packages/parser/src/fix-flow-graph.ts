@@ -1,5 +1,5 @@
-import { arePathsEqual } from 'utils'
-import { AlgorithmParsedFlow, Graph, Node, Path, UserFlowObject } from 'types'
+import { arePathsEqual } from '@parser/utils'
+import { AlgorithmParsedFlow, Graph, Node, Path, UserFlowObject } from '@parser/types'
 
 type AlgorithmNode = {
   path: Path

@@ -20,6 +20,7 @@ module.exports = {
     node: true,
     mocha: true,
     'jest/globals': true,
+    jest: true,
   },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'json', 'import', 'jest'],
   extends: [
@@ -55,6 +56,7 @@ module.exports = {
     'import/no-unresolved': 'error',
     'import/named': 'error',
     'import/default': 'error',
+    'import/no-extraneous-dependencies': 'error',
   },
   settings: {
     'import/resolver': {

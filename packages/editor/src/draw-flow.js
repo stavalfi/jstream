@@ -1,5 +1,5 @@
 import React from 'react'
-import { updateChart } from 'my-d3'
+import { updateChart } from '@editor/my-d3'
 import deepEqual from 'deep-equal'
 
 export default class DrawFlow extends React.Component {

@@ -1,5 +1,5 @@
-import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph } from 'utils'
-import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow, UserFlowObject } from 'types'
+import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph } from '@parser/utils'
+import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow, UserFlowObject } from '@parser/types'
 
 function getGraph(flow: UserFlowObject) {
   return Array.isArray(flow.graph) ? flow.graph : [flow.graph]

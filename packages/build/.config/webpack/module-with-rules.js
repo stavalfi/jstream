@@ -1,9 +1,10 @@
+const { babelDevelopmentAlias, babelProdAlias } = require('../utils/paths-resolving-strategies')
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const jsonImporter = require('node-sass-json-importer')
 
 module.exports = ({
   isDevelopmentMode,
-  isTestMode,
   constants: { isWebApp },
   publicPath = '.',
   paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
@@ -20,7 +21,7 @@ module.exports = ({
             ...require(babelRcPath),
           },
         },
-        ...(isWebApp || isTestMode
+        ...(isWebApp || isDevelopmentMode
           ? []
           : [
               {
@@ -29,13 +30,17 @@ module.exports = ({
                   context: packageJsonFolderPath,
                   configFile: libTsconfigFilePath,
                   experimentalFileCaching: true,
+                  // to speed up build: we can set to true when this fixed: https://github.com/TypeStrong/ts-loader/issues/957
+                  transpileOnly: false,
                 },
               },
               {
                 loader: '@stavalfi/babel-plugin-module-resolver-loader',
                 options: {
+                  cwd: srcPath,
                   root: [srcPath],
                   extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
+                  alias: isDevelopmentMode ? babelDevelopmentAlias : babelProdAlias,
                 },
               },
             ]),
@@ -43,11 +48,10 @@ module.exports = ({
           loader: 'eslint-loader',
           options: {
             failOnError: true,
-            failOnWarning: isDevelopmentMode || isTestMode,
+            failOnWarning: isDevelopmentMode,
             configFile: eslintRcPath,
             fix: false,
-            // eslint import will remmember sometimes failures from last run and won't re-check imports.
-            cache: false,
+            cache: true,
             formatter: require('eslint-formatter-friendly'),
           },
         },

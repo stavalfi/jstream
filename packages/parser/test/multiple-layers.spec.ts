@@ -1,5 +1,5 @@
-import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from 'utils/utils'
-import { UserFlow } from 'types'
+import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@parser-test/utils/utils'
+import { UserFlow } from '@parser/types'
 
 describe('multiple-layers', () => {
   it('1', () => {

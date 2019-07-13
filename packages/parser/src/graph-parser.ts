@@ -1,7 +1,6 @@
-import { compose } from 'redux'
-import { Graph, Node, Path, UserGraph } from 'types'
+import { Graph, Path, UserGraph } from '@parser/types'
 
-type ToDisplayName = (flowNode: Node) => string
+type ToDisplayName = (flowNode: { path: Path; identifier?: string }) => string
 type ToNode = (displayName: string) => { path: Path; identifier?: string }
 
 export const parseGraph = (
@@ -85,10 +84,8 @@ const parseSubGraph = (nodeToDisplayName: ToDisplayName, displayNameToNode: ToNo
             chars: [',', ':'],
           })
 
-          const improveDisplayName: (displayName: string) => string = compose(
-            nodeToDisplayName,
-            displayNameToNode,
-          )
+          const improveDisplayName = (displayName: string) => nodeToDisplayName(displayNameToNode(displayName))
+
           const displayName = improveDisplayName(subFlowToParse.slice(fromIndex, displayNameEndIndex))
 
           if (!displayNameToIndexes.hasOwnProperty(displayName)) {

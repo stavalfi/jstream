@@ -5,12 +5,9 @@ const { distPath, appEntryFilePaths } = paths
 const { isWebApp } = constants
 
 module.exports = (env = {}, argv = {}) => {
-  const isDevelopmentMode = argv.mode === 'development' || env.devServer
+  const isDevelopmentMode = env.devServer || argv.mode !== 'production'
   const publicPath = '/'
-
   return {
-    cache: isDevelopmentMode,
-
     stats: isDevelopmentMode ? 'none' : 'normal',
 
     devtool: isDevelopmentMode ? 'source-map' : 'none',
@@ -25,14 +22,14 @@ module.exports = (env = {}, argv = {}) => {
       ...(!isWebApp && { libraryTarget: 'umd' }),
     },
 
-    devServer: devServer({ isDevelopmentMode, isTestMode: false, constants, publicPath, paths }),
+    devServer: devServer({ isDevelopmentMode, constants, publicPath, paths }),
 
-    externals: externals({ isDevelopmentMode, isTestMode: false, constants, publicPath, paths }),
+    externals: externals({ isDevelopmentMode, constants, publicPath, paths }),
 
-    resolve: resolve({ isDevelopmentMode, isTestMode: false, constants, publicPath, paths }),
+    resolve: resolve({ isDevelopmentMode, constants, publicPath, paths }),
 
-    plugins: plugins({ isDevelopmentMode, isTestMode: false, constants, publicPath, paths }),
+    plugins: plugins({ isDevelopmentMode, constants, publicPath, paths }),
 
-    module: moduleWithRules({ isDevelopmentMode, isTestMode: false, constants, publicPath, paths }),
+    module: moduleWithRules({ isDevelopmentMode, constants, publicPath, paths }),
   }
 }
