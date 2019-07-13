@@ -11,31 +11,7 @@
     "checkJs": false,
     "noImplicitAny": true,
     "noEmit": true,
-    "listFiles": false,
-    "baseUrl": "packages",
-    "paths": {
-      "*": [
-        "parser/node_modules/*",
-        "editor/node_modules/*",
-        "flower/node_modules/*",
-        "build/node_modules/*",
-        "utils/node_modules/*",
-        "../node_modules/*"
-      ],
-      "@parser/*": ["parser/src/*"],
-      "@editor/*": ["editor/src/*"],
-      "@flower/*": ["flower/src/*"],
-      "@utils/*": ["utils/src/*"],
-      "@parser-test/*": ["parser/test/*"],
-      "@editor-test/*": ["editor/test/*"],
-      "@flower-test/*": ["flower/test/*"],
-      "@utils-test/*": ["utils/test/*"],
-      "@flow/parser": ["parser/src/index.ts"],
-      "@flow/editor": ["editor/src/index.tsx"],
-      "@flow/flower": ["flower/src/index.ts"],
-      "@flow/build": ["build/src/index.ts"],
-      "@flow/utils": ["utils/src/index.ts"]
-    }
+    "listFiles": false
   },
   "files": ["packages/declerations/declerations.d.ts"],
   "exclude": ["node_modules"]

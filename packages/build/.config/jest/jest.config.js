@@ -11,8 +11,7 @@ const {
   packagesPath,
 } = paths
 
-const { isCI, isManualRun, packagesProperties, mainProjectDirName } = constants
-
+const { isCI, isManualRun, packagesProperties, mainProjectDirName, packageDirectoryName } = constants
 const prodAlias = ({ packagesPath, packagesProperties, test }) =>
   packagesProperties
     .map(packageProperties => ({
@@ -22,12 +21,14 @@ const prodAlias = ({ packagesPath, packagesProperties, test }) =>
         'src',
         `$1`,
       ),
-      [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
-        packagesPath,
-        packageProperties.packageDirectoryName,
-        'src',
-        packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
-      ),
+      ...(packageProperties.packageDirectoryName !== packageDirectoryName && {
+        [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
+          packagesPath,
+          packageProperties.packageDirectoryName,
+          'src',
+          packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
+        ),
+      }),
       [`@${packageProperties.packageDirectoryName}-test/(.+)`]: path.resolve(
         packagesPath,
         packageProperties.packageDirectoryName,

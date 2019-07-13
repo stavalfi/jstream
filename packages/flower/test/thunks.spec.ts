@@ -1,5 +1,5 @@
 import { getStore, libSelector } from '@flower-test/utils'
-import { advanceFlowActionCreator, advanceGraphThunk } from '@flower/index'
+import { advanceFlowActionCreator, advanceGraphThunk } from '@flower/actions'
 // const state = (state: FlowState) => state
 
 describe('thunks', () => {

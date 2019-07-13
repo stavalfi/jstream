@@ -35,7 +35,7 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
     new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ isDevelopmentMode, constants, paths })),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
-      async: false,
+      async: isDevelopmentMode,
       formatter: 'codeframe',
       compilerOptions: getCompilerOptions(isDevelopmentMode, { isDevelopmentMode, constants, paths }),
     }),
@@ -46,7 +46,10 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
 
 const getCompilerOptions = (
   isDevelopmentMode,
-  { constants: { packagesProperties, mainProjectDirName }, paths: { packagesPath, mainTestsFolderPath } },
+  {
+    constants: { packagesProperties, mainProjectDirName, packageDirectoryName },
+    paths: { packagesPath, mainTestsFolderPath },
+  },
 ) => ({
   baseUrl: packagesPath,
   paths: {
@@ -61,6 +64,7 @@ const getCompilerOptions = (
       .reduce((acc, obj) => ({ ...acc, ...obj }), {}),
     ...(isDevelopmentMode &&
       packagesProperties
+        .filter(packageProperties => packageProperties.packageDirectoryName !== packageDirectoryName)
         .map(packageProperties => ({
           [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: [
             `${packageProperties.packageDirectoryName}/src/${packageProperties.isWebApp ? 'index.tsx' : 'index.ts'}`,

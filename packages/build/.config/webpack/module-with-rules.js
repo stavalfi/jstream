@@ -4,7 +4,7 @@ const path = require('path')
 
 module.exports = ({
   isDevelopmentMode,
-  constants: { isWebApp, mainProjectDirName, packagesProperties },
+  constants: { isWebApp, mainProjectDirName, packagesProperties, packageDirectoryName },
   publicPath = '.',
   paths: {
     srcPath,
@@ -54,6 +54,7 @@ module.exports = ({
                         packagesProperties,
                         mainTestsFolderPath,
                         srcPath,
+                        packageDirectoryName,
                       })
                     : prodAlias({ packagesPath, packagesProperties, mainTestsFolderPath, srcPath }),
                 },
@@ -154,8 +155,16 @@ module.exports = ({
   ],
 })
 
-const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties, mainTestsFolderPath, srcPath }) =>
+const developmentAlias = ({
+  mainProjectDirName,
+  packagesPath,
+  packagesProperties,
+  mainTestsFolderPath,
+  srcPath,
+  packageDirectoryName,
+}) =>
   packagesProperties
+    .filter(packageProperties => packageProperties.packageDirectoryName !== packageDirectoryName)
     .map(packageProperties => ({
       [`^@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
         packagesPath,
@@ -174,7 +183,7 @@ const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties
       }),
     )
 
-const prodAlias = ({ packagesProperties, mainTestsFolderPath, srcPath, packagesPath }) =>
+const prodAlias = ({ packagesProperties, srcPath, packagesPath }) =>
   packagesProperties
     .map(packageProperties => {
       const packageSrcFolderPath = path.resolve(packagesPath, packageProperties.packageDirectoryName, 'src')

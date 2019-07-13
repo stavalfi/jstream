@@ -27,8 +27,9 @@ module.exports = ({
   }
 }
 
-const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties }) =>
+const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties, packageDirectoryName }) =>
   packagesProperties
+    .filter(packageProperties => packageProperties.packageDirectoryName !== packageDirectoryName)
     .map(packageProperties => ({
       [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: path.resolve(
         packagesPath,

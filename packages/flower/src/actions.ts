@@ -1,3 +1,7 @@
+import uuid from 'uuid/v1'
+import { userInputNodeToNodeIndex } from '@flower/utils'
+import { isSubsetOf, Node, Path } from '@flow/parser'
+import { Combinations } from '@flow/utils'
 import {
   AdvanceGraphThunk,
   ExecuteFlowThunkCreator,
@@ -5,11 +9,7 @@ import {
   FlowActionCreator,
   FlowActionType,
   FlowReducerSelector,
-} from '@flow/flower'
-import uuid from 'uuid/v1'
-import { userInputNodeToNodeIndex } from '@flower/utils'
-import { isSubsetOf, Node, Path } from '@flow/parser'
-import { Combinations } from '@flow/utils'
+} from '@flower/types'
 
 export const updateConfigActionCreator: FlowActionCreator<FlowActionType.updateConfig> = payload => ({
   type: FlowActionType.updateConfig,
