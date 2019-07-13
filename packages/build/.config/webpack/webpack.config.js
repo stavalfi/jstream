@@ -7,7 +7,6 @@ const { isWebApp } = constants
 module.exports = (env = {}, argv = {}) => {
   const isDevelopmentMode = argv.mode === 'development' || env.devServer
   const publicPath = '/'
-
   return {
     stats: isDevelopmentMode ? 'none' : 'normal',
 

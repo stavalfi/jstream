@@ -26,7 +26,7 @@ const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
 const webpackConfigPath = path.resolve(webpackFolderPath, 'webpack.config.js')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
-const resolveModulesPathsArray = [srcPath, mainTestsFolderPath, nodeModulesPath, mainNodeModulesPath]
+const resolveModulesPathsArray = [nodeModulesPath, mainNodeModulesPath]
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 module.exports = {

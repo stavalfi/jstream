@@ -50,11 +50,9 @@ const getCompilerOptions = (
 ) => ({
   baseUrl: packagesPath,
   paths: {
-    '*': ['../node_modules/*'].concat(
-      _flatMap(['src', 'test', 'node_modules'], subFolder =>
-        packagesProperties.map(packageProperties => `${packageProperties.packageDirectoryName}/${subFolder}/*`),
-      ),
-    ),
+    '*': _flatMap(['src', 'test', 'node_modules'], subFolder =>
+      packagesProperties.map(packageProperties => `${packageProperties.packageDirectoryName}/${subFolder}/*`),
+    ).concat(['../node_modules/*']),
     ...packagesProperties
       .map(packageProperties => ({
         [`@${packageProperties.packageDirectoryName}/*`]: [`${packageProperties.packageDirectoryName}/src/*`],

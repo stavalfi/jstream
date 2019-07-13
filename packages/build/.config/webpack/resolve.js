@@ -4,13 +4,28 @@ module.exports = ({
   isDevelopmentMode,
   paths: { resolveModulesPathsArray, packagesPath },
   constants: { packagesProperties, mainProjectDirName, packageDirectoryName, isWebApp },
-}) => ({
-  extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
-  modules: resolveModulesPathsArray,
-  alias: isDevelopmentMode
+}) => {
+  const baseAlias = isDevelopmentMode
     ? developmentAlias({ isWebApp, packagesPath, mainProjectDirName, packagesProperties, packageDirectoryName })
-    : prodAlias({ isWebApp, mainProjectDirName, packagesPath, packagesProperties, packageDirectoryName }),
-})
+    : prodAlias({ isWebApp, mainProjectDirName, packagesPath, packagesProperties, packageDirectoryName })
+  const otherAlias = packagesProperties
+    .map(packageProperties => ({
+      [`@${packageProperties.packageDirectoryName}-test`]: path.resolve(
+        packagesPath,
+        packageProperties.packageDirectoryName,
+        'test',
+      ),
+    }))
+    .reduce((acc, alias) => ({ ...acc, ...alias }), {})
+  return {
+    extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
+    modules: resolveModulesPathsArray,
+    alias: {
+      ...baseAlias,
+      ...otherAlias,
+    },
+  }
+}
 
 const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties }) =>
   packagesProperties
@@ -22,7 +37,10 @@ const developmentAlias = ({ mainProjectDirName, packagesPath, packagesProperties
         packageProperties.isWebApp ? 'index.tsx' : 'index.ts',
       ),
     }))
-    .reduce((acc, alias) => ({ ...acc, ...alias }), prodAlias({ packagesPath, packagesProperties }))
+    .reduce((acc, alias) => ({ ...acc, ...alias }), {
+      'react-dom': '@hot-loader/react-dom',
+      ...prodAlias({ packagesPath, packagesProperties }),
+    })
 
 const prodAlias = ({ packagesPath, packagesProperties }) =>
   packagesProperties
@@ -33,4 +51,4 @@ const prodAlias = ({ packagesPath, packagesProperties }) =>
         'src',
       ),
     }))
-    .reduce((acc, alias) => ({ ...acc, ...alias }), { 'react-dom': '@hot-loader/react-dom' })
+    .reduce((acc, alias) => ({ ...acc, ...alias }), {})

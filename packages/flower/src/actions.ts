@@ -16,11 +16,6 @@ export const updateConfigActionCreator: FlowActionCreator<FlowActionType.updateC
   payload,
 })
 
-export const advanceFlowActionCreator: FlowActionCreator<FlowActionType.advanceFlowGraph> = payload => ({
-  type: FlowActionType.advanceFlowGraph,
-  payload,
-})
-
 // it is exported only to test the reducer.
 export const executeFlowActionCreator: FlowActionCreator<FlowActionType.executeFlow> = payload => {
   return {
@@ -29,6 +24,11 @@ export const executeFlowActionCreator: FlowActionCreator<FlowActionType.executeF
   }
 }
 
+export const advanceFlowActionCreator: FlowActionCreator<FlowActionType.advanceFlowGraph> = payload => ({
+  type: FlowActionType.advanceFlowGraph,
+  payload,
+})
+
 export const finishFlowActionCreator: FlowActionCreator<FlowActionType.finishFlow> = payload => {
   return {
     type: FlowActionType.finishFlow,
@@ -36,10 +36,19 @@ export const finishFlowActionCreator: FlowActionCreator<FlowActionType.finishFlo
   }
 }
 
-export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowName => dispatch => {
-  const action = dispatch(executeFlowActionCreator({ flowName, id: uuid() }))
+export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flow => dispatch => {
+  const action = dispatch(
+    executeFlowActionCreator({ flowId: flow.id, ...('name' in flow && { flowName: flow.name }), id: uuid() }),
+  )
   return dispatch(
-    advanceGraphThunk(reducerSelector)(advanceFlowActionCreator({ id: action.payload.id, toNodeIndex: 0 })),
+    advanceGraphThunk(reducerSelector)(
+      advanceFlowActionCreator({
+        id: action.payload.id,
+        flowId: flow.id,
+        ...('name' in flow && { flowName: flow.name }),
+        toNodeIndex: 0,
+      }),
+    ),
   )
 }
 
@@ -49,16 +58,16 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
       dispatch(action)
       const { flows, activeFlows, ...restOfState } = reducerSelector(getState())
       if (!('splitters' in restOfState)) {
-        return action
+        return Promise.resolve(action)
       }
       const { splitters } = restOfState
       const activeFlow = activeFlows.find(activeFlow => activeFlow.id === action.payload.id)
       if (!activeFlow) {
-        return action
+        return Promise.resolve(action)
       }
       const flow = flows.find(flow => flow.id === activeFlow.flowId)
       if (!flow) {
-        return action
+        return Promise.resolve(action)
       }
 
       const toNodeIndex = action.payload.toNodeIndex
@@ -83,6 +92,8 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
                 advance(
                   advanceFlowActionCreator({
                     id: action.payload.id,
+                    flowId: flow.id,
+                    ...('name' in flow && { flowName: flow.name }),
                     fromNodeIndex: toNodeIndex,
                     toNodeIndex: userInputNodeToNodeIndex({
                       splitters,

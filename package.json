@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "editor": "yarn --cwd ./packages/editor start",
-    "parser": "yarn --cwd ./packages/parser build:dev",
-    "flower": "yarn --cwd packages/flower build:dev",
+    "parser": "yarn --cwd ./packages/parser start",
+    "flower": "yarn --cwd packages/flower start",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "bootstrap": "lerna bootstrap",

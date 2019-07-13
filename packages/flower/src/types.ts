@@ -1,6 +1,7 @@
 import { Action, Reducer } from 'redux'
 import { Configuration, ParsedFlow, Splitters } from '@flow/parser'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
+import { Combinations, NonEmptyCombinations } from '@flow/utils'
 
 export enum FlowActionType {
   updateConfig = 'updateConfig',
@@ -11,9 +12,12 @@ export enum FlowActionType {
 
 type FlowActionPayload = {
   updateConfig: Configuration<ParsedFlow>
-  executeFlow: { id: string; flowName: string }
-  advanceFlowGraph: { id: String } & ({ toNodeIndex: number } | { fromNodeIndex: number; toNodeIndex: number })
-  finishFlow: { id: String }
+  executeFlow: { id: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
+  advanceFlowGraph: { id: string; flowId: string; toNodeIndex: number } & Combinations<{
+    fromNodeIndex: number
+  }> &
+    Combinations<{ flowName: string }>
+  finishFlow: { id: String; flowId: string } & Combinations<{ flowName: string }>
 }
 
 export type FlowActionCreator<ActionType extends keyof FlowActionPayload> = (
@@ -27,29 +31,29 @@ export type FlowActionByType = {
 export type FlowAction = FlowActionByType[keyof FlowActionPayload]
 
 export type AdvanceGraphThunk = ThunkAction<
-  FlowActionByType[FlowActionType.advanceFlowGraph] | Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>,
+  Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>,
   FlowState,
   undefined,
   FlowActionByType[FlowActionType.advanceFlowGraph]
 >
 
-export type ExecuteFlowThunk = FlowThunkAction<
-  FlowActionByType[FlowActionType.advanceFlowGraph] | Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>
->
+export type ExecuteFlowThunk = FlowThunkAction<Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>>
 
-export type ExecuteFlowThunkCreator = (reducerSelector: FlowReducerSelector) => (flowName: string) => ExecuteFlowThunk
+export type ExecuteFlowThunkCreator = (
+  reducerSelector: FlowReducerSelector,
+) => (flow: { id: string } & Combinations<{ name: string }>) => ExecuteFlowThunk
 
 export type ActiveFlow = {
   id: string
-  flowName: string
   flowId: string
   activeNodesIndexes: number[]
-}
+} & Combinations<{ flowName: string }>
 
 export type FlowState = {
   splitters: Splitters
   flows: ParsedFlow[]
   activeFlows: ActiveFlow[]
+  finishedFlows: ActiveFlow[]
 }
 
 export type FlowReducer = Reducer<FlowState, FlowAction>

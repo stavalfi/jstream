@@ -6,7 +6,6 @@ import {
   updateConfigActionCreator,
 } from '@flower/index'
 import { parse } from '@flow/parser'
-import { expect } from 'chai'
 
 describe('actions', () => {
   it('1', () => {
@@ -16,7 +15,7 @@ describe('actions', () => {
       },
       flows: ['a'],
     })
-    expect(updateConfigActionCreator(configuration)).deep.equal({
+    expect(updateConfigActionCreator(configuration)).toEqual({
       type: FlowActionType.updateConfig,
       payload: configuration,
     })
@@ -27,13 +26,15 @@ describe('actions', () => {
         fromNodeIndex: 1,
         toNodeIndex: 2,
         id: 'id',
+        flowId: '1',
       }),
-    ).deep.equal({
+    ).toEqual({
       type: FlowActionType.advanceFlowGraph,
       payload: {
         fromNodeIndex: 1,
         toNodeIndex: 2,
         id: 'id',
+        flowId: '1',
       },
     })
   })
@@ -42,12 +43,14 @@ describe('actions', () => {
       advanceFlowActionCreator({
         toNodeIndex: 2,
         id: 'id',
+        flowId: '1',
       }),
-    ).deep.equal({
+    ).toEqual({
       type: FlowActionType.advanceFlowGraph,
       payload: {
         toNodeIndex: 2,
         id: 'id',
+        flowId: '1',
       },
     })
   })
@@ -56,12 +59,14 @@ describe('actions', () => {
       executeFlowActionCreator({
         flowName: 'a',
         id: 'id',
+        flowId: '1',
       }),
-    ).deep.equal({
+    ).toEqual({
       type: FlowActionType.executeFlow,
       payload: {
         flowName: 'a',
         id: 'id',
+        flowId: '1',
       },
     })
   })
@@ -70,11 +75,13 @@ describe('actions', () => {
     expect(
       finishFlowActionCreator({
         id: 'id',
+        flowId: '1',
       }),
-    ).deep.equal({
+    ).toEqual({
       type: FlowActionType.finishFlow,
       payload: {
         id: 'id',
+        flowId: '1',
       },
     })
   })
