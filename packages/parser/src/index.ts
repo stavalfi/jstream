@@ -89,4 +89,5 @@ export {
   SideEffect,
   Path,
   Splitters,
+  Rule,
 } from '@parser/types'

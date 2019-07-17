@@ -71,11 +71,11 @@ export type ErrorFunctionRule = (
   flow: ParsedFlow,
 ) => (toNode: Node, i?: number, graph?: Node[]) => (error: any) => string | string[]
 
-export type Rule<Node> = (
+export type Rule<T> = (
   | { next: NextFunctionRule; error: ErrorFunctionRule }
   | { next: NextFunctionRule }
   | { error: ErrorFunctionRule }) &
-  Combinations<Node>
+  (T | {})
 
 export type ParsedUserFlow = {
   graph: UserGraph

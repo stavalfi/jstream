@@ -13,7 +13,7 @@ export enum FlowActionType {
 type FlowActionPayload = {
   updateConfig: Configuration<ParsedFlow>
   executeFlow: { id: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
-  advanceFlowGraph: { id: string; flowId: string; toNodeIndex: number } & Combinations<{
+  advanceFlowGraph: { id: string; flowId: string; toNodeIndexes: number[] } & Combinations<{
     fromNodeIndex: number
   }> &
     Combinations<{ flowName: string }>
@@ -31,13 +31,13 @@ export type FlowActionByType = {
 export type FlowAction = FlowActionByType[keyof FlowActionPayload]
 
 export type AdvanceGraphThunk = ThunkAction<
-  Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>,
+  Promise<FlowActionByType[FlowActionType.advanceFlowGraph][]>,
   FlowState,
   undefined,
   FlowActionByType[FlowActionType.advanceFlowGraph]
 >
 
-export type ExecuteFlowThunk = FlowThunkAction<Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>>
+export type ExecuteFlowThunk = FlowThunkAction<Promise<FlowActionByType[FlowActionType.advanceFlowGraph][]>>
 
 export type ExecuteFlowThunkCreator = (
   reducerSelector: FlowReducerSelector,
