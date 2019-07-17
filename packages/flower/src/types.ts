@@ -31,13 +31,13 @@ export type FlowActionByType = {
 export type FlowAction = FlowActionByType[keyof FlowActionPayload]
 
 export type AdvanceGraphThunk = ThunkAction<
-  Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>,
+  Promise<FlowActionByType[FlowActionType.advanceFlowGraph][]>,
   FlowState,
   undefined,
   FlowActionByType[FlowActionType.advanceFlowGraph]
 >
 
-export type ExecuteFlowThunk = FlowThunkAction<Promise<FlowActionByType[FlowActionType.advanceFlowGraph]>>
+export type ExecuteFlowThunk = FlowThunkAction<Promise<FlowActionByType[FlowActionType.advanceFlowGraph][]>>
 
 export type ExecuteFlowThunkCreator = (
   reducerSelector: FlowReducerSelector,

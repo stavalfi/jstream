@@ -18,6 +18,7 @@ export type Graph = Node[]
 
 export type ParsedFlow = {
   id: string
+  concurrency: boolean | number
   graph: Graph
   sideEffects: SideEffect[]
   rules: Rule<{ node: { path: Path } }>[]
@@ -59,7 +60,7 @@ export type UserFlowObject = {
   default_path?: string
   side_effects?: UserSideEffects
   rules?: Rule<{ node_name: string }>[]
-} & Combinations<{ name: string }>
+} & Combinations<{ name: string; concurrency: boolean | number }>
 
 export type UserFlow = UserGraph | UserFlowObject
 
@@ -71,13 +72,14 @@ export type ErrorFunctionRule = (
   flow: ParsedFlow,
 ) => (toNode: Node, i?: number, graph?: Node[]) => (error: any) => string | string[]
 
-export type Rule<Node> = (
+export type Rule<T> = (
   | { next: NextFunctionRule; error: ErrorFunctionRule }
   | { next: NextFunctionRule }
   | { error: ErrorFunctionRule }) &
-  Combinations<Node>
+  (T | {})
 
 export type ParsedUserFlow = {
+  concurrency: boolean | number
   graph: UserGraph
   name?: string
   extends_flows?: UserFlow[]

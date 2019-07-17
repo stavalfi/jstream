@@ -1,7 +1,6 @@
 import uuid from 'uuid/v1'
 import { userInputNodeToNodeIndex } from '@flower/utils'
-import { isSubsetOf, Node, Path } from '@flow/parser'
-import { Combinations } from '@flow/utils'
+import { isSubsetOf } from '@flow/parser'
 import {
   AdvanceGraphThunk,
   ExecuteFlowThunkCreator,
@@ -58,23 +57,36 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
       dispatch(action)
       const { flows, activeFlows, ...restOfState } = reducerSelector(getState())
       if (!('splitters' in restOfState)) {
-        return Promise.resolve(action)
+        return Promise.resolve([action])
       }
       const { splitters } = restOfState
       const activeFlow = activeFlows.find(activeFlow => activeFlow.id === action.payload.id)
       if (!activeFlow) {
-        return Promise.resolve(action)
+        return Promise.resolve([action])
       }
       const flow = flows.find(flow => flow.id === activeFlow.flowId)
       if (!flow) {
-        return Promise.resolve(action)
+        return Promise.resolve([action])
       }
 
-      const toNodeIndex = action.payload.toNodeIndex
-      const toNode = flow.graph[toNodeIndex]
-      const sideEffect = findByNodeOrDefault(flow.sideEffects, toNode)
+      const { toNodeIndex } = action.payload
 
-      const rule = findByNodeOrDefault(flow.rules, toNode)
+      const toAdvanceAction = (nextNodeIndex: number) =>
+        advanceFlowActionCreator({
+          id: action.payload.id,
+          flowId: flow.id,
+          ...('name' in flow && { flowName: flow.name }),
+          fromNodeIndex: toNodeIndex,
+          toNodeIndex: nextNodeIndex,
+        })
+
+      const toNode = flow.graph[toNodeIndex]
+      const sideEffect = findByNodeOrDefault(
+        flow.sideEffects,
+        sideEffect => 'node' in sideEffect && isSubsetOf(sideEffect.node.path, toNode.path),
+      )
+
+      const rule = findByNodeOrDefault(flow.rules, rule => 'node' in rule && isSubsetOf(rule.node.path, toNode.path))
 
       return new Promise((res, rej) => {
         try {
@@ -85,35 +97,26 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
       })
         .then(result => rule && 'next' in rule && rule.next(flow)(toNode, toNodeIndex, flow.graph)(result))
         .catch(error => rule && 'error' in rule && rule.error(flow)(toNode, toNodeIndex, flow.graph)(error))
-        .then(nextNode =>
-          !nextNode
-            ? action
-            : dispatch(
-                advance(
-                  advanceFlowActionCreator({
-                    id: action.payload.id,
-                    flowId: flow.id,
-                    ...('name' in flow && { flowName: flow.name }),
-                    fromNodeIndex: toNodeIndex,
-                    toNodeIndex: userInputNodeToNodeIndex({
-                      splitters,
-                      flows,
-                      flow,
-                    })(toNodeIndex)(nextNode),
-                  }),
-                ),
-              ),
-        )
+        .then(nextNodeNames => nextNodeNames && (Array.isArray(nextNodeNames) ? nextNodeNames : [nextNodeNames]))
+        .then(nextNodeNames => {
+          if (nextNodeNames) {
+            const nextNodesIndexes = nextNodeNames.map(nodeName =>
+              userInputNodeToNodeIndex({
+                splitters,
+                flows,
+                flow,
+              })(toNodeIndex)(nodeName),
+            )
+            const promises = nextNodesIndexes.map(nextNodeIndex => dispatch(advance(toAdvanceAction(nextNodeIndex))))
+            return Promise.all(promises).then(array => array.flatMap(array => array))
+          } else {
+            return [action]
+          }
+        })
     }
   }
 
-function findByNodeOrDefault<T>(
-  array: (T & Combinations<{ node: { path: Path } }>)[],
-  node: Node,
-): (T & Combinations<{ node: { path: Path } }>) | undefined {
-  const element = array.find(e => 'node' in e && isSubsetOf(e.node.path, node.path))
-  if (element) {
-    return element
-  }
-  return array.find(element => !('node' in element))
+function findByNodeOrDefault<T>(array: T[], predicate: (t1: T) => boolean): T | undefined {
+  const element = array.find(predicate)
+  return element || array.find(element => !('node' in element))
 }
