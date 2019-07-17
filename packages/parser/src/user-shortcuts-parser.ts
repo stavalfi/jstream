@@ -52,6 +52,7 @@ export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUn
       ...(flowObject.default_path && {
         defaultPath: flowObject.default_path.split(splitters.extends),
       }),
+      concurrency: 'concurrency' in flowObject ? flowObject.concurrency : false,
       side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
       rules: 'rules' in flowObject ? flowObject.rules : [],
     }

@@ -15,6 +15,7 @@ import {
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
 export type ExpectedFlow = {
   name?: string
+  concurrency?: boolean | number // it should be mandatory but we are too lazy to specify it in every test.
   graph: ExpectedFlowGraphNode[]
   defaultNodeIndex?: number
   extendedFlowIndex?: number
@@ -29,6 +30,7 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
           [`${path[0]}${i}${extendsSplitter}${path.slice(1).join(extendsSplitter)}`]: [[], []],
         },
       ],
+      concurrency: false,
       defaultNodeIndex: 0,
     }),
   )
@@ -36,7 +38,7 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
 export const createExpected = (
   expectedFlowsArrays: ExpectedFlow[],
   flowsConfig: Required<Configuration<UserFlow>>,
-): Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules'>[] =>
+): (Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules' | 'concurrency'> & Partial<Pick<ParsedFlow, 'concurrency'>>)[] =>
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
@@ -177,19 +179,19 @@ function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: Pa
   })
 }
 
-function flowToString(flow: ParsedFlowWithDisplyName) {
-  let str = ''
-  if ('name' in flow) {
-    str += `name: ${flow.name}\n`
-  }
-  if ('extendedFlowIndex' in flow) {
-    str += `extendedFlowIndex: ${flow.extendedFlowIndex}\n`
-  }
-  if ('defaultNodeIndex' in flow) {
-    str += `defaultNodeIndex: ${flow.defaultNodeIndex}`
-  }
-  return str
-}
+// function flowToString(flow: ParsedFlowWithDisplyName) {
+//   let str = ''
+//   if ('name' in flow) {
+//     str += `name: ${flow.name}\n`
+//   }
+//   if ('extendedFlowIndex' in flow) {
+//     str += `extendedFlowIndex: ${flow.extendedFlowIndex}\n`
+//   }
+//   if ('defaultNodeIndex' in flow) {
+//     str += `defaultNodeIndex: ${flow.defaultNodeIndex}`
+//   }
+//   return str
+// }
 
 export function graphToString(sortedGraph: (Node & { displayName?: string })[]) {
   // i === row number

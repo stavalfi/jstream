@@ -1,4 +1,5 @@
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
+import { ParsedFlow } from '@parser/types'
 
 describe('flatten-user-flow-shortcuts', () => {
   const splitters = {
@@ -13,6 +14,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow0',
         graph: ['flow0'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -27,6 +31,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow0',
         graph: ['flow0'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -40,6 +47,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -53,6 +63,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -66,6 +79,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -79,6 +95,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -92,6 +111,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow2'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -105,6 +127,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow2'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -122,6 +147,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow0',
         graph: ['flow0'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -139,6 +167,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow0',
         graph: ['flow0'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -154,6 +185,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow2'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -170,6 +204,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow2'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -185,6 +222,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0:flow1:flow2'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -202,6 +242,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow0',
         graph: ['flow0'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -213,12 +256,17 @@ describe('flatten-user-flow-shortcuts', () => {
     const actual = {
       name: 'flow1',
       graph: ['flow0'],
+      rules: [],
+      side_effects: [],
     }
     const expectedUserFlows = [
       {
         name: 'flow1',
         graph: ['flow0'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -236,6 +284,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow1',
         graph: ['flow0/id1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -251,6 +302,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['flow0/id1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -265,6 +319,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'a',
         graph: ['a_b:a_c'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -273,7 +330,7 @@ describe('flatten-user-flow-shortcuts', () => {
   })
 
   it('19', () => {
-    const parsedFlows = [
+    const parsedFlows: ParsedFlow[] = [
       {
         name: 'a',
         graph: [
@@ -284,8 +341,9 @@ describe('flatten-user-flow-shortcuts', () => {
           },
         ],
         id: '1',
-        sideEffects: [],
+        concurrency: false,
         rules: [],
+        sideEffects: [],
       },
     ]
     const actual = 'a'
@@ -293,6 +351,9 @@ describe('flatten-user-flow-shortcuts', () => {
       {
         graph: ['a'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -314,6 +375,7 @@ describe('flatten-user-flow-shortcuts', () => {
         id: '1',
         sideEffects: [],
         rules: [],
+        concurrency: false,
       },
     ]
     const actual = 'flow1_a'
@@ -322,6 +384,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow1',
         graph: ['flow1_a'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
@@ -343,6 +408,7 @@ describe('flatten-user-flow-shortcuts', () => {
         id: '1',
         sideEffects: [],
         rules: [],
+        concurrency: false,
       },
     ]
     const actual = 'flow1_a:flow1'
@@ -351,6 +417,9 @@ describe('flatten-user-flow-shortcuts', () => {
         name: 'flow1',
         graph: ['flow1_a:flow1'],
         extendsFlows: [],
+        concurrency: false,
+        rules: [],
+        side_effects: [],
       },
     ]
 
