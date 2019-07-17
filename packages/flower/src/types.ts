@@ -13,7 +13,7 @@ export enum FlowActionType {
 type FlowActionPayload = {
   updateConfig: Configuration<ParsedFlow>
   executeFlow: { id: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
-  advanceFlowGraph: { id: string; flowId: string; toNodeIndexes: number[] } & Combinations<{
+  advanceFlowGraph: { id: string; flowId: string; toNodeIndex: number } & Combinations<{
     fromNodeIndex: number
   }> &
     Combinations<{ flowName: string }>

@@ -227,56 +227,56 @@ describe('thunks', () => {
       })
     })
 
-    it(`6 - assert that we can't advance the same flow twice concurrently`, () => {
-      const configuration = parse({
-        splitters: {
-          extends: '/',
-        },
-        flows: [
-          {
-            name: 'flow1',
-            graph: 'a:b,c',
-            rules: [
-              {
-                node_name: 'a',
-                next: () => () => () => ['b', 'c'],
-              },
-            ],
-          },
-        ],
-      })
-      const flow = getFlow(configuration.flows, 'flow1')
-
-      const { dispatch, getActions, getState } = getStore({
-        ...configuration,
-        activeFlows: [
-          {
-            id: '1',
-            flowId: flow.id,
-            activeNodesIndexes: [],
-          },
-        ],
-        finishedFlows: [],
-      })
-
-      return dispatch(
-        advanceGraphThunk(libSelector)(advanceFlowActionCreator({ id: '1', flowId: flow.id, toNodeIndex: 0 })),
-      ).then(() => {
-        expect(getActions()).toEqual(actions([advanceFlowActionCreator({ id: '1', flowId: flow.id, toNodeIndex: 0 })]))
-        expect(getState()).toEqual(
-          state({
-            ...configuration,
-            activeFlows: [
-              {
-                id: '1',
-                flowId: flow.id,
-                activeNodesIndexes: [0],
-              },
-            ],
-            finishedFlows: [],
-          }),
-        )
-      })
-    })
+    // it(`6 - assert that we can't advance the same flow twice concurrently`, () => {
+    //   const configuration = parse({
+    //     splitters: {
+    //       extends: '/',
+    //     },
+    //     flows: [
+    //       {
+    //         name: 'flow1',
+    //         graph: 'a:b,c',
+    //         rules: [
+    //           {
+    //             node_name: 'a',
+    //             next: () => () => () => ['b', 'c'],
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   })
+    //   const flow = getFlow(configuration.flows, 'flow1')
+    //
+    //   const { dispatch, getActions, getState } = getStore({
+    //     ...configuration,
+    //     activeFlows: [
+    //       {
+    //         id: '1',
+    //         flowId: flow.id,
+    //         activeNodesIndexes: [],
+    //       },
+    //     ],
+    //     finishedFlows: [],
+    //   })
+    //
+    //   return dispatch(
+    //     advanceGraphThunk(libSelector)(advanceFlowActionCreator({ id: '1', flowId: flow.id, toNodeIndex: 0 })),
+    //   ).then(() => {
+    //     expect(getActions()).toEqual(actions([advanceFlowActionCreator({ id: '1', flowId: flow.id, toNodeIndex: 0 })]))
+    //     expect(getState()).toEqual(
+    //       state({
+    //         ...configuration,
+    //         activeFlows: [
+    //           {
+    //             id: '1',
+    //             flowId: flow.id,
+    //             activeNodesIndexes: [0],
+    //           },
+    //         ],
+    //         finishedFlows: [],
+    //       }),
+    //     )
+    //   })
+    // })
   })
 })

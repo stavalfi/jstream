@@ -54,6 +54,7 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
 export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
   function advance(action: FlowActionByType[FlowActionType.advanceFlowGraph]): AdvanceGraphThunk {
     return (dispatch, getState) => {
+      dispatch(action)
       const { flows, activeFlows, ...restOfState } = reducerSelector(getState())
       if (!('splitters' in restOfState)) {
         return Promise.resolve([action])
@@ -68,42 +69,24 @@ export const advanceGraphThunk = (reducerSelector: FlowReducerSelector) =>
         return Promise.resolve([action])
       }
 
-      const { toNodeIndexes } = action.payload
+      const { toNodeIndex } = action.payload
 
-      // const toAdvanceAction = (nextNodeIndex: number) =>
-      //   advanceFlowActionCreator({
-      //     id: action.payload.id,
-      //     flowId: flow.id,
-      //     ...('name' in flow && { flowName: flow.name }),
-      //     fromNodeIndex: toNodeIndex,
-      //     toNodeIndex: nextNodeIndex,
-      //   })
+      const toAdvanceAction = (nextNodeIndex: number) =>
+        advanceFlowActionCreator({
+          id: action.payload.id,
+          flowId: flow.id,
+          ...('name' in flow && { flowName: flow.name }),
+          fromNodeIndex: toNodeIndex,
+          toNodeIndex: nextNodeIndex,
+        })
 
-      const promise = Promise.all(
-        toNodeIndexes.map(toNodeIndex => {
-          const toNode = flow.graph[toNodeIndex]
-          const sideEffect = findByNodeOrDefault(
-            flow.sideEffects,
-            sideEffect => 'node' in sideEffect && isSubsetOf(sideEffect.node.path, toNode.path),
-          )
-
-          const rule = findByNodeOrDefault(
-            flow.rules,
-            rule => 'node' in rule && isSubsetOf(rule.node.path, toNode.path),
-          )
-
-          return new Promise((res, rej) => {
-            try {
-              res(sideEffect && sideEffect.sideEffectFunc(flow)(toNode)())
-            } catch (e) {
-              rej(e)
-            }
-          })
-            .then(result => rule && 'next' in rule && rule.next(flow)(toNode, toNodeIndex, flow.graph)(result))
-            .catch(error => rule && 'error' in rule && rule.error(flow)(toNode, toNodeIndex, flow.graph)(error))
-            .then(nextNodeNames => nextNodeNames && (Array.isArray(nextNodeNames) ? nextNodeNames : [nextNodeNames]))
-        }),
+      const toNode = flow.graph[toNodeIndex]
+      const sideEffect = findByNodeOrDefault(
+        flow.sideEffects,
+        sideEffect => 'node' in sideEffect && isSubsetOf(sideEffect.node.path, toNode.path),
       )
+
+      const rule = findByNodeOrDefault(flow.rules, rule => 'node' in rule && isSubsetOf(rule.node.path, toNode.path))
 
       return new Promise((res, rej) => {
         try {
