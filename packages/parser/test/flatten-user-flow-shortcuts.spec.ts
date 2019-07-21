@@ -344,6 +344,7 @@ describe('flatten-user-flow-shortcuts', () => {
         maxConcurrency: 1,
         rules: [],
         sideEffects: [],
+        pathsGroups: [],
       },
     ]
     const actual = 'a'
@@ -376,6 +377,7 @@ describe('flatten-user-flow-shortcuts', () => {
         sideEffects: [],
         rules: [],
         maxConcurrency: 1,
+        pathsGroups: [],
       },
     ]
     const actual = 'flow1_a'
@@ -409,6 +411,7 @@ describe('flatten-user-flow-shortcuts', () => {
         sideEffects: [],
         rules: [],
         maxConcurrency: 1,
+        pathsGroups: [],
       },
     ]
     const actual = 'flow1_a:flow1'

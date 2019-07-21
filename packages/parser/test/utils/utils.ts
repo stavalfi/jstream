@@ -11,6 +11,7 @@ import {
   Configuration,
   UserFlow,
 } from '@parser/types'
+import { expect as chaiExpect } from 'chai'
 
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
 export type ExpectedFlow = {
@@ -38,8 +39,7 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
 export const createExpected = (
   expectedFlowsArrays: ExpectedFlow[],
   flowsConfig: Required<Configuration<UserFlow>>,
-): (Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules' | 'maxConcurrency'> &
-  Partial<Pick<ParsedFlow, 'maxConcurrency'>>)[] =>
+): (Partial<Omit<ParsedFlow, 'id' | 'graph'>> & Pick<ParsedFlow, 'graph'> & ParsedFlowOptionalFields)[] =>
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
@@ -132,21 +132,21 @@ export function assertEqualFlows(
   expectedFlowsArray.forEach((expectedFlow, i) => {
     const actualFlow = findFlowByFlow(actualFlowsArray, expectedFlow)
     // todo: understand how to print this error message when a test fails.
-    // const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
-    //   'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
-    // } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
-    //     \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
-    //     \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
+    const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
+      'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
+    } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
+        \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
+        \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
     if (actualFlow) {
-      expect(actualFlow.graph).toEqual(expectedFlow.graph)
+      chaiExpect(actualFlow.graph, errorMessage).deep.equal(expectedFlow.graph)
       if ('defaultNodeIndex' in expectedFlow) {
-        expect('defaultNodeIndex' in actualFlow).toEqual(true)
+        chaiExpect('defaultNodeIndex' in actualFlow, errorMessage).deep.equal(true)
         // @ts-ignore   -> i have expect in the previous line.
-        expect(actualFlow.defaultNodeIndex).toEqual(expectedFlow.defaultNodeIndex)
+        chaiExpect(actualFlow.defaultNodeIndex, errorMessage).deep.equal(expectedFlow.defaultNodeIndex)
       }
       if (count === 0 && 'extendedFlowIndex' in expectedFlow) {
         const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex as number]
-        expect('extendedFlowIndex' in actualFlow).toEqual(true)
+        chaiExpect('extendedFlowIndex' in actualFlow, errorMessage).deep.equal(true)
         // @ts-ignore   -> i have expect in the previous line.
         const actualExtendedFlow = actualFlowsArray[actualFlow.extendedFlowIndex as number]
 
@@ -156,16 +156,16 @@ export function assertEqualFlows(
           // @ts-ignore
           expectedExtendedFlow.defaultNodeIndex === actualExtendedFlow.defaultNodeIndex &&
           graphToString(expectedExtendedFlow.graph) === graphToString(actualExtendedFlow.graph)
-        expect(
+        chaiExpect(
           isEqual,
-          // // @ts-ignore
-          // `${count === 0 ? 'expected' : 'actual'} flow: ${expectedFlow.name} - has different extended flow`,
-        ).toEqual(true)
+          // @ts-ignore
+          `${count === 0 ? 'expected' : 'actual'} flow: ${expectedFlow.name} - has different extended flow`,
+        ).deep.equal(true)
       }
     }
   })
 
-  // assertEqualFlows(actualFlowsArray1, expectedFlowsArray1, count + 1)
+  assertEqualFlows(actualFlowsArray1, expectedFlowsArray1, count + 1)
 }
 
 function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: ParsedFlowWithDisplyName) {
@@ -180,19 +180,19 @@ function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: Pa
   })
 }
 
-// function flowToString(flow: ParsedFlowWithDisplyName) {
-//   let str = ''
-//   if ('name' in flow) {
-//     str += `name: ${flow.name}\n`
-//   }
-//   if ('extendedFlowIndex' in flow) {
-//     str += `extendedFlowIndex: ${flow.extendedFlowIndex}\n`
-//   }
-//   if ('defaultNodeIndex' in flow) {
-//     str += `defaultNodeIndex: ${flow.defaultNodeIndex}`
-//   }
-//   return str
-// }
+function flowToString(flow: ParsedFlowWithDisplyName) {
+  let str = ''
+  if ('name' in flow) {
+    str += `name: ${flow.name}\n`
+  }
+  if ('extendedFlowIndex' in flow) {
+    str += `extendedFlowIndex: ${flow.extendedFlowIndex}\n`
+  }
+  if ('defaultNodeIndex' in flow) {
+    str += `defaultNodeIndex: ${flow.defaultNodeIndex}`
+  }
+  return str
+}
 
 export function graphToString(sortedGraph: (Node & { displayName?: string })[]) {
   // i === row number

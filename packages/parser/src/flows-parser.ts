@@ -13,6 +13,7 @@ import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import uuid from 'uuid/v1'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
 import { parseRules } from '@parser/rules-parser'
+import { flowPathsGroups } from '@parser/flow-paths-groups'
 
 type ParseMultipleFlows = ({
   userFlows,
@@ -49,6 +50,7 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           }),
           maxConcurrency: parsedFlow.maxConcurrency,
           graph: parsedFlow.graph,
+          pathsGroups: parsedFlow.pathsGroups,
           sideEffects: parsedFlow.sideEffects,
           rules: parsedFlow.rules,
         }))
@@ -137,9 +139,11 @@ type ComputeDefaultNodeIndexObject = ({
   flowToParse: ParsedUserFlow
   parsedGraph: Graph
   extendedParsedFlow?: AlgorithmParsedFlow
-}) => {
-  defaultNodeIndex?: number
-}
+}) =>
+  | {
+      defaultNodeIndex: number
+    }
+  | {}
 const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
   parsedFlowsUntilNow,
   flowToParse,
@@ -253,13 +257,19 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     extendedParsedFlow,
   })
 
-  const parsedFlow = {
+  const parsedFlow: ParsedFlow = {
     id: uuid(),
     ...(extendedParsedFlow && { extendedFlowId: extendedParsedFlow.id }),
     ...(flowToParse.name && { name: flowToParse.name }),
     ...(extendedParsedFlow && { extendedParsedFlow }),
     ...defaultNodeIndexObject,
     graph: updatedParsedGraph,
+    pathsGroups: flowPathsGroups({
+      parsedFlows: parsedFlowsUntilNow,
+      parsedGraph: updatedParsedGraph,
+      flowToParse,
+      extendedParsedFlow,
+    }),
     maxConcurrency: flowToParse.maxConcurrency,
     sideEffects: parseSideEffects(splitters)({
       parsedFlowsUntilNow,

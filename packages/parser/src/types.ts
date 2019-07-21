@@ -20,6 +20,7 @@ export type ParsedFlow = {
   id: string
   maxConcurrency: number
   graph: Graph
+  pathsGroups: string[][]
   sideEffects: SideEffect[]
   rules: Rule<{ node: { path: Path } }>[]
 } & ParsedFlowOptionalFields
@@ -36,8 +37,6 @@ export type AlgorithmParsedFlow = ParsedFlow &
         extendedFlowId: string
         extendedParsedFlow: AlgorithmParsedFlow
       }
-    | { extendedFlowId: string }
-    | { extendedParsedFlow: AlgorithmParsedFlow }
     | {})
 
 export type SideEffectFunction = (
