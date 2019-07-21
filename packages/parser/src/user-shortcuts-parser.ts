@@ -29,6 +29,16 @@ function getFlowNameObject(splitters: Splitters, parsedFlowsUntilNow: ParsedFlow
   }
 }
 
+function maxConcurrencyToNumber(maxConcurrency: boolean | number): number {
+  if (maxConcurrency === true) {
+    return Infinity
+  }
+  if (maxConcurrency === false) {
+    return 1
+  }
+  return maxConcurrency
+}
+
 export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUntilNow: ParsedFlow[]) =>
   function flatten(flow: UserFlow): ParsedUserFlow[] {
     if (typeof flow === 'string') {
@@ -52,7 +62,7 @@ export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUn
       ...(flowObject.default_path && {
         defaultPath: flowObject.default_path.split(splitters.extends),
       }),
-      concurrency: 'concurrency' in flowObject ? flowObject.concurrency : false,
+      maxConcurrency: 'max_concurrency' in flowObject ? maxConcurrencyToNumber(flowObject.max_concurrency) : 1,
       side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
       rules: 'rules' in flowObject ? flowObject.rules : [],
     }

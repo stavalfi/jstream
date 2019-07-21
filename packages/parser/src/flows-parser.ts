@@ -47,7 +47,7 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           ...('defaultNodeIndex' in parsedFlow && {
             defaultNodeIndex: parsedFlow.defaultNodeIndex,
           }),
-          concurrency: parsedFlow.concurrency,
+          maxConcurrency: parsedFlow.maxConcurrency,
           graph: parsedFlow.graph,
           sideEffects: parsedFlow.sideEffects,
           rules: parsedFlow.rules,
@@ -260,7 +260,7 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     ...(extendedParsedFlow && { extendedParsedFlow }),
     ...defaultNodeIndexObject,
     graph: updatedParsedGraph,
-    concurrency: flowToParse.concurrency,
+    maxConcurrency: flowToParse.maxConcurrency,
     sideEffects: parseSideEffects(splitters)({
       parsedFlowsUntilNow,
       flowName: flowToParse.name,

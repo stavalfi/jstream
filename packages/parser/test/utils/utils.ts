@@ -15,7 +15,7 @@ import {
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
 export type ExpectedFlow = {
   name?: string
-  concurrency?: boolean | number // it should be mandatory but we are too lazy to specify it in every test.
+  maxConcurrency?: number // it should be mandatory but we are too lazy to specify it in every test.
   graph: ExpectedFlowGraphNode[]
   defaultNodeIndex?: number
   extendedFlowIndex?: number
@@ -30,7 +30,7 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
           [`${path[0]}${i}${extendsSplitter}${path.slice(1).join(extendsSplitter)}`]: [[], []],
         },
       ],
-      concurrency: false,
+      maxConcurrency: 1,
       defaultNodeIndex: 0,
     }),
   )
@@ -38,7 +38,8 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
 export const createExpected = (
   expectedFlowsArrays: ExpectedFlow[],
   flowsConfig: Required<Configuration<UserFlow>>,
-): (Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules' | 'concurrency'> & Partial<Pick<ParsedFlow, 'concurrency'>>)[] =>
+): (Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules' | 'maxConcurrency'> &
+  Partial<Pick<ParsedFlow, 'maxConcurrency'>>)[] =>
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
