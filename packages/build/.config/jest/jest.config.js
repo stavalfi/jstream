@@ -37,6 +37,7 @@ module.exports = {
       testPathIgnorePatterns: ['node_modules'],
       setupFiles: [testPolyfillsFilePath],
       globals: {
+        __DEV__: true,
         'ts-jest': {
           tsConfig: linterTsconfigPath,
           babelConfig: require(babelRcPath),

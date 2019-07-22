@@ -546,7 +546,6 @@ describe('multiple-flows-in-first-layer', () => {
     assertEqualFlows(expectedFlows, actualFlows)
   })
 
-  // todo: need to fix this test. it failed after moving to ts.
   it('12', () => {
     const flowsConfig = (graph: UserFlow) => ({
       splitters: {
@@ -784,6 +783,7 @@ describe('multiple-flows-in-first-layer', () => {
           { flow3_flow2: [[1], []] }, // 2
         ],
         defaultNodeIndex: 1,
+        pathsGroups: [[1, 2, 3], [1, 2, 4], [1, 5]],
       },
     ]
 

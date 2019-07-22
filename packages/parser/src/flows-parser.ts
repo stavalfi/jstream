@@ -10,7 +10,7 @@ import {
 } from '@parser/utils'
 import { validateFlowToParse } from '@parser/flow-validator'
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
-import uuid from 'uuid/v1'
+import { uuid } from '@flow/utils'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
 import { parseRules } from '@parser/rules-parser'
 import { flowPathsGroups } from '@parser/flow-paths-groups'

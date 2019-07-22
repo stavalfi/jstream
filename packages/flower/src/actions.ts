@@ -1,4 +1,4 @@
-import uuid from 'uuid/v1'
+import { uuid } from '@flow/utils'
 import { userInputNodeToNodeIndex } from '@flower/utils'
 import { isSubsetOf } from '@flow/parser'
 import {

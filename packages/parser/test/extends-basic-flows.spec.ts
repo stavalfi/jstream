@@ -973,27 +973,33 @@ describe('extends-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
+        pathsGroups: [['1']],
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
+        pathsGroups: [['2']],
       },
       {
         graph: [{ a: [[], [1]] }, { b: [[0], []] }],
+        pathsGroups: [['0', '1'], ['0', '2']],
       },
       {
         name: 'flow0',
         graph: [{ flow0: [[], []] }],
         defaultNodeIndex: 0,
+        pathsGroups: [['1']],
       },
       {
         name: 'flow1',
         graph: [{ flow1: [[], []] }],
         defaultNodeIndex: 0,
+        pathsGroups: [['2']],
       },
       {
         graph: [{ flow0: [[], [1]] }, { flow1: [[0], []] }],
+        pathsGroups: [['0', '1'], ['0', '2']],
       },
     ]
 

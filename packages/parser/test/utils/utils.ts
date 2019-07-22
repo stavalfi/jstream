@@ -1,6 +1,6 @@
 import { parse } from '@parser/index'
 import { distractDisplayNameBySplitters, graphNodeToDisplayName } from '@parser/utils'
-import { table } from 'table'
+import { table as printMatrix } from 'table'
 import {
   Graph,
   Node,
@@ -20,6 +20,7 @@ export type ExpectedFlow = {
   graph: ExpectedFlowGraphNode[]
   defaultNodeIndex?: number
   extendedFlowIndex?: number
+  pathsGroups?: (number | string)[][]
 }
 
 export const declareFlows = (n: number, path: Path, extendsSplitter: string): ExpectedFlow[] =>
@@ -43,6 +44,9 @@ export const createExpected = (
   expectedFlowsArrays.map(flowToParse => ({
     ...flowToParse,
     graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
+    ...(flowToParse.pathsGroups
+      ? { pathsGroups: flowToParse.pathsGroups.map(array => array.map(groupId => `${groupId}`)) }
+      : { pathsGroups: undefined }),
   }))
 
 const convertExpectedFlowGraphArray = (
@@ -111,6 +115,7 @@ function sortGraph(graph: Graph, splitters = { extends: '_', identifier: '/' }):
 
 type ParsedFlowWithDisplyName = {
   graph: (Node & { displayName?: string })[]
+  pathsGroups?: ParsedFlow['pathsGroups']
 } & ParsedFlowOptionalFields
 
 export function assertEqualFlows(
@@ -131,7 +136,6 @@ export function assertEqualFlows(
   }
   expectedFlowsArray.forEach((expectedFlow, i) => {
     const actualFlow = findFlowByFlow(actualFlowsArray, expectedFlow)
-    // todo: understand how to print this error message when a test fails.
     const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
       'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
     } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
@@ -143,6 +147,9 @@ export function assertEqualFlows(
         chaiExpect('defaultNodeIndex' in actualFlow, errorMessage).deep.equal(true)
         // @ts-ignore   -> i have expect in the previous line.
         chaiExpect(actualFlow.defaultNodeIndex, errorMessage).deep.equal(expectedFlow.defaultNodeIndex)
+      }
+      if (count === 0 && expectedFlow.pathsGroups) {
+        assertPathsGroupsEqual(expectedFlow, actualFlow, count)
       }
       if (count === 0 && 'extendedFlowIndex' in expectedFlow) {
         const expectedExtendedFlow = expectedFlowsArray[expectedFlow.extendedFlowIndex as number]
@@ -166,6 +173,42 @@ export function assertEqualFlows(
   })
 
   assertEqualFlows(actualFlowsArray1, expectedFlowsArray1, count + 1)
+}
+
+function assertPathsGroupsEqual(
+  expectedFlow: ParsedFlowWithDisplyName,
+  actualFlow: ParsedFlowWithDisplyName,
+  count: number,
+) {
+  if (count > 1) {
+    return
+  }
+  const expected = expectedFlow.pathsGroups
+  const actual = actualFlow.pathsGroups
+  if (expected) {
+    chaiExpect(
+      Boolean(actual),
+      `${count === 0 ? 'expected' : 'actual'} flow should have pathsGroups but it doesn't have`,
+    ).deep.equal(true)
+    if (actual) {
+      const expectedArray = expected.flatMap(x => x)
+      const actualArray = actual.flatMap(x => x)
+      const differentGroupsInExpected = Array.from(new Set(expectedArray))
+      for (const expectedGroupId of differentGroupsInExpected) {
+        const indexesWithSameValueInExpected = expectedArray.reduce(
+          (acc: number[], groupId, i) => (groupId === expectedGroupId ? [i, ...acc] : acc),
+          [],
+        )
+        const errorMessage = `expected pathsGroups is different then actual pathsGroups.\n\nexpected: (every line is different array. left side= index 0)\n${table(
+          expected,
+        )}\nactual:\n${table(actual)}\n`
+
+        const actualValues = actualArray.filter((_, i) => indexesWithSameValueInExpected.includes(i))
+        chaiExpect(Array.from(new Set(actualValues)).length === 1, errorMessage).deep.equal(true)
+      }
+    }
+  }
+  assertPathsGroupsEqual(actualFlow, expectedFlow, count + 1)
 }
 
 function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: ParsedFlowWithDisplyName) {
@@ -212,4 +255,15 @@ export function graphToString(sortedGraph: (Node & { displayName?: string })[]) 
     node.childrenIndexes.forEach(j => (matrix[i + 1][0] = node.displayName as string))
   })
   return table(matrix)
+}
+
+// ensure matrix have a consistent number of cells before printing it using `table` lib.
+function table(matrix: any[]) {
+  const maxLength = matrix.reduce((max, array) => (array.length > max ? array.length : max), 0)
+  const fixedMatrix = matrix.map(array =>
+    array.length < maxLength
+      ? array.concat(Array.from(new Array(maxLength - array.length).keys()).map(() => ''))
+      : array,
+  )
+  return printMatrix(fixedMatrix)
 }

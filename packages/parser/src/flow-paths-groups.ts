@@ -1,5 +1,5 @@
-import uuid from 'uuid/v1'
 import { AlgorithmParsedFlow, Graph, ParsedFlow, UserFlowObject } from '@parser/types'
+import { uuid } from '@flow/utils'
 
 type FlowPathsGroups = ({
   parsedFlows,
@@ -14,8 +14,9 @@ type FlowPathsGroups = ({
 }) => ParsedFlow['pathsGroups']
 
 export const flowPathsGroups: FlowPathsGroups = ({ parsedFlows, flowToParse, parsedGraph, extendedParsedFlow }) => {
+  const mainGroupId = uuid()
   if (parsedGraph.length === 1 && parsedGraph[0].path.length === 1) {
-    return [[uuid()]]
+    return [[mainGroupId]]
   }
 
   return parsedGraph
@@ -42,7 +43,7 @@ export const flowPathsGroups: FlowPathsGroups = ({ parsedFlows, flowToParse, par
       const actualRepeats = repeats / parsedFlow.graph.length
       return Array.from(Array(actualRepeats).keys()).flatMap(() => replaceGroupsIds(parsedFlow.pathsGroups))
     })
-    .map(subFlowPathGroups => [uuid(), ...subFlowPathGroups])
+    .map(subFlowPathGroups => [mainGroupId, ...subFlowPathGroups])
 }
 
 function findParsedFlow(
@@ -77,5 +78,5 @@ function replaceGroupsIds(pathsGroups: ParsedFlow['pathsGroups']): ParsedFlow['p
       newPathsGroups[i][j] = oldGroupIdToNewGroupId[pathsGroups[i][j]]
     }
   }
-  return pathsGroups
+  return newPathsGroups
 }
