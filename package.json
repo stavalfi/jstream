@@ -8,8 +8,8 @@
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "bootstrap": "lerna bootstrap",
-    "prepare": "yarn run clean && lerna run build:prod --sort && yarn bootstrap",
-    "prepublishOnly": "yarn run clean && lerna run build:dev && yarn prepare && lerna exec --parallel -- pkg-ok && lerna run test --parallel"
+    "prepare1": "yarn run clean && lerna run build:prod --sort && yarn bootstrap",
+    "prepublishOnly1": "yarn run clean && lerna run build:dev && yarn prepare && lerna exec --parallel -- pkg-ok && lerna run test --parallel"
   },
   "devDependencies": {
     "husky": "^2.3.0",

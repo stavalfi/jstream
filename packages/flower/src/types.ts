@@ -10,7 +10,7 @@ export enum FlowActionType {
   finishFlow = 'finishFlow',
 }
 
-type FlowActionPayload = {
+export type FlowActionPayload = {
   updateConfig: Configuration<ParsedFlow>
   executeFlow: { id: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
   advanceFlowGraph: { id: string; flowId: string; toNodeIndex: number } & Combinations<{
@@ -43,10 +43,14 @@ export type ExecuteFlowThunkCreator = (
   reducerSelector: FlowReducerSelector,
 ) => (flow: { id: string } & Combinations<{ name: string }>) => ExecuteFlowThunk
 
+export type Request = FlowActionPayload['advanceFlowGraph']
+export type NodeConcurrency = { concurrencyCount: number; requests: Request[] }
+export type GraphConcurrency = NodeConcurrency[]
 export type ActiveFlow = {
   id: string
   flowId: string
-  activeNodesIndexes: number[]
+  graphConcurrency: GraphConcurrency
+  queue: Request[]
 } & Combinations<{ flowName: string }>
 
 export type FlowState = {
@@ -54,6 +58,7 @@ export type FlowState = {
   flows: ParsedFlow[]
   activeFlows: ActiveFlow[]
   finishedFlows: ActiveFlow[]
+  advanced: Request[]
 }
 
 export type FlowReducer = Reducer<FlowState, FlowAction>

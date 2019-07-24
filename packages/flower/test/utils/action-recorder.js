@@ -7,6 +7,6 @@ export const recordActionsEnhancer = createStore => (...args) => {
       actions.push(action)
       return store.dispatch(action)
     },
-    getActions: () => actions,
+    getActions: () => actions.sort(),
   }
 }

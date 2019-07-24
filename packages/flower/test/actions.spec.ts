@@ -41,14 +41,14 @@ describe('actions', () => {
   it('3', () => {
     expect(
       advanceFlowActionCreator({
-        toNodeIndex: 2,
+        toNodeIndex: 0,
         id: 'id',
         flowId: '1',
       }),
     ).toEqual({
       type: FlowActionType.advanceFlowGraph,
       payload: {
-        toNodeIndex: 2,
+        toNodeIndex: 0,
         id: 'id',
         flowId: '1',
       },
@@ -80,6 +80,22 @@ describe('actions', () => {
     ).toEqual({
       type: FlowActionType.finishFlow,
       payload: {
+        id: 'id',
+        flowId: '1',
+      },
+    })
+  })
+  it('6 go directly to node that is not the head', () => {
+    expect(
+      advanceFlowActionCreator({
+        toNodeIndex: 2,
+        id: 'id',
+        flowId: '1',
+      }),
+    ).toEqual({
+      type: FlowActionType.advanceFlowGraph,
+      payload: {
+        toNodeIndex: 2,
         id: 'id',
         flowId: '1',
       },
