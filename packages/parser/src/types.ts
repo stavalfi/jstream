@@ -65,11 +65,19 @@ export type UserFlow = UserGraph | UserFlowObject
 
 export type NextFunctionRule = (
   flow: ParsedFlow,
-) => (toNode: Node, i?: number, graph?: Node[]) => (result: any) => string | string[]
+) => (
+  toNode: Node,
+  i?: number,
+  graph?: Node[],
+) => (result: any) => string | string[] | Promise<string> | Promise<string[]>
 
 export type ErrorFunctionRule = (
   flow: ParsedFlow,
-) => (toNode: Node, i?: number, graph?: Node[]) => (error: any) => string | string[]
+) => (
+  toNode: Node,
+  i?: number,
+  graph?: Node[],
+) => (error: any) => string | string[] | Promise<string> | Promise<string[]>
 
 export type Rule<T> = (
   | { next: NextFunctionRule; error: ErrorFunctionRule }

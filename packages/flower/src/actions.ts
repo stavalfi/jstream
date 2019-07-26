@@ -37,16 +37,23 @@ export const finishFlowActionCreator: FlowActionCreator<FlowActionType.finishFlo
   }
 }
 
-export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flow => dispatch => {
+export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flow => (dispatch, getState) => {
   const action = dispatch(
     executeFlowActionCreator({ flowId: flow.id, ...('name' in flow && { flowName: flow.name }), id: uuid() }),
   )
+
+  const { flows, activeFlows } = reducerSelector(getState())
+  const flowDetails = getFlowDetails(flows, activeFlows, action.payload.id)
+  if (!('flow' in flowDetails) || !('activeFlow' in flowDetails)) {
+    return Promise.resolve([])
+  }
+
   return dispatch(
     advanceGraphThunkCreator(reducerSelector)(
       advanceFlowActionCreator({
         id: action.payload.id,
         flowId: flow.id,
-        ...('name' in flow && { flowName: flow.name }),
+        ...('name' in flowDetails.flow && { flowName: flowDetails.flow.name }),
         toNodeIndex: 0,
       }),
     ),
@@ -107,9 +114,24 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
       rej(e)
     }
   })
-    .then(result => rule && 'next' in rule && rule.next(flow)(toNode, request.toNodeIndex, flow.graph)(result))
-    .catch(error => rule && 'error' in rule && rule.error(flow)(toNode, request.toNodeIndex, flow.graph)(error))
-    .then(nextNodeNames => (nextNodeNames ? (Array.isArray(nextNodeNames) ? nextNodeNames : [nextNodeNames]) : []))
+    .then<string | string[], string | string[]>(
+      result =>
+        rule && 'next' in rule ? rule.next(flow)(toNode, request.toNodeIndex, flow.graph)(result) : Promise.resolve([]),
+      error =>
+        rule && 'error' in rule
+          ? rule.error(flow)(toNode, request.toNodeIndex, flow.graph)(error)
+          : Promise.resolve([]),
+    )
+    .then<string[], string[]>(
+      nextNodeNames => (nextNodeNames ? (Array.isArray(nextNodeNames) ? nextNodeNames : [nextNodeNames]) : []),
+      error => {
+        console.log(
+          'custom rule function threw error. this library will assume that this rule returned an empty array instead. error:',
+          error,
+        )
+        return []
+      },
+    )
     .then(nextNodeNames =>
       nextNodeNames
         .map(nodeName =>
