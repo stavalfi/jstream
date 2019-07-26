@@ -71,3 +71,11 @@ export const getFlowDetails: GetFlowDetails = (flows, activeFlows, activeFlowId)
     activeFlowIndex,
   }
 }
+
+export function findByNodeOrDefault<T>(array: T[], predicate: (t1: T) => boolean): T | undefined {
+  const element = array.find(predicate)
+  return element || array.find(element => !('node' in element))
+}
+
+export const flatMapPromisesResults = <T>(promises: Promise<T[]>[]): Promise<T[]> =>
+  Promise.all(promises).then(array => array.flatMap(array => array))
