@@ -12,12 +12,12 @@ export enum FlowActionType {
 
 export type FlowActionPayload = {
   updateConfig: Configuration<ParsedFlow>
-  executeFlow: { id: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
-  advanceFlowGraph: { id: string; flowId: string; toNodeIndex: number } & Combinations<{
+  executeFlow: { activeFlowId: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
+  advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & Combinations<{
     fromNodeIndex: number
   }> &
     Combinations<{ flowName: string }>
-  finishFlow: { id: String; flowId: string } & Combinations<{ flowName: string }>
+  finishFlow: { activeFlowId: String; flowId: string } & Combinations<{ flowName: string }>
 }
 
 export type FlowActionCreator<ActionType extends keyof FlowActionPayload> = (

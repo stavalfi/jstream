@@ -43,7 +43,7 @@ describe('advanceFlowGraph', () => {
     expect(
       reducer(
         initialState,
-        advanceFlowActionCreator({ id: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 }),
+        advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 }),
       ),
     ).toEqual(
       state({
@@ -66,7 +66,7 @@ describe('advanceFlowGraph', () => {
           },
         ],
         finishedFlows: [],
-        advanced: [{ id: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 }],
+        advanced: [{ activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 }],
       }),
     )
   })
@@ -96,12 +96,12 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ id: '1', flowName: 'composed-flow' }),
+            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
           ),
-          advanceFlowActionCreator({ id: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
         ),
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: 'composed-flow',
           fromNodeIndex: 0,
@@ -135,7 +135,7 @@ describe('advanceFlowGraph', () => {
         finishedFlows: [],
         advanced: [
           {
-            id: '1',
+            activeFlowId: '1',
             flowId: flow.id,
             flowName: 'composed-flow',
             fromNodeIndex: 0,
@@ -171,12 +171,12 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ id: '1', flowName: 'composed-flow' }),
+            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
           ),
-          advanceFlowActionCreator({ id: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
         ),
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: 'composed-flow',
           fromNodeIndex: 1,
@@ -208,7 +208,7 @@ describe('advanceFlowGraph', () => {
           },
         ],
         finishedFlows: [],
-        advanced: [{ id: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }],
+        advanced: [{ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }],
       }),
     )
   })
@@ -237,9 +237,9 @@ describe('advanceFlowGraph', () => {
       reducer(
         reducer(
           reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ id: '1', flowName: 'composed-flow' }),
+          executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
         ),
-        advanceFlowActionCreator({ id: '2', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+        advanceFlowActionCreator({ activeFlowId: '2', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
       ),
     ).toEqual(
       state({
@@ -296,11 +296,11 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ id: '1', flowName: 'composed-flow' }),
+            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
           ),
-          finishFlowActionCreator({ id: '1', flowId: flow.id }),
+          finishFlowActionCreator({ activeFlowId: '1', flowId: flow.id }),
         ),
-        advanceFlowActionCreator({ id: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+        advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
       ),
     ).toEqual(
       state({
@@ -357,12 +357,12 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ id: '1', flowName: 'composed-flow' }),
+            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
           ),
-          advanceFlowActionCreator({ id: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
         ),
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: 'composed-flow',
           fromNodeIndex: 0,
@@ -402,7 +402,7 @@ describe('advanceFlowGraph', () => {
           },
         ],
         finishedFlows: [],
-        advanced: [{ id: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }],
+        advanced: [{ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }],
       }),
     )
   })
@@ -433,12 +433,12 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ id: '1', flowName: 'a' }),
+            executeFlowActionCreator({ activeFlowId: '1', flowName: 'a' }),
           ),
-          advanceFlowActionCreator({ id: '1', flowId: flow.id, flowName: 'a', toNodeIndex: 0 }),
+          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'a', toNodeIndex: 0 }),
         ),
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: 'a',
           toNodeIndex: 0,
@@ -457,7 +457,7 @@ describe('advanceFlowGraph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: 'a',
                 toNodeIndex: 0,
@@ -468,7 +468,7 @@ describe('advanceFlowGraph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: 'a',
                     toNodeIndex: 0,
@@ -527,7 +527,7 @@ describe('advanceFlowGraph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           fromNodeIndex: 0,
@@ -544,7 +544,7 @@ describe('advanceFlowGraph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 fromNodeIndex: 0,
@@ -560,7 +560,7 @@ describe('advanceFlowGraph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     fromNodeIndex: 0,
@@ -620,7 +620,7 @@ describe('advanceFlowGraph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 1,
@@ -650,7 +650,7 @@ describe('advanceFlowGraph', () => {
         finishedFlows: [],
         advanced: [
           {
-            id: '1',
+            activeFlowId: '1',
             flowId: flow.id,
             flowName: flow.name,
             toNodeIndex: 1,
@@ -703,7 +703,7 @@ describe('advanceFlowGraph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 1,
@@ -719,7 +719,7 @@ describe('advanceFlowGraph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 1,
@@ -734,7 +734,7 @@ describe('advanceFlowGraph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 1,
@@ -775,7 +775,7 @@ describe('advanceFlowGraph', () => {
           flowId: flow.id,
           queue: [
             {
-              id: '1',
+              activeFlowId: '1',
               flowId: flow.id,
               flowName: flow.name,
               toNodeIndex: 1,
@@ -790,7 +790,7 @@ describe('advanceFlowGraph', () => {
               concurrencyCount: 1,
               requests: [
                 {
-                  id: '1',
+                  activeFlowId: '1',
                   flowId: flow.id,
                   flowName: flow.name,
                   toNodeIndex: 1,
@@ -807,7 +807,7 @@ describe('advanceFlowGraph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 1,
@@ -823,13 +823,13 @@ describe('advanceFlowGraph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 1,
               },
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 1,
@@ -844,13 +844,13 @@ describe('advanceFlowGraph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 1,
                   },
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 1,
@@ -904,7 +904,7 @@ describe('advanceFlowGraph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 0,
@@ -920,7 +920,7 @@ describe('advanceFlowGraph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 0,
@@ -931,7 +931,7 @@ describe('advanceFlowGraph', () => {
                 concurrencyCount: 0,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 0,

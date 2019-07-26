@@ -27,7 +27,7 @@ describe('executeFlow', () => {
     expect(
       reducer(
         reducer(initialState, updateConfigActionCreator(configuration)),
-        executeFlowActionCreator({ flowName: 'a', id: '1' }),
+        executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
       ),
     ).toEqual(
       state({
@@ -72,9 +72,9 @@ describe('executeFlow', () => {
       reducer(
         reducer(
           reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ flowName: 'a', id: '1' }),
+          executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
         ),
-        executeFlowActionCreator({ flowName: 'a', id: '1' }),
+        executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
       ),
     ).toEqual(
       state({
@@ -119,9 +119,9 @@ describe('executeFlow', () => {
       reducer(
         reducer(
           reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ flowName: 'a', id: '1' }),
+          executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
         ),
-        executeFlowActionCreator({ flowName: 'a', id: '2' }),
+        executeFlowActionCreator({ flowName: 'a', activeFlowId: '2' }),
       ),
     ).toEqual(
       state({
@@ -179,11 +179,11 @@ describe('executeFlow', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ flowName: 'a', id: '1' }),
+            executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
           ),
-          finishFlowActionCreator({ id: '1', flowId: configuration.flows[0].id }),
+          finishFlowActionCreator({ activeFlowId: '1', flowId: configuration.flows[0].id }),
         ),
-        executeFlowActionCreator({ flowName: 'a', id: '1' }),
+        executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
       ),
     ).toEqual(
       state({

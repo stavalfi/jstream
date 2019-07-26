@@ -14,11 +14,11 @@ import { advanceFlowActionCreator, executeFlowActionCreator } from '@flower/acti
 
 export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flow => (dispatch, getState) => {
   const action = dispatch(
-    executeFlowActionCreator({ flowId: flow.id, ...('name' in flow && { flowName: flow.name }), id: uuid() }),
+    executeFlowActionCreator({ flowId: flow.id, ...('name' in flow && { flowName: flow.name }), activeFlowId: uuid() }),
   )
 
   const { flows, activeFlows } = reducerSelector(getState())
-  const flowDetails = getFlowDetails(flows, activeFlows, action.payload.id)
+  const flowDetails = getFlowDetails(flows, activeFlows, action.payload.activeFlowId)
   if (!('flow' in flowDetails) || !('activeFlow' in flowDetails)) {
     return Promise.resolve([])
   }
@@ -26,7 +26,7 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
   return dispatch(
     advanceGraphThunkCreator(reducerSelector)(
       advanceFlowActionCreator({
-        id: action.payload.id,
+        activeFlowId: action.payload.activeFlowId,
         flowId: flow.id,
         ...('name' in flowDetails.flow && { flowName: flowDetails.flow.name }),
         toNodeIndex: 0,
@@ -67,7 +67,7 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
 
   const { splitters } = restOfState
 
-  const flowDetails = getFlowDetails(flows, activeFlows, request.id)
+  const flowDetails = getFlowDetails(flows, activeFlows, request.activeFlowId)
   if (!('flow' in flowDetails) || !('activeFlow' in flowDetails)) {
     return Promise.resolve([])
   }
@@ -118,7 +118,7 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
         )
         .map(nextNodeIndex =>
           advanceFlowActionCreator({
-            id: request.id,
+            activeFlowId: request.activeFlowId,
             flowId: flow.id,
             ...('name' in flow && { flowName: flow.name }),
             fromNodeIndex: request.toNodeIndex,

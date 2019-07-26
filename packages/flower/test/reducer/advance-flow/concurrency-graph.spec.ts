@@ -52,7 +52,7 @@ describe('try to advance in complex concurrency graph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 0,
@@ -68,7 +68,7 @@ describe('try to advance in complex concurrency graph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 0,
@@ -79,7 +79,7 @@ describe('try to advance in complex concurrency graph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 0,
@@ -154,7 +154,7 @@ describe('try to advance in complex concurrency graph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 0,
@@ -170,7 +170,7 @@ describe('try to advance in complex concurrency graph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 0,
@@ -181,7 +181,7 @@ describe('try to advance in complex concurrency graph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 0,
@@ -256,7 +256,7 @@ describe('try to advance in complex concurrency graph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 0,
@@ -272,7 +272,7 @@ describe('try to advance in complex concurrency graph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 0,
@@ -283,7 +283,7 @@ describe('try to advance in complex concurrency graph', () => {
                 concurrencyCount: 1,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 0,
@@ -358,7 +358,7 @@ describe('try to advance in complex concurrency graph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 1,
@@ -374,7 +374,7 @@ describe('try to advance in complex concurrency graph', () => {
             flowId: flow.id,
             queue: [
               {
-                id: '1',
+                activeFlowId: '1',
                 flowId: flow.id,
                 flowName: flow.name,
                 toNodeIndex: 1,
@@ -389,7 +389,7 @@ describe('try to advance in complex concurrency graph', () => {
                 concurrencyCount: 0,
                 requests: [
                   {
-                    id: '1',
+                    activeFlowId: '1',
                     flowId: flow.id,
                     flowName: flow.name,
                     toNodeIndex: 1,
@@ -460,7 +460,7 @@ describe('try to advance in complex concurrency graph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           fromNodeIndex: 0,
@@ -491,7 +491,7 @@ describe('try to advance in complex concurrency graph', () => {
         finishedFlows: [],
         advanced: [
           {
-            id: '1',
+            activeFlowId: '1',
             flowId: flow.id,
             flowName: flow.name,
             fromNodeIndex: 0,
@@ -561,7 +561,7 @@ describe('try to advance in complex concurrency graph', () => {
       reducer(
         initialState,
         advanceFlowActionCreator({
-          id: '1',
+          activeFlowId: '1',
           flowId: flow.id,
           flowName: flow.name,
           toNodeIndex: 0,
@@ -591,7 +591,7 @@ describe('try to advance in complex concurrency graph', () => {
         finishedFlows: [],
         advanced: [
           {
-            id: '1',
+            activeFlowId: '1',
             flowId: flow.id,
             flowName: flow.name,
             toNodeIndex: 0,

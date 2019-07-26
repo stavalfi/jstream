@@ -25,7 +25,7 @@ describe('actions', () => {
       advanceFlowActionCreator({
         fromNodeIndex: 1,
         toNodeIndex: 2,
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       }),
     ).toEqual({
@@ -33,7 +33,7 @@ describe('actions', () => {
       payload: {
         fromNodeIndex: 1,
         toNodeIndex: 2,
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       },
     })
@@ -42,14 +42,14 @@ describe('actions', () => {
     expect(
       advanceFlowActionCreator({
         toNodeIndex: 0,
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       }),
     ).toEqual({
       type: FlowActionType.advanceFlowGraph,
       payload: {
         toNodeIndex: 0,
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       },
     })
@@ -58,14 +58,14 @@ describe('actions', () => {
     expect(
       executeFlowActionCreator({
         flowName: 'a',
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       }),
     ).toEqual({
       type: FlowActionType.executeFlow,
       payload: {
         flowName: 'a',
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       },
     })
@@ -74,13 +74,13 @@ describe('actions', () => {
   it('5', () => {
     expect(
       finishFlowActionCreator({
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       }),
     ).toEqual({
       type: FlowActionType.finishFlow,
       payload: {
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       },
     })
@@ -89,14 +89,14 @@ describe('actions', () => {
     expect(
       advanceFlowActionCreator({
         toNodeIndex: 2,
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       }),
     ).toEqual({
       type: FlowActionType.advanceFlowGraph,
       payload: {
         toNodeIndex: 2,
-        id: 'id',
+        activeFlowId: 'id',
         flowId: '1',
       },
     })

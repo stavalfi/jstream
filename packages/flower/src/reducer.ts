@@ -31,7 +31,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
       }
     }
     case 'executeFlow': {
-      const { id } = action.payload
+      const { activeFlowId } = action.payload
       const flow = flows.find(flow =>
         'flowName' in action.payload
           ? 'name' in flow && flow.name === action.payload.flowName
@@ -39,14 +39,14 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
       )
       if (
         !flow ||
-        activeFlows.some(activeflow => activeflow.id === id) ||
-        finishedFlows.some(activeflow => activeflow.id === id)
+        activeFlows.some(activeflow => activeflow.id === activeFlowId) ||
+        finishedFlows.some(activeflow => activeflow.id === activeFlowId)
       ) {
         return lastState
       } else {
         return immer(lastState, draft => {
           draft.activeFlows.push({
-            id,
+            id: activeFlowId,
             flowId: flow.id,
             ...('name' in flow && { flowName: flow.name }),
             queue: [],
@@ -59,9 +59,9 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
       }
     }
     case 'advanceFlowGraph': {
-      const { id, ...payload } = action.payload
+      const { activeFlowId, ...payload } = action.payload
 
-      const flowDetails = getFlowDetails(flows, activeFlows, id)
+      const flowDetails = getFlowDetails(flows, activeFlows, activeFlowId)
       if (!('flow' in flowDetails) || !('activeFlow' in flowDetails)) {
         return lastState
       }
@@ -128,15 +128,15 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
       })
     }
     case 'finishFlow': {
-      const { id } = action.payload
-      const activeFlow = activeFlows.find(activeFlow => activeFlow.id === id)
+      const { activeFlowId } = action.payload
+      const activeFlow = activeFlows.find(activeFlow => activeFlow.id === activeFlowId)
       if (!activeFlow || !flows.find(flow => flow.id === activeFlow.flowId)) {
         return lastState
       }
 
       return {
         ...lastState,
-        activeFlows: lastState.activeFlows.filter(activeFlow => activeFlow.id !== id),
+        activeFlows: lastState.activeFlows.filter(activeFlow => activeFlow.id !== activeFlowId),
         finishedFlows: [...lastState.finishedFlows, activeFlow],
       }
     }
