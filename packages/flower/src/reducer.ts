@@ -180,6 +180,16 @@ const canAdvance: CanAdvance = ({ flows, flow, graphConcurrency, toNodeIndex, re
     }
   }
 
+  // const didAllParentsAdvanced = flow.graph[toNodeIndex].parentsIndexes.every(parentIndex =>
+  //   graphConcurrency[toNodeIndex].requests.find(
+  //     request => 'fromNodeIndex' in request && request.fromNodeIndex === parentIndex,
+  //   ),
+  // )
+  //
+  // if (!didAllParentsAdvanced) {
+  //   return false
+  // }
+
   return flow.graph[toNodeIndex].path.every((flowName, i) => {
     const subFlow = flows.find(flow => 'name' in flow && flow.name === flowName)
     if (!subFlow) {

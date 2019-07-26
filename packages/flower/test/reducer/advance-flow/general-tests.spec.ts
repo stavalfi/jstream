@@ -865,4 +865,85 @@ describe('advanceFlowGraph', () => {
       }),
     )
   })
+
+  it(`12 - try to advance and to node with concurrency=0 and fallback to requests`, () => {
+    const configuration = parse({
+      splitters: {
+        extends: '/',
+      },
+      flows: [
+        {
+          graph: 'a',
+          max_concurrency: 0,
+        },
+      ],
+    })
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'a') as ParsedFlow & {
+      name: string
+    }
+    const initialState: FlowState = {
+      ...configuration,
+      activeFlows: [
+        {
+          id: '1',
+          flowName: flow.name,
+          flowId: flow.id,
+          queue: [],
+          graphConcurrency: [
+            {
+              concurrencyCount: 0,
+              requests: [],
+            },
+          ],
+        },
+      ],
+      finishedFlows: [],
+      advanced: [],
+    }
+    expect(
+      reducer(
+        initialState,
+        advanceFlowActionCreator({
+          id: '1',
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: 0,
+        }),
+      ),
+    ).toEqual(
+      state({
+        ...configuration,
+        activeFlows: [
+          {
+            id: '1',
+            flowName: flow.name,
+            flowId: flow.id,
+            queue: [
+              {
+                id: '1',
+                flowId: flow.id,
+                flowName: flow.name,
+                toNodeIndex: 0,
+              },
+            ],
+            graphConcurrency: [
+              {
+                concurrencyCount: 0,
+                requests: [
+                  {
+                    id: '1',
+                    flowId: flow.id,
+                    flowName: flow.name,
+                    toNodeIndex: 0,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        finishedFlows: [],
+        advanced: [],
+      }),
+    )
+  })
 })
