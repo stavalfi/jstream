@@ -6,7 +6,13 @@ import { advanceGraphThunkCreator } from '@flower/thunks'
 
 describe('advance thunk', () => {
   describe('advanceGraphThunk', () => {
-    const actions = (actions: FlowActionByType[FlowActionType.advanceFlowGraph][]) => actions.sort()
+    const actions = (actions: FlowActionByType[FlowActionType.advanceFlowGraph][]) =>
+      actions
+        .map(action => ({
+          type: action.type,
+          payload: action.payload,
+        }))
+        .sort()
 
     it('1 - try to advance flow with a signle node', async () => {
       const configuration = parse({
@@ -27,11 +33,11 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -93,11 +99,11 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -120,7 +126,7 @@ describe('advance thunk', () => {
       expect(actualActions).toEqual(expectedActions)
     })
 
-    it('4 - try to advance flow with a two nodes with specific rule', async () => {
+    it('4 - try to advance flow (containing two nodes) with specific rule', async () => {
       const configuration = parse({
         splitters: {
           extends: '/',
@@ -150,11 +156,11 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -218,15 +224,15 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -293,15 +299,15 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -368,15 +374,15 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -447,15 +453,15 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -528,15 +534,15 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -603,15 +609,15 @@ describe('advance thunk', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },

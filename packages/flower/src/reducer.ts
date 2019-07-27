@@ -1,6 +1,5 @@
-import { ActiveFlow, FlowActionPayload, FlowReducer, FlowState, GraphConcurrency, Request } from '@flower/types'
+import { ActiveFlow, FlowReducer, FlowState, GraphConcurrency, Request } from '@flower/types'
 import { ParsedFlow } from '@flow/parser'
-import deepEqual from 'fast-deep-equal'
 import immer from 'immer'
 import { getFlowDetails } from '@flower/utils'
 
@@ -52,7 +51,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
             queue: [],
             graphConcurrency: flow.graph.map(() => ({
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             })),
           })
         })
@@ -68,14 +67,14 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
 
       const { flow, activeFlow, activeFlowIndex } = flowDetails
 
-      if (!isValidAdvancePayload(flow, activeFlow, action.payload)) {
+      if (!isValidAdvancePayload(flow, activeFlow, action)) {
         return lastState
       }
 
       const tempActiveFlow = immer(activeFlow, draft => {
         'fromNodeIndex' in payload && draft.graphConcurrency[payload.fromNodeIndex].concurrencyCount--
-        draft.graphConcurrency[payload.toNodeIndex].requests.push(action.payload)
-        draft.queue.push(action.payload)
+        draft.graphConcurrency[payload.toNodeIndex].requestIds.push(action.id)
+        draft.queue.push(action)
       })
 
       const { queue, advancing, graphConcurrency } = tempActiveFlow.queue.reduce(
@@ -85,20 +84,20 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
             advancing,
             graphConcurrency,
           }: {
-            queue: FlowActionPayload['advanceFlowGraph'][]
-            advancing: FlowActionPayload['advanceFlowGraph'][]
+            queue: ActiveFlow['queue']
+            advancing: FlowState['advanced']
             graphConcurrency: GraphConcurrency
           },
           request,
         ) => {
-          const nodeConcurrency = graphConcurrency[request.toNodeIndex]
-          const requestIndex = nodeConcurrency.requests.findIndex(rqst => deepEqual(rqst, request))
+          const nodeConcurrency = graphConcurrency[request.payload.toNodeIndex]
+          const requestIndex = nodeConcurrency.requestIds.findIndex(actionId => request.id === actionId)
           if (
             canAdvance({
               flows,
               flow,
               graphConcurrency,
-              toNodeIndex: request.toNodeIndex,
+              toNodeIndex: request.payload.toNodeIndex,
               requestIndex,
             })
           ) {
@@ -106,8 +105,8 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
               queue,
               advancing: [...advancing, request],
               graphConcurrency: immer(graphConcurrency, draft => {
-                draft[request.toNodeIndex].concurrencyCount++
-                draft[request.toNodeIndex].requests.splice(requestIndex)
+                draft[request.payload.toNodeIndex].concurrencyCount++
+                draft[request.payload.toNodeIndex].requestIds.splice(requestIndex)
               }),
             }
           } else {
@@ -146,17 +145,21 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
 
 export default reducer
 
-function isValidAdvancePayload(flow: ParsedFlow, activeFlow: ActiveFlow, payload: Request) {
-  if (0 > payload.toNodeIndex || flow.graph.length <= payload.toNodeIndex) {
+function isValidAdvancePayload(flow: ParsedFlow, activeFlow: ActiveFlow, request: Request) {
+  if (0 > request.payload.toNodeIndex || flow.graph.length <= request.payload.toNodeIndex) {
     return false
   }
 
-  if ('fromNodeIndex' in payload && (0 > payload.fromNodeIndex || payload.fromNodeIndex > flow.graph.length)) {
+  if (
+    'fromNodeIndex' in request.payload &&
+    (0 > request.payload.fromNodeIndex || request.payload.fromNodeIndex > flow.graph.length)
+  ) {
     return false
   }
 
   return !(
-    'fromNodeIndex' in payload && !flow.graph[payload.fromNodeIndex].childrenIndexes.includes(payload.toNodeIndex)
+    'fromNodeIndex' in request.payload &&
+    !flow.graph[request.payload.fromNodeIndex].childrenIndexes.includes(request.payload.toNodeIndex)
   )
 }
 
@@ -181,7 +184,7 @@ const canAdvance: CanAdvance = ({ flows, flow, graphConcurrency, toNodeIndex, re
   }
 
   // const didAllParentsAdvanced = flow.graph[toNodeIndex].parentsIndexes.every(parentIndex =>
-  //   graphConcurrency[toNodeIndex].requests.find(
+  //   graphConcurrency[toNodeIndex].requestIds.find(
   //     request => 'fromNodeIndex' in request && request.fromNodeIndex === parentIndex,
   //   ),
   // )

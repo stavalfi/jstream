@@ -48,7 +48,7 @@ describe('finishFlow', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -98,7 +98,7 @@ describe('finishFlow', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },

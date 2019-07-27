@@ -9,7 +9,7 @@ export const getStore: (
   getState: () => {
     libReducer: FlowState
   }
-  getActions: () => FlowAction[]
+  getActions: () => Omit<FlowAction, 'id'>[]
 } = getMockStore
 
 export const libSelector: FlowReducerSelector = state => state.libReducer

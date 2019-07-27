@@ -7,7 +7,12 @@ import { executeFlowThunkCreator } from '@flower/thunks'
 describe('advance thunk', () => {
   describe('advanceGraphThunk', () => {
     const actions = (actions: FlowActionByType[FlowActionType.advanceFlowGraph | FlowActionType.executeFlow][]) =>
-      actions.sort()
+      actions
+        .map(action => ({
+          type: action.type,
+          payload: action.payload,
+        }))
+        .sort()
 
     it('1 - excute flow without specifing flow-name', async () => {
       const configuration = parse({

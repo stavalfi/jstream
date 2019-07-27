@@ -10,22 +10,27 @@ export enum FlowActionType {
   finishFlow = 'finishFlow',
 }
 
-export type FlowActionPayload = {
+type AdvanceFlowGraphOptional = Combinations<{
+  fromNodeIndex: number
+  flowName: string
+}>
+
+export interface FlowActionPayload {
   updateConfig: Configuration<ParsedFlow>
   executeFlow: { activeFlowId: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
-  advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & Combinations<{
-    fromNodeIndex: number
-  }> &
-    Combinations<{ flowName: string }>
+  advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & AdvanceFlowGraphOptional
   finishFlow: { activeFlowId: String; flowId: string } & Combinations<{ flowName: string }>
 }
 
 export type FlowActionCreator<ActionType extends keyof FlowActionPayload> = (
   payload: FlowActionPayload[ActionType],
-) => Action<ActionType> & { payload: FlowActionPayload[ActionType] }
+) => Action<ActionType> & { id: string; payload: FlowActionPayload[ActionType] }
 
 export type FlowActionByType = {
-  [ActionType in keyof FlowActionPayload]: Action<ActionType> & { payload: FlowActionPayload[ActionType] }
+  [ActionType in keyof FlowActionPayload]: Action<ActionType> & {
+    id: string
+    payload: FlowActionPayload[ActionType]
+  }
 }
 
 export type FlowAction = FlowActionByType[keyof FlowActionPayload]
@@ -43,8 +48,11 @@ export type ExecuteFlowThunkCreator = (
   reducerSelector: FlowReducerSelector,
 ) => (flow: { id: string } & Combinations<{ name: string }>) => ExecuteFlowThunk
 
-export type Request = FlowActionPayload['advanceFlowGraph']
-export type NodeConcurrency = { concurrencyCount: number; requests: Request[] }
+export type Request = Omit<FlowActionByType[FlowActionType.advanceFlowGraph], 'type'>
+export type NodeConcurrency = {
+  concurrencyCount: number
+  requestIds: string[] // actionIds from ActiveFlow.queue
+}
 export type GraphConcurrency = NodeConcurrency[]
 export type ActiveFlow = {
   id: string

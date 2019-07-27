@@ -25,23 +25,23 @@ it('11', () => {})
 //               case 'a':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'b':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'c':
 //                 return {
 //                   concurrencyCount: 1,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               default:
 //                 // 'd'
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [
+//                   requestIds: [
 //                     {
 //                       activeFlowId: '1',
 //                       flowId: flow.id,
@@ -80,23 +80,23 @@ it('11', () => {})
 //                 case 'a':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'b':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'c':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 default:
 //                   // 'd'
 //                   return {
 //                     concurrencyCount: 1,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //               }
 //             }),
@@ -121,7 +121,7 @@ it('11', () => {})
 //     )
 //   })
 //
-//   it(`2 - try advance to a joined node (node has concurrency=1) and go to requests`, () => {
+//   it(`2 - try advance to a joined node (node has concurrency=1) and go to requestIds`, () => {
 //     const configuration = parse('a:b,c:d')
 //     const flow: ParsedFlow = configuration.flows[0]
 //     const initialState: FlowState = {
@@ -136,23 +136,23 @@ it('11', () => {})
 //               case 'a':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'b':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'c':
 //                 return {
 //                   concurrencyCount: 1,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               default:
 //                 // 'd'
 //                 return {
 //                   concurrencyCount: 1,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //             }
 //           }),
@@ -191,23 +191,23 @@ it('11', () => {})
 //                 case 'a':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'b':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'c':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 default:
 //                   // 'd'
 //                   return {
 //                     concurrencyCount: 1,
-//                     requests: [
+//                     requestIds: [
 //                       {
 //                         activeFlowId: '1',
 //                         flowId: flow.id,
@@ -226,7 +226,7 @@ it('11', () => {})
 //     )
 //   })
 //
-//   it(`3 - try advance to a joined node (node has concurrency>1) and go to requests`, () => {
+//   it(`3 - try advance to a joined node (node has concurrency>1) and go to requestIds`, () => {
 //     const configuration = parse({
 //       flows: [
 //         {
@@ -252,23 +252,23 @@ it('11', () => {})
 //               case 'a':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'b':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'c':
 //                 return {
 //                   concurrencyCount: 1,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               default:
 //                 // 'd'
 //                 return {
 //                   concurrencyCount: 1,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //             }
 //           }),
@@ -307,23 +307,23 @@ it('11', () => {})
 //                 case 'a':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'b':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'c':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 default:
 //                   // 'd'
 //                   return {
 //                     concurrencyCount: 1,
-//                     requests: [
+//                     requestIds: [
 //                       {
 //                         activeFlowId: '1',
 //                         flowId: flow.id,
@@ -342,7 +342,7 @@ it('11', () => {})
 //     )
 //   })
 //
-//   it(`4 - advance two nodes to a joined node that has multiple same requests`, () => {
+//   it(`4 - advance two nodes to a joined node that has multiple same requestIds`, () => {
 //     const configuration = parse('a:b,c:d')
 //     const flow: ParsedFlow = configuration.flows[0]
 //     const initialState: FlowState = {
@@ -376,23 +376,23 @@ it('11', () => {})
 //               case 'a':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'b':
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               case 'c':
 //                 return {
 //                   concurrencyCount: 1,
-//                   requests: [],
+//                   requestIds: [],
 //                 }
 //               default:
 //                 // 'd'
 //                 return {
 //                   concurrencyCount: 0,
-//                   requests: [
+//                   requestIds: [
 //                     {
 //                       activeFlowId: '1',
 //                       flowId: flow.id,
@@ -456,23 +456,23 @@ it('11', () => {})
 //                 case 'a':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'b':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 case 'c':
 //                   return {
 //                     concurrencyCount: 0,
-//                     requests: [],
+//                     requestIds: [],
 //                   }
 //                 default:
 //                   // 'd'
 //                   return {
 //                     concurrencyCount: 1,
-//                     requests: [
+//                     requestIds: [
 //                       {
 //                         activeFlowId: '1',
 //                         flowId: flow.id,

@@ -52,7 +52,7 @@ describe('updateConfig', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -66,7 +66,7 @@ describe('updateConfig', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -88,7 +88,7 @@ describe('updateConfig', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -102,7 +102,7 @@ describe('updateConfig', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -160,7 +160,7 @@ describe('updateConfig', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -181,7 +181,7 @@ describe('updateConfig', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },

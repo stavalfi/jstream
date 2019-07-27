@@ -5,7 +5,7 @@ import { advanceFlowActionCreator, reducer } from '@flower/index'
 const state = (state: FlowState) => state
 
 describe('try to advance in complex concurrency graph', () => {
-  it(`1 - fallback to requests`, () => {
+  it(`1 - fallback to requestIds`, () => {
     const configuration = parse({
       splitters: {
         extends: '/',
@@ -36,11 +36,11 @@ describe('try to advance in complex concurrency graph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -48,17 +48,13 @@ describe('try to advance in complex concurrency graph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 0,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 0,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -66,29 +62,15 @@ describe('try to advance in complex concurrency graph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 0,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 0,
-                  },
-                ],
+                requestIds: [action.id],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -138,11 +120,11 @@ describe('try to advance in complex concurrency graph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -150,17 +132,13 @@ describe('try to advance in complex concurrency graph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 0,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 0,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -168,29 +146,15 @@ describe('try to advance in complex concurrency graph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 0,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 0,
-                  },
-                ],
+                requestIds: [action.id],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -240,11 +204,11 @@ describe('try to advance in complex concurrency graph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -252,17 +216,13 @@ describe('try to advance in complex concurrency graph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 0,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 0,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -270,29 +230,15 @@ describe('try to advance in complex concurrency graph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 0,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 0,
-                  },
-                ],
+                requestIds: [action.id],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -342,11 +288,11 @@ describe('try to advance in complex concurrency graph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 2,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -354,17 +300,13 @@ describe('try to advance in complex concurrency graph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 1,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 1,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -372,29 +314,15 @@ describe('try to advance in complex concurrency graph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 1,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 2,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 1,
-                  },
-                ],
+                requestIds: [action.id],
               },
             ],
           },
@@ -444,11 +372,11 @@ describe('try to advance in complex concurrency graph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 2,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -456,18 +384,14 @@ describe('try to advance in complex concurrency graph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          fromNodeIndex: 0,
-          toNodeIndex: 1,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      fromNodeIndex: 0,
+      toNodeIndex: 1,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -479,25 +403,17 @@ describe('try to advance in complex concurrency graph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [
-          {
-            activeFlowId: '1',
-            flowId: flow.id,
-            flowName: flow.name,
-            fromNodeIndex: 0,
-            toNodeIndex: 1,
-          },
-        ],
+        advanced: [action],
       }),
     )
   })
@@ -545,11 +461,11 @@ describe('try to advance in complex concurrency graph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -557,17 +473,13 @@ describe('try to advance in complex concurrency graph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 0,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 0,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -579,24 +491,17 @@ describe('try to advance in complex concurrency graph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 2,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [
-          {
-            activeFlowId: '1',
-            flowId: flow.id,
-            flowName: flow.name,
-            toNodeIndex: 0,
-          },
-        ],
+        advanced: [action],
       }),
     )
   })

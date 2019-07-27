@@ -67,14 +67,14 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
 
   const { splitters } = restOfState
 
-  const flowDetails = getFlowDetails(flows, activeFlows, request.activeFlowId)
+  const flowDetails = getFlowDetails(flows, activeFlows, request.payload.activeFlowId)
   if (!('flow' in flowDetails) || !('activeFlow' in flowDetails)) {
     return Promise.resolve([])
   }
 
   const { flow } = flowDetails
 
-  const toNode = flow.graph[request.toNodeIndex]
+  const toNode = flow.graph[request.payload.toNodeIndex]
   const sideEffect = findByNodeOrDefault(
     flow.sideEffects,
     sideEffect => 'node' in sideEffect && isSubsetOf(sideEffect.node.path, toNode.path),
@@ -91,10 +91,12 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
   })
     .then<string | string[], string | string[]>(
       result =>
-        rule && 'next' in rule ? rule.next(flow)(toNode, request.toNodeIndex, flow.graph)(result) : Promise.resolve([]),
+        rule && 'next' in rule
+          ? rule.next(flow)(toNode, request.payload.toNodeIndex, flow.graph)(result)
+          : Promise.resolve([]),
       error =>
         rule && 'error' in rule
-          ? rule.error(flow)(toNode, request.toNodeIndex, flow.graph)(error)
+          ? rule.error(flow)(toNode, request.payload.toNodeIndex, flow.graph)(error)
           : Promise.resolve([]),
     )
     .then<string[], string[]>(
@@ -114,14 +116,14 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
             splitters,
             flows,
             flow,
-          })(request.toNodeIndex)(nodeName),
+          })(request.payload.toNodeIndex)(nodeName),
         )
         .map(nextNodeIndex =>
           advanceFlowActionCreator({
-            activeFlowId: request.activeFlowId,
+            activeFlowId: request.payload.activeFlowId,
             flowId: flow.id,
             ...('name' in flow && { flowName: flow.name }),
-            fromNodeIndex: request.toNodeIndex,
+            fromNodeIndex: request.payload.toNodeIndex,
             toNodeIndex: nextNodeIndex,
           }),
         ),

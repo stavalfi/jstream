@@ -32,7 +32,7 @@ describe('advanceFlowGraph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -40,12 +40,8 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 })
+    expect(reducer(initialState, action)).toEqual(
       state({
         splitters: {
           extends: '/',
@@ -60,13 +56,13 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [{ activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 }],
+        advanced: [action],
       }),
     )
   })
@@ -91,6 +87,13 @@ describe('advanceFlowGraph', () => {
       ],
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'composed-flow') as ParsedFlow
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: 'composed-flow',
+      fromNodeIndex: 0,
+      toNodeIndex: 1,
+    })
     expect(
       reducer(
         reducer(
@@ -100,13 +103,7 @@ describe('advanceFlowGraph', () => {
           ),
           advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
         ),
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: 'composed-flow',
-          fromNodeIndex: 0,
-          toNodeIndex: 1,
-        }),
+        action,
       ),
     ).toEqual(
       state({
@@ -123,25 +120,17 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [
-          {
-            activeFlowId: '1',
-            flowId: flow.id,
-            flowName: 'composed-flow',
-            fromNodeIndex: 0,
-            toNodeIndex: 1,
-          },
-        ],
+        advanced: [action],
       }),
     )
   })
@@ -166,6 +155,12 @@ describe('advanceFlowGraph', () => {
       ],
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'composed-flow') as ParsedFlow
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: 'composed-flow',
+      toNodeIndex: 0,
+    })
     expect(
       reducer(
         reducer(
@@ -173,7 +168,7 @@ describe('advanceFlowGraph', () => {
             reducer(initialState, updateConfigActionCreator(configuration)),
             executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
           ),
-          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+          action,
         ),
         advanceFlowActionCreator({
           activeFlowId: '1',
@@ -198,17 +193,17 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [{ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }],
+        advanced: [action],
       }),
     )
   })
@@ -256,11 +251,11 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -318,11 +313,11 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
@@ -352,6 +347,12 @@ describe('advanceFlowGraph', () => {
       ],
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'composed-flow') as ParsedFlow
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: 'composed-flow',
+      toNodeIndex: 0,
+    })
     expect(
       reducer(
         reducer(
@@ -359,7 +360,7 @@ describe('advanceFlowGraph', () => {
             reducer(initialState, updateConfigActionCreator(configuration)),
             executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
           ),
-          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+          action,
         ),
         advanceFlowActionCreator({
           activeFlowId: '1',
@@ -384,30 +385,30 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [{ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }],
+        advanced: [action],
       }),
     )
   })
 
-  it(`7 - try to advance twice to head and it has concurrency=1 so fallback to requests`, () => {
+  it(`7 - try to advance twice to head and it has concurrency=1 so fallback to requestIds`, () => {
     const initialState: FlowState = {
       splitters: { extends: 'delimiter1' },
       flows: [],
@@ -428,6 +429,12 @@ describe('advanceFlowGraph', () => {
       ],
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'a') as ParsedFlow
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: 'a',
+      toNodeIndex: 0,
+    })
     expect(
       reducer(
         reducer(
@@ -437,12 +444,7 @@ describe('advanceFlowGraph', () => {
           ),
           advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'a', toNodeIndex: 0 }),
         ),
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: 'a',
-          toNodeIndex: 0,
-        }),
+        action,
       ),
     ).toEqual(
       state({
@@ -455,25 +457,11 @@ describe('advanceFlowGraph', () => {
             id: '1',
             flowName: 'a',
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: 'a',
-                toNodeIndex: 0,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: 'a',
-                    toNodeIndex: 0,
-                  },
-                ],
+                requestIds: [action.id],
               },
             ],
           },
@@ -484,7 +472,7 @@ describe('advanceFlowGraph', () => {
     )
   })
 
-  it(`8 - try to advance twice to second node and it has concurrency=1 so fallback to requests`, () => {
+  it(`8 - try to advance twice to second node and it has concurrency=1 so fallback to requestIds`, () => {
     const configuration = parse({
       splitters: {
         extends: '/',
@@ -511,11 +499,11 @@ describe('advanceFlowGraph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -523,18 +511,14 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          fromNodeIndex: 0,
-          toNodeIndex: 1,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      fromNodeIndex: 0,
+      toNodeIndex: 1,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -542,31 +526,15 @@ describe('advanceFlowGraph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                fromNodeIndex: 0,
-                toNodeIndex: 1,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    fromNodeIndex: 0,
-                    toNodeIndex: 1,
-                  },
-                ],
+                requestIds: [action.id],
               },
             ],
           },
@@ -604,11 +572,11 @@ describe('advanceFlowGraph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -616,17 +584,13 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 1,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 1,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -638,24 +602,17 @@ describe('advanceFlowGraph', () => {
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 1,
-                requests: [],
+                requestIds: [],
               },
             ],
           },
         ],
         finishedFlows: [],
-        advanced: [
-          {
-            activeFlowId: '1',
-            flowId: flow.id,
-            flowName: flow.name,
-            toNodeIndex: 1,
-          },
-        ],
+        advanced: [action],
       }),
     )
   })
@@ -687,11 +644,11 @@ describe('advanceFlowGraph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 1,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -699,17 +656,13 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 1,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 1,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -717,29 +670,15 @@ describe('advanceFlowGraph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 1,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 1,
-                  },
-                ],
+                requestIds: [action.id],
               },
             ],
           },
@@ -750,7 +689,7 @@ describe('advanceFlowGraph', () => {
     )
   })
 
-  it(`11 - try to advance and fallback to a non-empty requests`, () => {
+  it(`11 - try to advance and fallback to a non-empty requestIds`, () => {
     const configuration = parse({
       splitters: {
         extends: '/',
@@ -766,6 +705,12 @@ describe('advanceFlowGraph', () => {
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as ParsedFlow & {
       name: string
     }
+    const action1 = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 1,
+    })
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -773,29 +718,15 @@ describe('advanceFlowGraph', () => {
           id: '1',
           flowName: flow.name,
           flowId: flow.id,
-          queue: [
-            {
-              activeFlowId: '1',
-              flowId: flow.id,
-              flowName: flow.name,
-              toNodeIndex: 1,
-            },
-          ],
+          queue: [action1],
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
             {
               concurrencyCount: 1,
-              requests: [
-                {
-                  activeFlowId: '1',
-                  flowId: flow.id,
-                  flowName: flow.name,
-                  toNodeIndex: 1,
-                },
-              ],
+              requestIds: [action1.id],
             },
           ],
         },
@@ -803,17 +734,13 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 1,
-        }),
-      ),
-    ).toEqual(
+    const action2 = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 1,
+    })
+    expect(reducer(initialState, action2)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -821,41 +748,15 @@ describe('advanceFlowGraph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 1,
-              },
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 1,
-              },
-            ],
+            queue: [action1, action2],
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [],
+                requestIds: [],
               },
               {
                 concurrencyCount: 1,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 1,
-                  },
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 1,
-                  },
-                ],
+                requestIds: [action1.id, action2.id],
               },
             ],
           },
@@ -866,7 +767,7 @@ describe('advanceFlowGraph', () => {
     )
   })
 
-  it(`12 - try to advance and to node with concurrency=0 and fallback to requests`, () => {
+  it(`12 - try to advance to node with concurrency=0 and fallback to requestIds`, () => {
     const configuration = parse({
       splitters: {
         extends: '/',
@@ -892,7 +793,7 @@ describe('advanceFlowGraph', () => {
           graphConcurrency: [
             {
               concurrencyCount: 0,
-              requests: [],
+              requestIds: [],
             },
           ],
         },
@@ -900,17 +801,13 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    expect(
-      reducer(
-        initialState,
-        advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: flow.name,
-          toNodeIndex: 0,
-        }),
-      ),
-    ).toEqual(
+    const action = advanceFlowActionCreator({
+      activeFlowId: '1',
+      flowId: flow.id,
+      flowName: flow.name,
+      toNodeIndex: 0,
+    })
+    expect(reducer(initialState, action)).toEqual(
       state({
         ...configuration,
         activeFlows: [
@@ -918,25 +815,11 @@ describe('advanceFlowGraph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [
-              {
-                activeFlowId: '1',
-                flowId: flow.id,
-                flowName: flow.name,
-                toNodeIndex: 0,
-              },
-            ],
+            queue: [action],
             graphConcurrency: [
               {
                 concurrencyCount: 0,
-                requests: [
-                  {
-                    activeFlowId: '1',
-                    flowId: flow.id,
-                    flowName: flow.name,
-                    toNodeIndex: 0,
-                  },
-                ],
+                requestIds: [action.id],
               },
             ],
           },
