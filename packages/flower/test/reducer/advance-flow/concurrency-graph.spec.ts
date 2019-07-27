@@ -249,7 +249,7 @@ describe('try to advance in complex concurrency graph', () => {
     )
   })
 
-  it(`4 - try to advance to node (not from any node) when there is no free concurrency and fallback to requets`, () => {
+  it(`4 - try to advance to node (not from any node) when there is no free concurrency and request should be denied`, () => {
     const configuration = parse({
       splitters: {
         extends: '/',
@@ -314,7 +314,7 @@ describe('try to advance in complex concurrency graph', () => {
             id: '1',
             flowName: flow.name,
             flowId: flow.id,
-            queue: [action],
+            queue: [],
             graphConcurrency: [
               {
                 concurrencyCount: 2,
@@ -322,7 +322,7 @@ describe('try to advance in complex concurrency graph', () => {
               },
               {
                 concurrencyCount: 0,
-                requestIds: [action.id],
+                requestIds: [],
               },
             ],
           },
