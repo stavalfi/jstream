@@ -24,21 +24,19 @@ type ParseMultipleFlows = ({
   splitters: Splitters
   parsedFlowsUntilNow?: AlgorithmParsedFlow[]
 }) => ParsedFlow[]
-export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitters, parsedFlowsUntilNow = [] }) => {
-  return parseUserFlows({
+export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitters, parsedFlowsUntilNow = [] }) =>
+  parseUserFlows({
     userFlows,
     splitters,
     parsedFlowsUntilNow,
-    finalMapper: parsedFlows => {
-      return parsedFlows
-        .map((parsedFlow, i, array) => {
-          return {
-            ...parsedFlow,
-            ...('extendedFlowId' in parsedFlow && {
-              extendedFlowIndex: array.findIndex(flow => flow.id === parsedFlow.extendedFlowId),
-            }),
-          }
-        })
+    finalMapper: parsedFlows =>
+      parsedFlows
+        .map((parsedFlow, i, array) => ({
+          ...parsedFlow,
+          ...('extendedFlowId' in parsedFlow && {
+            extendedFlowIndex: array.findIndex(flow => flow.id === parsedFlow.extendedFlowId),
+          }),
+        }))
         .map((parsedFlow: AlgorithmParsedFlow) => ({
           id: parsedFlow.id,
           ...('extendedFlowIndex' in parsedFlow && {
@@ -53,10 +51,8 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           pathsGroups: parsedFlow.pathsGroups,
           sideEffects: parsedFlow.sideEffects,
           rules: parsedFlow.rules,
-        }))
-    },
+        })),
   })
-}
 
 type ParseUserFlows = ({
   userFlows,

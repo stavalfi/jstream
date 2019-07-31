@@ -79,7 +79,13 @@ const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {
   return 0
 }
 
-function sortGraph(graph: Graph, splitters = { extends: '_', identifier: '/' }): (Node & { displayName: string })[] {
+function sortGraph(
+  graph: Graph,
+  splitters = { extends: '_', identifier: '/' },
+): {
+  oldIndexToNewIndex: { [index: number]: number }
+  newGraph: (Node & { displayName: string })[]
+} {
   const newGraph = graph
     .map(node => ({
       ...node,
@@ -95,22 +101,25 @@ function sortGraph(graph: Graph, splitters = { extends: '_', identifier: '/' }):
     })
     .reduce((acc, obj) => ({ ...acc, ...obj }), {})
 
-  return newGraph
-    .map(node => ({
-      ...node,
-      childrenIndexes: node.childrenIndexes
-        .map(i => oldIndexToNewIndex[i])
-        .sort((i, j) => compareNodes(splitters)(newGraph[i], newGraph[j])),
-      parentsIndexes: node.parentsIndexes
-        .map(i => oldIndexToNewIndex[i])
-        .sort((i, j) => compareNodes(splitters)(newGraph[i], newGraph[j])),
-    }))
-    .map(node => ({
-      path: node.path,
-      childrenIndexes: node.childrenIndexes,
-      parentsIndexes: node.parentsIndexes,
-      displayName: node.displayName,
-    }))
+  return {
+    oldIndexToNewIndex,
+    newGraph: newGraph
+      .map(node => ({
+        ...node,
+        childrenIndexes: node.childrenIndexes
+          .map(i => oldIndexToNewIndex[i])
+          .sort((i, j) => compareNodes(splitters)(newGraph[i], newGraph[j])),
+        parentsIndexes: node.parentsIndexes
+          .map(i => oldIndexToNewIndex[i])
+          .sort((i, j) => compareNodes(splitters)(newGraph[i], newGraph[j])),
+      }))
+      .map(node => ({
+        path: node.path,
+        childrenIndexes: node.childrenIndexes,
+        parentsIndexes: node.parentsIndexes,
+        displayName: node.displayName,
+      })),
+  }
 }
 
 type ParsedFlowWithDisplyName = {
@@ -118,19 +127,62 @@ type ParsedFlowWithDisplyName = {
   pathsGroups?: ParsedFlow['pathsGroups']
 } & ParsedFlowOptionalFields
 
+const sortFlow = (flow: ParsedFlowWithDisplyName): ParsedFlowWithDisplyName => {
+  const { newGraph, oldIndexToNewIndex } = sortGraph(flow.graph)
+  const newPathsGroups = flow.pathsGroups && flow.pathsGroups.map(x => x)
+  newPathsGroups &&
+    flow.pathsGroups &&
+    flow.pathsGroups.forEach(
+      (_, i) => flow.pathsGroups && (newPathsGroups[oldIndexToNewIndex[i]] = flow.pathsGroups[i]),
+    )
+
+  return {
+    ...flow,
+    graph: newGraph,
+    pathsGroups: newPathsGroups,
+    ...('defaultNodeIndex' in flow && { defaultNodeIndex: oldIndexToNewIndex[flow.defaultNodeIndex] }),
+  }
+}
+
+const sortFlows = (flows: ParsedFlowWithDisplyName[]): ParsedFlowWithDisplyName[] => {
+  const withSourceIndexes = flows.map(sortFlow).map((flow, startIndex) => ({
+    ...flow,
+    startIndex,
+    graphAsString: JSON.stringify(flow.graph),
+  }))
+  const sortedFlows = withSourceIndexes.sort((flow1, flow2) => {
+    if (flow1.graphAsString < flow2.graphAsString) {
+      return -1
+    }
+    if (flow1.graphAsString > flow2.graphAsString) {
+      return 1
+    }
+    return 0
+  })
+  const oldToNewIndex = sortedFlows
+    .map((flow, newIndex) => ({ [flow.startIndex]: newIndex }))
+    .reduce((acc, x) => ({ ...acc, ...x }), {})
+
+  return sortedFlows
+    .map(flow => {
+      delete flow.startIndex
+      delete flow.graphAsString
+      return flow
+    })
+    .map(flow => ({
+      ...flow,
+      ...('extendedFlowIndex' in flow && { extendedFlowIndex: oldToNewIndex[flow.extendedFlowIndex] }),
+    }))
+}
+
 export function assertEqualFlows(
   expectedFlowsArray1: ParsedFlowWithDisplyName[],
   actualFlowsArray1: ParsedFlowWithDisplyName[],
   count = 0,
 ) {
-  const expectedFlowsArray = expectedFlowsArray1.map(flow => ({
-    ...flow,
-    graph: sortGraph(flow.graph),
-  }))
-  const actualFlowsArray = actualFlowsArray1.map(flow => ({
-    ...flow,
-    graph: sortGraph(flow.graph),
-  }))
+  const expectedFlowsArray = sortFlows(expectedFlowsArray1)
+  const actualFlowsArray = sortFlows(actualFlowsArray1)
+
   if (count > 1) {
     return
   }
@@ -141,6 +193,7 @@ export function assertEqualFlows(
     } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
         \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
         \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
+    chaiExpect(actualFlow, errorMessage).not.undefined
     if (actualFlow) {
       chaiExpect(actualFlow.graph, errorMessage).deep.equal(expectedFlow.graph)
       if ('defaultNodeIndex' in expectedFlow) {
@@ -183,12 +236,17 @@ function assertPathsGroupsEqual(
   if (count > 1) {
     return
   }
-  const expected = expectedFlow.pathsGroups
-  const actual = actualFlow.pathsGroups
+  const expectedFlow1: ParsedFlowWithDisplyName = count === 0 ? expectedFlow : actualFlow
+  const actualFlow1: ParsedFlowWithDisplyName = count === 0 ? actualFlow : expectedFlow
+  const expected = expectedFlow1.pathsGroups
+  const actual = actualFlow1.pathsGroups
   if (expected) {
     chaiExpect(
       Boolean(actual),
-      `${count === 0 ? 'expected' : 'actual'} flow should have pathsGroups but it doesn't have`,
+      // @ts-ignore
+      `(${'name' in expectedFlow1 ? expectedFlow1.name : '__NO_FLOW_NAME_'}) ${
+        count === 0 ? 'expected' : 'actual'
+      } flow should have pathsGroups but it doesn't have`,
     ).deep.equal(true)
     if (actual) {
       const expectedArray = expected.flatMap(x => x)
@@ -199,22 +257,23 @@ function assertPathsGroupsEqual(
           (acc: number[], groupId, i) => (groupId === expectedGroupId ? [i, ...acc] : acc),
           [],
         )
-        const errorMessage = `expected pathsGroups is different then actual pathsGroups.\n\nexpected: (every line is different array. left side= index 0)\n${table(
-          expected,
-        )}\nactual:\n${table(actual)}\n`
+        const errorMessage = `expected pathsGroups is different then actual pathsGroups.\n\nexpected: (every line is different array. left side= index 0)\n${
+          // @ts-ignore
+          'name' in expectedFlow1 ? expectedFlow1.name : '__NO_FLOW_NAME_'
+        }\n${table(expected)}\nactual:\n${table(actual)}\n`
 
         const actualValues = actualArray.filter((_, i) => indexesWithSameValueInExpected.includes(i))
         chaiExpect(Array.from(new Set(actualValues)).length === 1, errorMessage).deep.equal(true)
       }
     }
   }
-  assertPathsGroupsEqual(actualFlow, expectedFlow, count + 1)
+  assertPathsGroupsEqual(actualFlow1, expectedFlow1, count + 1)
 }
 
 function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: ParsedFlowWithDisplyName) {
   return flowsArray.find(flow => {
-    let stringToFind = graphToString(flowToSearch.graph)
-    let stringNow = graphToString(flow.graph)
+    const stringToFind = graphToString(flowToSearch.graph)
+    const stringNow = graphToString(flow.graph)
     return (
       ('name' in flow && 'name' in flowToSearch && flow.name === flowToSearch.name) ||
       // @ts-ignore

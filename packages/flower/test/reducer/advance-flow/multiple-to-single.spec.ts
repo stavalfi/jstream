@@ -390,7 +390,7 @@ describe('multiple nodes advance to single node', () => {
     )
   })
 
-  it(`5 - ensure we can't go directly to node 1 without moving to it form it's parent`, () => {
+  it(`5 - ensure we can't go directly to node 1 without moving to it from  it's parent`, () => {
     const configuration = parse({
       splitters: {
         extends: '/',

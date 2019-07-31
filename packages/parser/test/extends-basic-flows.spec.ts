@@ -27,6 +27,7 @@ describe('extends-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
+        pathsGroups: [['0']],
       },
     ]
 
@@ -244,6 +245,7 @@ describe('extends-basic-flows', () => {
       ...declareFlows(2, ['flow', 'a'], '_'),
       {
         graph: [{ flow0_a: [[], [1]] }, { flow1_a: [[0], []] }],
+        pathsGroups: [['0', '1'], ['2', '3']],
       },
     ]
 
@@ -1005,6 +1007,92 @@ describe('extends-basic-flows', () => {
 
     const actualFlows = createFlows(actual, flowsConfig)
     const expectedFlows = createExpected(expected, flowsConfig(actual))
+
+    assertEqualFlows(expectedFlows, actualFlows)
+  })
+  it('39', () => {
+    const flowsConfig = () => ({
+      splitters: {
+        extends: '_',
+      },
+      flows: [
+        {
+          name: 'flow0',
+          graph: 'flow1:flow2,flow3',
+          default_path: 'flow2',
+          extends_flows: [
+            {
+              name: 'composed-flow',
+              graph: ['a:b'],
+            },
+          ],
+        },
+      ],
+    })
+
+    const expected: ExpectedFlow[] = [
+      {
+        name: 'flow1',
+        graph: [{ flow1: [[], []] }],
+        defaultNodeIndex: 0,
+        pathsGroups: [['1']],
+      },
+      {
+        name: 'flow2',
+        graph: [{ flow2: [[], []] }],
+        defaultNodeIndex: 0,
+        pathsGroups: [['2']],
+      },
+      {
+        name: 'flow3',
+        graph: [{ flow3: [[], []] }],
+        defaultNodeIndex: 0,
+        pathsGroups: [['3']],
+      },
+      {
+        name: 'flow0',
+        graph: [{ flow0_flow1: [[], [1, 2]] }, { flow0_flow2: [[0], []] }, { flow0_flow3: [[0], []] }],
+        pathsGroups: [['0', '1'], ['0', '2'], ['0', '3']],
+        defaultNodeIndex: 1,
+      },
+      {
+        name: 'a',
+        graph: [{ a_flow0_flow1: [[], [1, 2]] }, { a_flow0_flow2: [[0], []] }, { a_flow0_flow3: [[0], []] }],
+        pathsGroups: [['0', '1', '2'], ['0', '1', '3'], ['0', '1', '4']],
+        defaultNodeIndex: 1,
+        extendedFlowIndex: 3,
+      },
+      {
+        name: 'b',
+        graph: [{ b_flow0_flow1: [[], [1, 2]] }, { b_flow0_flow2: [[0], []] }, { b_flow0_flow3: [[0], []] }],
+        pathsGroups: [['0', '1', '2'], ['0', '1', '3'], ['0', '1', '4']],
+        defaultNodeIndex: 1,
+        extendedFlowIndex: 3,
+      },
+      {
+        name: 'composed-flow',
+        graph: [
+          { 'composed-flow_a_flow0_flow1': [[], [1, 2]] }, // 0
+          { 'composed-flow_a_flow0_flow2': [[0], [3]] }, // 1
+          { 'composed-flow_a_flow0_flow3': [[0], []] }, // 2
+          { 'composed-flow_b_flow0_flow1': [[1], [4, 5]] }, // 3
+          { 'composed-flow_b_flow0_flow2': [[3], []] }, // 4
+          { 'composed-flow_b_flow0_flow3': [[3], []] }, // 5
+        ],
+        pathsGroups: [
+          ['0', '1', '2', '3'],
+          ['0', '1', '2', '4'],
+          ['0', '1', '2', '5'],
+          ['0', '6', '7', '8'],
+          ['0', '6', '7', '9'],
+          ['0', '6', '7', '10'],
+        ],
+        extendedFlowIndex: 3,
+      },
+    ]
+
+    const actualFlows = createFlows(undefined, flowsConfig)
+    const expectedFlows = createExpected(expected, flowsConfig())
 
     assertEqualFlows(expectedFlows, actualFlows)
   })
