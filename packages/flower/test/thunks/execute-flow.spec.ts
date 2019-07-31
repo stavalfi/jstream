@@ -35,7 +35,11 @@ describe('advance thunk', () => {
       const actualActions = getActions()
 
       const expectedActions = actions([
-        executeFlowActionCreator({ activeFlowId: getState().libReducer.activeFlows[0].id, flowId: flow.id }),
+        executeFlowActionCreator({
+          activeFlowId: getState().libReducer.activeFlows[0].id,
+          flowId: flow.id,
+          flowName: flow.name,
+        }),
         advanceFlowActionCreator({
           activeFlowId: getState().libReducer.activeFlows[0].id,
           flowId: flow.id,

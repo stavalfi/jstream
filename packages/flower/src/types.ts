@@ -46,7 +46,7 @@ export type ExecuteFlowThunk = FlowThunkAction<Promise<FlowActionByType[FlowActi
 
 export type ExecuteFlowThunkCreator = (
   reducerSelector: FlowReducerSelector,
-) => (flow: { id: string } & Combinations<{ name: string }>) => ExecuteFlowThunk
+) => (flow: NonEmptyCombinations<{ id: string; name: string }>) => ExecuteFlowThunk
 
 export type Request = Omit<FlowActionByType[FlowActionType.advanceFlowGraph], 'type'>
 export type NodeConcurrency = {

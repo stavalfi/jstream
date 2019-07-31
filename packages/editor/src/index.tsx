@@ -40,4 +40,4 @@ const config = parse({
 })
 
 store.dispatch(updateConfigActionCreator(config))
-store.dispatch(executeFlowThunkCreator(libSelector)({ id: config.flows[0].id }))
+store.dispatch(executeFlowThunkCreator(libSelector)({ name: 'flow1' }))

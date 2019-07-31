@@ -12,14 +12,26 @@ import { findByNodeOrDefault, flatMapPromisesResults, getFlowDetails, userInputN
 import { isSubsetOf } from '@flow/parser'
 import { advanceFlowActionCreator, executeFlowActionCreator } from '@flower/actions'
 
-export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flow => (dispatch, getState) => {
+export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowIdOrName => (
+  dispatch,
+  getState,
+) => {
+  const { flows } = reducerSelector(getState())
+  const flow = flows.find(
+    flow =>
+      ('id' in flowIdOrName && flowIdOrName.id === flow.id) ||
+      ('name' in flow && 'name' in flowIdOrName && flow.name === flowIdOrName.name),
+  )
+
+  if (!flow) {
+    return Promise.resolve([])
+  }
+
   const action = dispatch(
     executeFlowActionCreator({ flowId: flow.id, ...('name' in flow && { flowName: flow.name }), activeFlowId: uuid() }),
   )
 
-  const { flows, activeFlows } = reducerSelector(getState())
-  const flowDetails = getFlowDetails(flows, activeFlows, action.payload.activeFlowId)
-  if (!('flow' in flowDetails) || !('activeFlow' in flowDetails)) {
+  if (!reducerSelector(getState()).activeFlows.some(activeFlow => activeFlow.id === action.payload.activeFlowId)) {
     return Promise.resolve([])
   }
 
@@ -28,7 +40,7 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
       advanceFlowActionCreator({
         activeFlowId: action.payload.activeFlowId,
         flowId: flow.id,
-        ...('name' in flowDetails.flow && { flowName: flowDetails.flow.name }),
+        ...('name' in flow && { flowName: flow.name }),
         toNodeIndex: 0,
       }),
     ),
