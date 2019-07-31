@@ -50,10 +50,7 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
 
 const getCompilerOptions = (
   isDevelopmentMode,
-  {
-    constants: { packagesProperties, mainProjectDirName, packageDirectoryName },
-    paths: { packagesPath, mainTestsFolderPath },
-  },
+  { constants: { packagesProperties, mainProjectDirName, packageDirectoryName }, paths: { packagesPath } },
 ) => ({
   baseUrl: packagesPath,
   paths: {

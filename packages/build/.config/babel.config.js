@@ -1,5 +1,5 @@
-module.exports = {
-  presets: [
+module.exports = ({ isDevelopmentMode }) => {
+  const productionPresets = [
     [
       '@babel/preset-env',
       {
@@ -8,15 +8,8 @@ module.exports = {
         },
       },
     ],
-    [
-      '@babel/preset-react',
-      {
-        modules: false,
-      },
-    ],
-    '@babel/typescript',
-  ],
-  plugins: [
+  ]
+  const productionPlugins = [
     '@babel/proposal-object-rest-spread',
     [
       '@babel/plugin-proposal-decorators',
@@ -24,7 +17,6 @@ module.exports = {
         legacy: true,
       },
     ],
-    '@babel/proposal-class-properties',
     '@babel/plugin-proposal-do-expressions',
     '@babel/plugin-proposal-export-default-from',
     '@babel/plugin-proposal-export-namespace-from',
@@ -44,5 +36,18 @@ module.exports = {
     '@babel/plugin-proposal-throw-expressions',
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-syntax-import-meta',
-  ],
+  ]
+  return {
+    presets: [
+      ...(isDevelopmentMode ? [] : productionPresets),
+      [
+        '@babel/preset-react',
+        {
+          modules: false,
+        },
+      ],
+      '@babel/typescript',
+    ],
+    plugins: [...(isDevelopmentMode ? [] : productionPlugins), '@babel/proposal-class-properties'],
+  }
 }
