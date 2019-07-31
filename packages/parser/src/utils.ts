@@ -1,5 +1,5 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
-import { AlgorithmParsedFlow, ParsedFlow, Path, Splitters } from '@parser/types'
+import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, Path, Splitters, UserFlowObject } from '@parser/types'
 
 export const distractDisplayNameBySplitters = (
   splitters: Splitters,
@@ -187,4 +187,56 @@ export const arePathsEqual = (path1: Path, path2: Path) => {
     }
   }
   return true
+}
+
+type GetHeadsIndexOfSubFlows = (params: {
+  parsedFlows: ParsedFlow[]
+  flowToParse: UserFlowObject
+  graph: Graph
+  extendedParsedFlow?: AlgorithmParsedFlow
+}) => number[]
+
+// - the graph parameter don't have to be fully parsed graph. but every node must have a full path.
+export const getHeadsIndexOfSubFlows: GetHeadsIndexOfSubFlows = ({
+  parsedFlows,
+  flowToParse,
+  graph,
+  extendedParsedFlow,
+}) => {
+  function isHead(node: Node) {
+    if (node.path.length === 1) {
+      return true
+    }
+
+    const path = 'name' in flowToParse ? node.path.slice(1) : node.path
+
+    if (!extendedParsedFlow) {
+      const subFlow = parsedFlows.find(flow => 'name' in flow && flow.name === path[0]) as ParsedFlow
+      return arePathsEqual(subFlow.graph[0].path, path)
+    } else {
+      const extendedFlowNameIndex = path.findIndex(
+        flowName => 'name' in extendedParsedFlow && flowName === extendedParsedFlow.name,
+      )
+      if (extendedFlowNameIndex === 0) {
+        return arePathsEqual(extendedParsedFlow.graph[0].path, path)
+      }
+
+      const subFlow = parsedFlows.find(flow => 'name' in flow && flow.name === path[0]) as ParsedFlow
+
+      if (!subFlow.graph[0].path.every((flowName, i) => path[i] === flowName)) {
+        return false
+      }
+
+      const startExtendIndex = path.findIndex((flowName, i) => subFlow.graph[0].path[i] !== flowName)
+
+      if (startExtendIndex === -1) {
+        return true
+      }
+
+      const extendedSubPath = path.slice(startExtendIndex)
+      return arePathsEqual(extendedParsedFlow.graph[0].path, extendedSubPath)
+    }
+  }
+
+  return graph.reduce((acc: number[], node, i) => (isHead(node) ? [...acc, i] : acc), [])
 }

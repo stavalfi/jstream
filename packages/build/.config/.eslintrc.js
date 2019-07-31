@@ -31,7 +31,9 @@ module.exports = {
     'plugin:import/typescript',
     'plugin:jest/recommended',
   ],
-  globals: {},
+  globals: {
+    __DEV__: true,
+  },
   rules: {
     'jest/valid-expect': 'off',
     'eol-last': 0,

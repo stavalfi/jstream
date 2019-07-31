@@ -1,3 +1,4 @@
+const { DefinePlugin } = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -18,6 +19,9 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
   ]
   const developmentPlugins = []
   return [
+    new DefinePlugin({
+      __DEV__: isDevelopmentMode,
+    }),
     ...(isWebApp
       ? [
           new HtmlWebpackPlugin({

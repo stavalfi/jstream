@@ -13,6 +13,7 @@ const {
 const { isCI, isManualRun } = constants
 
 module.exports = {
+  expand: true,
   ...(isCI && { maxConcurrency: 1 }),
   projects: [
     // webstorm doesn't support running multiple projects when clicking on jest buttons in the IDE.
@@ -37,6 +38,7 @@ module.exports = {
       testPathIgnorePatterns: ['node_modules'],
       setupFiles: [testPolyfillsFilePath],
       globals: {
+        __DEV__: true,
         'ts-jest': {
           tsConfig: linterTsconfigPath,
           babelConfig: require(babelRcPath),

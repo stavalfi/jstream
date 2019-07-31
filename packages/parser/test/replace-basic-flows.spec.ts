@@ -15,13 +15,13 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -44,17 +44,17 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ a: [[], [1]] }, { b: [[0], []] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -77,17 +77,17 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ a: [[], [1]] }, { b: [[0], []] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -110,17 +110,17 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ b: [[], [1]] }, { a: [[0], []] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -143,17 +143,17 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ a: [[1], [1]] }, { b: [[0], [0]] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -176,21 +176,21 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ b: [[], [1]] }, { a: [[0], []] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ a: [[1], [1]] }, { b: [[0], [0]] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -221,22 +221,22 @@ describe('replace-basic-flows', () => {
         name: 'a',
         graph: [{ a: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'b',
         graph: [{ b: [[], []] }],
         defaultNodeIndex: 0,
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         name: 'c',
         graph: [{ c_a: [[], [1]] }, { c_b: [[0], []] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
       {
         graph: [{ c_a: [[], [1]] }, { c_b: [[0], []] }],
-        concurrency: false,
+        maxConcurrency: 1,
       },
     ]
 
@@ -463,6 +463,7 @@ describe('replace-basic-flows', () => {
           { c_a: [[2], [4]] }, // 3
           { c_b: [[3], []] }, // 4
         ],
+        pathsGroups: [['1', '2', '3'], ['1', '2', '4'], ['1', '5'], ['1', '6', '7'], ['1', '6', '8']],
       },
     ]
 

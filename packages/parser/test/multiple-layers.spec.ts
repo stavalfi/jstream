@@ -113,6 +113,7 @@ describe('multiple-layers', () => {
       {
         graph: [{ flow0_c_b_a: [[1], [1]] }, { flow1_c_b_a: [[0], [0]] }],
         extendedFlowIndex: 2,
+        pathsGroups: [['0', '1', '2', '3', '4'], ['0', '5', '6', '7', '8']],
       },
     ]
 
@@ -292,7 +293,6 @@ describe('multiple-layers', () => {
     assertEqualFlows(expectedFlows, actualFlows)
   })
 
-  // bug
   it('7', () => {
     const flowsConfig = (graph: UserFlow) => ({
       splitters: {

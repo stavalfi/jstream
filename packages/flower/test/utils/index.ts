@@ -9,7 +9,7 @@ export const getStore: (
   getState: () => {
     libReducer: FlowState
   }
-  getActions: () => FlowAction[]
+  getActions: () => Omit<FlowAction, 'id'>[]
 } = getMockStore
 
 export const libSelector: FlowReducerSelector = state => state.libReducer
@@ -18,10 +18,10 @@ export const state = (state: FlowState) => ({
   libReducer: state,
 })
 
-export function getFlow(flows: ParsedFlow[], flowName: string): ParsedFlow {
+export function getFlow(flows: ParsedFlow[], flowName: string): ParsedFlow & { name: string } {
   const flow = flows.find(flow => 'name' in flow && flow.name === flowName)
   expect(flow).not.toBeUndefined()
-  if (!flow) {
+  if (!flow || !('name' in flow)) {
     // I will never be here but it's for typescript.
     throw new Error('flow is undefined.')
   }
