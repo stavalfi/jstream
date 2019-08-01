@@ -2,6 +2,7 @@
   "name": "@flow/build",
   "version": "1.0.0",
   "description": "",
+  "main": ".config/index.js",
   "scripts": {
     "b:start": "MANUAL_RUN=true webpack-dev-server --hot --env.devServer --config .config/webpack/webpack.config.js",
     "b:build:dev": "MANUAL_RUN=true webpack --mode development --config .config/webpack/webpack.config.js",

@@ -1,4 +1,4 @@
-module.exports = ({ isDevelopmentMode }) => {
+module.exports = ({ isDevelopmentMode, isTestMode }) => {
   const productionPresets = [
     [
       '@babel/preset-env',
@@ -35,11 +35,10 @@ module.exports = ({ isDevelopmentMode }) => {
     ],
     '@babel/plugin-proposal-throw-expressions',
     '@babel/plugin-syntax-dynamic-import',
-    '@babel/plugin-syntax-import-meta',
   ]
   return {
     presets: [
-      ...(isDevelopmentMode ? [] : productionPresets),
+      ...(isDevelopmentMode && !isTestMode ? [] : productionPresets),
       [
         '@babel/preset-react',
         {
@@ -48,6 +47,6 @@ module.exports = ({ isDevelopmentMode }) => {
       ],
       '@babel/typescript',
     ],
-    plugins: [...(isDevelopmentMode ? [] : productionPlugins), '@babel/proposal-class-properties'],
+    plugins: [...(isDevelopmentMode && !isTestMode ? [] : productionPlugins), '@babel/proposal-class-properties'],
   }
 }
