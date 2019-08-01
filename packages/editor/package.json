@@ -37,6 +37,7 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
+    "@flow/build": "^1.0.0",
     "@types/deep-equal": "^1.0.1",
     "@types/redux-logger": "^3.0.7",
     "karma": "^4.1.0",

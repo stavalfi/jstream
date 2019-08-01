@@ -41,7 +41,7 @@ module.exports = {
         __DEV__: true,
         'ts-jest': {
           tsConfig: linterTsconfigPath,
-          babelConfig: require(babelRcPath),
+          babelConfig: require(babelRcPath)({ isDevelopmentMode: true, isTestMode: true }),
         },
         window: {},
       },

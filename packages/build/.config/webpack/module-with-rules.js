@@ -18,7 +18,7 @@ module.exports = ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            ...require(babelRcPath),
+            ...require(babelRcPath)({ isDevelopmentMode }),
           },
         },
         ...(isWebApp || isDevelopmentMode
@@ -62,6 +62,21 @@ module.exports = ({
       loaders: [isDevelopmentMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
     },
     {
+      test: /\.font\.js$/,
+      loaders: [
+        'style-loader',
+        'css-loader',
+        {
+          loader: 'webfonts-loader',
+          options: {
+            types: 'ttf',
+            publicPath,
+            baseSelector: '.sf',
+          },
+        },
+      ],
+    },
+    {
       test: /\.(jpe?g|png|gif)$/i,
       loaders: [
         {
@@ -86,21 +101,6 @@ module.exports = ({
                 optimizationLevel: 7,
               },
             },
-          },
-        },
-      ],
-    },
-    {
-      test: /\.font\.js$/,
-      loaders: [
-        'style-loader',
-        'css-loader',
-        {
-          loader: 'webfonts-loader',
-          options: {
-            types: 'ttf',
-            publicPath,
-            baseSelector: '.sf',
           },
         },
       ],
