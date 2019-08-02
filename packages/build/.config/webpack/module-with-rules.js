@@ -76,67 +76,69 @@ module.exports = ({
         },
       ],
     },
-    (isCI || !isDevelopmentMode) && [
-      {
-        test: /\.(jpe?g|png|gif)$/i,
-        loaders: [
+    ...(isCI || !isDevelopmentMode
+      ? [
           {
-            loader: 'file-loader',
-            options: {
-              query: {
-                name: 'assets/[hash].[name].[ext]',
-              },
-            },
-          },
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              query: {
-                mozjpeg: {
-                  progressive: true,
-                },
-                gifsicle: {
-                  interlaced: true,
-                },
-                optipng: {
-                  optimizationLevel: 7,
+            test: /\.(jpe?g|png|gif)$/i,
+            loaders: [
+              {
+                loader: 'file-loader',
+                options: {
+                  query: {
+                    name: 'assets/[hash].[name].[ext]',
+                  },
                 },
               },
-            },
+              {
+                loader: 'image-webpack-loader',
+                options: {
+                  query: {
+                    mozjpeg: {
+                      progressive: true,
+                    },
+                    gifsicle: {
+                      interlaced: true,
+                    },
+                    optipng: {
+                      optimizationLevel: 7,
+                    },
+                  },
+                },
+              },
+            ],
           },
-        ],
-      },
-      {
-        test: /\.svg(\?.*)?$/,
-        loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
-      },
-      {
-        test: /\.ttf(\?.*)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
-      },
-      {
-        test: /\.(woff|woff2)(\?.*)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/font-woff',
-      },
-      {
-        test: /\.eot(\?.*)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
-      },
-      {
-        test: /\.(scss|sass)$/,
-        exclude: /(node_modules)/,
-        use: [
-          'style-loader',
-          'css-loader',
           {
-            loader: 'sass-loader',
-            options: {
-              indentedSyntax: true,
-              importer: jsonImporter,
-            },
+            test: /\.svg(\?.*)?$/,
+            loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
           },
-        ],
-      },
-    ],
-  ].filter(Boolean),
+          {
+            test: /\.ttf(\?.*)?$/,
+            loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+          },
+          {
+            test: /\.(woff|woff2)(\?.*)?$/,
+            loader: 'url-loader?limit=10000&mimetype=application/font-woff',
+          },
+          {
+            test: /\.eot(\?.*)?$/,
+            loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
+          },
+          {
+            test: /\.(scss|sass)$/,
+            exclude: /(node_modules)/,
+            use: [
+              'style-loader',
+              'css-loader',
+              {
+                loader: 'sass-loader',
+                options: {
+                  indentedSyntax: true,
+                  importer: jsonImporter,
+                },
+              },
+            ],
+          },
+        ]
+      : []),
+  ],
 })

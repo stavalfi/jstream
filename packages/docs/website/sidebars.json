@@ -1,0 +1,10 @@
+{
+  "docs": {
+    "Docusaurus": ["doc1", "doc10"],
+    "First Category": ["doc2"],
+    "stav Category": ["doc3"]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}

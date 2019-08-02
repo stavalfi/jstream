@@ -18,7 +18,8 @@
     "pretty-quick": "^1.11.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/docs/website"
   ],
   "engines": {
     "node": ">=8.11.3"

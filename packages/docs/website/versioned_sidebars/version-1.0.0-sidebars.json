@@ -1,0 +1,10 @@
+{
+  "version-1.0.0-docs": {
+    "Docusaurus": ["version-1.0.0-doc1", "version-1.0.0-doc10"],
+    "First Category": ["version-1.0.0-doc2"],
+    "stav Category": ["version-1.0.0-doc3"]
+  },
+  "version-1.0.0-docs-other": {
+    "First Category": ["version-1.0.0-doc4", "version-1.0.0-doc5"]
+  }
+}
