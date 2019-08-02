@@ -1,5 +1,5 @@
 {
-  "name": "@flow/flower",
+  "name": "@jstream/flower",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "FOLDER=flower yarn workspace @flow/build"
+    "exec": "FOLDER=flower yarn workspace @jstream/build"
   },
   "keywords": [],
   "author": "",
@@ -23,13 +23,13 @@
     "lodash": "^4.17.11"
   },
   "dependencies": {
-    "@flow/parser": "^1.0.0",
-    "@flow/utils": "^1.0.0",
+    "@jstream/parser": "^1.0.0",
+    "@jstream/utils": "^1.0.0",
     "immer": "^3.1.3",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "@flow/build": "^1.0.0",
+    "@jstream/build": "^1.0.0",
     "pkg-ok": "^2.3.1",
     "redux": "^4.0.4",
     "redux-actions-assertions": "^1.3.0",

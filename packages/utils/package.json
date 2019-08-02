@@ -1,5 +1,5 @@
 {
-  "name": "@flow/utils",
+  "name": "@jstream/utils",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
     "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "FOLDER=utils yarn workspace @flow/build"
+    "exec": "FOLDER=utils yarn workspace @jstream/build"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +23,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@flow/build": "^1.0.0",
+    "@jstream/build": "^1.0.0",
     "@types/uuid": "^3.4.5",
     "pkg-ok": "^2.3.1",
     "typescript": "^3.5.2"

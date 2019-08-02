@@ -5,7 +5,7 @@ import {
   reducer,
   updateConfigActionCreator,
 } from '@flower/index'
-import { parse } from '@flow/parser'
+import { parse } from '@jstream/parser'
 
 const state = (state: FlowState) => state
 

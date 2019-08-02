@@ -1,24 +1,17 @@
 {
-  "name": "@flow/documents",
+  "name": "@jstream/docs",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "yarn run exec b:start",
-    "build:prod": "yarn run exec b:build:prod",
-    "test": "yarn run exec b:test",
-    "test:unit": "yarn run exec b:test:unit",
-    "test:watch": "yarn run exec b:test:watch",
-    "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
-    "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "FOLDER=utils yarn workspace @flow/build"
+    "clean:all": "yarn run clean && rm -rf node_modules"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@flow/build": "^1.0.0",
+    "@jstream/build": "^1.0.0",
     "docusaurus-init": "^1.12.0",
     "typescript": "^3.5.2"
   }

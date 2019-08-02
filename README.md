@@ -1,6 +1,6 @@
-<h1 align="center">Flow</h1>
+<h1 align="center">JStream</h1>
 <p align="center">Represent graphs, differently</p>
-
+s
 ## Table of Contents
 
 1. [Install](#install)
@@ -11,16 +11,8 @@
 
 <h2 align="center">Install</h2>
 
-Install with npm:
-
 ```bash
-npm install --save-dev @flow/parser
-```
-
-Install with yarn:
-
-```bash
-yarn add --dev @flow/parser
+yarn add @jstream/parser
 ```
 
 <h2 align="center">Introduction</h2>

@@ -7,9 +7,9 @@ import {
   FlowState,
   Request,
 } from '@flower/types'
-import { uuid } from '@flow/utils'
+import { uuid } from '@jstream/utils'
 import { findByNodeOrDefault, flatMapPromisesResults, getFlowDetails, userInputNodeToNodeIndex } from '@flower/utils'
-import { isSubsetOf } from '@flow/parser'
+import { isSubsetOf } from '@jstream/parser'
 import { advanceFlowActionCreator, executeFlowActionCreator } from '@flower/actions'
 
 export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowIdOrName => (

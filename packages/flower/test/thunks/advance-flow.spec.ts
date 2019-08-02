@@ -1,7 +1,7 @@
 import { getFlow, getStore, libSelector } from '@flower-test/utils'
 import { advanceFlowActionCreator } from '@flower/actions'
 import { FlowActionByType, FlowActionType } from '@flower/types'
-import { parse } from '@flow/parser'
+import { parse } from '@jstream/parser'
 import { advanceGraphThunkCreator } from '@flower/thunks'
 
 describe('advance thunk', () => {

@@ -1,6 +1,6 @@
 import { getStore as getMockStore } from '@flower-test/utils/utils'
 import { FlowAction, FlowReducerSelector, FlowState, FlowThunkDispatch } from '@flower/index'
-import { ParsedFlow } from '@flow/parser'
+import { ParsedFlow } from '@jstream/parser'
 
 export const getStore: (
   initialState?: FlowState,

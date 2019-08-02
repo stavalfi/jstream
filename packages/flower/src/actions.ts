@@ -1,5 +1,5 @@
 import { FlowActionCreator, FlowActionType } from '@flower/types'
-import { uuid } from '@flow/utils'
+import { uuid } from '@jstream/utils'
 
 export const updateConfigActionCreator: FlowActionCreator<FlowActionType.updateConfig> = payload => ({
   id: uuid(),

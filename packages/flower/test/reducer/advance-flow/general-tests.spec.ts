@@ -1,4 +1,4 @@
-import { parse, ParsedFlow } from '@flow/parser'
+import { parse, ParsedFlow } from '@jstream/parser'
 import { FlowState } from '@flower/types'
 import {
   advanceFlowActionCreator,

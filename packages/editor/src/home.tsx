@@ -3,7 +3,7 @@ import React from 'react'
 import DrawFlow from '@editor/draw-flow'
 // @ts-ignore
 import FlowsEditor from '@editor/flows-editor'
-import { ParsedUserConfigurationObject } from '@flow/parser'
+import { ParsedUserConfigurationObject } from '@jstream/parser'
 
 interface State {
   selectedFlowIndex?: number

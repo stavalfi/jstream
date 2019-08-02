@@ -1,4 +1,4 @@
-import { isSubsetOf, ParsedFlow, Path, displayNameToFullGraphNode, Splitters } from '@flow/parser'
+import { isSubsetOf, ParsedFlow, Path, displayNameToFullGraphNode, Splitters } from '@jstream/parser'
 import { isString as _isString, isNumber as _isNumber } from 'lodash'
 import { ActiveFlow } from '@flower/types'
 

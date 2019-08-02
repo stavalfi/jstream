@@ -1,4 +1,4 @@
-import { parse } from '@flow/parser'
+import { parse } from '@jstream/parser'
 import {
   executeFlowActionCreator,
   finishFlowActionCreator,

@@ -1,10 +1,12 @@
 {
-  "name": "@flow/main",
+  "name": "@jstream/main",
   "private": true,
   "scripts": {
     "editor": "yarn --cwd ./packages/editor start",
     "parser": "yarn --cwd ./packages/parser start",
     "flower": "yarn --cwd packages/flower start",
+    "utils": "yarn --cwd packages/utils start",
+    "docs": "yarn --cwd packages/docs/website start",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "bootstrap": "lerna bootstrap",
@@ -26,6 +28,7 @@
   },
   "description": "represent graphs, differently.",
   "keywords": [
+    "jstream",
     "lerna",
     "webpack",
     "yarn",
@@ -40,12 +43,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/stavalfi/flow.git"
+    "url": "https://github.com/stavalfi/jstream.git"
   },
   "bugs": {
-    "url": "https://github.com/stavalfi/flow/issues"
+    "url": "https://github.com/stavalfi/jstream/issues"
   },
-  "homepage": "https://github.com/stavalfi/flow#readme",
+  "homepage": "https://github.com/stavalfi/jstream#readme",
   "author": {
     "name": "Stav Alfi",
     "email": "stavalfi@gmail.com",

@@ -1,5 +1,5 @@
 import { ActiveFlow, FlowReducer, FlowState, GraphConcurrency, Request } from '@flower/types'
-import { ParsedFlow } from '@flow/parser'
+import { ParsedFlow } from '@jstream/parser'
 import immer from 'immer'
 import { getFlowDetails } from '@flower/utils'
 

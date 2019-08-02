@@ -1,5 +1,5 @@
 import { ParsedUserFlow, UserFlow } from '@parser/types'
-import { Combinations } from '@flow/utils'
+import { Combinations } from '@jstream/utils'
 
 type ErrorMessages = {
   [errorMessageKey: string]: {
