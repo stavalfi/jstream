@@ -5,7 +5,7 @@ const jsonImporter = require('node-sass-json-importer')
 
 module.exports = ({
   isDevelopmentMode,
-  constants: { isWebApp },
+  constants: { isWebApp, isCI },
   publicPath = '.',
   paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
 }) => ({
@@ -76,65 +76,67 @@ module.exports = ({
         },
       ],
     },
-    {
-      test: /\.(jpe?g|png|gif)$/i,
-      loaders: [
-        {
-          loader: 'file-loader',
-          options: {
-            query: {
-              name: 'assets/[hash].[name].[ext]',
-            },
-          },
-        },
-        {
-          loader: 'image-webpack-loader',
-          options: {
-            query: {
-              mozjpeg: {
-                progressive: true,
-              },
-              gifsicle: {
-                interlaced: true,
-              },
-              optipng: {
-                optimizationLevel: 7,
+    (isCI || !isDevelopmentMode) && [
+      {
+        test: /\.(jpe?g|png|gif)$/i,
+        loaders: [
+          {
+            loader: 'file-loader',
+            options: {
+              query: {
+                name: 'assets/[hash].[name].[ext]',
               },
             },
           },
-        },
-      ],
-    },
-    {
-      test: /\.svg(\?.*)?$/,
-      loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
-    },
-    {
-      test: /\.ttf(\?.*)?$/,
-      loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
-    },
-    {
-      test: /\.(woff|woff2)(\?.*)?$/,
-      loader: 'url-loader?limit=10000&mimetype=application/font-woff',
-    },
-    {
-      test: /\.eot(\?.*)?$/,
-      loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
-    },
-    {
-      test: /\.(scss|sass)$/,
-      exclude: /(node_modules)/,
-      use: [
-        'style-loader',
-        'css-loader',
-        {
-          loader: 'sass-loader',
-          options: {
-            indentedSyntax: true,
-            importer: jsonImporter,
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              query: {
+                mozjpeg: {
+                  progressive: true,
+                },
+                gifsicle: {
+                  interlaced: true,
+                },
+                optipng: {
+                  optimizationLevel: 7,
+                },
+              },
+            },
           },
-        },
-      ],
-    },
-  ],
+        ],
+      },
+      {
+        test: /\.svg(\?.*)?$/,
+        loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
+      },
+      {
+        test: /\.ttf(\?.*)?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+      },
+      {
+        test: /\.(woff|woff2)(\?.*)?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff',
+      },
+      {
+        test: /\.eot(\?.*)?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
+      },
+      {
+        test: /\.(scss|sass)$/,
+        exclude: /(node_modules)/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              indentedSyntax: true,
+              importer: jsonImporter,
+            },
+          },
+        ],
+      },
+    ],
+  ].filter(Boolean),
 })

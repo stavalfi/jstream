@@ -341,12 +341,13 @@ describe('replace-basic-flows', () => {
       },
       flows: graph,
     })
-    const actual = [
+    const actual: UserFlow[] = [
       'a',
       'b',
       {
         name: 'c',
         graph: 'a:b',
+        default_path: 'b',
       },
       {
         graph: 'c_a:a',
@@ -366,6 +367,7 @@ describe('replace-basic-flows', () => {
       {
         name: 'c',
         graph: [{ c_a: [[], [1]] }, { c_b: [[0], []] }],
+        defaultNodeIndex: 1,
       },
       {
         graph: [{ c_a: [[], [1, 2]] }, { c_b: [[0], []] }, { a: [[0], []] }],
@@ -429,12 +431,13 @@ describe('replace-basic-flows', () => {
       },
       flows: graph,
     })
-    const actual = [
+    const actual: UserFlow[] = [
       'a',
       'b',
       {
         name: 'c',
         graph: 'a:b',
+        default_path: 'b',
       },
       {
         graph: 'c_a:a:c_b',
@@ -454,16 +457,15 @@ describe('replace-basic-flows', () => {
       {
         name: 'c',
         graph: [{ c_a: [[], [1]] }, { c_b: [[0], []] }],
+        defaultNodeIndex: 1,
       },
       {
         graph: [
-          { c_a: [[], [1, 2]] }, // 0
+          { c_a: [[2], [1, 2]] }, // 0
           { c_b: [[0], []] }, // 1
-          { a: [[0], [3]] }, // 2
-          { c_a: [[2], [4]] }, // 3
-          { c_b: [[3], []] }, // 4
+          { a: [[0], [0]] }, // 2
         ],
-        pathsGroups: [['1', '2', '3'], ['1', '2', '4'], ['1', '5'], ['1', '6', '7'], ['1', '6', '8']],
+        pathsGroups: [['1', '2', '3'], ['1', '2', '4'], ['1', '5']],
       },
     ]
 

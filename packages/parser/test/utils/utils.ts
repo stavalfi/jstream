@@ -192,7 +192,7 @@ export function assertEqualFlows(
       'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
     } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
         \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
-        \n${flowToString(actualFlowsArray[i])} \n${graphToString(actualFlowsArray[i].graph)}`
+        \n${flowToString(actualFlowsArray[i])} \n${graphToString((actualFlow || actualFlowsArray[i]).graph)}`
     chaiExpect(actualFlow, errorMessage).not.undefined
     if (actualFlow) {
       chaiExpect(actualFlow.graph, errorMessage).deep.equal(expectedFlow.graph)

@@ -240,6 +240,7 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
   )
 
   const updatedParsedGraph = fixAndExtendGraph({
+    splitters,
     parsedFlows: parsedFlowsUntilNow,
     flowToParse,
     parsedGraph,

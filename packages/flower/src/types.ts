@@ -49,11 +49,14 @@ export type ExecuteFlowThunkCreator = (
 ) => (flow: NonEmptyCombinations<{ id: string; name: string }>) => ExecuteFlowThunk
 
 export type Request = Omit<FlowActionByType[FlowActionType.advanceFlowGraph], 'type'>
+
 export type NodeConcurrency = {
   concurrencyCount: number
   requestIds: string[] // actionIds from ActiveFlow.queue
 }
+
 export type GraphConcurrency = NodeConcurrency[]
+
 export type ActiveFlow = {
   id: string
   flowId: string
