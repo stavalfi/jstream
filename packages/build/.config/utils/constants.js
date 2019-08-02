@@ -1,7 +1,7 @@
 const envVariables = require('./env-variables')
 const packagesProperties = require('./packages-properties')
 
-const mainProjectDirName = 'flow'
+const mainProjectDirName = 'jstream'
 const packagesDirName = 'packages'
 
 const filesExt = ['ts', 'tsx', 'js', 'jsx']

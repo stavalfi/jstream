@@ -9,12 +9,12 @@ import {
   FlowThunkDispatch,
   reducer,
   updateConfigActionCreator,
-} from '@flow/flower'
+} from '@jstream/flower'
 
 import { logger } from 'redux-logger'
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import thunk from 'redux-thunk'
-import { parse } from '@flow/parser'
+import { parse } from '@jstream/parser'
 
 // @ts-ignore
 ReactDOM.render(<App />, document.getElementById('app'))

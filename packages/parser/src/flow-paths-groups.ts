@@ -1,5 +1,5 @@
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow } from '@parser/types'
-import { uuid } from '@flow/utils'
+import { uuid } from '@jstream/utils'
 import { getHeadsIndexOfSubFlows } from '@parser/utils'
 
 type FlowPathsGroups = ({

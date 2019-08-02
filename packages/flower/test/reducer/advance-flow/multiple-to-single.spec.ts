@@ -1,5 +1,5 @@
 import { FlowState } from '@flower/types'
-import { parse, ParsedFlow } from '@flow/parser'
+import { parse, ParsedFlow } from '@jstream/parser'
 import { advanceFlowActionCreator } from '@flower/actions'
 import { reducer } from '@flower/index'
 

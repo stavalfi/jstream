@@ -12,10 +12,10 @@
       "@editor-test/*": ["editor/test/*"],
       "@flower-test/*": ["flower/test/*"],
       "@utils-test/*": ["utils/test/*"],
-      "@flow/parser": ["parser/src/index.ts"],
-      "@flow/flower": ["flower/src/index.ts"],
-      "@flow/build": ["build/src/index.ts"],
-      "@flow/utils": ["utils/src/index.ts"]
+      "@jstream/parser": ["parser/src/index.ts"],
+      "@jstream/flower": ["flower/src/index.ts"],
+      "@jstream/build": ["build/src/index.ts"],
+      "@jstream/utils": ["utils/src/index.ts"]
     }
   },
   "include": ["src", "test"],

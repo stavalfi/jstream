@@ -1,5 +1,5 @@
 {
-  "name": "@flow/editor",
+  "name": "@jstream/editor",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.html",
@@ -12,15 +12,15 @@
     "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "FOLDER=editor yarn workspace @flow/build"
+    "exec": "FOLDER=editor yarn workspace @jstream/build"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@flow/utils": "^1.0.0",
-    "@flow/parser": "^1.0.0",
-    "@flow/flower": "^1.0.0",
+    "@jstream/utils": "^1.0.0",
+    "@jstream/parser": "^1.0.0",
+    "@jstream/flower": "^1.0.0",
     "d3": "^5.9.2",
     "deep-equal": "^1.0.1",
     "dirty-json": "^0.7.0",
@@ -37,7 +37,7 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "@flow/build": "^1.0.0",
+    "@jstream/build": "^1.0.0",
     "@types/deep-equal": "^1.0.1",
     "@types/redux-logger": "^3.0.7",
     "karma": "^4.1.0",

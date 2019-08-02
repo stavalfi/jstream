@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { graphNodeToDisplayName } from '@flow/parser'
+import { graphNodeToDisplayName } from '@jstream/parser'
 require('./styles.css')
 
 function toNodes({ splitters, graph }) {

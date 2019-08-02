@@ -1,6 +1,6 @@
 import { arePathsEqual } from '@parser/utils'
 import { AlgorithmParsedFlow, Graph, Node, Path, Splitters, UserFlowObject } from '@parser/types'
-import { uuid } from '@flow/utils'
+import { uuid } from '@jstream/utils'
 
 type AlgorithmNode = {
   path: Path

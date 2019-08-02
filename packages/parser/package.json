@@ -1,5 +1,5 @@
 {
-  "name": "@flow/parser",
+  "name": "@jstream/parser",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "lint-staged": "yarn run exec b:lint-staged",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
-    "exec": "FOLDER=parser yarn workspace @flow/build"
+    "exec": "FOLDER=parser yarn workspace @jstream/build"
   },
   "keywords": [],
   "author": "",
@@ -23,11 +23,11 @@
     "lodash": "^4.17.11"
   },
   "dependencies": {
-    "@flow/utils": "^1.0.0",
+    "@jstream/utils": "^1.0.0",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "@flow/build": "^1.0.0",
+    "@jstream/build": "^1.0.0",
     "chai": "^4.2.0",
     "pkg-ok": "^2.3.1",
     "table": "^5.4.1",

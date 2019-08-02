@@ -1,4 +1,4 @@
-import { Combinations } from '@flow/utils'
+import { Combinations } from '@jstream/utils'
 
 export type Splitters = {
   extends: string

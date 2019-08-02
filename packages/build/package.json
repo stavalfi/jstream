@@ -1,5 +1,5 @@
 {
-  "name": "@flow/build",
+  "name": "@jstream/build",
   "version": "1.0.0",
   "description": "",
   "main": ".config/index.js",

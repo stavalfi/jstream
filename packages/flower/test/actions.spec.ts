@@ -5,7 +5,7 @@ import {
   FlowActionType,
   updateConfigActionCreator,
 } from '@flower/index'
-import { parse } from '@flow/parser'
+import { parse } from '@jstream/parser'
 
 describe('actions', () => {
   it('1', () => {

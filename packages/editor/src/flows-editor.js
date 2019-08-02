@@ -6,7 +6,7 @@ import 'brace/mode/json'
 import 'brace/theme/github'
 import Jsonic from 'jsonic'
 import dJSON from 'dirty-json'
-import { parse } from '@flow/parser'
+import { parse } from '@jstream/parser'
 
 export default class FlowsEditor extends React.Component {
   constructor(props) {

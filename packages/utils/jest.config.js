@@ -1,3 +1,3 @@
-const { jest } = require('@flow/build')
+const { jest } = require('@jstream/build')
 
 module.exports = jest
