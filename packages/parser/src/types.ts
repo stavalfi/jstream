@@ -2,7 +2,6 @@ import { Combinations } from '@flow/utils'
 
 export type Splitters = {
   extends: string
-  identifier?: string
 }
 
 export type Path = string[]
@@ -11,7 +10,6 @@ export type Node = {
   path: Path
   childrenIndexes: number[]
   parentsIndexes: number[]
-  identifier?: string
 }
 
 export type Graph = Node[]
@@ -44,7 +42,7 @@ export type SideEffectFunction = (
 ) => (toNode: Node, i?: number, graph?: Node[]) => (context?: any) => any | Promise<any>
 
 export type SideEffect = { sideEffectFunc: SideEffectFunction } & Combinations<{
-  node: { path: Path; identifier?: string }
+  node: { path: Path }
 }>
 
 export type UserGraph = string | string[]

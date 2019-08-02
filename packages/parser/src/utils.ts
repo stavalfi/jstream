@@ -1,27 +1,9 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, Path, Splitters, UserFlowObject } from '@parser/types'
 
-export const distractDisplayNameBySplitters = (
-  splitters: Splitters,
-  displayName: string,
-): { partialPath: Path; identifier?: string } => {
-  const identifierSplitterStartIndex = splitters.identifier ? displayName.indexOf(splitters.identifier) : -1
-
-  const identifierObject = splitters.hasOwnProperty('identifier') &&
-    identifierSplitterStartIndex > -1 && {
-      identifier: displayName.split(splitters.identifier as string)[1],
-    }
-
-  const displayNameOnlyFlows =
-    identifierSplitterStartIndex > -1 ? displayName.slice(0, identifierSplitterStartIndex) : displayName
-
-  const partialPath = displayNameOnlyFlows.split(splitters.extends)
-
-  return {
-    partialPath,
-    ...identifierObject,
-  }
-}
+export const distractDisplayNameBySplitters = (splitters: Splitters, displayName: string): { partialPath: Path } => ({
+  partialPath: displayName.split(splitters.extends),
+})
 
 export const extractUniqueFlowsNamesFromGraph = (splitters: Splitters) =>
   function extract(graph: string | string[]): string[] {
@@ -42,17 +24,12 @@ export const extractUniqueFlowsNamesFromGraph = (splitters: Splitters) =>
     return [...new Set(result)]
   }
 
-export type GraphNodeToDisplayName = (splitters: Splitters) => (flowNode: { path: Path; identifier?: string }) => string
+export type GraphNodeToDisplayName = (splitters: Splitters) => (flowNode: { path: Path }) => string
 export const graphNodeToDisplayName: GraphNodeToDisplayName = splitters => flowNode => {
   if (flowNode.path.length === 1) {
     return flowNode.path[0]
   }
-  const flows = flowNode.path.join(splitters.extends)
-  if (flowNode.identifier) {
-    return `${flows}${splitters.identifier}${flowNode.identifier}`
-  } else {
-    return flows
-  }
+  return flowNode.path.join(splitters.extends)
 }
 
 export type DisplayNameToFullGraphNode = (
@@ -65,10 +42,10 @@ export type DisplayNameToFullGraphNode = (
     | { flowName: string }
     | { extendedParsedFlow: ParsedFlow }
     | { flowName: string; extendedParsedFlow: ParsedFlow }),
-) => (displayName: string) => { path: Path; identifier?: string }
+) => (displayName: string) => { path: Path }
 
 export const displayNameToFullGraphNode: DisplayNameToFullGraphNode = splitters => params => displayName => {
-  const { partialPath, identifier } = distractDisplayNameBySplitters(splitters, displayName)
+  const { partialPath } = distractDisplayNameBySplitters(splitters, displayName)
   const path = fillUserPath({
     parsedFlows: params.parsedFlows,
     ...('flowName' in params && { flowName: params.flowName }),
@@ -77,7 +54,6 @@ export const displayNameToFullGraphNode: DisplayNameToFullGraphNode = splitters 
   })
   return {
     path,
-    ...(identifier && { identifier }),
   }
 }
 

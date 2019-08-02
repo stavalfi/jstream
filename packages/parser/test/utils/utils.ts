@@ -59,7 +59,6 @@ const convertExpectedFlowGraphArray = (
       parentsIndexes: Object.values(node)[0][0],
       childrenIndexes: Object.values(node)[0][1],
       path: displayNode.partialPath,
-      ...(displayNode.hasOwnProperty('identifier') && { identifier: displayNode.identifier }),
     }
   })
 }
@@ -81,7 +80,7 @@ const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {
 
 function sortGraph(
   graph: Graph,
-  splitters = { extends: '_', identifier: '/' },
+  splitters = { extends: '_' },
 ): {
   oldIndexToNewIndex: { [index: number]: number }
   newGraph: (Node & { displayName: string })[]

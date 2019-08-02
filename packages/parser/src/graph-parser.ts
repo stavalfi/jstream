@@ -1,7 +1,7 @@
 import { Graph, Path, UserGraph } from '@parser/types'
 
-type ToDisplayName = (flowNode: { path: Path; identifier?: string }) => string
-type ToNode = (displayName: string) => { path: Path; identifier?: string }
+type ToDisplayName = (flowNode: { path: Path }) => string
+type ToNode = (displayName: string) => { path: Path }
 
 export const parseGraph = (
   graphNodeToDisplayName: ToDisplayName,

@@ -4,7 +4,6 @@ import { ParsedFlow } from '@parser/types'
 describe('flatten-user-flow-shortcuts', () => {
   const splitters = {
     extends: '_',
-    identifier: '/',
   }
 
   it('1', () => {
@@ -300,6 +299,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
     const expectedUserFlows = [
       {
+        name: 'flow0/id1',
         graph: ['flow0/id1'],
         extendsFlows: [],
         maxConcurrency: 1,

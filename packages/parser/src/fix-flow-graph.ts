@@ -7,7 +7,6 @@ type AlgorithmNode = {
   children: AlgorithmNode[]
   parents: AlgorithmNode[]
   index?: number
-  identifier?: string
   newGroupId: string
 }
 
@@ -226,16 +225,12 @@ const extendGraph = (extendedParsedFlow?: AlgorithmParsedFlow) => (
 
 function graphByIndexesToObjects(graph: (Node & { newGroupId: string })[]): AlgorithmNode[] {
   return graph
-    .map(pos => {
-      const identifierObject = pos.identifier && { identifier: pos.identifier }
-      return {
-        ...identifierObject,
-        path: pos.path,
-        children: [],
-        parents: [],
-        newGroupId: pos.newGroupId,
-      }
-    })
+    .map(pos => ({
+      path: pos.path,
+      children: [],
+      parents: [],
+      newGroupId: pos.newGroupId,
+    }))
     .map((pos: AlgorithmNode, j, array) => {
       pos.parents = graph[j].parentsIndexes.map(parentIndex => array[parentIndex])
       pos.children = graph[j].childrenIndexes.map(childIndex => array[childIndex])
@@ -264,7 +259,6 @@ function transformToArrayGraph(head: AlgorithmNode): Node[] {
     path: Path
     children: WithIndex[]
     parents: WithIndex[]
-    identifier?: string
   }
 
   const graphWithIndexes = graph as WithIndex[]
