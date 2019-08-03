@@ -82,49 +82,41 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
           {
             queue,
             advancing,
-            ignoredRequestIds,
             graphConcurrency,
           }: {
             queue: ActiveFlow['queue']
             advancing: FlowState['advanced']
-            ignoredRequestIds: string[]
             graphConcurrency: GraphConcurrency
           },
           request,
         ) => {
-          if (ignoredRequestIds.includes(request.id)) {
-            return { queue, advancing, ignoredRequestIds, graphConcurrency }
-          }
           const nodeConcurrency = graphConcurrency[request.payload.toNodeIndex]
           const requestIdIndex = nodeConcurrency.requestIds.findIndex(actionId => request.id === actionId)
-          const requestsToAdvance = canAdvance({
+          const requestToAdvance = canAdvance({
             flows,
             flow,
-            originalQueue: tempActiveFlow.queue,
             graphConcurrency,
             request,
             requestIdIndex,
           })
-          if (requestsToAdvance) {
+          if (requestToAdvance) {
             return {
               queue,
-              advancing: [...advancing, ...requestsToAdvance],
-              ignoredRequestIds: [...ignoredRequestIds, ...requestsToAdvance.map(request => request.id)],
+              advancing: [...advancing, requestToAdvance],
               graphConcurrency: immer(graphConcurrency, draft => {
                 draft[request.payload.toNodeIndex].concurrencyCount++
                 draft[request.payload.toNodeIndex].requestIds = draft[request.payload.toNodeIndex].requestIds.filter(
-                  requestId => requestsToAdvance.every(request => request.id !== requestId),
+                  requestId => requestToAdvance.id !== requestId,
                 )
               }),
             }
           } else {
-            return { queue: [...queue, request], advancing, ignoredRequestIds, graphConcurrency }
+            return { queue: [...queue, request], advancing, graphConcurrency }
           }
         },
         {
           queue: [],
           advancing: [],
-          ignoredRequestIds: [],
           graphConcurrency: tempActiveFlow.graphConcurrency,
         },
       )
@@ -187,13 +179,12 @@ function isValidAdvancePayload(flow: ParsedFlow, activeFlow: ActiveFlow, request
 type CanAdvance = (params: {
   flows: ParsedFlow[]
   flow: ParsedFlow
-  originalQueue: ActiveFlow['queue']
   graphConcurrency: ActiveFlow['graphConcurrency']
   request: Request
   requestIdIndex: number
-}) => Request[] | false
+}) => Request | false
 
-const canAdvance: CanAdvance = ({ flows, flow, originalQueue, graphConcurrency, request, requestIdIndex }) => {
+const canAdvance: CanAdvance = ({ flows, flow, graphConcurrency, request, requestIdIndex }) => {
   if (requestIdIndex !== 0) {
     return false
   }
@@ -203,26 +194,6 @@ const canAdvance: CanAdvance = ({ flows, flow, originalQueue, graphConcurrency, 
     if (actualConcurrency + 1 > maxConcurrency) {
       return false
     }
-  }
-
-  const { parentsIndexes } = flow.graph[request.payload.toNodeIndex]
-
-  const toNodeRequests = graphConcurrency[request.payload.toNodeIndex].requestIds.map(
-    requestId => originalQueue.find(request => request.id === requestId) as Request,
-  )
-
-  const requestsFromParentsToAdvance = parentsIndexes
-    .map(parentIndex =>
-      toNodeRequests.find(
-        request => 'fromNodeIndex' in request.payload && request.payload.fromNodeIndex === parentIndex,
-      ),
-    )
-    .filter(Boolean) as Request[]
-
-  const didAllParentsAdvanced = parentsIndexes.length === requestsFromParentsToAdvance.length
-
-  if (!didAllParentsAdvanced) {
-    return false
   }
 
   const hasFreeConcurrencyToAdvance = flow.graph[request.payload.toNodeIndex].path.every((flowName, i) => {
@@ -242,7 +213,7 @@ const canAdvance: CanAdvance = ({ flows, flow, originalQueue, graphConcurrency, 
     return false
   }
 
-  return parentsIndexes.length === 0 ? [request] : requestsFromParentsToAdvance
+  return request
 }
 
 type GetConcurrencyCountOfGroup = (params: {
