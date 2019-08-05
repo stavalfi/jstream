@@ -1,29 +1,130 @@
 ---
 id: doc1
-title: Latin-ish
-sidebar_label: Example Page
+title: Parser
+sidebar_label: Parser
 ---
 
-Check the [documentation](https://docusaurus.io) for how to use Docusaurus.
+_Parser_ can be used as a mathematical tool to generate graphs from simple text. It has a minimal and powerful syntax which takes the advantage of reprinting patterns inside your graph to minimize the actual description of it.
 
-## Lorem
+We will start with a simple representaiton of the following graphs:
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus elementum massa eget nulla aliquet sagittis. Proin odio tortor, vulputate ut odio in, ultrices ultricies augue. Cras ornare ultrices lorem malesuada iaculis. Etiam sit amet libero tempor, pulvinar mauris sed, sollicitudin sapien.
+| _flow_            | actual graph                 | notes                                     |
+| ----------------- | ---------------------------- | ----------------------------------------- |
+| `a:b`             | `a->b`                       |                                           |
+| `a:b:c`           | `a->b->c`                    |                                           |
+| `a:b:a`           | `a<->b`                      |                                           |
+| `a:b:a`           | `a<->b`                      |                                           |
+| `a:b,c`           | `a->b, a->c`                 |                                           |
+| `a:b,c:a`         | `a<->b, a->c`                |                                           |
+| `a:b,c,d:e`       | `a->b, a->c, a->d, b,c,d->e` |                                           |
+| `a:[b:c],d`       | `a->b->c, a->d`              | `[..]` will return the first defined node |
+| `a:[b:c],[d:e]:f` | `a->b->c, a->d->e b,d->f`    |                                           |
 
-## Mauris In Code
+---
+
+Before we continue, Please use the [Live Editor]() for practice.
+
+## Flow
+
+> **Definition 1.1.** A [_directed simple graph_](https://proofwiki.org/wiki/Definition:Simple_Graph) is a graph which is;
+>
+> - Not a multigraph, i.e. there is no more than one edge between each pair of vertices;
+> - Not a loop-graph, i.e. there are no loops, that is, edges which start and end at the same vertex;
+> - Not a weighted graph, i.e. the edges are not mapped to a number.
+
+> **Definition 1.2.** A **_Flow_** is a _directed-simple graph_ with a single entry-point (head) such that there is a path from the fist node to every other node in the graph (there may not be a path from every node to the head).
+
+```typescript
+type Flow = {
+  name: string // optional
+  graph: string | string[]
+}
+```
+
+For example:
+
+```json
+{
+  "name": "flow0",
+  "graph": ["a:b", "b:c"] // same as "a:b:c"
+}
+```
 
 ```
-Mauris vestibulum ullamcorper nibh, ut semper purus pulvinar ut. Donec volutpat orci sit amet mauris malesuada, non pulvinar augue aliquam. Vestibulum ultricies at urna ut suscipit. Morbi iaculis, erat at imperdiet semper, ipsum nulla sodales erat, eget tincidunt justo dui quis justo. Pellentesque dictum bibendum diam at aliquet. Sed pulvinar, dolor quis finibus ornare, eros odio facilisis erat, eu rhoncus nunc dui sed ex. Nunc gravida dui massa, sed ornare arcu tincidunt sit amet. Maecenas efficitur sapien neque, a laoreet libero feugiat ut.
+name: flow0
+a->b->c
 ```
 
-## Nulla
+To give each node a unique key, a prefix will be added to every node - the flow's name (if there is):
 
-Nulla facilisi. Maecenas sodales nec purus eget posuere. Sed sapien quam, pretium a risus in, porttitor dapibus erat. Sed sit amet fringilla ipsum, eget iaculis augue. Integer sollicitudin tortor quis ultricies aliquam. Suspendisse fringilla nunc in tellus cursus, at placerat tellus scelerisque. Sed tempus elit a sollicitudin rhoncus. Nulla facilisi. Morbi nec dolor dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras et aliquet lectus. Pellentesque sit amet eros nisi. Quisque ac sapien in sapien congue accumsan. Nullam in posuere ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Proin lacinia leo a nibh fringilla pharetra.
+```
+name: flow0
+flow0/a -> flow0/b -> flow0/c
+```
 
-## Orci
+## Composition
 
-Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin venenatis lectus dui, vel ultrices ante bibendum hendrerit. Aenean egestas feugiat dui id hendrerit. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur in tellus laoreet, eleifend nunc id, viverra leo. Proin vulputate non dolor vel vulputate. Curabitur pretium lobortis felis, sit amet finibus lorem suscipit ut. Sed non mollis risus. Duis sagittis, mi in euismod tincidunt, nunc mauris vestibulum urna, at euismod est elit quis erat. Phasellus accumsan vitae neque eu placerat. In elementum arcu nec tellus imperdiet, eget maximus nulla sodales. Curabitur eu sapien eget nisl sodales fermentum.
+A _flow_ can contain multiple flows just by naming them as a ragular nodes in the graph. The parser will find those flows in the graph and replace them with all their nodes.
 
-## Phasellus
+```json
+[
+  {
+    "name": "flow0"
+    // ....
+  },
+  {
+    "name": "flow1"
+    // ....
+  },
+  {
+    "name": "composed-flow",
+    "graph": "flow0:flow1"
+  }
+]
+```
 
-Phasellus pulvinar ex id commodo imperdiet. Praesent odio nibh, sollicitudin sit amet faucibus id, placerat at metus. Donec vitae eros vitae tortor hendrerit finibus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Quisque vitae purus dolor. Duis suscipit ac nulla et finibus. Phasellus ac sem sed dui dictum gravida. Phasellus eleifend vestibulum facilisis. Integer pharetra nec enim vitae mattis. Duis auctor, lectus quis condimentum bibendum, nunc dolor aliquam massa, id bibendum orci velit quis magna. Ut volutpat nulla nunc, sed interdum magna condimentum non. Sed urna metus, scelerisque vitae consectetur a, feugiat quis magna. Donec dignissim ornare nisl, eget tempor risus malesuada quis.
+There is only one problem inthe above example, if `flow0` contains multiple nodes, which node from `flow0` did you intend to be the bridge between those flows? To solve this problem, we will need to tell the _parser_ who is that node:
+
+```json
+[
+  {
+    "name": "flow0",
+    "graph": "a:b",
+    "default_path": "a"
+  },
+  {
+    "name": "flow1",
+    "graph": "c"
+    // rule: if you have more than one node in a graph,
+    //       "default_path" must be specified.
+  },
+  "flow0:flow1"
+]
+```
+
+The above example, will produce a graph representation for every flow. Our nameless-flow will look like this:
+
+```
+flow0/a -> flow0/b
+        \
+         -> flow1/c
+```
+
+If we will change the `default_path` to `b`, it will look like this:
+
+```
+flow0/a -> flow0/b -> flow1/c
+```
+
+---
+
+To be more precise, the _parser_ will create a flow object for every node that he didn't see yet. The reason is for being able to reuse flows that you already defined.
+
+For the above example, the _parser_ will create the following flows, each with it's graph: _a_,_b_,_flow0_,_c_,_flow1_, nameless-flow (`flow0:flow1`).
+
+You can even change the "default_path" while defining the last flow by explicitly specifing it:
+
+| _flow_          | actual graph                             | notes                     |
+| --------------- | ---------------------------------------- | ------------------------- |
+| `flow0/a:flow1` | `flow0/a -> flow0/b, flow0/a -> flow1/c` | same as the first output  |
+| `flow0/b:flow1` | `flow0/a -> flow0/b -> flow1/c`          | same as the second output |
