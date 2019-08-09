@@ -21,9 +21,9 @@ const users = [
 ]
 
 const siteConfig = {
-  title: 'Test Site', // Title for your website.
-  tagline: 'A website for testing',
-  url: 'https://your-docusaurus-test-site.com', // Your website URL
+  title: 'Jstream', // Title for your website.
+  tagline: 'Represent graphs, differently ',
+  url: 'https://stavalfi.github.io/jstream/', // Your website URL
   baseUrl: '/jstream/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
@@ -31,15 +31,15 @@ const siteConfig = {
 
   // Used for publishing and more
   projectName: 'jstream',
-  organizationName: 'facebook',
+  organizationName: 'Jstream',
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    { doc: 'doc1', label: 'Docs' },
-    { doc: 'doc4', label: 'API' },
+    { doc: 'syntax', label: 'Docs' },
+    { doc: 'parser-api', label: 'API' },
     { page: 'help', label: 'Help' },
     { blog: true, label: 'Blog' },
   ],
@@ -73,7 +73,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Your Name or Your Company Name`,
+  copyright: `Copyright © ${new Date().getFullYear()} Stav Alfi`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.

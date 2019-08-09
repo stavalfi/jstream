@@ -1,10 +1,12 @@
 ---
-id: doc2
-title: Example1
-sidebar_label: Parser Configurations
+id: parser-example1
+title: Parser Configuration - Example 1
+sidebar_label: Example 1
 ---
 
 A practical usecase to use the parser, is to represent a state machine of a function:
+
+## Configuration
 
 ```json
 {
@@ -26,6 +28,8 @@ A practical usecase to use the parser, is to represent a state machine of a func
   ]
 }
 ```
+
+## Graphs
 
 The `state` flow:
 
@@ -68,7 +72,7 @@ f3/f2/state/should_start -> f3/f2/state/failed, f3/f2/state/canceled, f3/f2/stat
 
 In the parsed-configuration, you have access to `f1`,`f2` and `f3` flows seperatly, fully defined for you.
 
-Parser configuration
+## Parsed configuration
 
 ```json
 {

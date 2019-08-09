@@ -1,5 +1,5 @@
 ---
-id: doc3
+id: parser-api
 title: Parser API
 sidebar_label: Parser API
 ---
@@ -36,11 +36,13 @@ console.log(parse('flow1'))
 }
 ```
 
+## Flow Type
+
 ```typescript
 // https://stackoverflow.com/questions/56877697/get-all-combinations-of-a-type/56877972#56877972
 // type Combinations = all combinations of a type (including an empty type)
 
-export type ParsedFlow = {
+type Flow = {
   id: string
   graph: {
     path: string[]
@@ -57,23 +59,25 @@ export type ParsedFlow = {
 
 ---
 
-`id` - in _production_ build of the _parser_ library, it will be a valid
+## id
+
+In _production_ build of the _parser_ library, it will be a valid
 uui-id using _uuid_ library. For development builds of the _parser_
 library, it will be an incremented numbers (for better debugging).
 Unless you are a contribe to this library right now, you will work
 with uuids.
 
----
+## name
 
-`name` - the name of the flow. If you didn't provide a name, _parser_ will try to infer the name:
+The name of the flow. If you didn't provide a name, _parser_ will try to infer the name:
 
 If the graph has a single node, _parser_ will check if there isn't an
 already defined flow with that node-name. if not, the name of this
 flow will be equal to it's single node's name.
 
----
+## defaultNodeIndex
 
-`defaultNodeIndex` - _parser_ will infer (if possible) the default-node
+_parser_ will infer (if possible) the default-node
 that will be used when using this flow in other flows. For example:
 
 ```json5
@@ -114,9 +118,9 @@ We specified that `b` will be the default node when writing `flow1` in other flo
 
 The infering algorithm can do much more than that. For more information about `default_path`, please read in the docs.
 
----
+## graph
 
-`graph` - an array of nodes.
+An array of nodes.
 
 Each node contains:
 
@@ -124,9 +128,9 @@ Each node contains:
 `childrenIndexes` - children node indexes.
 `parentsIndexes` - parents node indexes.
 
----
+## pathsGroups
 
-`pathsGroups` - This feature is the opposite of the `path` property of each node.
+This feature is the opposite of the `path` property of each node.
 while the `path` of each nodes tells me which flows a node belongs,
 this feature tells us which nodes each **appearance** of a flow consist.
 
@@ -198,7 +202,7 @@ the help of `pathsGroups`, we can know how much functions
 (different and the same functions) we are running at the
 same time in every appearance of every flow (remmber: `pathsGroups` will give us the
 abolity to know which functions belongs to a specific appearance of a specific flow).
-  
+
 Implementations notes about `pathsGroups`:
 
 - The numbers in the last image will be replaced by *uuid*s in production build of _parser_.

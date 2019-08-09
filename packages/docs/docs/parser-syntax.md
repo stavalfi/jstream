@@ -1,7 +1,7 @@
 ---
-id: doc1
-title: Parser
-sidebar_label: Parser
+id: syntax
+title: Syntax
+sidebar_label: Syntax
 ---
 
 _Parser_ can be used as a mathematical tool to generate graphs
@@ -141,7 +141,7 @@ flow by explicitly specifing it:
 | `flow0/a:flow1` | `flow0/a -> flow0/b, flow0/a -> flow1/c` | same as the first output  |
 | `flow0/b:flow1` | `flow0/a -> flow0/b -> flow1/c`          | same as the second output |
 
-## Auto-filling
+## Auto-filling / Auto-inferring
 
 The _parser_ can receive a graph with references to other flows and
 it will build the output graph based on those flows.
