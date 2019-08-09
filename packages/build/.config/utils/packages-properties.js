@@ -19,4 +19,8 @@ module.exports = [
     packageDirectoryName: 'utils',
     isWebApp: false,
   },
+  {
+    packageDirectoryName: 'playground',
+    isWebApp: true,
+  },
 ]

@@ -22,7 +22,8 @@ export default class Home extends React.Component<{}, State> {
     }
   }
 
-  setConfig = (config: ParsedUserConfigurationObject) => this.setState({ config })
+  setConfig = (config: ParsedUserConfigurationObject) =>
+    this.setState({ config, ...(config.flows.length > 0 && { selectedFlowIndex: config.flows.length - 1 }) })
 
   setSelectedFlowIndex = (selectedFlowIndex: number) => this.setState({ selectedFlowIndex })
 
