@@ -19,7 +19,7 @@ export const userInputNodeToNodeIndex: UserInputNodeToNodeIndex = ({
 }) => fromNodeIndex => userNode => {
   const stringToNode = displayNameToFullGraphNode(splitters)({
     parsedFlows: flows,
-    ...('name' in flow && { name: flow.name }),
+    flowToParse: flow,
     ...('extendedFlowIndex' in flow && { extendedFlowIndex: flows[flow.extendedFlowIndex] }),
   })
 

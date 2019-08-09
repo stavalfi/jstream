@@ -8,7 +8,7 @@ import {
   graphNodeToDisplayName,
   isSubsetOf,
 } from '@parser/utils'
-import { validateFlowToParse } from '@parser/flow-validator'
+import { validateFlowToParse } from '@parser/validators/unparsed-flow-validator'
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import { uuid } from '@jstream/utils'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
@@ -150,7 +150,7 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
     return { defaultNodeIndex: 0 }
   }
 
-  if (flowToParse.defaultPath) {
+  if ('defaultPath' in flowToParse) {
     const { defaultPath } = flowToParse
     const options = parsedGraph.map((node, i) => i).filter(i => isSubsetOf(defaultPath, parsedGraph[i].path))
 
@@ -232,7 +232,7 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
       graphNodeToDisplayName(splitters),
       displayNameToFullGraphNode(splitters)({
         parsedFlows: parsedFlowsUntilNow,
-        ...('name' in flowToParse && { flowName: flowToParse.name }),
+        flowToParse,
         extendedParsedFlow: extendedParsedFlow,
       }),
       flowToParse.graph,
@@ -257,7 +257,7 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
   const parsedFlow: ParsedFlow = {
     id: uuid(),
     ...(extendedParsedFlow && { extendedFlowId: extendedParsedFlow.id }),
-    ...(flowToParse.name && { name: flowToParse.name }),
+    ...('name' in flowToParse && { name: flowToParse.name }),
     ...(extendedParsedFlow && { extendedParsedFlow }),
     ...defaultNodeIndexObject,
     graph: updatedParsedGraph,
@@ -270,15 +270,13 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     maxConcurrency: flowToParse.maxConcurrency,
     sideEffects: parseSideEffects(splitters)({
       parsedFlowsUntilNow,
-      flowName: flowToParse.name,
+      flowToParse,
       extendedParsedFlow,
-      sideEffects: flowToParse.side_effects,
     }),
     rules: parseRules(splitters)({
       parsedFlowsUntilNow,
-      flowName: flowToParse.name,
       extendedParsedFlow,
-      rules: flowToParse.rules,
+      flowToParse,
     }),
   }
 
@@ -286,7 +284,7 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     splitters,
     extendedParsedFlow: parsedFlow,
     parsedFlowsUntilNow,
-    userFlows: flowToParse.extendsFlows,
+    userFlows: 'extendsFlows' in flowToParse ? flowToParse.extendsFlows : [],
     concatWith: [parsedFlow],
   })
 }
@@ -319,8 +317,8 @@ const parseMissingFlowsFromDisplayName = (splitters: Splitters) => (
         }
       } else {
         return (
-          flowToParse.name !== userFlow.name &&
-          parsedFlowsUntilNow.every(flow => !('name' in flow) || flow.name !== userFlow.name)
+          ('name' in flowToParse && flowToParse.name) !== ('name' in userFlow && userFlow.name) &&
+          parsedFlowsUntilNow.every(flow => !('name' in flow) || flow.name !== ('name' in userFlow && userFlow.name))
         )
       }
     },

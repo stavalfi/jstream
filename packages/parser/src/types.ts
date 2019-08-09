@@ -54,10 +54,13 @@ export type UserSideEffects = (
 export type UserFlowObject = {
   graph: UserGraph
   extends_flows?: UserFlow[]
-  default_path?: string
-  side_effects?: UserSideEffects
-  rules?: Rule<{ node_name: string }>[]
-} & Combinations<{ name: string; max_concurrency: boolean | number }>
+} & Combinations<{
+  name: string
+  max_concurrency: boolean | number
+  default_path: string
+  side_effects: UserSideEffects
+  rules: Rule<{ node_name: string }>[]
+}>
 
 export type UserFlow = UserGraph | UserFlowObject
 
@@ -85,14 +88,14 @@ export type Rule<T> = (
 
 export type ParsedUserFlow = {
   maxConcurrency: number
-  graph: UserGraph
-  name?: string
-  extends_flows?: UserFlow[]
-  defaultPath?: string[]
-  side_effects?: UserSideEffects
-  extendsFlows?: UserFlow[]
-  rules?: Rule<{ node_name: string }>[]
-}
+  graph: string[]
+  extendsFlows: UserFlow[]
+  rules: Rule<{ node_name: string }>[]
+  side_effects: UserSideEffects
+} & Combinations<{
+  name: string
+  defaultPath: string[]
+}>
 
 export type Configuration<Flow> = {
   splitters?: Splitters
