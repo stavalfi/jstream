@@ -2,11 +2,6 @@ const { webpackDevelopmentAlias, webpackOtherAlias, webpackProdAlias } = require
 
 module.exports = ({ isDevelopmentMode, paths: { resolveModulesPathsArray }, constants: {} }) => {
   const baseAlias = isDevelopmentMode ? webpackDevelopmentAlias : webpackProdAlias
-  console.log({
-    baseAlias,
-    webpackOtherAlias,
-  })
-  console.log(resolveModulesPathsArray)
   return {
     extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
     modules: resolveModulesPathsArray,

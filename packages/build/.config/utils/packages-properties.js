@@ -8,6 +8,10 @@ module.exports = [
     isWebApp: false,
   },
   {
+    packageDirectoryName: 'editor-website',
+    isWebApp: true,
+  },
+  {
     packageDirectoryName: 'flower',
     isWebApp: false,
   },

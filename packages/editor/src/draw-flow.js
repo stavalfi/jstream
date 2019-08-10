@@ -10,18 +10,18 @@ export default class DrawFlow extends React.Component {
     )
   }
 
-  componentDidMount() {
-    const { config, selectedFlowIndex, height, width } = this.props
-    selectedFlowIndex > -1 &&
-      config.flows.length > selectedFlowIndex &&
-      updateChart({
-        svgReact: this.refs.mySvg,
-        config,
-        flow: config.flows[selectedFlowIndex],
-        height,
-        width,
-      })
-  }
+  // componentDidMount() {
+  //   const { config, selectedFlowIndex, height, width } = this.props
+  //   selectedFlowIndex > -1 &&
+  //     config.flows.length > selectedFlowIndex &&
+  //     updateChart({
+  //       svgReact: this.refs.mySvg,
+  //       config,
+  //       flow: config.flows[selectedFlowIndex],
+  //       height,
+  //       width,
+  //     })
+  // }
 
   componentDidUpdate() {
     const { config, selectedFlowIndex, height, width } = this.props
