@@ -3864,6 +3864,11 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
+circular-dependency-plugin@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/circular-dependency-plugin/-/circular-dependency-plugin-5.1.0.tgz#5b170791f77a1710078ce3147b2a8922e9342275"
+  integrity sha512-O87Wn38kMHeNxfn3dbZpDCw8hJ1IMS9jQqnKCtYkT8dP2SbJtEJxi3eiv9JcDK06oL4EuYmR07tuyf/X8DfsZA==
+
 class-utils@^0.3.5:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/class-utils/-/class-utils-0.3.6.tgz#f93369ae8b9a7ce02fd41faad0ca83033190c463"

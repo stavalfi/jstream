@@ -59,6 +59,7 @@ module.exports = {
     'import/named': 'error',
     'import/default': 'error',
     'import/no-extraneous-dependencies': 'error',
+    'import/no-cycle': 'error',
   },
   settings: {
     'import/resolver': {

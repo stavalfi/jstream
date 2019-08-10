@@ -6,6 +6,7 @@ const currentPackageRootPath = path.resolve(__dirname, '..', '..')
 const packagesPath = path.resolve(currentPackageRootPath, '..')
 const configFolderPath = path.resolve(currentPackageRootPath, '.config')
 
+const mainFolderPath = path.resolve(packagesPath, '..')
 const packageJsonFolderPath = path.resolve(packagesPath, packageDirectoryName)
 const libTsconfigFilePath = path.resolve(configFolderPath, 'lib-tsconfig.json')
 const linterTsconfigPath = path.resolve(packageJsonFolderPath, 'tsconfig.json')
@@ -30,6 +31,7 @@ const resolveModulesPathsArray = [nodeModulesPath, mainNodeModulesPath]
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 module.exports = {
+  mainFolderPath,
   allTestsFolders,
   appEntryFilePaths,
   babelRcPath,

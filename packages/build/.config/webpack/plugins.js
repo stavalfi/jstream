@@ -8,10 +8,11 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
 const _flatMap = require('lodash/flatMap')
+const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 module.exports = ({ isDevelopmentMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI } = constants
-  const { linterTsconfigPath, indexHtmlPath } = paths
+  const { linterTsconfigPath, indexHtmlPath, mainFolderPath } = paths
   const productionPlugins = [
     new MiniCssExtractPlugin({
       filename: '[chunkhash].css',
@@ -19,6 +20,12 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
   ]
   const developmentPlugins = []
   return [
+    new CircularDependencyPlugin({
+      exclude: /node_modules/,
+      failOnError: true,
+      allowAsyncCycles: false,
+      cwd: mainFolderPath,
+    }),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,
     }),
