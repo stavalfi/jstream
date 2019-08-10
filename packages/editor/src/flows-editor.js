@@ -7,6 +7,7 @@ import 'brace/theme/github'
 import Jsonic from 'jsonic'
 import dJSON from 'dirty-json'
 import { parse } from '@jstream/parser'
+import deepEqual from 'deep-equal'
 
 export default class FlowsEditor extends React.Component {
   constructor(props) {
@@ -18,9 +19,9 @@ export default class FlowsEditor extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      nextProps.onConfigChange !== this.props.onConfigChange ||
-      nextProps.config !== this.props.config ||
-      nextState.config !== this.state.config
+      deepEqual(nextProps, this.props) ||
+      deepEqual(nextState.error, this.state.error) ||
+      deepEqual(nextState, this.state)
     )
   }
 
@@ -37,25 +38,14 @@ export default class FlowsEditor extends React.Component {
   }
 
   onChange = newConfig => {
-    console.log('newConfig: ', newConfig)
-    console.log(
-      'allowed props in flow: \n',
-      `UserFlow: {
-      name?: string
-      graph: UserGraph
-      default_path?: string
-      extends_flows?: UserFlow[]
-    }`,
-    )
     try {
       const json = this.stringToObject(newConfig)
       const configObject = parse(json)
       return this.setState({ config: newConfig, error: false }, () => {
-        console.log(configObject)
         this.props.onConfigChange(configObject)
       })
     } catch (e) {
-      return this.setState({ config: newConfig, error: e }, () => console.log(e))
+      return this.setState({ config: newConfig, error: e })
     }
   }
 
@@ -73,11 +63,30 @@ export default class FlowsEditor extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(
+      'allowed props in flow: \n',
+      `UserFlow: {
+      name?: string
+      graph: UserGraph
+      default_path?: string
+      extends_flows?: UserFlow[]
+    }`,
+    )
+    if (this.state.error) {
+      console.log(this.state.error)
+    } else {
+      const json = this.stringToObject(this.state.config)
+      const configObject = parse(json)
+      console.log(configObject)
+    }
+  }
+
   getFlowName = (flow, index) => {
     if (flow.hasOwnProperty('name')) {
       return flow.name
     }
-    return `composed-flow${index}`
+    return `__FLOW_WITH_NO_NAME_${index}`
   }
 
   renderButtons = () => {

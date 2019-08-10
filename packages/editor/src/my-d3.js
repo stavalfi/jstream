@@ -1,14 +1,14 @@
 import * as d3 from 'd3'
 import { graphNodeToDisplayName } from '@jstream/parser'
-require('./styles.css')
+import '@editor/styles.css'
 
 function toNodes({ splitters, graph }) {
-  return graph.map(graphNodeToDisplayName(splitters)).map((displayName, i) => ({ id: displayName }))
+  return graph.map(graphNodeToDisplayName(splitters)).map(displayName => ({ id: displayName }))
 }
 
 function toLinks({ splitters, graph }) {
   return graph.flatMap(node =>
-    node.childrenIndexes.map((target, i) => ({
+    node.childrenIndexes.map(target => ({
       source: graphNodeToDisplayName(splitters)(node),
       target: graphNodeToDisplayName(splitters)(graph[target]),
     })),
@@ -18,17 +18,17 @@ function toLinks({ splitters, graph }) {
 export function updateChart({ svgReact, config, flow, height, width }) {
   ;[...svgReact.children].forEach(x => svgReact.removeChild(x))
 
-  let nodes = toNodes({ splitters: config.splitters, graph: flow.graph })
-  let links = toLinks({ splitters: config.splitters, graph: flow.graph })
+  const nodes = toNodes({ splitters: config.splitters, graph: flow.graph })
+  const links = toLinks({ splitters: config.splitters, graph: flow.graph })
 
   const graph = { nodes, links }
 
-  var color = d3.scaleOrdinal(d3.schemeCategory10)
+  const color = d3.scaleOrdinal(d3.schemeCategory10)
 
   drawD3(graph)
 
   function drawD3(graph) {
-    var label = {
+    const label = {
       nodes: [],
       links: [],
     }
@@ -42,7 +42,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       })
     })
 
-    var labelLayout = d3
+    const labelLayout = d3
       .forceSimulation(label.nodes)
       .force('charge', d3.forceManyBody().strength(-50))
       .force(
@@ -53,7 +53,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
           .strength(1),
       )
 
-    var graphLayout = d3
+    const graphLayout = d3
       .forceSimulation(graph.nodes)
       .force('charge', d3.forceManyBody().strength(-3000))
       .force('center', d3.forceCenter(width / 2, height / 2))
@@ -71,7 +71,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       )
       .on('tick', ticked)
 
-    var adjlist = []
+    const adjlist = []
 
     graph.links.forEach(function(d) {
       adjlist[`${d.source.index}-${d.target.index}`] = true
@@ -82,7 +82,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       return a === b || adjlist[`${a}-${b}`]
     }
 
-    var svg = d3
+    const svg = d3
       .select(svgReact)
       .attr('width', x => {
         return width
@@ -101,7 +101,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       .append('svg:path')
       .attr('d', 'M0,-5L10,0L0,5')
 
-    var container = svg.append('g')
+    const container = svg.append('g')
 
     svg.call(
       d3
@@ -112,7 +112,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
         }),
     )
 
-    var link = container
+    const link = container
       .append('g')
       .attr('class', 'links')
       .selectAll('line')
@@ -123,7 +123,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       .attr('stroke-width', '4px')
       .attr('marker-end', d => 'url(#arrow)')
 
-    var node = container
+    const node = container
       .append('g')
       .attr('class', 'nodes')
       .selectAll('g')
@@ -145,7 +145,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
         .on('end', dragended),
     )
 
-    var labelNode = container
+    const labelNode = container
       .append('g')
       .attr('class', 'labelNodes')
       .selectAll('text')
@@ -183,7 +183,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
     }
 
     function focus(d) {
-      var index = d3.select(d3.event.target).datum().index
+      const index = d3.select(d3.event.target).datum().index
       node.style('opacity', function(o) {
         return neigh(index, o.index) ? 1 : 0.1
       })

@@ -5,6 +5,10 @@ module.exports = [
   },
   {
     packageDirectoryName: 'editor',
+    isWebApp: false,
+  },
+  {
+    packageDirectoryName: 'editor-website',
     isWebApp: true,
   },
   {
@@ -18,5 +22,9 @@ module.exports = [
   {
     packageDirectoryName: 'utils',
     isWebApp: false,
+  },
+  {
+    packageDirectoryName: 'playground',
+    isWebApp: true,
   },
 ]

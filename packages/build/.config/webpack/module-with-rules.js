@@ -47,8 +47,8 @@ module.exports = ({
         {
           loader: 'eslint-loader',
           options: {
-            failOnError: true,
-            failOnWarning: isDevelopmentMode,
+            failOnError: !isDevelopmentMode,
+            failOnWarning: !isDevelopmentMode,
             configFile: eslintRcPath,
             fix: false,
             cache: true,

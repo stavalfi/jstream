@@ -7,6 +7,7 @@
     "flower": "yarn --cwd packages/flower start",
     "utils": "yarn --cwd packages/utils start",
     "docs": "yarn --cwd packages/docs/website start",
+    "playground": "yarn --cwd packages/playground start",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "bootstrap": "lerna bootstrap",

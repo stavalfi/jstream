@@ -1,12 +1,11 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
-import Home from '@editor/home'
+import Hohahoha from '@playground/playground-hoha'
 
 const App: Function = () => (
-  <h1>
-    <Home />
-    <br />
-  </h1>
+  <>
+    <Hohahoha />
+  </>
 )
 
 export default hot(App)

@@ -6,22 +6,22 @@ import { reducer } from '@flower/index'
 const state = (state: FlowState) => state
 
 describe('multiple nodes advance to single node', () => {
-  it(`1 - advance two nodes to a joined node`, () => {
-    const configuration = parse('a:b,c:d')
+  it(`1 - advance node to a joined node with actual concurrency=1`, () => {
+    const configuration = parse([
+      { max_concurrency: 2, graph: 'd' },
+      {
+        max_concurrency: 2,
+        graph: 'a:b,c:d',
+      },
+    ])
     const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
-    const action1 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
-    })
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
         {
           id: '1',
           flowId: flow.id,
-          queue: [action1],
+          queue: [],
           graphConcurrency: flow.graph.map(node => {
             switch (['a', 'b', 'c', 'd'].find(char => node.path.includes(char))) {
               case 'a':
@@ -42,8 +42,8 @@ describe('multiple nodes advance to single node', () => {
               default:
                 // 'd'
                 return {
-                  concurrencyCount: 0,
-                  requestIds: [action1.id],
+                  concurrencyCount: 1,
+                  requestIds: [],
                 }
             }
           }),
@@ -87,7 +87,7 @@ describe('multiple nodes advance to single node', () => {
                 default:
                   // 'd'
                   return {
-                    concurrencyCount: 1,
+                    concurrencyCount: 2,
                     requestIds: [],
                   }
               }
@@ -95,13 +95,18 @@ describe('multiple nodes advance to single node', () => {
           },
         ],
         finishedFlows: [],
-        advanced: [action1, action2],
+        advanced: [action2],
       }),
     )
   })
 
   it(`2 - try advance to a joined node (node has concurrency=1) and go to requestIds`, () => {
-    const configuration = parse('a:b,c:d')
+    const configuration = parse([
+      {
+        max_concurrency: 2,
+        graph: 'a:b,c:d',
+      },
+    ])
     const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
     const initialState: FlowState = {
       ...configuration,
@@ -187,7 +192,7 @@ describe('multiple nodes advance to single node', () => {
     )
   })
 
-  it(`3 - try advance to a joined node (node has concurrency>1) and go to requestIds`, () => {
+  it(`3 - advance to a joined node (node has concurrency>1)`, () => {
     const configuration = parse({
       flows: [
         {
@@ -251,7 +256,7 @@ describe('multiple nodes advance to single node', () => {
           {
             id: '1',
             flowId: flow.id,
-            queue: [action1],
+            queue: [],
             graphConcurrency: flow.graph.map(node => {
               switch (['a', 'b', 'c', 'd'].find(char => node.path.includes(char))) {
                 case 'a':
@@ -272,21 +277,21 @@ describe('multiple nodes advance to single node', () => {
                 default:
                   // 'd'
                   return {
-                    concurrencyCount: 1,
-                    requestIds: [action1.id],
+                    concurrencyCount: 2,
+                    requestIds: [],
                   }
               }
             }),
           },
         ],
         finishedFlows: [],
-        advanced: [],
+        advanced: [action1],
       }),
     )
   })
 
   it(`4 - advance one node to a joined node that has multiple same request.payload (but differet request.id)`, () => {
-    const configuration = parse('a:b,c:d')
+    const configuration = parse([['a:b,c:d', 'd:a']])
     const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
     const action1 = advanceFlowActionCreator({
       activeFlowId: '1',
@@ -327,13 +332,13 @@ describe('multiple nodes advance to single node', () => {
                 }
               case 'c':
                 return {
-                  concurrencyCount: 1,
+                  concurrencyCount: 0,
                   requestIds: [],
                 }
               default:
                 // 'd'
                 return {
-                  concurrencyCount: 0,
+                  concurrencyCount: 1,
                   requestIds: [action1.id, action2.id, action3.id],
                 }
             }
@@ -346,8 +351,8 @@ describe('multiple nodes advance to single node', () => {
     const action4 = advanceFlowActionCreator({
       activeFlowId: '1',
       flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      toNodeIndex: flow.graph.findIndex(node => node.path.includes('a')),
     })
     expect(reducer(initialState, action4)).toEqual(
       state({
@@ -356,13 +361,13 @@ describe('multiple nodes advance to single node', () => {
           {
             id: '1',
             flowId: flow.id,
-            queue: [action2, action3],
+            queue: [action2, action3, action4],
             graphConcurrency: flow.graph.map(node => {
               switch (['a', 'b', 'c', 'd'].find(char => node.path.includes(char))) {
                 case 'a':
                   return {
                     concurrencyCount: 0,
-                    requestIds: [],
+                    requestIds: [action4.id],
                   }
                 case 'b':
                   return {
@@ -385,7 +390,7 @@ describe('multiple nodes advance to single node', () => {
           },
         ],
         finishedFlows: [],
-        advanced: [action1, action4],
+        advanced: [action1],
       }),
     )
   })

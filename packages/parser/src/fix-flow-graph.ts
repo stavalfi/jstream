@@ -1,5 +1,5 @@
 import { arePathsEqual } from '@parser/utils'
-import { AlgorithmParsedFlow, Graph, Node, Path, Splitters, UserFlowObject } from '@parser/types'
+import { AlgorithmParsedFlow, Graph, Node, ParsedUserFlow, Path, Splitters, UserFlowObject } from '@parser/types'
 import { uuid } from '@jstream/utils'
 
 type AlgorithmNode = {
@@ -13,7 +13,7 @@ type AlgorithmNode = {
 type FixAndExtendGraph = (params: {
   splitters: Splitters
   parsedFlows: AlgorithmParsedFlow[]
-  flowToParse: UserFlowObject
+  flowToParse: ParsedUserFlow
   parsedGraph: Graph
   extendedParsedFlow?: AlgorithmParsedFlow
 }) => Graph

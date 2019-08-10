@@ -1,11 +1,16 @@
 import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph } from '@parser/utils'
 import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow, UserFlowObject } from '@parser/types'
+import { toArray } from '@jstream/utils'
 
 function getGraph(flow: UserFlowObject) {
   return Array.isArray(flow.graph) ? flow.graph : [flow.graph]
 }
 
-function getFlowNameObject(splitters: Splitters, parsedFlowsUntilNow: ParsedFlow[], flow: UserFlowObject) {
+function getFlowNameObject(
+  splitters: Splitters,
+  parsedFlowsUntilNow: ParsedFlow[],
+  flow: UserFlowObject,
+): { name: string } | {} {
   if ('name' in flow) {
     return { name: flow.name }
   }
@@ -46,19 +51,19 @@ export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUn
       })
     }
 
-    const flowObject = flow as UserFlowObject
-    const graph = getGraph(flowObject)
+    const flowObject: UserFlowObject = flow as UserFlowObject
     const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flowObject)
-    const flowToParse = {
-      graph,
-      ...nameObject,
-      extendsFlows: flowObject.extends_flows || [],
-      ...(flowObject.default_path && {
-        defaultPath: flowObject.default_path.split(splitters.extends),
-      }),
-      maxConcurrency: 'max_concurrency' in flowObject ? maxConcurrencyToNumber(flowObject.max_concurrency) : 1,
-      side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
-      rules: 'rules' in flowObject ? flowObject.rules : [],
-    }
-    return [flowToParse]
+    return [
+      {
+        graph: toArray(flowObject.graph),
+        ...nameObject,
+        extendsFlows: flowObject.extends_flows ? flowObject.extends_flows : [],
+        ...('default_path' in flowObject && {
+          defaultPath: flowObject.default_path.split(splitters.extends),
+        }),
+        maxConcurrency: 'max_concurrency' in flowObject ? maxConcurrencyToNumber(flowObject.max_concurrency) : 1,
+        side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
+        rules: 'rules' in flowObject ? flowObject.rules : [],
+      },
+    ]
   }

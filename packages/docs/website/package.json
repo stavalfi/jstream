@@ -1,18 +1,17 @@
 {
-  "name": "@jstream/docs-web",
+  "name": "@jstream/docs",
   "version": "1.0.0",
   "scripts": {
-    "publish": "GIT_USER=stavalfi CURRENT_BRANCH=master USE_SSH=true yarn run publish-gh-pages",
     "examples": "docusaurus-examples",
     "start": "docusaurus-start",
-    "build:prod": "yarn run build",
     "build": "docusaurus-build",
     "publish-gh-pages": "docusaurus-publish",
     "write-translations": "docusaurus-write-translations",
     "version": "docusaurus-version",
-    "rename-version": "docusaurus-rename-version",
-    "clean": "rm -rf build",
-    "clean:all": "yarn run clean && rm -rf node_modules"
+    "rename-version": "docusaurus-rename-version"
+  },
+  "dependencies": {
+    "@jstream/editor": "^1.0.0"
   },
   "devDependencies": {
     "docusaurus": "^1.12.0"

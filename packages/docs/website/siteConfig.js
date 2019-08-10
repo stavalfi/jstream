@@ -21,26 +21,27 @@ const users = [
 ]
 
 const siteConfig = {
-  title: 'Test Site', // Title for your website.
-  tagline: 'A website for testing',
-  url: 'https://stavalfi.github.io', // Your website URL
+  title: 'Jstream', // Title for your website.
+  tagline: 'Represent graphs, differently ',
+  url: 'https://stavalfi.github.io/jstream/', // Your website URL
   baseUrl: '/jstream/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
 
   // Used for publishing and more
-  projectName: 'flow',
-  organizationName: 'stavalfi',
+  projectName: 'jstream',
+  organizationName: 'Jstream',
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    { doc: 'doc1', label: 'Docs' },
-    { doc: 'doc4', label: 'API' },
+    { doc: 'syntax', label: 'Docs' },
+    { doc: 'parser-api', label: 'API' },
     { page: 'help', label: 'Help' },
+    { page: 'my-page1', label: 'Editor' },
     { blog: true, label: 'Blog' },
   ],
 
@@ -54,8 +55,8 @@ const siteConfig = {
 
   /* Colors for website */
   colors: {
-    primaryColor: '#117f51',
-    secondaryColor: '#0b5838',
+    primaryColor: '#9d887f',
+    secondaryColor: '#6d5f58',
   },
 
   /* Custom fonts for website */
@@ -73,7 +74,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Your Name or Your Company Name`,
+  copyright: `Copyright © ${new Date().getFullYear()} Stav Alfi`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.

@@ -16,3 +16,5 @@ export const mapIf = <T, U>(
   }
   return element
 }
+
+export const toArray = <T>(param: T | T[]): T[] => (Array.isArray(param) ? param : [param])
