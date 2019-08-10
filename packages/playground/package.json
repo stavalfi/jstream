@@ -19,7 +19,11 @@
   "dependencies": {
     "lodash": "^4.17.11",
     "rxjs": "^6.5.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hot-loader": "^4.8.6",
+    "@jstream/editor": "^1.0.0"
   },
   "devDependencies": {
     "@jstream/build": "^1.0.0",
