@@ -10,7 +10,7 @@ interface State {
   config: ParsedUserConfigurationObject
 }
 
-export default class Home extends React.Component<{}, State> {
+export default class Editor extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props)
     this.state = {

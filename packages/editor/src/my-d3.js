@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { graphNodeToDisplayName } from '@jstream/parser'
-require('./styles.css')
+import '@editor/styles.css'
 
 function toNodes({ splitters, graph }) {
   return graph.map(graphNodeToDisplayName(splitters)).map(displayName => ({ id: displayName }))

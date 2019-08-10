@@ -2,8 +2,6 @@
   "name": "@jstream/playground",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "start": "yarn run exec b:start",
     "build:prod": "yarn run exec b:build:prod",

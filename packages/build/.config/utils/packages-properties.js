@@ -5,7 +5,7 @@ module.exports = [
   },
   {
     packageDirectoryName: 'editor',
-    isWebApp: true,
+    isWebApp: false,
   },
   {
     packageDirectoryName: 'flower',

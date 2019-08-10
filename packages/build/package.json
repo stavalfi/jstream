@@ -45,7 +45,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
     "@hot-loader/react-dom": "^16.8.6",
-    "@stavalfi/babel-plugin-module-resolver-loader": "^1.3.0",
+    "@stavalfi/babel-plugin-module-resolver-loader": "^1.4.0",
     "@types/chai": "4.1.7",
     "@types/deep-equal": "^1.0.1",
     "@types/jasmine": "^3.3.13",

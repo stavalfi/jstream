@@ -41,6 +41,7 @@ const siteConfig = {
     { doc: 'syntax', label: 'Docs' },
     { doc: 'parser-api', label: 'API' },
     { page: 'help', label: 'Help' },
+    { page: 'my-page1', label: 'Editor' },
     { blog: true, label: 'Blog' },
   ],
 

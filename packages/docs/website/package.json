@@ -10,6 +10,9 @@
     "version": "docusaurus-version",
     "rename-version": "docusaurus-rename-version"
   },
+  "dependencies": {
+    "@jstream/editor": "^1.0.0"
+  },
   "devDependencies": {
     "docusaurus": "^1.12.0"
   }

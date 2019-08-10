@@ -13,6 +13,9 @@ const Container = CompLibrary.Container
 const GridBlock = CompLibrary.GridBlock
 
 function Help(props) {
+  if (props) {
+    return <span>12345</span>
+  }
   const { config: siteConfig, language = '' } = props
   const { baseUrl, docsUrl } = siteConfig
   const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`
