@@ -1,12 +1,12 @@
 import * as d3 from 'd3'
-import { graphNodeToDisplayName } from '@jstream/parser'
+import { Configuration, Graph, graphNodeToDisplayName, ParsedFlow, Splitters } from '@jstream/parser'
 import '@editor/styles.css'
 
-function toNodes({ splitters, graph }) {
+function toNodes({ splitters, graph }: { splitters: Splitters; graph: Graph }) {
   return graph.map(graphNodeToDisplayName(splitters)).map(displayName => ({ id: displayName }))
 }
 
-function toLinks({ splitters, graph }) {
+function toLinks({ splitters, graph }: { splitters: Splitters; graph: Graph }) {
   return graph.flatMap(node =>
     node.childrenIndexes.map(target => ({
       source: graphNodeToDisplayName(splitters)(node),
@@ -15,20 +15,37 @@ function toLinks({ splitters, graph }) {
   )
 }
 
-export function updateChart({ svgReact, config, flow, height, width }) {
+export function updateChart({
+  svgReact,
+  config,
+  flow,
+  height,
+  width,
+}: {
+  svgReact: any
+  config: Required<Configuration<ParsedFlow>>
+  flow: ParsedFlow
+  height: number
+  width: number
+}) {
   ;[...svgReact.children].forEach(x => svgReact.removeChild(x))
 
   const nodes = toNodes({ splitters: config.splitters, graph: flow.graph })
   const links = toLinks({ splitters: config.splitters, graph: flow.graph })
 
-  const graph = { nodes, links }
-
   const color = d3.scaleOrdinal(d3.schemeCategory10)
 
-  drawD3(graph)
+  drawD3({ nodes, links })
 
-  function drawD3(graph) {
-    const label = {
+  function drawD3(graph: { nodes: { id: string }[]; links: { source: string; target: string }[] }) {
+    const label: {
+      nodes: {
+        node: {
+          id: string
+        }
+      }[]
+      links: { source: number; target: number }[]
+    } = {
       nodes: [],
       links: [],
     }
@@ -43,6 +60,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
     })
 
     const labelLayout = d3
+      // @ts-ignore
       .forceSimulation(label.nodes)
       .force('charge', d3.forceManyBody().strength(-50))
       .force(
@@ -54,6 +72,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       )
 
     const graphLayout = d3
+      // @ts-ignore
       .forceSimulation(graph.nodes)
       .force('charge', d3.forceManyBody().strength(-3000))
       .force('center', d3.forceCenter(width / 2, height / 2))
@@ -64,6 +83,7 @@ export function updateChart({ svgReact, config, flow, height, width }) {
         d3
           .forceLink(graph.links)
           .id(function(d) {
+            // @ts-ignore
             return d.id
           })
           .distance(100)
@@ -71,14 +91,17 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       )
       .on('tick', ticked)
 
-    const adjlist = []
+    const adjlist: boolean[] = []
 
     graph.links.forEach(function(d) {
+      // @ts-ignore
       adjlist[`${d.source.index}-${d.target.index}`] = true
+      // @ts-ignore
       adjlist[`${d.target.index}-${d.source.index}`] = true
     })
 
-    function neigh(a, b) {
+    function neigh(a: any, b: any) {
+      // @ts-ignore
       return a === b || adjlist[`${a}-${b}`]
     }
 
@@ -132,12 +155,14 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       .append('circle')
       .attr('r', 20)
       .attr('fill', function(d) {
+        // @ts-ignore
         return color(d.group)
       })
 
     node.on('mouseover', focus).on('mouseout', unfocus)
 
     node.call(
+      // @ts-ignore
       d3
         .drag()
         .on('start', dragstarted)
@@ -169,28 +194,35 @@ export function updateChart({ svgReact, config, flow, height, width }) {
 
       labelLayout.alphaTarget(0.3).restart()
       labelNode.each(function(d, i) {
+        // @ts-ignore
         d.x = d.node.x
+        // @ts-ignore
         d.y = d.node.y
       })
       labelNode.call(updateNode)
     }
 
-    function fixna(x) {
+    function fixna(x: number) {
       if (isFinite(x)) {
         return x
       }
       return 0
     }
 
+    // @ts-ignore
     function focus(d) {
+      // @ts-ignore
       const index = d3.select(d3.event.target).datum().index
       node.style('opacity', function(o) {
+        // @ts-ignore
         return neigh(index, o.index) ? 1 : 0.1
       })
       labelNode.attr('display', function(o) {
+        // @ts-ignore
         return neigh(index, o.node.index) ? 'block' : 'none'
       })
       link.style('opacity', function(o) {
+        // @ts-ignore
         return o.source.index == index || o.target.index == index ? 1 : 0.1
       })
     }
@@ -201,28 +233,36 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       link.style('opacity', 1)
     }
 
+    // @ts-ignore
     function updateLink(link) {
       link
+        // @ts-ignore
         .attr('x1', function(d) {
           return fixna(d.source.x)
         })
+        // @ts-ignore
         .attr('y1', function(d) {
           return fixna(d.source.y)
         })
+        // @ts-ignore
         .attr('x2', function(d) {
           return fixna(d.target.x)
         })
+        // @ts-ignore
         .attr('y2', function(d) {
           return fixna(d.target.y)
         })
     }
 
+    // @ts-ignore
     function updateNode(node) {
+      // @ts-ignore
       node.attr('transform', function(d) {
         return `translate(${fixna(d.x)},${fixna(d.y)})`
       })
     }
 
+    // @ts-ignore
     function dragstarted(d) {
       d3.event.sourceEvent.stopPropagation()
       if (!d3.event.active) {
@@ -232,11 +272,13 @@ export function updateChart({ svgReact, config, flow, height, width }) {
       d.fy = d.y
     }
 
+    // @ts-ignore
     function dragged(d) {
       d.fx = d3.event.x
       d.fy = d3.event.y
     }
 
+    // @ts-ignore
     function dragended(d) {
       if (!d3.event.active) {
         graphLayout.alphaTarget(0)

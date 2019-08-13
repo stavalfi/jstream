@@ -59,7 +59,7 @@ module.exports = ({
     },
     {
       test: /\.css$/,
-      loaders: [isDevelopmentMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
+      loaders: [isDevelopmentMode || !isWebApp ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
     },
     {
       test: /\.font\.js$/,

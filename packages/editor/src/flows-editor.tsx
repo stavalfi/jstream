@@ -5,19 +5,31 @@ import 'brace/mode/json'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'brace/theme/github'
 import Jsonic from 'jsonic'
+// @ts-ignore
 import dJSON from 'dirty-json'
-import { parse } from '@jstream/parser'
+import { Configuration, parse, ParsedFlow } from '@jstream/parser'
 import deepEqual from 'deep-equal'
 
-export default class FlowsEditor extends React.Component {
-  constructor(props) {
+type Props = {
+  onSelectedFlowIndexChange: (index: number) => void
+  onConfigChange: (config: Required<Configuration<ParsedFlow>>) => void
+  config: Required<Configuration<ParsedFlow>>
+}
+
+type State = {
+  error?: false | string
+  config: string
+}
+
+export default class FlowsEditor extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     this.state = {
       config: '',
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     return (
       deepEqual(nextProps, this.props) ||
       deepEqual(nextState.error, this.state.error) ||
@@ -25,7 +37,7 @@ export default class FlowsEditor extends React.Component {
     )
   }
 
-  stringToObject = newConfig => {
+  stringToObject = (newConfig: string) => {
     try {
       return Jsonic(newConfig)
     } catch (e) {
@@ -37,7 +49,7 @@ export default class FlowsEditor extends React.Component {
     }
   }
 
-  onChange = newConfig => {
+  onChange = (newConfig: string) => {
     try {
       const json = this.stringToObject(newConfig)
       const configObject = parse(json)
@@ -49,12 +61,12 @@ export default class FlowsEditor extends React.Component {
     }
   }
 
-  handleKeyDown = event => {
+  handleKeyDown = (event: any) => {
     let charCode = String.fromCharCode(event.which).toLowerCase()
     if (event.metaKey && charCode === 'k') {
       this.setState(lastState => {
         if (lastState.error) {
-          return {}
+          return lastState
         } else {
           const config = JSON.stringify(this.stringToObject(lastState.config), null, '\t')
           return { config }
@@ -63,7 +75,7 @@ export default class FlowsEditor extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     console.log(
       'allowed props in flow: \n',
       `UserFlow: {
@@ -82,8 +94,8 @@ export default class FlowsEditor extends React.Component {
     }
   }
 
-  getFlowName = (flow, index) => {
-    if (flow.hasOwnProperty('name')) {
+  getFlowName = (flow: ParsedFlow, index: number) => {
+    if ('name' in flow) {
       return flow.name
     }
     return `__FLOW_WITH_NO_NAME_${index}`
