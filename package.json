@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "editor": "yarn --cwd ./packages/editor start",
+    "editor-website": "yarn --cwd ./packages/editor-website start",
     "parser": "yarn --cwd ./packages/parser start",
     "flower": "yarn --cwd packages/flower start",
     "utils": "yarn --cwd packages/utils start",
