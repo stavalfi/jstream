@@ -27,6 +27,7 @@
   },
   "description": "represent graphs, differently.",
   "keywords": [
+    "flow",
     "jstream",
     "lerna",
     "webpack",

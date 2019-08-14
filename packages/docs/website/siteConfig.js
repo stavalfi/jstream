@@ -23,7 +23,7 @@ const users = [
 const siteConfig = {
   title: 'Jstream', // Title for your website.
   tagline: 'Represent graphs, differently ',
-  url: 'https://stavalfi.github.io/jstream/', // Your website URL
+  url: 'https://jstream.netlify.com/', // Your website URL
   baseUrl: '/jstream/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
@@ -41,7 +41,7 @@ const siteConfig = {
     { doc: 'syntax', label: 'Docs' },
     { doc: 'parser-api', label: 'API' },
     { page: 'help', label: 'Help' },
-    { href: 'https://jstream.netlify.com/', label: 'Editor' },
+    { href: 'https://jstream-editor.netlify.com/', label: 'Editor' },
     { blog: true, label: 'Blog' },
   ],
 
