@@ -1,16 +1,38 @@
 trigger:
   - master
 
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+      node_version: 10.x
+    mac:
+      imageName: 'macos-10.13'
+      node_version: 10.x
+
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: $(imageName)
 
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '10.x'
+      versionSpec: $(node_version)
     displayName: 'Install Node.js'
 
-  - script: |
-      yarn --ignore-scripts
-      yarn lerna run build:prod --sort
-    displayName: 'yarn && lerna build:prod --sort'
+  - script: yarn --ignore-scripts
+    displayName: 'yarn'
+
+  - script: yarn lerna run build:dev --sort
+    displayName: 'yarn lerna run build:dev --sort'
+
+  - script: yarn lerna run clean
+    displayName: 'yarn lerna run clean'
+
+  - script: yarn lerna run build:prod
+    displayName: 'yarn lerna run build:prod --sort'
+
+  - script: yarn lerna run clean
+    displayName: 'yarn lerna run clean'
+
+  - script: yarn lerna run test
+    displayName: 'yarn lerna run test'

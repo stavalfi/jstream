@@ -10,10 +10,7 @@
     "docs": "yarn --cwd packages/docs/website start",
     "playground": "yarn --cwd packages/playground start",
     "clean": "lerna run clean --parallel",
-    "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
-    "bootstrap": "lerna bootstrap",
-    "prepare": "yarn run clean && lerna run build:prod --sort && yarn bootstrap",
-    "prepublishOnly": "yarn run clean && lerna run build:dev && yarn prepare && lerna exec --parallel -- pkg-ok && lerna run test --parallel"
+    "clean:all": "lerna run clean:all --parallel && rm -rf node_modules"
   },
   "devDependencies": {
     "husky": "^2.3.0",

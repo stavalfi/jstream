@@ -1,6 +1,9 @@
 <h1 align="center">JStream</h1>
 <p align="center">Represent graphs, differently</p>
 
+[![Build Status](https://dev.azure.com/stavalfi/jstream/_apis/build/status/stavalfi.jstream?branchName=master)](https://dev.azure.com/stavalfi/jstream/_build/latest?definitionId=1&branchName=master)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a2959f98-cdf7-4d0c-9526-e6e7e87632e7/deploy-status)](https://app.netlify.com/sites/jstream/deploys)
+
 ## Table of Contents
 
 1. [Install](#install)
