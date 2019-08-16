@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "..",
     "paths": {
-      "*": ["utils/node_modules/*", "../node_modules/*"],
+      "*": ["playground/node_modules/*", "../node_modules/*"],
       "@parser/*": ["parser/src/*"],
       "@editor/*": ["editor/src/*"],
       "@flower/*": ["flower/src/*"],

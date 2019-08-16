@@ -102,7 +102,7 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
 
   return new Promise((res, rej) => {
     try {
-      res(sideEffect && sideEffect.sideEffectFunc(flow)(toNode)())
+      res(sideEffect && sideEffect.sideEffectFunc(flow)(toNode, request.payload.toNodeIndex, flow.graph)(null))
     } catch (e) {
       rej(e)
     }
