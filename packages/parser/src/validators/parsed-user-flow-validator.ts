@@ -1,9 +1,9 @@
 import { extractUniqueFlowsNamesFromGraph } from '@parser/utils'
 import { ParsedFlow, ParsedUserFlow, Splitters } from '@parser/types'
-import { composeErrors, ErrorObject, unParsedFlowErrorObject } from '@parser/error-messages'
+import { buildString, composeErrors, ErrorObject } from '@parser/error-messages'
 import { toArray } from '@jstream/utils'
 
-export const validateFlowToParse = (splitters: Splitters) => (
+export const validateParsedUserFlow = (splitters: Splitters) => (
   parsedFlowsUntilNow: ParsedFlow[],
   extendedParsedFlow?: ParsedFlow,
 ) => (flowToParse: ParsedUserFlow) => {
@@ -13,6 +13,20 @@ export const validateFlowToParse = (splitters: Splitters) => (
   }
   return flowToParse
 }
+
+const unParsedFlowErrorObject = ({
+  flowToParse,
+  ...errorObject
+}: ErrorObject & { flowToParse: ParsedUserFlow }): ErrorObject => ({
+  ...errorObject,
+  additionalDetails: buildString(
+    'name' in flowToParse && `flow-name: ${flowToParse.name}`,
+    `user-graph: [${toArray(flowToParse.graph).join(' &&& ')}]`,
+    'defaultPath' in flowToParse && `default-path: ${flowToParse.defaultPath}`,
+    ' ',
+    'additionalDetails' in errorObject && errorObject.additionalDetails,
+  ),
+})
 
 const buildErrorObjects = (splitters: Splitters) => (
   parsedFlowsUntilNow: ParsedFlow[],
@@ -44,7 +58,7 @@ const buildErrorObjects = (splitters: Splitters) => (
           }),
         )
       }
-      const includedDelimiter = Object.values(splitters).find(delimiter => flowToParse.name.includes(delimiter))
+      const includedDelimiter = flowToParse.name.includes(splitters.extends)
       if (includedDelimiter) {
         errorObjects.push(
           unParsedFlowErrorObject({

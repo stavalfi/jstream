@@ -8,7 +8,7 @@ import {
   graphNodeToDisplayName,
   isSubsetOf,
 } from '@parser/utils'
-import { validateFlowToParse } from '@parser/validators/unparsed-flow-validator'
+import { validateParsedUserFlow } from '@parser/validators/parsed-user-flow-validator'
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import { uuid } from '@jstream/utils'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
@@ -87,7 +87,7 @@ const parseUserFlows: ParseUserFlows = ({
       const userFlows = flattenUserFlowShortcuts(splitters)([...parsedFlowsUntilNow, ...acc1])(userFlow)
       const result = userFlows.reduce((acc2: AlgorithmParsedFlow[], userFlow, i) => {
         const acc3 = [...parsedFlowsUntilNow, ...acc1, ...acc2]
-        const validatedUserFlow = validateFlowToParse(splitters)(acc3, extendedParsedFlow)(userFlow)
+        const validatedUserFlow = validateParsedUserFlow(splitters)(acc3, extendedParsedFlow)(userFlow)
         if (
           !filterUserFlowPredicate(acc3)(validatedUserFlow, i) ||
           ('name' in validatedUserFlow &&

@@ -1,5 +1,4 @@
-import { Combinations, toArray } from '@jstream/utils'
-import { ParsedUserFlow } from '@parser/types'
+import { Combinations } from '@jstream/utils'
 
 export const errorMessages = {
   'flow has no properties': {
@@ -12,6 +11,8 @@ export const errorMessages = {
   },
   [`flow with the same name is already defined`]: {
     errorCode: 'pa-3',
+    additionalExplanation:
+      'you may defined this flow by one of two ways: (a) explicitly with a name property. (b) implicitly by defining a flow with one node in the graph. the node name equals to this flow node',
   },
   [`flow-name can't contain a splitter`]: {
     errorCode: 'pa-4',
@@ -27,11 +28,11 @@ export const errorMessages = {
   [`a flow's graph with a single node can't have a defaultPath property`]: {
     errorCode: 'pa-7',
     additionalExplanation:
-      'we may remove this error in the future. its too expensive in production to partially check how much nodes there are in an unparsed-graph.',
+      'we may remove this error in the future. its too expensive in production to partially check how much nodes there are in an unparsed-graph',
   },
 }
 
-const buildString = (...str: (string | false | null | undefined)[]): string => str.filter(Boolean).join(`\n`)
+export const buildString = (...str: (string | false | null | undefined)[]): string => str.filter(Boolean).join(`\n`)
 
 export type ErrorObject = {
   errorMessageKey: keyof typeof errorMessages
@@ -54,17 +55,3 @@ export const buildErrorString: BuildErrorString = ({ errorMessageKey, printDevEr
 }
 
 export const composeErrors = (...errors: ErrorObject[]): string => errors.map(buildErrorString).join(`\n-----------\n`)
-
-export const unParsedFlowErrorObject = ({
-  flowToParse,
-  ...errorObject
-}: ErrorObject & { flowToParse: ParsedUserFlow }) => ({
-  ...errorObject,
-  additionalDetails: buildString(
-    'name' in flowToParse && `flow-name: ${flowToParse.name}`,
-    `user-graph: [${toArray(flowToParse.graph).join(' &&& ')}]`,
-    'defaultPath' in flowToParse && `default-path: ${flowToParse.defaultPath}`,
-    ' ',
-    'additionalDetails' in errorObject && errorObject.additionalDetails,
-  ),
-})
