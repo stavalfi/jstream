@@ -269,9 +269,8 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     }),
     maxConcurrency: flowToParse.maxConcurrency,
     sideEffects: parseSideEffects(splitters)({
-      parsedFlowsUntilNow,
+      parsedGraph: updatedParsedGraph,
       flowToParse,
-      extendedParsedFlow,
     }),
     rules: parseRules(splitters)({
       parsedGraph: updatedParsedGraph,

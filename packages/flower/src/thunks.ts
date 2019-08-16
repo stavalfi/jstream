@@ -90,8 +90,8 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
   const toNode = flow.graph[request.payload.toNodeIndex]
   const sideEffect = findByNodeOrDefault(
     flow.sideEffects,
-    sideEffect => 'node' in sideEffect && isSubsetOf(sideEffect.node.path, toNode.path),
-    rule => !('node' in rule),
+    sideEffect => 'nodeIndex' in sideEffect && isSubsetOf(flow.graph[sideEffect.nodeIndex].path, toNode.path),
+    rule => !('nodeIndex' in rule),
   )
 
   const rule = findByNodeOrDefault(

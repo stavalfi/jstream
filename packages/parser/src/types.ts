@@ -42,7 +42,7 @@ export type SideEffectFunction = (
 ) => (toNode: Node, i?: number, graph?: Node[]) => (context?: any) => any | Promise<any>
 
 export type SideEffect = { sideEffectFunc: SideEffectFunction } & Combinations<{
-  node: { path: Path }
+  nodeIndex: number
 }>
 
 export type UserGraph = string | string[]
