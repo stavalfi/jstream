@@ -82,38 +82,43 @@ const parseUserFlows: ParseUserFlows = ({
   concatWith = [],
   finalMapper = x => x,
 }) => {
-  const parsedFlows = userFlows
-    .reduce((acc1: AlgorithmParsedFlow[], userFlow) => {
-      const userFlows = flattenUserFlowShortcuts(splitters)([...parsedFlowsUntilNow, ...acc1])(userFlow)
-      const result = userFlows.reduce((acc2: AlgorithmParsedFlow[], userFlow, i) => {
-        const acc3 = [...parsedFlowsUntilNow, ...acc1, ...acc2]
-        const validatedUserFlow = validateParsedUserFlow(splitters)(acc3, extendedParsedFlow)(userFlow)
-        if (
-          !filterUserFlowPredicate(acc3)(validatedUserFlow, i) ||
-          ('name' in validatedUserFlow &&
-            extendedParsedFlow &&
-            'name' in extendedParsedFlow &&
-            extendedParsedFlow.name === validatedUserFlow.name)
-        ) {
-          return acc2
-        }
-        const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(
-          acc3,
-          validatedUserFlow,
-          extendedParsedFlow,
-        )
-        const parsedFlows = parseFlow({
-          splitters,
-          parsedFlowsUntilNow: [...acc3, ...missingParsedFlows],
-          flowToParse: validatedUserFlow,
-          extendedParsedFlow,
-        })
-        return [...acc2, ...missingParsedFlows, ...parsedFlows]
-      }, [])
+  const parsedFlows: ParsedFlow[] = []
 
-      return [...acc1, ...result]
-    }, [])
-    .concat(concatWith)
+  for (const userFlow of userFlows) {
+    const parsedUserFlows = flattenUserFlowShortcuts(splitters)([...parsedFlowsUntilNow, ...parsedFlows])(userFlow)
+    for (let i = 0; i < parsedUserFlows.length; i++) {
+      const parsedUserFlow = parsedUserFlows[i]
+
+      validateParsedUserFlow(splitters)([...parsedFlowsUntilNow, ...parsedFlows], extendedParsedFlow)(parsedUserFlow)
+
+      if (
+        !filterUserFlowPredicate([...parsedFlowsUntilNow, ...parsedFlows])(parsedUserFlow, i) ||
+        ('name' in parsedUserFlow &&
+          extendedParsedFlow &&
+          'name' in extendedParsedFlow &&
+          extendedParsedFlow.name === parsedUserFlow.name)
+      ) {
+        continue
+      }
+
+      const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(
+        [...parsedFlowsUntilNow, ...parsedFlows],
+        parsedUserFlow,
+        extendedParsedFlow,
+      )
+
+      const newParsedFlows = parseFlow({
+        splitters,
+        parsedFlowsUntilNow: [...parsedFlowsUntilNow, ...parsedFlows, ...missingParsedFlows],
+        flowToParse: parsedUserFlow,
+        extendedParsedFlow,
+      })
+
+      parsedFlows.push(...missingParsedFlows, ...newParsedFlows)
+    }
+  }
+
+  parsedFlows.push(...concatWith)
 
   return finalMapper(parsedFlows)
 }
