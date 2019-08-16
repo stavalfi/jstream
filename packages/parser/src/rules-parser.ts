@@ -1,28 +1,21 @@
-import { displayNameToFullGraphNode } from '@parser/utils'
-import { ParsedFlow, ParsedUserFlow, Path, Rule, Splitters } from '@parser/types'
+import { findNodeIndex } from '@parser/utils'
+import { Graph, ParsedUserFlow, Path, Rule, Splitters } from '@parser/types'
 
 type ParseRules = (
   splitters: Splitters,
 ) => ({
-  parsedFlowsUntilNow,
-  extendedParsedFlow,
+  parsedGraph,
   flowToParse,
 }: {
-  parsedFlowsUntilNow: ParsedFlow[]
-  extendedParsedFlow?: ParsedFlow
+  parsedGraph: Graph
   flowToParse: ParsedUserFlow
 }) => Rule<{ node: { path: Path } }>[]
 
-export const parseRules: ParseRules = splitters => ({ parsedFlowsUntilNow, extendedParsedFlow, flowToParse }) => {
-  const toNode = displayNameToFullGraphNode(splitters)({
-    parsedFlows: parsedFlowsUntilNow,
-    flowToParse,
-    extendedParsedFlow,
-  })
-  const rules = 'rules' in flowToParse ? flowToParse.rules : []
-  return rules.map(rule => {
+export const parseRules: ParseRules = splitters => ({ parsedGraph, flowToParse }) => {
+  const toNodeIndex = findNodeIndex(splitters)(parsedGraph)
+  return flowToParse.rules.map(rule => {
     return {
-      ...('node_name' in rule && { node: toNode(rule.node_name) }),
+      ...('node_name' in rule && { nodeIndex: toNodeIndex(rule.node_name) }),
       ...rule,
     }
   })

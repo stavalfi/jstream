@@ -1,6 +1,12 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, Path, Splitters, UserFlowObject } from '@parser/types'
 
+export const findNodeIndex = (splitter: Splitters) => (graph: Graph) => (displayName: string) => {
+  const { partialPath } = distractDisplayNameBySplitters(splitter, displayName)
+  const exactNode = graph.findIndex(({ path }) => arePathsEqual(partialPath, path))
+  return exactNode > -1 ? exactNode : graph.findIndex(({ path }) => isSubsetOf(partialPath, path))
+}
+
 export const distractDisplayNameBySplitters = (splitters: Splitters, displayName: string): { partialPath: Path } => ({
   partialPath: displayName.split(splitters.extends),
 })

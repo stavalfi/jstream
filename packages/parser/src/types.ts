@@ -20,7 +20,7 @@ export type ParsedFlow = {
   graph: Graph
   pathsGroups: string[][]
   sideEffects: SideEffect[]
-  rules: Rule<{ node: { path: Path } }>[]
+  rules: Rule<{ nodeIndex: number }>[]
 } & ParsedFlowOptionalFields
 
 export type ParsedFlowOptionalFields = Combinations<{

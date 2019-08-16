@@ -79,7 +79,13 @@ const initializeConfig: InitializeConfig = config => {
   }
 }
 
-export { graphNodeToDisplayName, isSubsetOf, displayNameToFullGraphNode } from '@parser/utils'
+export {
+  graphNodeToDisplayName,
+  isSubsetOf,
+  displayNameToFullGraphNode,
+  distractDisplayNameBySplitters,
+  findNodeIndex,
+} from '@parser/utils'
 export {
   Configuration,
   ParsedUserConfigurationObject,

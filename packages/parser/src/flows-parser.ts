@@ -274,8 +274,7 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
       extendedParsedFlow,
     }),
     rules: parseRules(splitters)({
-      parsedFlowsUntilNow,
-      extendedParsedFlow,
+      parsedGraph: updatedParsedGraph,
       flowToParse,
     }),
   }

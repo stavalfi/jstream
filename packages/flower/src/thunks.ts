@@ -8,9 +8,10 @@ import {
   Request,
 } from '@flower/types'
 import { uuid } from '@jstream/utils'
-import { findByNodeOrDefault, flatMapPromisesResults, getFlowDetails, userInputNodeToNodeIndex } from '@flower/utils'
-import { isSubsetOf } from '@jstream/parser'
+import { findByNodeOrDefault, flatMapPromisesResults, getFlowDetails } from '@flower/utils'
+import { findNodeIndex, isSubsetOf } from '@jstream/parser'
 import { advanceFlowActionCreator, executeFlowActionCreator } from '@flower/actions'
+import { arePathsEqual } from '@parser/utils'
 
 export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowIdOrName => (
   dispatch,
@@ -90,9 +91,14 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
   const sideEffect = findByNodeOrDefault(
     flow.sideEffects,
     sideEffect => 'node' in sideEffect && isSubsetOf(sideEffect.node.path, toNode.path),
+    rule => !('node' in rule),
   )
 
-  const rule = findByNodeOrDefault(flow.rules, rule => 'node' in rule && isSubsetOf(rule.node.path, toNode.path))
+  const rule = findByNodeOrDefault(
+    flow.rules,
+    rule => 'nodeIndex' in rule && arePathsEqual(flow.graph[rule.nodeIndex].path, toNode.path),
+    rule => !('nodeIndex' in rule),
+  )
 
   return new Promise((res, rej) => {
     try {
@@ -122,22 +128,14 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
       },
     )
     .then(nextNodeNames =>
-      nextNodeNames
-        .map(nodeName =>
-          userInputNodeToNodeIndex({
-            splitters,
-            flows,
-            flow,
-          })(request.payload.toNodeIndex)(nodeName),
-        )
-        .map(nextNodeIndex =>
-          advanceFlowActionCreator({
-            activeFlowId: request.payload.activeFlowId,
-            flowId: flow.id,
-            ...('name' in flow && { flowName: flow.name }),
-            fromNodeIndex: request.payload.toNodeIndex,
-            toNodeIndex: nextNodeIndex,
-          }),
-        ),
+      nextNodeNames.map(findNodeIndex(splitters)(flow.graph)).map(nextNodeIndex =>
+        advanceFlowActionCreator({
+          activeFlowId: request.payload.activeFlowId,
+          flowId: flow.id,
+          ...('name' in flow && { flowName: flow.name }),
+          fromNodeIndex: request.payload.toNodeIndex,
+          toNodeIndex: nextNodeIndex,
+        }),
+      ),
     )
 }
