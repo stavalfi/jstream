@@ -60,15 +60,6 @@ const buildErrorObjects = (splitters: Splitters) => (
         )
       }
     }
-  } else {
-    if (flowToParse.extendsFlows.filter(Boolean).length > 0) {
-      errorObjects.push(
-        unParsedFlowErrorObject({
-          errorMessageKey: `flow with extended-flows property must have explicit defined name`,
-          flowToParse,
-        }),
-      )
-    }
   }
 
   if ('graph' in flowToParse) {

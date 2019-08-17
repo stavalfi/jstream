@@ -88,3 +88,24 @@ store.dispatch(executeFlowThunkCreator(libSelector)(flow))
 
 import Editor from '@jstream/editor'
 export default Editor
+
+/*
+{
+      splitters: {
+        extends: '/',
+      },
+      flows: [
+        {
+          graph:"start:success",
+          default_path:"success",
+          extends_flows:[
+            {
+              name:"all",
+              graph:"add:backup",
+              default_path:"backup"
+            }
+            ]
+        }
+      ],
+    }
+ */
