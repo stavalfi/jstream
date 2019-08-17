@@ -41,7 +41,7 @@ const buildErrorObjects = (splitters: Splitters) => (
     return errorObjects
   }
 
-  if ('name' in flowToParse) {
+  if (flowToParse.hasPredefinedName) {
     if (!flowToParse.name) {
       errorObjects.push(
         unParsedFlowErrorObject({
@@ -64,7 +64,7 @@ const buildErrorObjects = (splitters: Splitters) => (
     if (flowToParse.extendsFlows.filter(Boolean).length > 0) {
       errorObjects.push(
         unParsedFlowErrorObject({
-          errorMessageKey: `flow with extended-flows property must have a name`,
+          errorMessageKey: `flow with extended-flows property must have explicit defined name`,
           flowToParse,
         }),
       )

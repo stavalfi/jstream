@@ -1,9 +1,27 @@
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
-import { ParsedFlow } from '@parser/types'
+import { ParsedFlow, ParsedUserFlow } from '@parser/types'
+import { Combinations } from '@jstream/utils'
 
 describe('flatten-user-flow-shortcuts', () => {
   const splitters = {
     extends: '_',
+  }
+
+  const assert = (
+    actualUserFlows: ParsedUserFlow,
+    expectedUserFlows: Omit<ParsedUserFlow, 'name' | 'hasPredefinedName'> & Combinations<{ name: string }>,
+  ) => {
+    const expected: ParsedUserFlow = {
+      ...expectedUserFlows,
+      hasPredefinedName: 'name' in expectedUserFlows,
+      name:
+        'name' in expectedUserFlows
+          ? expectedUserFlows.name
+          : !actualUserFlows.hasPredefinedName
+          ? actualUserFlows.name
+          : 'bug',
+    }
+    expect(actualUserFlows).toEqual(expected)
   }
 
   it('1', () => {
@@ -18,7 +36,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('2', () => {
@@ -33,7 +51,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('3', () => {
@@ -47,7 +65,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('4', () => {
@@ -61,7 +79,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('5', () => {
@@ -75,7 +93,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('6', () => {
@@ -89,7 +107,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('7', () => {
@@ -103,7 +121,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('8', () => {
@@ -117,7 +135,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('9', () => {
@@ -135,7 +153,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('10', () => {
@@ -153,7 +171,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('11', () => {
@@ -169,7 +187,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('12', () => {
@@ -186,7 +204,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('13', () => {
@@ -202,7 +220,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('14', () => {
@@ -220,7 +238,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('15', () => {
@@ -240,7 +258,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('16', () => {
@@ -258,7 +276,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('17', () => {
@@ -275,7 +293,7 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('18', () => {
@@ -290,13 +308,14 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('19', () => {
     const parsedFlows: ParsedFlow[] = [
       {
         name: 'a',
+        hasPredefinedName: true,
         graph: [
           {
             path: ['a'],
@@ -321,13 +340,14 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('20', () => {
-    const parsedFlows = [
+    const parsedFlows: ParsedFlow[] = [
       {
         name: 'a',
+        hasPredefinedName: true,
         graph: [
           {
             path: ['a'],
@@ -353,13 +373,14 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 
   it('21', () => {
-    const parsedFlows = [
+    const parsedFlows: ParsedFlow[] = [
       {
         name: 'a',
+        hasPredefinedName: true,
         graph: [
           {
             path: ['a'],
@@ -385,6 +406,6 @@ describe('flatten-user-flow-shortcuts', () => {
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
-    expect(actualUserFlows).toEqual(expectedUserFlows)
+    assert(actualUserFlows, expectedUserFlows)
   })
 })

@@ -19,7 +19,7 @@ export const errorMessages = {
     errorCode: 'pa-4',
     additionalExplanation: `If you didn't define any splitter by your self, you may have used the default splitter which is: /`,
   },
-  [`flow with extended-flows property must have a name`]: {
+  [`flow with extended-flows property must have explicit defined name`]: {
     errorCode: 'pa-5',
   },
   [`illegal unparsed-graph`]: {

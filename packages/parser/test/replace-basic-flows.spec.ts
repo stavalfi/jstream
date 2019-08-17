@@ -26,9 +26,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('2', () => {
@@ -59,9 +60,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('3', () => {
@@ -92,9 +94,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('4', () => {
@@ -125,9 +128,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('5', () => {
@@ -158,9 +162,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('6', () => {
@@ -195,9 +200,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('7', () => {
@@ -241,9 +247,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('8', () => {
@@ -285,9 +292,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('9', () => {
@@ -329,9 +337,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('10', () => {
@@ -375,9 +384,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('11', () => {
@@ -419,9 +429,10 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('12', () => {
@@ -470,8 +481,9 @@ describe('replace-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 })

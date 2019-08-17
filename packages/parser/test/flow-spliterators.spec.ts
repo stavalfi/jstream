@@ -33,7 +33,7 @@ describe('flow-spliterators', () => {
     const actualFlows = createFlows(actual, flowsConfig(splitters))
     const expectedFlows = createExpected(expected, flowsConfig(splitters)(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(splitters, expectedFlows, actualFlows)
   })
 
   it('2', () => {
@@ -57,7 +57,7 @@ describe('flow-spliterators', () => {
     const actualFlows = createFlows(actual, flowsConfig(splitters))
     const expectedFlows = createExpected(expected, flowsConfig(splitters)(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(splitters, expectedFlows, actualFlows)
   })
 
   it('3', () => {
@@ -81,7 +81,7 @@ describe('flow-spliterators', () => {
     const actualFlows = createFlows(actual, flowsConfig(splitters))
     const expectedFlows = createExpected(expected, flowsConfig(splitters)(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(splitters, expectedFlows, actualFlows)
   })
 
   it('4', () => {
@@ -105,6 +105,6 @@ describe('flow-spliterators', () => {
     const actualFlows = createFlows(actual, flowsConfig(splitters))
     const expectedFlows = createExpected(expected, flowsConfig(splitters)(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(splitters, expectedFlows, actualFlows)
   })
 })

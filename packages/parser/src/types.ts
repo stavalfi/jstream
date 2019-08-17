@@ -16,6 +16,8 @@ export type Graph = Node[]
 
 export type ParsedFlow = {
   id: string
+  hasPredefinedName: boolean
+  name: string
   maxConcurrency: number
   graph: Graph
   pathsGroups: string[][]
@@ -24,7 +26,6 @@ export type ParsedFlow = {
 } & ParsedFlowOptionalFields
 
 export type ParsedFlowOptionalFields = Combinations<{
-  name: string
   extendedFlowIndex: number
   defaultNodeIndex: number
 }>
@@ -87,13 +88,14 @@ export type Rule<T> = (
   (T | {})
 
 export type ParsedUserFlow = {
+  hasPredefinedName: boolean
+  name: string
   maxConcurrency: number
   graph: string[]
   extendsFlows: UserFlow[]
   rules: Rule<{ node_name: string }>[]
   side_effects: UserSideEffects
 } & Combinations<{
-  name: string
   defaultPath: string[]
 }>
 

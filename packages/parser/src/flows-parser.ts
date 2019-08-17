@@ -44,7 +44,8 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           ...('extendedFlowIndex' in parsedFlow && {
             extendedFlowIndex: parsedFlow.extendedFlowIndex,
           }),
-          ...('name' in parsedFlow && { name: parsedFlow.name }),
+          hasPredefinedName: parsedFlow.hasPredefinedName,
+          name: parsedFlow.name,
           ...('defaultNodeIndex' in parsedFlow && {
             defaultNodeIndex: parsedFlow.defaultNodeIndex,
           }),
@@ -247,7 +248,8 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, userFlow, flowTo
   const parsedFlow: ParsedFlow = {
     id: uuid(),
     ...(extendedParsedFlow && { extendedFlowId: extendedParsedFlow.id }),
-    ...('name' in flowToParse && { name: flowToParse.name }),
+    hasPredefinedName: flowToParse.hasPredefinedName,
+    name: flowToParse.name,
     ...(extendedParsedFlow && { extendedParsedFlow }),
     ...defaultNodeIndexObject,
     graph: updatedParsedGraph,

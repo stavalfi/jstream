@@ -14,7 +14,7 @@ describe('multiple nodes advance to single node', () => {
         graph: 'a:b,c:d',
       },
     ])
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -107,7 +107,7 @@ describe('multiple nodes advance to single node', () => {
         graph: 'a:b,c:d',
       },
     ])
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -205,7 +205,7 @@ describe('multiple nodes advance to single node', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -292,7 +292,7 @@ describe('multiple nodes advance to single node', () => {
 
   it(`4 - advance one node to a joined node that has multiple same request.payload (but differet request.id)`, () => {
     const configuration = parse([['a:b,c:d', 'd:a']])
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
     const action1 = advanceFlowActionCreator({
       activeFlowId: '1',
       flowId: flow.id,
