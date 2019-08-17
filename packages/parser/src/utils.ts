@@ -43,7 +43,7 @@ export type DisplayNameToFullGraphNode = (
 ) => (
   params: {
     parsedFlows: ParsedFlow[]
-    flowToParse: { name: string } | {}
+    flowToParse: { name: string }
   } & ({} | { extendedParsedFlow: ParsedFlow }),
 ) => (displayName: string) => { path: Path }
 
@@ -55,7 +55,7 @@ export const displayNameToFullGraphNode: DisplayNameToFullGraphNode = splitters 
   const { partialPath } = distractDisplayNameBySplitters(splitters, displayName)
   const path = fillUserPath({
     parsedFlows,
-    ...('name' in flowToParse && { flowName: flowToParse.name }),
+    flowName: flowToParse.name,
     ...('extendedParsedFlow' in rest && { extendedParsedFlow: rest.extendedParsedFlow }),
     userPath: partialPath,
   })
@@ -91,7 +91,7 @@ function fillUserPath({
 
   if (subPathNotExtendedFlows.length > 0) {
     const parsedFlow = parsedFlows.find(
-      parsedFlow => 'name' in parsedFlow && parsedFlow.name === subPathNotExtendedFlows[0],
+      parsedFlow => parsedFlow.name === subPathNotExtendedFlows[0],
     ) as AlgorithmParsedFlow
 
     const isExtendingTheSameFlow = (() => {
@@ -99,7 +99,7 @@ function fillUserPath({
         const extended = 'extendedParsedFlow' in parsedFlow && parsedFlow.extendedParsedFlow
         // TODO: Critical BUG!!!! fast solution: replaced while(extended) => if(extended)
         if (extended) {
-          if ('name' in extended && 'name' in extendedParsedFlow && extended.name === extendedParsedFlow.name) {
+          if (extended.name === extendedParsedFlow.name) {
             return true
           }
         }
@@ -117,7 +117,7 @@ function fillUserPath({
         newPath = newPath.concat(parsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)
       } else {
         const lastParsedFlow = parsedFlows.find(
-          parsedFlow => 'name' in parsedFlow && parsedFlow.name === userPath[userPath.length - 1],
+          parsedFlow => parsedFlow.name === userPath[userPath.length - 1],
         ) as AlgorithmParsedFlow & { defaultNodeIndex: number }
         const option = options.find(path =>
           isSubsetOf(lastParsedFlow.graph[lastParsedFlow.defaultNodeIndex as number].path, path),
@@ -191,20 +191,18 @@ export const getHeadsIndexOfSubFlows: GetHeadsIndexOfSubFlows = ({
       return true
     }
 
-    const path = 'name' in flowToParse ? node.path.slice(1) : node.path
+    const path = node.path.slice(1)
 
     if (!extendedParsedFlow) {
-      const subFlow = parsedFlows.find(flow => 'name' in flow && flow.name === path[0]) as ParsedFlow
+      const subFlow = parsedFlows.find(flow => flow.name === path[0]) as ParsedFlow
       return arePathsEqual(subFlow.graph[0].path, path)
     } else {
-      const extendedFlowNameIndex = path.findIndex(
-        flowName => 'name' in extendedParsedFlow && flowName === extendedParsedFlow.name,
-      )
+      const extendedFlowNameIndex = path.findIndex(flowName => flowName === extendedParsedFlow.name)
       if (extendedFlowNameIndex === 0) {
         return arePathsEqual(extendedParsedFlow.graph[0].path, path)
       }
 
-      const subFlow = parsedFlows.find(flow => 'name' in flow && flow.name === path[0]) as ParsedFlow
+      const subFlow = parsedFlows.find(flow => flow.name === path[0]) as ParsedFlow
 
       if (!subFlow.graph[0].path.every((flowName, i) => path[i] === flowName)) {
         return false

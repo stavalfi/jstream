@@ -32,11 +32,11 @@ export const flowPathsGroups: FlowPathsGroups = ({ parsedFlows, flowToParse, par
       ? {
           ...node,
           subFlow: 'this value is not used',
-          path: 'name' in flowToParse ? node.path.slice(1) : node.path,
+          path: node.path.slice(1),
         }
       : {
           ...node,
-          path: 'name' in flowToParse ? node.path.slice(1) : node.path,
+          path: node.path.slice(1),
         },
   )
 

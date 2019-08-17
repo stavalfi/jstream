@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "test": "echo no-test",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules"
   },

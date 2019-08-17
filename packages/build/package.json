@@ -12,6 +12,7 @@
     "b:test:watch": "MANUAL_RUN=true yarn run b:test --watch",
     "b:lint-staged": "MANUAL_RUN=true lint-staged --config .config/lint-staged.config.js",
     "lint-staged": "MANUAL_RUN=true FOLDER=build yarn run b:lint-staged",
+    "test": "echo no-test",
     "clean": "MANUAL_RUN=true rm -rf dist",
     "clean:all": "MANUAL_RUN=true yarn run clean && rm -rf node_modules"
   },

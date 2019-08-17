@@ -148,8 +148,7 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
         defaultNodeIndex: options[0],
       }
     } else {
-      const defaultFlow =
-        parsedFlowsUntilNow.find(flow => 'name' in flow && flow.name === defaultPath[defaultPath.length - 1]) || {}
+      const defaultFlow = parsedFlowsUntilNow.find(flow => flow.name === defaultPath[defaultPath.length - 1]) || {}
       if (defaultFlow && defaultFlow.hasOwnProperty('defaultNodeIndex')) {
         const option = options.find(i => {
           // @ts-ignore
@@ -173,7 +172,7 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
   const flowsIndex = flowToParse.hasOwnProperty('name') ? 1 : 0
   const differentFlows = [...new Set(parsedGraph.map(node => node.path[flowsIndex]))]
   if (differentFlows.length === 1) {
-    const parsedFlow = parsedFlowsUntilNow.find(flow => 'name' in flow && flow.name === differentFlows[0])
+    const parsedFlow = parsedFlowsUntilNow.find(flow => flow.name === differentFlows[0])
     if (parsedFlow) {
       if (!('defaultNodeIndex' in parsedFlow)) {
         return {}
@@ -292,15 +291,12 @@ const parseMissingFlowsFromDisplayName = (splitters: Splitters) => (
   flowToParse: ParsedUserFlow,
   extendedParsedFlow?: AlgorithmParsedFlow,
 ) => {
-  const parsedFlowNames = parsedFlows.map(f => 'name' in f && f.name).filter(Boolean) as string[]
+  const parsedFlowNames = parsedFlows.map(f => f.name).filter(Boolean) as string[]
 
   const uniqueFlowsNames = extractUniqueFlowsNamesFromGraph(splitters)(flowToParse.graph)
   const flowsNamesInGraph = uniqueFlowsNames.filter(flowName => !parsedFlowNames.includes(flowName))
 
-  if (
-    flowsNamesInGraph.length === 0 ||
-    (flowsNamesInGraph.length === 1 && 'name' in flowToParse && flowToParse.name === flowsNamesInGraph[0])
-  ) {
+  if (flowsNamesInGraph.length === 0 || (flowsNamesInGraph.length === 1 && flowToParse.name === flowsNamesInGraph[0])) {
     return []
   } else {
     return parseUserFlows({

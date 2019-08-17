@@ -1,5 +1,5 @@
 import { arePathsEqual } from '@parser/utils'
-import { AlgorithmParsedFlow, Graph, Node, ParsedUserFlow, Path, Splitters, UserFlowObject } from '@parser/types'
+import { AlgorithmParsedFlow, Graph, Node, ParsedUserFlow, Path, Splitters } from '@parser/types'
 import { uuid } from '@jstream/utils'
 
 type AlgorithmNode = {
@@ -24,12 +24,7 @@ export const fixAndExtendGraph: FixAndExtendGraph = ({
   parsedGraph,
   extendedParsedFlow,
 }) => {
-  if (
-    parsedGraph.length === 1 &&
-    parsedGraph[0].path.length === 1 &&
-    'name' in flowToParse &&
-    parsedGraph[0].path[0] === flowToParse.name
-  ) {
+  if (parsedGraph.length === 1 && parsedGraph[0].path.length === 1 && parsedGraph[0].path[0] === flowToParse.name) {
     if (extendedParsedFlow) {
       return extendedParsedFlow.graph.map(node => ({
         ...node,
@@ -63,23 +58,15 @@ export const fixAndExtendGraph: FixAndExtendGraph = ({
     )
     .acc.map(group => group.flowName)
 
-  if (
-    differentFlowNames.length === 1 &&
-    extendedParsedFlow &&
-    'name' in extendedParsedFlow &&
-    differentFlowNames[0] === extendedParsedFlow.name
-  ) {
+  if (differentFlowNames.length === 1 && extendedParsedFlow && differentFlowNames[0] === extendedParsedFlow.name) {
     return extendedParsedFlow.graph.map(node => ({
       ...node,
-      path: 'name' in flowToParse ? [flowToParse.name, ...node.path] : node.path,
+      path: [flowToParse.name, ...node.path],
     }))
   }
 
   const extendedFlowsInGraphByFlowName = differentFlowNames
-    .map(
-      flowName =>
-        parsedFlows.find(parsedFlow => 'name' in parsedFlow && parsedFlow.name === flowName) as AlgorithmParsedFlow,
-    )
+    .map(flowName => parsedFlows.find(parsedFlow => parsedFlow.name === flowName) as AlgorithmParsedFlow)
     .map(parsedFlow => ({
       ...parsedFlow,
       graph: parsedFlow.graph.map(addFlowName(flowToParse)),
@@ -142,7 +129,7 @@ const tryAddLink = ({ fromNode, toNode }: { fromNode: AlgorithmNode; toNode: Alg
   }
 }
 
-const getUsedFlowName = (flowToParse: UserFlowObject) => (path: Path) => {
+const getUsedFlowName = (flowToParse: ParsedUserFlow) => (path: Path) => {
   if (path.length > 1) {
     if (flowToParse.hasOwnProperty('name')) {
       return path[1]
@@ -154,8 +141,8 @@ const getUsedFlowName = (flowToParse: UserFlowObject) => (path: Path) => {
   }
 }
 
-const addFlowName = (flowToParse: UserFlowObject) => (node: Node): Node => {
-  return 'name' in flowToParse ? { ...node, path: [flowToParse.name, ...node.path] } : node
+const addFlowName = (flowToParse: ParsedUserFlow) => (node: Node): Node => {
+  return { ...node, path: [flowToParse.name, ...node.path] }
 }
 
 const extendGraph = (extendedParsedFlow?: AlgorithmParsedFlow) => (
