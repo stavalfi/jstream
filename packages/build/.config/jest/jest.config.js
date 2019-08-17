@@ -10,11 +10,10 @@ const {
   babelRcPath,
 } = paths
 
-const { isCI, isManualRun } = constants
+const { isManualRun } = constants
 
 module.exports = {
   expand: true,
-  ...(isCI && { maxConcurrency: 1 }),
   projects: [
     // webstorm doesn't support running multiple projects when clicking on jest buttons in the IDE.
     ...(isManualRun
