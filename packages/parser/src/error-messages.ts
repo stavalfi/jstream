@@ -30,6 +30,9 @@ export const errorMessages = {
     additionalExplanation:
       'we may remove this error in the future. its too expensive in production to partially check how much nodes there are in an unparsed-graph',
   },
+  [`using the name of the extends flow inside a graph is not allowed`]: {
+    errorCode: 'pa-8',
+  },
 }
 
 export const buildString = (...str: (string | false | null | undefined)[]): string => str.filter(Boolean).join(`\n`)

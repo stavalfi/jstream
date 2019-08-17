@@ -1,6 +1,5 @@
-import { ParsedFlow, Splitters, UserFlow, UserGraph } from '@parser/types'
-import { buildString, composeErrors, ErrorObject } from '@parser/error-messages'
-import { Combinations, toArray } from '@jstream/utils'
+import { ParsedFlow, Splitters, UserFlow } from '@parser/types'
+import { composeErrors, ErrorObject } from '@parser/error-messages'
 
 export const validateUserFlow = (splitters: Splitters) => (
   parsedFlowsUntilNow: ParsedFlow[],
@@ -13,22 +12,22 @@ export const validateUserFlow = (splitters: Splitters) => (
   return useFlow
 }
 
-const userFlowErrorObject = ({
-  useFlow,
-  ...errorObject
-}: ErrorObject & { useFlow: UserFlow } & Combinations<{
-    name: string
-    graph: UserGraph
-  }>): ErrorObject => ({
-  ...errorObject,
-  additionalDetails: buildString(
-    `flow: ${useFlow}`,
-    'name' in errorObject && `flow-name: ${errorObject.name}`,
-    'graph' in errorObject && `user-graph: [${toArray(errorObject.graph).join(' &&& ')}]`,
-    ' ',
-    'additionalDetails' in errorObject && errorObject.additionalDetails,
-  ),
-})
+// const userFlowErrorObject = ({
+//   useFlow,
+//   ...errorObject
+// }: ErrorObject & { useFlow: UserFlow } & Combinations<{
+//     name: string
+//     graph: UserGraph
+//   }>): ErrorObject => ({
+//   ...errorObject,
+//   additionalDetails: buildString(
+//     `flow: ${useFlow}`,
+//     'name' in errorObject && `flow-name: ${errorObject.name}`,
+//     'graph' in errorObject && `user-graph: [${toArray(errorObject.graph).join(' &&& ')}]`,
+//     ' ',
+//     'additionalDetails' in errorObject && errorObject.additionalDetails,
+//   ),
+// })
 
 const buildErrorObjects = (splitters: Splitters) => (
   parsedFlowsUntilNow: ParsedFlow[],

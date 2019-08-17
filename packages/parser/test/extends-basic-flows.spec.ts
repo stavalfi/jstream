@@ -942,23 +942,9 @@ describe('extends-basic-flows', () => {
       name: 'flow0',
       graph: 'a',
     }
-    const expected: ExpectedFlow[] = [
-      {
-        name: 'a',
-        graph: [{ a: [[], []] }],
-        defaultNodeIndex: 0,
-      },
-      {
-        name: 'flow0',
-        graph: [{ flow0_a: [[], []] }],
-        defaultNodeIndex: 0,
-      },
-    ]
-
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
-
-    assertEqualFlows(expectedFlows, actualFlows)
+    expect(() => createFlows(actual, flowsConfig)).toThrow(
+      'using the name of the extends flow inside a graph is not allowed',
+    )
   })
 
   it('38', () => {
