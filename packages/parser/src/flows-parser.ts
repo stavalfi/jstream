@@ -15,6 +15,7 @@ import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters
 import { parseRules } from '@parser/rules-parser'
 import { flowPathsGroups } from '@parser/flow-paths-groups'
 import { validateUserFlow } from '@parser/validators/user-flow-validator'
+import { validateParsedFlow } from '@parser/validators/parsed-flow-validator'
 
 type ParseMultipleFlows = ({
   userFlows,
@@ -25,8 +26,8 @@ type ParseMultipleFlows = ({
   splitters: Splitters
   parsedFlowsUntilNow?: AlgorithmParsedFlow[]
 }) => ParsedFlow[]
-export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitters, parsedFlowsUntilNow = [] }) =>
-  parseUserFlows({
+export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitters, parsedFlowsUntilNow = [] }) => {
+  const parsedFlows = parseUserFlows({
     userFlows,
     splitters,
     parsedFlowsUntilNow,
@@ -54,6 +55,9 @@ export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitte
           rules: parsedFlow.rules,
         })),
   })
+
+  return parsedFlows
+}
 
 type ParseUserFlows = ({
   userFlows,
@@ -87,21 +91,31 @@ const parseUserFlows: ParseUserFlows = ({
     const flows: ParsedFlow[] = [...parsedFlowsUntilNow, ...parsedFlows]
     validateUserFlow(splitters)(flows, extendedParsedFlow)(userFlow)
 
-    const parsedUserFlows = flattenUserFlowShortcuts(splitters)(flows)(userFlow)
-    for (const parsedUserFlow of parsedUserFlows.filter(filterUserFlowPredicate(flows))) {
-      validateParsedUserFlow(splitters)(flows, extendedParsedFlow)(parsedUserFlow)
+    const parsedUserFlow = flattenUserFlowShortcuts(splitters)(flows)(userFlow)
 
-      const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(flows, parsedUserFlow, extendedParsedFlow)
-
-      const newParsedFlows = parseFlow({
-        splitters,
-        parsedFlowsUntilNow: [...flows, ...missingParsedFlows],
-        flowToParse: parsedUserFlow,
-        extendedParsedFlow,
-      })
-
-      parsedFlows.push(...missingParsedFlows, ...newParsedFlows)
+    if (!filterUserFlowPredicate(flows)(parsedUserFlow)) {
+      continue
     }
+
+    validateParsedUserFlow(splitters)(flows, extendedParsedFlow)(parsedUserFlow)
+
+    const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(flows, parsedUserFlow, extendedParsedFlow)
+
+    const newParsedFlows = parseFlow({
+      splitters,
+      parsedFlowsUntilNow: [...flows, ...missingParsedFlows],
+      flowToParse: parsedUserFlow,
+      extendedParsedFlow,
+    })
+    ;[...missingParsedFlows, ...newParsedFlows].forEach(
+      validateParsedFlow(splitters)({
+        userFlow,
+        parsedUserFlow,
+        flows: [...parsedFlows, ...missingParsedFlows, ...newParsedFlows],
+      }),
+    )
+
+    parsedFlows.push(...missingParsedFlows, ...newParsedFlows)
   }
 
   parsedFlows.push(...concatWith)

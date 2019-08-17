@@ -12,7 +12,8 @@ export const errorMessages = {
   [`flow with the same name is already defined`]: {
     errorCode: 'pa-3',
     additionalExplanation:
-      'you may defined this flow by one of two ways: (a) explicitly with a name property. (b) implicitly by defining a flow with one node in the graph. the node name equals to this flow node',
+      'you may defined this flow by one of two ways: (a) explicitly with a name property. (b) implicitly by defining a flow with one node in the graph (the node name equals to this flow node).',
+    solution: `to solve this, just use the flow in other flows. you don't need to re-define it. if you want to define special properties to it, then search where you defined it first (implicitly or explicitly) and define it before. also, don't forgot to make other explicit defenition of it as implicit: just use it without define it in other flows.`,
   },
   [`flow-name can't contain a splitter`]: {
     errorCode: 'pa-4',
@@ -33,6 +34,9 @@ export const errorMessages = {
   [`using the name of the extends flow inside a graph is not allowed`]: {
     errorCode: 'pa-8',
   },
+  [`flow with the same name is already defined in an extended flow`]: {
+    errorCode: 'pa-9',
+  },
 }
 
 export const buildString = (...str: (string | false | null | undefined)[]): string => str.filter(Boolean).join(`\n`)
@@ -47,12 +51,14 @@ type BuildErrorString = (params: ErrorObject) => string
 export const buildErrorString: BuildErrorString = ({ errorMessageKey, printDevError = __DEV__, ...rest }) => {
   const errorMessage = errorMessages[errorMessageKey]
   const additionalExplanation = 'additionalExplanation' in errorMessage && errorMessage.additionalExplanation
+  const solution = 'solution' in errorMessage && errorMessage.solution
 
   return buildString(
     `Error code: ${errorMessage.errorCode}`,
     errorMessageKey,
     'additionalDetails' in rest && rest.additionalDetails,
     additionalExplanation && `additional-explanation: ${additionalExplanation}`,
+    solution && `solution: ${solution}`,
     'error' in rest && rest.error,
   )
 }

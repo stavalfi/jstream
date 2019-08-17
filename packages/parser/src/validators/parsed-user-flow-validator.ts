@@ -50,14 +50,6 @@ const buildErrorObjects = (splitters: Splitters) => (
         }),
       )
     } else {
-      if (parsedFlowsUntilNow.some(flow => 'name' in flow && flow.name === flowToParse.name)) {
-        errorObjects.push(
-          unParsedFlowErrorObject({
-            errorMessageKey: `flow with the same name is already defined`,
-            flowToParse,
-          }),
-        )
-      }
       const includedDelimiter = flowToParse.name.includes(splitters.extends)
       if (includedDelimiter) {
         errorObjects.push(

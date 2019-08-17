@@ -39,7 +39,7 @@ function maxConcurrencyToNumber(maxConcurrency: boolean | number): number {
 }
 
 export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUntilNow: ParsedFlow[]) =>
-  function flatten(flow: UserFlow): ParsedUserFlow[] {
+  function flatten(flow: UserFlow): ParsedUserFlow {
     if (typeof flow === 'string') {
       return flatten({
         graph: [flow],
@@ -53,17 +53,15 @@ export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUn
 
     const flowObject: UserFlowObject = flow as UserFlowObject
     const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flowObject)
-    return [
-      {
-        graph: toArray(flowObject.graph),
-        ...nameObject,
-        extendsFlows: flowObject.extends_flows ? flowObject.extends_flows : [],
-        ...('default_path' in flowObject && {
-          defaultPath: flowObject.default_path.split(splitters.extends),
-        }),
-        maxConcurrency: 'max_concurrency' in flowObject ? maxConcurrencyToNumber(flowObject.max_concurrency) : 1,
-        side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
-        rules: 'rules' in flowObject ? flowObject.rules : [],
-      },
-    ]
+    return {
+      graph: toArray(flowObject.graph),
+      ...nameObject,
+      extendsFlows: flowObject.extends_flows ? flowObject.extends_flows : [],
+      ...('default_path' in flowObject && {
+        defaultPath: flowObject.default_path.split(splitters.extends),
+      }),
+      maxConcurrency: 'max_concurrency' in flowObject ? maxConcurrencyToNumber(flowObject.max_concurrency) : 1,
+      side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
+      rules: 'rules' in flowObject ? flowObject.rules : [],
+    }
   }
