@@ -34,7 +34,7 @@ export const errorMessages = {
   [`using the name of the extends flow inside a graph is not allowed`]: {
     errorCode: 'pa-8',
   },
-  [`flow with the same name is already defined in an extended flow`]: {
+  [`flow with the same name is already defined as an extended flow`]: {
     errorCode: 'pa-9',
   },
 }

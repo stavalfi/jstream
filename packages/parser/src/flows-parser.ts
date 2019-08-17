@@ -85,7 +85,7 @@ const parseUserFlows: ParseUserFlows = ({
   concatWith = [],
   finalMapper = x => x,
 }) => {
-  const parsedFlows: ParsedFlow[] = []
+  const parsedFlows: ParsedFlow[] = [...concatWith]
 
   for (const userFlow of userFlows) {
     const flows: ParsedFlow[] = [...parsedFlowsUntilNow, ...parsedFlows]
@@ -93,32 +93,24 @@ const parseUserFlows: ParseUserFlows = ({
 
     const parsedUserFlow = flattenUserFlowShortcuts(splitters)(flows)(userFlow)
 
+    validateParsedUserFlow(splitters)(flows, extendedParsedFlow)(parsedUserFlow)
+
     if (!filterUserFlowPredicate(flows)(parsedUserFlow)) {
       continue
     }
-
-    validateParsedUserFlow(splitters)(flows, extendedParsedFlow)(parsedUserFlow)
 
     const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(flows, parsedUserFlow, extendedParsedFlow)
 
     const newParsedFlows = parseFlow({
       splitters,
       parsedFlowsUntilNow: [...flows, ...missingParsedFlows],
+      userFlow,
       flowToParse: parsedUserFlow,
       extendedParsedFlow,
     })
-    ;[...missingParsedFlows, ...newParsedFlows].forEach(
-      validateParsedFlow(splitters)({
-        userFlow,
-        parsedUserFlow,
-        flows: [...parsedFlows, ...missingParsedFlows, ...newParsedFlows],
-      }),
-    )
 
     parsedFlows.push(...missingParsedFlows, ...newParsedFlows)
   }
-
-  parsedFlows.push(...concatWith)
 
   return finalMapper(parsedFlows)
 }
@@ -223,15 +215,17 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
 type ParseFlow = ({
   splitters,
   parsedFlowsUntilNow,
+  userFlow,
   flowToParse,
   extendedParsedFlow,
 }: {
   splitters: Splitters
   parsedFlowsUntilNow: AlgorithmParsedFlow[]
+  userFlow: UserFlow
   flowToParse: ParsedUserFlow
   extendedParsedFlow?: AlgorithmParsedFlow
 }) => AlgorithmParsedFlow[]
-const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFlow }) => {
+const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, userFlow, flowToParse, extendedParsedFlow }) => {
   const parsedGraph = removePointersFromNodeToHimSelf(
     parseGraph(
       graphNodeToDisplayName(splitters),
@@ -282,6 +276,12 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
       flowToParse,
     }),
   }
+
+  validateParsedFlow(splitters)({
+    userFlow,
+    parsedUserFlow: flowToParse,
+    flows: parsedFlowsUntilNow,
+  })(parsedFlow)
 
   return parseUserFlows({
     splitters,

@@ -59,15 +59,6 @@ const buildErrorObjects = (splitters: Splitters) => (
           }),
         )
       }
-
-      if (extendedParsedFlow && 'name' in extendedParsedFlow && flowToParse.name === extendedParsedFlow.name) {
-        errorObjects.push(
-          unParsedFlowErrorObject({
-            errorMessageKey: `using the name of the extends flow inside a graph is not allowed`,
-            flowToParse,
-          }),
-        )
-      }
     }
   } else {
     if (flowToParse.extendsFlows.filter(Boolean).length > 0) {
