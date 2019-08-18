@@ -12,12 +12,12 @@
     "baseUrl": ".",
     "paths": {
       "*": [
-        "../../node_modules/*",
         "../parser/node_modules/*",
         "../editor/node_modules/*",
         "../flower/node_modules/*",
         "../build/node_modules/*",
-        "../utils/node_modules/*"
+        "../utils/node_modules/*",
+        "../../node_modules/*"
       ],
       "@parser/*": ["../parser/src/*"],
       "@editor/*": ["../editor/src/*"],

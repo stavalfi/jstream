@@ -7,11 +7,18 @@ import {
   FlowState,
   Request,
 } from '@flower/types'
-import { uuid } from '@jstream/utils'
+import { Combinations, uuid } from '@jstream/utils'
 import { findByNodeOrDefault, flatMapPromisesResults, getFlowDetails } from '@flower/utils'
-import { findNodeIndex, isSubsetOf } from '@jstream/parser'
+import {
+  arePathsEqual,
+  findNodeIndex,
+  graphNodeToDisplayName,
+  isSubsetOf,
+  Node,
+  ParsedFlow,
+  Rule,
+} from '@jstream/parser'
 import { advanceFlowActionCreator, executeFlowActionCreator } from '@flower/actions'
-import { arePathsEqual } from '@parser/utils'
 
 export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector => flowIdOrName => (
   dispatch,
@@ -94,11 +101,19 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
     rule => !('nodeIndex' in rule),
   )
 
-  const rule = findByNodeOrDefault(
-    flow.rules,
-    rule => 'nodeIndex' in rule && arePathsEqual(flow.graph[rule.nodeIndex].path, toNode.path),
-    rule => !('nodeIndex' in rule),
+  console.log(
+    `request: ${
+      'fromNodeIndex' in request.payload
+        ? `from: ${graphNodeToDisplayName(splitters)(flow.graph[request.payload.fromNodeIndex])} (${
+            request.payload.fromNodeIndex
+          }), `
+        : ''
+    }to: ${graphNodeToDisplayName(splitters)(flow.graph[request.payload.toNodeIndex])} (${
+      request.payload.toNodeIndex
+    })`,
   )
+
+  const flowWithRule = getRule(flows, flow, toNode)
 
   return new Promise((res, rej) => {
     try {
@@ -108,13 +123,14 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
     }
   })
     .then<string | string[], string | string[]>(
-      result =>
-        rule && 'next' in rule
-          ? rule.next(flow)(toNode, request.payload.toNodeIndex, flow.graph)(result)
-          : Promise.resolve([]),
+      result => {
+        return flowWithRule && 'next' in flowWithRule.rule
+          ? flowWithRule.rule.next(flow)(toNode, request.payload.toNodeIndex, flow.graph)(result)
+          : Promise.resolve([])
+      },
       error =>
-        rule && 'error' in rule
-          ? rule.error(flow)(toNode, request.payload.toNodeIndex, flow.graph)(error)
+        flowWithRule && 'error' in flowWithRule.rule
+          ? flowWithRule.rule.error(flow)(toNode, request.payload.toNodeIndex, flow.graph)(error)
           : Promise.resolve([]),
     )
     .then<string[], string[]>(
@@ -127,8 +143,23 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
         return []
       },
     )
-    .then(nextNodeNames =>
-      nextNodeNames.map(findNodeIndex(splitters)(flow.graph)).map(nextNodeIndex =>
+    .then(nextNodeNames => {
+      if (!flowWithRule) {
+        return []
+      }
+      const nextNodeIndexes = nextNodeNames
+        .map(findNodeIndex(splitters)(flowWithRule.flow.graph)) // array of indexes of nodes of a different graph!
+        // for each node, find it's corresponding in our graph:
+        .map(indexInRuleFlow => flowWithRule.flow.graph[indexInRuleFlow].path)
+        .map(path => toNode.childrenIndexes.find(childIndex => isSubsetOf(path, flow.graph[childIndex].path)) as number)
+
+      console.log(
+        `from: ${graphNodeToDisplayName(splitters)(toNode)} (${request.payload.toNodeIndex}) to: [${nextNodeIndexes
+          .map(i => `${graphNodeToDisplayName(splitters)(flow.graph[i])} (${i})`)
+          .join(', ')}]`,
+      )
+
+      return nextNodeIndexes.map(nextNodeIndex =>
         advanceFlowActionCreator({
           activeFlowId: request.payload.activeFlowId,
           flowId: flow.id,
@@ -136,6 +167,61 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
           fromNodeIndex: request.payload.toNodeIndex,
           toNodeIndex: nextNodeIndex,
         }),
-      ),
-    )
+      )
+    })
+}
+
+type FindRule = (
+  flow: ParsedFlow,
+  options: Combinations<{ path: Node['path'] }>,
+) => Rule<{ nodeIndex: number }> | undefined
+
+const findRule: FindRule = (flow, options) =>
+  'path' in options
+    ? flow.rules.find(rule => 'nodeIndex' in rule && arePathsEqual(flow.graph[rule.nodeIndex].path, options.path))
+    : flow.rules.find(rule => !('nodeIndex' in rule))
+
+// return the rule and the flow that has that rule.
+function getRule(
+  flows: ParsedFlow[],
+  flow: ParsedFlow,
+  toNode: Node,
+): { flow: ParsedFlow; rule: Rule<{ nodeIndex: number }> } | undefined {
+  let flowRuleWithoutNode: ParsedFlow | undefined
+  let ruleWithoutNode: Rule<{ nodeIndex: number }> | undefined
+
+  const { path: toNodePath } = toNode
+  for (let i = 0; i < toNode.path.length; i++) {
+    const path = toNodePath.slice(i)
+    const subFlow = flows.find(f => f.name === toNodePath[i]) as ParsedFlow
+    const rule = findRule(subFlow, { path, withNodeName: true })
+    if (rule) {
+      return { flow: subFlow, rule }
+    } else {
+      if (!ruleWithoutNode) {
+        flowRuleWithoutNode = subFlow
+        ruleWithoutNode = findRule(subFlow, { withNodeName: false })
+      }
+    }
+  }
+
+  let extendedFlow: ParsedFlow | false = 'extendedFlowIndex' in flow && flows[flow.extendedFlowIndex]
+  while (extendedFlow) {
+    const { name: extendedFlowName } = extendedFlow
+    const startIndex = toNodePath.findIndex(flowName => flowName === extendedFlowName)
+    const pathWithoutExtended = toNodePath.slice(startIndex)
+
+    const rule = findRule(extendedFlow, { path: pathWithoutExtended, withNodeName: true })
+    if (rule) {
+      return { flow: extendedFlow, rule }
+    } else {
+      if (!ruleWithoutNode) {
+        flowRuleWithoutNode = extendedFlow
+        ruleWithoutNode = findRule(extendedFlow, { withNodeName: false })
+      }
+    }
+    extendedFlow = 'extendedFlowIndex' in extendedFlow && flows[extendedFlow.extendedFlowIndex]
+  }
+
+  return flowRuleWithoutNode && ruleWithoutNode && { flow: flowRuleWithoutNode, rule: ruleWithoutNode }
 }

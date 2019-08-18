@@ -40,7 +40,7 @@ export type AlgorithmParsedFlow = ParsedFlow &
 
 export type SideEffectFunction = (
   flow: ParsedFlow,
-) => (toNode: Node, i?: number, graph?: Node[]) => (context?: any) => any | Promise<any>
+) => (toNode: Node, i: number, graph: Node[]) => (context: any) => any | Promise<any>
 
 export type SideEffect = { sideEffectFunc: SideEffectFunction } & Combinations<{
   nodeIndex: number
@@ -69,17 +69,13 @@ export type NextFunctionRule = (
   flow: ParsedFlow,
 ) => (
   toNode: Node,
-  i?: number,
-  graph?: Node[],
+  i: number,
+  graph: Node[],
 ) => (result: any) => string | string[] | Promise<string> | Promise<string[]>
 
 export type ErrorFunctionRule = (
   flow: ParsedFlow,
-) => (
-  toNode: Node,
-  i?: number,
-  graph?: Node[],
-) => (error: any) => string | string[] | Promise<string> | Promise<string[]>
+) => (toNode: Node, i: number, graph: Node[]) => (error: any) => string | string[] | Promise<string> | Promise<string[]>
 
 export type Rule<T> = (
   | { next: NextFunctionRule; error: ErrorFunctionRule }

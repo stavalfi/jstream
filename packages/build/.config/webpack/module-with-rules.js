@@ -18,7 +18,7 @@ module.exports = ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            ...require(babelRcPath)({ isDevelopmentMode }),
+            ...require(babelRcPath)({ isDevelopmentMode, isCI }),
           },
         },
         ...(isWebApp || isDevelopmentMode

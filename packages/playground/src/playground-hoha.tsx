@@ -22,57 +22,28 @@ const config = parse({
   },
   flows: [
     {
-      name: 'backup',
-      graph: 'backing_up:success,fail',
+      graph: 'start:success,error',
       default_path: 'success',
       rules: [
         {
-          node_name: 'backing_up',
+          node_name: 'start',
           next: () => () => () => 'success',
-          error: () => () => () => 'fail',
         },
       ],
-      side_effects: [
+      extends_flows: [
         {
-          node_name: 'backing_up',
-          side_effect: flow => toNode => context => {
-            console.log('backing up to remote storage....')
-          },
-        },
-      ],
-    },
-    {
-      name: 'add',
-      graph: 'adding:[success:backup],fail',
-      default_path: 'backup',
-      rules: [
-        {
-          node_name: 'adding',
-          next: () => () => () => 'success',
-          error: () => () => () => 'fail',
+          graph: 'add',
+          rules: [
+            {
+              node_name: 'start',
+              next: () => () => () => 'error',
+            },
+          ],
         },
         {
-          node_name: 'success',
-          next: () => () => () => 'backing_up/backing_up',
-        },
-        {
-          node_name: 'backup/backing_up',
-          next: () => () => () => 'backup/backing_up/success',
-          error: () => () => () => 'backup/backing_up/fail',
-        },
-      ],
-      side_effects: [
-        {
-          node_name: 'adding',
-          side_effect: flow => toNode => context => {
-            console.log('adding to local store....')
-          },
-        },
-        {
-          node_name: 'backup/backing_up',
-          side_effect: flow => toNode => context => {
-            console.log('backing up to remote storage....')
-          },
+          name: 'all',
+          graph: 'add:backup',
+          default_path: 'backup',
         },
       ],
     },
@@ -80,7 +51,7 @@ const config = parse({
 })
 
 store.dispatch(updateConfigActionCreator(config))
-const flow = config.flows.find(flow => 'name' in flow && flow.name === 'add') as ParsedFlow
+const flow = config.flows.find(flow => 'name' in flow && flow.name === 'f3') as ParsedFlow
 console.log(flow.graph)
 store.dispatch(executeFlowThunkCreator(libSelector)(flow))
 
@@ -88,24 +59,3 @@ store.dispatch(executeFlowThunkCreator(libSelector)(flow))
 
 import Editor from '@jstream/editor'
 export default Editor
-
-/*
-{
-      splitters: {
-        extends: '/',
-      },
-      flows: [
-        {
-          graph:"start:success",
-          default_path:"success",
-          extends_flows:[
-            {
-              name:"all",
-              graph:"add:backup",
-              default_path:"backup"
-            }
-            ]
-        }
-      ],
-    }
- */

@@ -1,7 +1,6 @@
 import { AlgorithmParsedFlow, ParsedFlow, Splitters, UserFlow, UserFlowObject, UserGraph } from '@parser/types'
 import { buildString, composeErrors, ErrorObject } from '@parser/error-messages'
-import { Combinations } from '@utils/types'
-import { toArray } from '@utils/utils'
+import { Combinations, toArray } from '@jstream/utils'
 import { extractUniqueFlowsNamesFromGraph } from '@parser/utils'
 
 export const validateUserFlow = (splitters: Splitters) => (

@@ -19,6 +19,7 @@
   "dependencies": {
     "@jstream/flower": "^1.0.0",
     "@jstream/parser": "^1.0.0",
+    "@jstream/editor": "^1.0.0",
     "lodash": "^4.17.11",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

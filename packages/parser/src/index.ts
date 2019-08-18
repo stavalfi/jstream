@@ -85,6 +85,7 @@ export {
   displayNameToFullGraphNode,
   distractDisplayNameBySplitters,
   findNodeIndex,
+  arePathsEqual,
 } from '@parser/utils'
 export {
   Configuration,
