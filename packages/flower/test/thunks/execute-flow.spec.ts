@@ -33,10 +33,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: getState().libReducer.activeFlows[0].id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -74,10 +74,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: getState().libReducer.activeFlows[0].id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -148,10 +148,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: activeFlow.id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -233,10 +233,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: activeFlow.id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -293,10 +293,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: activeFlow.id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -354,10 +354,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: activeFlow.id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -432,10 +432,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: activeFlow.id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({
@@ -526,10 +526,10 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
+        flowName: flow.name,
         payload: {
           activeFlowId: activeFlow.id,
           flowId: flow.id,
-          flowName: flow.name,
         },
       }),
       advanceFlowActionCreator({

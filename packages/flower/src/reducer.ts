@@ -31,11 +31,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
     }
     case 'executeFlow': {
       const { activeFlowId } = action.payload
-      const flow = flows.find(flow =>
-        'flowName' in action.payload
-          ? 'name' in flow && flow.name === action.payload.flowName
-          : flow.id === action.payload.flowId,
-      )
+      const flow = flows.find(flow => flow.name === action.flowName)
       if (
         !flow ||
         activeFlows.some(activeflow => activeflow.id === activeFlowId) ||

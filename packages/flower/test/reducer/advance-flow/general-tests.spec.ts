@@ -103,7 +103,7 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
+            executeFlowActionCreator({ flowName: 'composed-flow', payload: { activeFlowId: '1' } }),
           ),
           advanceFlowActionCreator({
             payload: { activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 },
@@ -174,7 +174,7 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
+            executeFlowActionCreator({ flowName: 'composed-flow', payload: { activeFlowId: '1' } }),
           ),
           action,
         ),
@@ -242,7 +242,7 @@ describe('advanceFlowGraph', () => {
       reducer(
         reducer(
           reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-          executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
+          executeFlowActionCreator({ flowName: 'composed-flow', payload: { activeFlowId: '1' } }),
         ),
         advanceFlowActionCreator({
           payload: { activeFlowId: '2', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 },
@@ -303,7 +303,7 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
+            executeFlowActionCreator({ flowName: 'composed-flow', payload: { activeFlowId: '1' } }),
           ),
           finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id } }),
         ),
@@ -374,7 +374,7 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
+            executeFlowActionCreator({ flowName: 'composed-flow', payload: { activeFlowId: '1' } }),
           ),
           action,
         ),
@@ -460,7 +460,7 @@ describe('advanceFlowGraph', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'a' } }),
+            executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
           ),
           advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, flowName: 'a', toNodeIndex: 0 } }),
         ),

@@ -7,8 +7,9 @@ export const updateConfigActionCreator: FlowActionCreator<FlowActionType.updateC
   payload,
 })
 
-export const executeFlowActionCreator: FlowActionCreator<FlowActionType.executeFlow> = ({ payload }) => ({
+export const executeFlowActionCreator: FlowActionCreator<FlowActionType.executeFlow> = ({ flowName, payload }) => ({
   id: uuid(),
+  flowName,
   type: FlowActionType.executeFlow,
   payload,
 })

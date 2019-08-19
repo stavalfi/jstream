@@ -17,7 +17,7 @@ type AdvanceFlowGraphOptional = Combinations<{
 
 export interface FlowActionPayload {
   updateConfig: Configuration<ParsedFlow>
-  executeFlow: { activeFlowId: string } & NonEmptyCombinations<{ flowId: string; flowName: string }>
+  executeFlow: { activeFlowId: string } & Combinations<{ flowId: string }>
   advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & AdvanceFlowGraphOptional
   finishFlow: { activeFlowId: String; flowId: string } & Combinations<{ flowName: string }>
 }
@@ -29,6 +29,7 @@ export type FlowActionByType = {
   }
   executeFlow: Action<'executeFlow'> & {
     id: string
+    flowName: string
     payload: FlowActionPayload['executeFlow']
   }
   advanceFlowGraph: Action<'advanceFlowGraph'> & {

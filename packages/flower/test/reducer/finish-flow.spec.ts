@@ -28,7 +28,7 @@ describe('finishFlow', () => {
       reducer(
         reducer(
           reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-          executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
+          executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
         ),
         finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
       ),
@@ -76,7 +76,7 @@ describe('finishFlow', () => {
         reducer(
           reducer(
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
-            executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
+            executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
           ),
           finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
         ),

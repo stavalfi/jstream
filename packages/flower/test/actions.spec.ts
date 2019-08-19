@@ -63,17 +63,17 @@ describe('actions', () => {
   })
   it('4', () => {
     const action = executeFlowActionCreator({
+      flowName: 'a',
       payload: {
-        flowName: 'a',
         activeFlowId: 'id',
         flowId: '1',
       },
     })
     expect(action).toEqual({
       id: action.id,
+      flowName: 'a',
       type: FlowActionType.executeFlow,
       payload: {
-        flowName: 'a',
         activeFlowId: 'id',
         flowId: '1',
       },

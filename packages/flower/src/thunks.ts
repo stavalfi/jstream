@@ -37,7 +37,8 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
 
   const action = dispatch(
     executeFlowActionCreator({
-      payload: { flowId: flow.id, ...('name' in flow && { flowName: flow.name }), activeFlowId: uuid() },
+      flowName: flow.name,
+      payload: { flowId: flow.id, activeFlowId: uuid() },
     }),
   )
 
