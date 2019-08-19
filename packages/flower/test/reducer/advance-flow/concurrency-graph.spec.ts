@@ -49,10 +49,10 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         toNodeIndex: 0,
       },
     })
@@ -135,10 +135,10 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         toNodeIndex: 0,
       },
     })
@@ -221,10 +221,10 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         toNodeIndex: 0,
       },
     })
@@ -307,10 +307,10 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         toNodeIndex: 1,
       },
     })
@@ -393,10 +393,10 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         fromNodeIndex: 0,
         toNodeIndex: 1,
       },
@@ -484,10 +484,10 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         toNodeIndex: 0,
       },
     })

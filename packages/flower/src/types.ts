@@ -10,15 +10,12 @@ export enum FlowActionType {
   finishFlow = 'finishFlow',
 }
 
-type AdvanceFlowGraphOptional = Combinations<{
-  fromNodeIndex: number
-  flowName: string
-}>
-
 export interface FlowActionPayload {
   updateConfig: Configuration<ParsedFlow>
   executeFlow: { activeFlowId: string } & Combinations<{ flowId: string }>
-  advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & AdvanceFlowGraphOptional
+  advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & Combinations<{
+    fromNodeIndex: number
+  }>
   finishFlow: { activeFlowId: String; flowId: string } & Combinations<{ flowName: string }>
 }
 
@@ -34,10 +31,14 @@ export type FlowActionByType = {
   }
   advanceFlowGraph: Action<'advanceFlowGraph'> & {
     id: string
+    flowName: string
+    fromNode?: string
+    toNode?: string
     payload: FlowActionPayload['advanceFlowGraph']
   }
   finishFlow: Action<'finishFlow'> & {
     id: string
+    flowName: string
     payload: FlowActionPayload['finishFlow']
   }
 }

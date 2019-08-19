@@ -24,7 +24,7 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
   dispatch,
   getState,
 ) => {
-  const { flows } = reducerSelector(getState())
+  const { splitters, flows } = reducerSelector(getState())
   const flow = flows.find(
     flow =>
       ('id' in flowIdOrName && flowIdOrName.id === flow.id) ||
@@ -49,10 +49,11 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
   return dispatch(
     advanceGraphThunkCreator(reducerSelector)(
       advanceFlowActionCreator({
+        flowName: flow.name,
+        toNode: graphNodeToDisplayName(splitters)(flow.graph[0]),
         payload: {
           activeFlowId: action.payload.activeFlowId,
           flowId: flow.id,
-          ...('name' in flow && { flowName: flow.name }),
           toNodeIndex: 0,
         },
       }),
@@ -158,18 +159,22 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
         .map(indexInRuleFlow => flowWithRule.flow.graph[indexInRuleFlow].path)
         .map(path => toNode.childrenIndexes.find(childIndex => isSubsetOf(path, flow.graph[childIndex].path)) as number)
 
+      const fromNodeDisplayName = graphNodeToDisplayName(splitters)(toNode)
+
       console.log(
-        `from: ${graphNodeToDisplayName(splitters)(toNode)} (${request.payload.toNodeIndex}) to: [${nextNodeIndexes
+        `from: ${fromNodeDisplayName} (${request.payload.toNodeIndex}) to: [${nextNodeIndexes
           .map(i => `${graphNodeToDisplayName(splitters)(flow.graph[i])} (${i})`)
           .join(', ')}]`,
       )
 
-      return nextNodeIndexes.map(nextNodeIndex =>
+      return nextNodeIndexes.map((nextNodeIndex, i) =>
         advanceFlowActionCreator({
+          flowName: flow.name,
+          fromNode: fromNodeDisplayName,
+          toNode: nextNodeNames[i],
           payload: {
             activeFlowId: request.payload.activeFlowId,
             flowId: flow.id,
-            ...('name' in flow && { flowName: flow.name }),
             fromNodeIndex: request.payload.toNodeIndex,
             toNodeIndex: nextNodeIndex,
           },

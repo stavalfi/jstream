@@ -24,6 +24,7 @@ describe('actions', () => {
   })
   it('2', () => {
     const action = advanceFlowActionCreator({
+      flowName: 'a',
       payload: {
         fromNodeIndex: 1,
         toNodeIndex: 2,
@@ -33,7 +34,7 @@ describe('actions', () => {
     })
     expect(action).toEqual({
       id: action.id,
-
+      flowName: 'a',
       type: FlowActionType.advanceFlowGraph,
       payload: {
         fromNodeIndex: 1,
@@ -45,6 +46,7 @@ describe('actions', () => {
   })
   it('3', () => {
     const action = advanceFlowActionCreator({
+      flowName: 'a',
       payload: {
         toNodeIndex: 0,
         activeFlowId: 'id',
@@ -53,6 +55,7 @@ describe('actions', () => {
     })
     expect(action).toEqual({
       id: action.id,
+      flowName: 'a',
       type: FlowActionType.advanceFlowGraph,
       payload: {
         toNodeIndex: 0,
@@ -82,6 +85,7 @@ describe('actions', () => {
 
   it('5', () => {
     const action = finishFlowActionCreator({
+      flowName: 'a',
       payload: {
         activeFlowId: 'id',
         flowId: '1',
@@ -89,6 +93,7 @@ describe('actions', () => {
     })
     expect(action).toEqual({
       id: action.id,
+      flowName: 'a',
       type: FlowActionType.finishFlow,
       payload: {
         activeFlowId: 'id',
@@ -98,6 +103,7 @@ describe('actions', () => {
   })
   it('6 go directly to node that is not the head', () => {
     const action = advanceFlowActionCreator({
+      flowName: 'a',
       payload: {
         toNodeIndex: 2,
         activeFlowId: 'id',
@@ -106,6 +112,7 @@ describe('actions', () => {
     })
     expect(action).toEqual({
       id: action.id,
+      flowName: 'a',
       type: FlowActionType.advanceFlowGraph,
       payload: {
         toNodeIndex: 2,

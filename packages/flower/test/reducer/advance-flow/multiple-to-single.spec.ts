@@ -53,6 +53,7 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action2 = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -148,6 +149,7 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action1 = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -248,6 +250,7 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action1 = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -300,6 +303,8 @@ describe('multiple nodes advance to single node', () => {
     const configuration = parse([['a:b,c:d', 'd:a']])
     const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
     const action1 = advanceFlowActionCreator({
+      flowName: flow.name,
+
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -308,6 +313,8 @@ describe('multiple nodes advance to single node', () => {
       },
     })
     const action2 = advanceFlowActionCreator({
+      flowName: flow.name,
+
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -316,6 +323,8 @@ describe('multiple nodes advance to single node', () => {
       },
     })
     const action3 = advanceFlowActionCreator({
+      flowName: flow.name,
+
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -361,6 +370,8 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action4 = advanceFlowActionCreator({
+      flowName: flow.name,
+
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
@@ -449,10 +460,10 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
+      flowName: flow.name,
       payload: {
         activeFlowId: '1',
         flowId: flow.id,
-        flowName: flow.name,
         toNodeIndex: 1,
       },
     })

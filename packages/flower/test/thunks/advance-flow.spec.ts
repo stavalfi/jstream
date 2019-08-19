@@ -9,6 +9,7 @@ describe('advance thunk', () => {
     const actions = (actions: FlowActionByType[FlowActionType.advanceFlowGraph][]) =>
       actions
         .map(action => ({
+          flowName: action.flowName,
           type: action.type,
           payload: action.payload,
         }))
@@ -48,13 +49,19 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
       ])
 
       expect(actualActions).toEqual(expectedActions)
@@ -65,13 +72,13 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: '1', toNodeIndex: 0 } }),
+          advanceFlowActionCreator({ flowName: 'dddd', payload: { activeFlowId: '1', flowId: '1', toNodeIndex: 0 } }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: '1', toNodeIndex: 0 } }),
+        advanceFlowActionCreator({ flowName: 'dddd', payload: { activeFlowId: '1', flowId: '1', toNodeIndex: 0 } }),
       ])
 
       expect(actualActions).toEqual(expectedActions)
@@ -116,13 +123,19 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
       ])
 
       expect(actualActions).toEqual(expectedActions)
@@ -173,18 +186,24 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: 'flow1',
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
@@ -247,27 +266,33 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
         }),
         advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 1,
             toNodeIndex: 2,
           },
@@ -326,27 +351,33 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
         }),
         advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 2,
           },
@@ -405,27 +436,33 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
         }),
         advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 2,
           },
@@ -488,27 +525,33 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
         }),
         advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 1,
             toNodeIndex: 2,
           },
@@ -573,18 +616,24 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
@@ -650,18 +699,24 @@ describe('advance thunk', () => {
 
       await dispatch(
         advanceGraphThunkCreator(libSelector)(
-          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
+          advanceFlowActionCreator({
+            flowName: flow.name,
+            payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+          }),
         ),
       )
 
       const actualActions = getActions()
       const expectedActions = actions([
-        advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 } }),
         advanceFlowActionCreator({
+          flowName: flow.name,
+          payload: { activeFlowId: '1', flowId: flow.id, toNodeIndex: 0 },
+        }),
+        advanceFlowActionCreator({
+          flowName: flow.name,
           payload: {
             activeFlowId: '1',
             flowId: flow.id,
-            flowName: flow.name,
             fromNodeIndex: 0,
             toNodeIndex: 1,
           },
