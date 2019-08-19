@@ -36,7 +36,9 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
   }
 
   const action = dispatch(
-    executeFlowActionCreator({ flowId: flow.id, ...('name' in flow && { flowName: flow.name }), activeFlowId: uuid() }),
+    executeFlowActionCreator({
+      payload: { flowId: flow.id, ...('name' in flow && { flowName: flow.name }), activeFlowId: uuid() },
+    }),
   )
 
   if (!reducerSelector(getState()).activeFlows.some(activeFlow => activeFlow.id === action.payload.activeFlowId)) {
@@ -46,10 +48,12 @@ export const executeFlowThunkCreator: ExecuteFlowThunkCreator = reducerSelector 
   return dispatch(
     advanceGraphThunkCreator(reducerSelector)(
       advanceFlowActionCreator({
-        activeFlowId: action.payload.activeFlowId,
-        flowId: flow.id,
-        ...('name' in flow && { flowName: flow.name }),
-        toNodeIndex: 0,
+        payload: {
+          activeFlowId: action.payload.activeFlowId,
+          flowId: flow.id,
+          ...('name' in flow && { flowName: flow.name }),
+          toNodeIndex: 0,
+        },
       }),
     ),
   )
@@ -161,11 +165,13 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
 
       return nextNodeIndexes.map(nextNodeIndex =>
         advanceFlowActionCreator({
-          activeFlowId: request.payload.activeFlowId,
-          flowId: flow.id,
-          ...('name' in flow && { flowName: flow.name }),
-          fromNodeIndex: request.payload.toNodeIndex,
-          toNodeIndex: nextNodeIndex,
+          payload: {
+            activeFlowId: request.payload.activeFlowId,
+            flowId: flow.id,
+            ...('name' in flow && { flowName: flow.name }),
+            fromNodeIndex: request.payload.toNodeIndex,
+            toNodeIndex: nextNodeIndex,
+          },
         }),
       )
     })
@@ -181,7 +187,7 @@ const findRule: FindRule = (flow, options) =>
     ? flow.rules.find(rule => 'nodeIndex' in rule && arePathsEqual(flow.graph[rule.nodeIndex].path, options.path))
     : flow.rules.find(rule => !('nodeIndex' in rule))
 
-// return the rule and the flow that has that rule.
+// return the rule and the flow that has that rule
 function getRule(
   flows: ParsedFlow[],
   flow: ParsedFlow,

@@ -27,10 +27,10 @@ describe('finishFlow', () => {
     expect(
       reducer(
         reducer(
-          reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+          reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+          executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
         ),
-        finishFlowActionCreator({ activeFlowId: '1', flowId: configuration.flows[0].id }),
+        finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
       ),
     ).toEqual(
       state({
@@ -75,12 +75,12 @@ describe('finishFlow', () => {
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
           ),
-          finishFlowActionCreator({ activeFlowId: '1', flowId: configuration.flows[0].id }),
+          finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
         ),
-        finishFlowActionCreator({ activeFlowId: '1', flowId: configuration.flows[0].id }),
+        finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
       ),
     ).toEqual(
       state({

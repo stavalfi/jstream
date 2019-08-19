@@ -36,7 +36,7 @@ const config = parse({
           rules: [
             {
               node_name: 'start',
-              next: () => () => () => 'error',
+              next: () => () => () => 'success',
             },
           ],
         },
@@ -44,14 +44,20 @@ const config = parse({
           name: 'all',
           graph: 'add:backup',
           default_path: 'backup',
+          rules: [
+            {
+              node_name: 'add/success',
+              next: () => () => () => 'backup/start',
+            },
+          ],
         },
       ],
     },
   ],
 })
 
-store.dispatch(updateConfigActionCreator(config))
-const flow = config.flows.find(flow => 'name' in flow && flow.name === 'f3') as ParsedFlow
+store.dispatch(updateConfigActionCreator({ payload: config }))
+const flow = config.flows.find(flow => flow.name === 'all') as ParsedFlow
 console.log(flow.graph)
 store.dispatch(executeFlowThunkCreator(libSelector)(flow))
 

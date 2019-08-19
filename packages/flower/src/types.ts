@@ -22,16 +22,28 @@ export interface FlowActionPayload {
   finishFlow: { activeFlowId: String; flowId: string } & Combinations<{ flowName: string }>
 }
 
-export type FlowActionCreator<ActionType extends keyof FlowActionPayload> = (
-  payload: FlowActionPayload[ActionType],
-) => Action<ActionType> & { id: string; payload: FlowActionPayload[ActionType] }
-
 export type FlowActionByType = {
-  [ActionType in keyof FlowActionPayload]: Action<ActionType> & {
+  updateConfig: Action<'updateConfig'> & {
     id: string
-    payload: FlowActionPayload[ActionType]
+    payload: FlowActionPayload['updateConfig']
+  }
+  executeFlow: Action<'executeFlow'> & {
+    id: string
+    payload: FlowActionPayload['executeFlow']
+  }
+  advanceFlowGraph: Action<'advanceFlowGraph'> & {
+    id: string
+    payload: FlowActionPayload['advanceFlowGraph']
+  }
+  finishFlow: Action<'finishFlow'> & {
+    id: string
+    payload: FlowActionPayload['finishFlow']
   }
 }
+
+export type FlowActionCreator<ActionType extends keyof FlowActionPayload> = (
+  params: Omit<FlowActionByType[ActionType], 'id' | 'type'>,
+) => FlowActionByType[ActionType]
 
 export type FlowAction = FlowActionByType[keyof FlowActionPayload]
 

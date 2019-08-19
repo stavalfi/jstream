@@ -15,7 +15,7 @@ describe('actions', () => {
       },
       flows: ['a'],
     })
-    const action = updateConfigActionCreator(configuration)
+    const action = updateConfigActionCreator({ payload: configuration })
     expect(action).toEqual({
       id: action.id,
       type: FlowActionType.updateConfig,
@@ -24,10 +24,12 @@ describe('actions', () => {
   })
   it('2', () => {
     const action = advanceFlowActionCreator({
-      fromNodeIndex: 1,
-      toNodeIndex: 2,
-      activeFlowId: 'id',
-      flowId: '1',
+      payload: {
+        fromNodeIndex: 1,
+        toNodeIndex: 2,
+        activeFlowId: 'id',
+        flowId: '1',
+      },
     })
     expect(action).toEqual({
       id: action.id,
@@ -43,9 +45,11 @@ describe('actions', () => {
   })
   it('3', () => {
     const action = advanceFlowActionCreator({
-      toNodeIndex: 0,
-      activeFlowId: 'id',
-      flowId: '1',
+      payload: {
+        toNodeIndex: 0,
+        activeFlowId: 'id',
+        flowId: '1',
+      },
     })
     expect(action).toEqual({
       id: action.id,
@@ -59,9 +63,11 @@ describe('actions', () => {
   })
   it('4', () => {
     const action = executeFlowActionCreator({
-      flowName: 'a',
-      activeFlowId: 'id',
-      flowId: '1',
+      payload: {
+        flowName: 'a',
+        activeFlowId: 'id',
+        flowId: '1',
+      },
     })
     expect(action).toEqual({
       id: action.id,
@@ -76,8 +82,10 @@ describe('actions', () => {
 
   it('5', () => {
     const action = finishFlowActionCreator({
-      activeFlowId: 'id',
-      flowId: '1',
+      payload: {
+        activeFlowId: 'id',
+        flowId: '1',
+      },
     })
     expect(action).toEqual({
       id: action.id,
@@ -90,9 +98,11 @@ describe('actions', () => {
   })
   it('6 go directly to node that is not the head', () => {
     const action = advanceFlowActionCreator({
-      toNodeIndex: 2,
-      activeFlowId: 'id',
-      flowId: '1',
+      payload: {
+        toNodeIndex: 2,
+        activeFlowId: 'id',
+        flowId: '1',
+      },
     })
     expect(action).toEqual({
       id: action.id,

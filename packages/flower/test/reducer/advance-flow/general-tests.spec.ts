@@ -40,7 +40,9 @@ describe('advanceFlowGraph', () => {
       finishedFlows: [],
       advanced: [],
     }
-    const action = advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 })
+    const action = advanceFlowActionCreator({
+      payload: { activeFlowId: '1', flowId: flow.id, flowName: flow.name, toNodeIndex: 0 },
+    })
     expect(reducer(initialState, action)).toEqual(
       state({
         splitters: {
@@ -88,20 +90,24 @@ describe('advanceFlowGraph', () => {
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'composed-flow') as ParsedFlow
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: 'composed-flow',
-      fromNodeIndex: 0,
-      toNodeIndex: 1,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: 'composed-flow',
+        fromNodeIndex: 0,
+        toNodeIndex: 1,
+      },
     })
     expect(
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
           ),
-          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+          advanceFlowActionCreator({
+            payload: { activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 },
+          }),
         ),
         action,
       ),
@@ -156,26 +162,30 @@ describe('advanceFlowGraph', () => {
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'composed-flow') as ParsedFlow
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: 'composed-flow',
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: 'composed-flow',
+        toNodeIndex: 0,
+      },
     })
     expect(
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
           ),
           action,
         ),
         advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: 'composed-flow',
-          fromNodeIndex: 1,
-          toNodeIndex: 2,
+          payload: {
+            activeFlowId: '1',
+            flowId: flow.id,
+            flowName: 'composed-flow',
+            fromNodeIndex: 1,
+            toNodeIndex: 2,
+          },
         }),
       ),
     ).toEqual(
@@ -231,10 +241,12 @@ describe('advanceFlowGraph', () => {
     expect(
       reducer(
         reducer(
-          reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
+          reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+          executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
         ),
-        advanceFlowActionCreator({ activeFlowId: '2', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+        advanceFlowActionCreator({
+          payload: { activeFlowId: '2', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 },
+        }),
       ),
     ).toEqual(
       state({
@@ -290,12 +302,14 @@ describe('advanceFlowGraph', () => {
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
           ),
-          finishFlowActionCreator({ activeFlowId: '1', flowId: flow.id }),
+          finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id } }),
         ),
-        advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 }),
+        advanceFlowActionCreator({
+          payload: { activeFlowId: '1', flowId: flow.id, flowName: 'composed-flow', toNodeIndex: 0 },
+        }),
       ),
     ).toEqual(
       state({
@@ -348,26 +362,30 @@ describe('advanceFlowGraph', () => {
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'composed-flow') as ParsedFlow
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: 'composed-flow',
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: 'composed-flow',
+        toNodeIndex: 0,
+      },
     })
     expect(
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ activeFlowId: '1', flowName: 'composed-flow' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'composed-flow' } }),
           ),
           action,
         ),
         advanceFlowActionCreator({
-          activeFlowId: '1',
-          flowId: flow.id,
-          flowName: 'composed-flow',
-          fromNodeIndex: 0,
-          toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+          payload: {
+            activeFlowId: '1',
+            flowId: flow.id,
+            flowName: 'composed-flow',
+            fromNodeIndex: 0,
+            toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+          },
         }),
       ),
     ).toEqual(
@@ -430,19 +448,21 @@ describe('advanceFlowGraph', () => {
     })
     const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'a') as ParsedFlow
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: 'a',
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: 'a',
+        toNodeIndex: 0,
+      },
     })
     expect(
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ activeFlowId: '1', flowName: 'a' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { activeFlowId: '1', flowName: 'a' } }),
           ),
-          advanceFlowActionCreator({ activeFlowId: '1', flowId: flow.id, flowName: 'a', toNodeIndex: 0 }),
+          advanceFlowActionCreator({ payload: { activeFlowId: '1', flowId: flow.id, flowName: 'a', toNodeIndex: 0 } }),
         ),
         action,
       ),
@@ -512,11 +532,13 @@ describe('advanceFlowGraph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: flow.name,
-      fromNodeIndex: 0,
-      toNodeIndex: 1,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: flow.name,
+        fromNodeIndex: 0,
+        toNodeIndex: 1,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -585,11 +607,13 @@ describe('advanceFlowGraph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: flow.name,
-      toNodeIndex: 1,
-      fromNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: flow.name,
+        toNodeIndex: 1,
+        fromNodeIndex: 0,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -653,10 +677,12 @@ describe('advanceFlowGraph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: flow.name,
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: flow.name,
+        toNodeIndex: 0,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -697,10 +723,12 @@ describe('advanceFlowGraph', () => {
       name: string
     }
     const action1 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      flowName: flow.name,
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        flowName: flow.name,
+        toNodeIndex: 0,
+      },
     })
     const initialState: FlowState = {
       ...configuration,

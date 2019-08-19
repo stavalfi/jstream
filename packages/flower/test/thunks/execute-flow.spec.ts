@@ -33,15 +33,19 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: getState().libReducer.activeFlows[0].id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: getState().libReducer.activeFlows[0].id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: getState().libReducer.activeFlows[0].id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: 0,
+        payload: {
+          activeFlowId: getState().libReducer.activeFlows[0].id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: 0,
+        },
       }),
     ])
 
@@ -70,15 +74,19 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: getState().libReducer.activeFlows[0].id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: getState().libReducer.activeFlows[0].id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: getState().libReducer.activeFlows[0].id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: 0,
+        payload: {
+          activeFlowId: getState().libReducer.activeFlows[0].id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: 0,
+        },
       }),
     ])
 
@@ -140,36 +148,46 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: toIndex('adding'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: toIndex('adding'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('adding'),
-        toNodeIndex: toIndex('add/success'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('adding'),
+          toNodeIndex: toIndex('add/success'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('add/success'),
-        toNodeIndex: toIndex('backup/backing_up'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('add/success'),
+          toNodeIndex: toIndex('backup/backing_up'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('backup/backing_up'),
-        toNodeIndex: toIndex('backup/success'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('backup/backing_up'),
+          toNodeIndex: toIndex('backup/success'),
+        },
       }),
     ])
 
@@ -215,22 +233,28 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: toIndex('start'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: toIndex('start'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('start'),
-        toNodeIndex: toIndex('success'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('start'),
+          toNodeIndex: toIndex('success'),
+        },
       }),
     ])
 
@@ -269,15 +293,19 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: toIndex('start'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: toIndex('start'),
+        },
       }),
     ])
 
@@ -326,22 +354,28 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: toIndex('start'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: toIndex('start'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('start'),
-        toNodeIndex: toIndex('success'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('start'),
+          toNodeIndex: toIndex('success'),
+        },
       }),
     ])
 
@@ -398,36 +432,122 @@ describe('execute and advance thunk', () => {
 
     const expectedActions = actions([
       executeFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        toNodeIndex: toIndex('f1/start'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: toIndex('f1/start'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('f1/start'),
-        toNodeIndex: toIndex('f1/success'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('f1/start'),
+          toNodeIndex: toIndex('f1/success'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('f1/success'),
-        toNodeIndex: toIndex('f2/start'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('f1/success'),
+          toNodeIndex: toIndex('f2/start'),
+        },
       }),
       advanceFlowActionCreator({
-        activeFlowId: activeFlow.id,
-        flowId: flow.id,
-        flowName: flow.name,
-        fromNodeIndex: toIndex('f2/start'),
-        toNodeIndex: toIndex('f2/success'),
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('f2/start'),
+          toNodeIndex: toIndex('f2/success'),
+        },
+      }),
+    ])
+
+    expect(actualActions).toEqual(expectedActions)
+  })
+
+  it('4 - use rules from top level extended flow', async () => {
+    const configuration = parse({
+      splitters: {
+        extends: '/',
+      },
+      flows: [
+        {
+          graph: 'start:success,fail',
+          default_path: 'success',
+          rules: [
+            {
+              node_name: 'start',
+              next: () => () => () => 'success',
+              error: () => () => () => 'fail',
+            },
+          ],
+          extends_flows: [
+            'f3',
+            'f4',
+            {
+              graph: 'f2',
+              extends_flows: ['f1'],
+            },
+            'f5',
+            'f6',
+          ],
+        },
+      ],
+    })
+    const flow = getFlow(configuration.flows, 'f1')
+
+    const { dispatch, getActions, getState } = getStore({
+      ...configuration,
+      activeFlows: [],
+      finishedFlows: [],
+      advanced: [],
+    })
+
+    await dispatch(executeFlowThunkCreator(libSelector)(flow))
+
+    const actualActions = getActions()
+
+    const toIndex = findNodeIndex(configuration.splitters)(flow.graph)
+
+    const activeFlow = getState().libReducer.activeFlows[0]
+
+    const expectedActions = actions([
+      executeFlowActionCreator({
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+        },
+      }),
+      advanceFlowActionCreator({
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          toNodeIndex: toIndex('start'),
+        },
+      }),
+      advanceFlowActionCreator({
+        payload: {
+          activeFlowId: activeFlow.id,
+          flowId: flow.id,
+          flowName: flow.name,
+          fromNodeIndex: toIndex('start'),
+          toNodeIndex: toIndex('success'),
+        },
       }),
     ])
 

@@ -26,8 +26,8 @@ describe('executeFlow', () => {
     })
     expect(
       reducer(
-        reducer(initialState, updateConfigActionCreator(configuration)),
-        executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+        reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+        executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
       ),
     ).toEqual(
       state({
@@ -71,10 +71,10 @@ describe('executeFlow', () => {
     expect(
       reducer(
         reducer(
-          reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+          reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+          executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
         ),
-        executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+        executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
       ),
     ).toEqual(
       state({
@@ -118,10 +118,10 @@ describe('executeFlow', () => {
     expect(
       reducer(
         reducer(
-          reducer(initialState, updateConfigActionCreator(configuration)),
-          executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+          reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+          executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
         ),
-        executeFlowActionCreator({ flowName: 'a', activeFlowId: '2' }),
+        executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '2' } }),
       ),
     ).toEqual(
       state({
@@ -178,12 +178,12 @@ describe('executeFlow', () => {
       reducer(
         reducer(
           reducer(
-            reducer(initialState, updateConfigActionCreator(configuration)),
-            executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+            reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+            executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
           ),
-          finishFlowActionCreator({ activeFlowId: '1', flowId: configuration.flows[0].id }),
+          finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
         ),
-        executeFlowActionCreator({ flowName: 'a', activeFlowId: '1' }),
+        executeFlowActionCreator({ payload: { flowName: 'a', activeFlowId: '1' } }),
       ),
     ).toEqual(
       state({
