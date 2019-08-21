@@ -3,14 +3,14 @@ import { Configuration, Graph, graphNodeToDisplayName, ParsedFlow, Splitters } f
 import '@editor/styles.css'
 
 function toNodes({ splitters, graph }: { splitters: Splitters; graph: Graph }) {
-  return graph.map(graphNodeToDisplayName(splitters)).map(displayName => ({ id: displayName }))
+  return graph.map(graphNodeToDisplayName(splitters)).map((displayName, index) => ({ id: `(${index}) ${displayName}` }))
 }
 
 function toLinks({ splitters, graph }: { splitters: Splitters; graph: Graph }) {
-  return graph.flatMap(node =>
+  return graph.flatMap((node, index) =>
     node.childrenIndexes.map(target => ({
-      source: graphNodeToDisplayName(splitters)(node),
-      target: graphNodeToDisplayName(splitters)(graph[target]),
+      source: `(${index}) ${graphNodeToDisplayName(splitters)(node)}`,
+      target: `(${target}) ${graphNodeToDisplayName(splitters)(graph[target])}`,
     })),
   )
 }
