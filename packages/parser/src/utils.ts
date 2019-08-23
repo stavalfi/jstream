@@ -1,6 +1,6 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, Path, Splitters, UserFlowObject } from '@parser/types'
-import { removeProp } from '@utils/utils'
+import { removeProp } from '@jstream/utils'
 import { savedProps } from '@parser/constants'
 import { buildErrorString } from '@parser/error-messages'
 

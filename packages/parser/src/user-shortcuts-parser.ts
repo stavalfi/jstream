@@ -1,6 +1,6 @@
 import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph, removeSavedProps } from '@parser/utils'
-import { ParsedFlow, ParsedUserFlow, ParseExtensionsProps, Splitters, UserFlow, UserFlowObject } from '@parser/types'
-import { removeProp, toArray, uuid } from '@jstream/utils'
+import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow, UserFlowObject } from '@parser/types'
+import { toArray, uuid } from '@jstream/utils'
 import _isString from 'lodash/isString'
 
 function getFlowNameObject<Extensions>(

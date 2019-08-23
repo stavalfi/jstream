@@ -3,10 +3,11 @@ import {
   FlowReducerSelector,
   FlowState,
   FlowThunkDispatch,
+  parse,
   reducer,
+  Flow,
   updateConfigActionCreator,
 } from '@jstream/flower'
-import parse, { ParsedFlow } from '@jstream/parser'
 import { logger } from 'redux-logger'
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import thunk from 'redux-thunk'
@@ -48,7 +49,7 @@ const config = parse({
 })
 
 store.dispatch(updateConfigActionCreator({ payload: config }))
-const flow = config.flows.find(flow => flow.name === 'all') as ParsedFlow
+const flow = config.flows.find(flow => flow.name === 'all') as Flow
 console.log(flow.graph)
 store.dispatch(executeFlowThunkCreator(libSelector)(flow))
 

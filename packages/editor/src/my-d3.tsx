@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
-import { Configuration, Graph, graphNodeToDisplayName, ParsedFlow, Splitters } from '@jstream/parser'
+import { Configuration, Graph, graphNodeToDisplayName, Splitters } from '@jstream/parser'
+import { Flow } from '@jstream/flower'
 import '@editor/styles.css'
 
 function toNodes({ splitters, graph }: { splitters: Splitters; graph: Graph }) {
@@ -23,8 +24,8 @@ export function updateChart({
   width,
 }: {
   svgReact: any
-  config: Required<Configuration<ParsedFlow>>
-  flow: ParsedFlow
+  config: Required<Configuration<Flow>>
+  flow: Flow
   height: number
   width: number
 }) {

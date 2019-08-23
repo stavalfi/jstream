@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@jstream/parser": "^1.0.0",
+    "@jstream/flower": "^1.0.0",
     "@jstream/utils": "^1.0.0",
     "d3": "^5.9.2",
     "deep-equal": "^1.0.1",

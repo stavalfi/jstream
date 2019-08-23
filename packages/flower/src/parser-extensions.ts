@@ -1,6 +1,5 @@
-import { ParseExtensionsProps } from '@parser/types'
+import { ParseExtensionsProps, findNodeIndex } from '@jstream/parser'
 import { FlowExtensions, UnparsedFlowExtensions } from '@flower/types'
-import { findNodeIndex } from '@parser/utils'
 
 const parseExtensions: ParseExtensionsProps<UnparsedFlowExtensions, FlowExtensions> = params => ({
   maxConcurrency: parseMaxConcurrency(params),

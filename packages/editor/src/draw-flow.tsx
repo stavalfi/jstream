@@ -1,10 +1,11 @@
 import React from 'react'
 import { updateChart } from '@editor/my-d3'
 import deepEqual from 'deep-equal'
-import { Configuration, ParsedFlow } from '@jstream/parser'
+import { Configuration } from '@jstream/parser'
+import { Flow } from '@jstream/flower'
 
 type Props = {
-  config: Required<Configuration<ParsedFlow>>
+  config: Required<Configuration<Flow>>
   selectedFlowIndex: number
   height: number
   width: number

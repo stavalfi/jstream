@@ -10,7 +10,7 @@ import {
 } from '@parser/utils'
 import { validateParsedUserFlow } from '@parser/validators/parsed-user-flow-validator'
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
-import { removeProp, uuid } from '@jstream/utils'
+import { uuid } from '@jstream/utils'
 import {
   AlgorithmParsedFlow,
   Graph,
