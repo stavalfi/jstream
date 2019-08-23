@@ -1,7 +1,6 @@
-import { FlowState } from '@flower/types'
-import { parse, ParsedFlow } from '@jstream/parser'
+import { Flow, FlowState } from '@flower/types'
 import { advanceFlowActionCreator } from '@flower/actions'
-import { reducer } from '@flower/index'
+import { parse, reducer } from '@flower/index'
 
 const state = (state: FlowState) => state
 
@@ -14,7 +13,7 @@ describe('multiple nodes advance to single node', () => {
         graph: 'a:b,c:d',
       },
     ])
-    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -110,7 +109,7 @@ describe('multiple nodes advance to single node', () => {
         graph: 'a:b,c:d',
       },
     ])
-    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -211,7 +210,7 @@ describe('multiple nodes advance to single node', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -301,7 +300,7 @@ describe('multiple nodes advance to single node', () => {
 
   it(`4 - advance one node to a joined node that has multiple same request.payload (but differet request.id)`, () => {
     const configuration = parse([['a:b,c:d', 'd:a']])
-    const flow = configuration.flows.find(flow => flow.graph.length === 4) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const action1 = advanceFlowActionCreator({
       flowName: flow.name,
 
@@ -433,7 +432,7 @@ describe('multiple nodes advance to single node', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as Flow & {
       name: string
     }
     const initialState: FlowState = {

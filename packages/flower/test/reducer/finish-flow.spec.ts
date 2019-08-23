@@ -2,10 +2,10 @@ import {
   executeFlowActionCreator,
   finishFlowActionCreator,
   FlowState,
+  parse,
   reducer,
   updateConfigActionCreator,
 } from '@flower/index'
-import { parse } from '@jstream/parser'
 
 const state = (state: FlowState) => state
 
@@ -30,7 +30,7 @@ describe('finishFlow', () => {
           reducer(initialState, updateConfigActionCreator({ payload: configuration })),
           executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
         ),
-        finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
+        finishFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
       ),
     ).toEqual(
       state({
@@ -78,9 +78,9 @@ describe('finishFlow', () => {
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
             executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
           ),
-          finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
+          finishFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
         ),
-        finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
+        finishFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
       ),
     ).toEqual(
       state({

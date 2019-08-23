@@ -1,8 +1,9 @@
 import { getFlow, getStore, libSelector } from '@flower-test/utils'
 import { advanceFlowActionCreator, executeFlowActionCreator } from '@flower/actions'
 import { FlowActionByType, FlowActionType } from '@flower/types'
-import { findNodeIndex, parse } from '@jstream/parser'
+import { findNodeIndex } from '@jstream/parser'
 import { executeFlowThunkCreator } from '@flower/thunks'
+import { parse } from '@flower/index'
 
 describe('execute and advance thunk', () => {
   const actions = (actions: FlowActionByType[FlowActionType.advanceFlowGraph | FlowActionType.executeFlow][]) =>

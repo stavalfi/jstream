@@ -1,5 +1,4 @@
-import { FlowState, reducer, updateConfigActionCreator } from '@flower/index'
-import { parse, ParsedFlow } from '@jstream/parser'
+import { Flow, FlowState, parse, reducer, updateConfigActionCreator } from '@flower/index'
 
 const state = (state: FlowState) => state
 
@@ -155,7 +154,7 @@ describe('updateConfig', () => {
         {
           id: 'id1',
           flowName: 'a',
-          flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as ParsedFlow).id,
+          flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as Flow).id,
           queue: [],
           graphConcurrency: [
             {
@@ -176,7 +175,7 @@ describe('updateConfig', () => {
           {
             id: 'id1',
             flowName: 'a',
-            flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as ParsedFlow).id,
+            flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as Flow).id,
             queue: [],
             graphConcurrency: [
               {

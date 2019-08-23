@@ -1,6 +1,5 @@
 import { getStore as getMockStore } from '@flower-test/utils/utils'
-import { FlowAction, FlowReducerSelector, FlowState, FlowThunkDispatch } from '@flower/index'
-import { ParsedFlow } from '@jstream/parser'
+import { Flow, FlowAction, FlowReducerSelector, FlowState, FlowThunkDispatch } from '@flower/index'
 
 export const getStore: (
   initialState?: FlowState,
@@ -18,7 +17,7 @@ export const state = (state: FlowState) => ({
   libReducer: state,
 })
 
-export function getFlow(flows: ParsedFlow[], flowName: string): ParsedFlow & { name: string } {
+export function getFlow(flows: Flow[], flowName: string): Flow & { name: string } {
   const flow = flows.find(flow => 'name' in flow && flow.name === flowName)
   expect(flow).not.toBeUndefined()
   if (!flow || !('name' in flow)) {

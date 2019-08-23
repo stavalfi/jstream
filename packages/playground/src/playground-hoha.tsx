@@ -6,7 +6,7 @@ import {
   reducer,
   updateConfigActionCreator,
 } from '@jstream/flower'
-import { parse, ParsedFlow } from '@jstream/parser'
+import parse, { ParsedFlow } from '@jstream/parser'
 import { logger } from 'redux-logger'
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import thunk from 'redux-thunk'
@@ -31,15 +31,6 @@ const config = parse({
         },
       ],
       extends_flows: [
-        {
-          graph: 'add',
-          rules: [
-            {
-              node_name: 'start',
-              next: () => () => () => 'success',
-            },
-          ],
-        },
         {
           name: 'all',
           graph: 'add:backup',

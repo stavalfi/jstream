@@ -1,6 +1,5 @@
-import { parse, ParsedFlow } from '@jstream/parser'
-import { FlowState } from '@flower/types'
-import { advanceFlowActionCreator, reducer } from '@flower/index'
+import { Flow, FlowState } from '@flower/types'
+import { advanceFlowActionCreator, parse, reducer } from '@flower/index'
 
 const state = (state: FlowState) => state
 
@@ -22,7 +21,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -108,7 +107,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -194,7 +193,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -280,7 +279,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -366,7 +365,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -457,7 +456,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {

@@ -1,8 +1,8 @@
-import { parse } from '@jstream/parser'
 import {
   executeFlowActionCreator,
   finishFlowActionCreator,
   FlowState,
+  parse,
   reducer,
   updateConfigActionCreator,
 } from '@flower/index'
@@ -181,7 +181,7 @@ describe('executeFlow', () => {
             reducer(initialState, updateConfigActionCreator({ payload: configuration })),
             executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
           ),
-          finishFlowActionCreator({ payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
+          finishFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1', flowId: configuration.flows[0].id } }),
         ),
         executeFlowActionCreator({ flowName: 'a', payload: { activeFlowId: '1' } }),
       ),

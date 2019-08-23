@@ -1,6 +1,6 @@
 import { Action, Reducer } from 'redux'
-import { Configuration, ParsedFlow, Splitters } from '@jstream/parser'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
+import { Configuration, ParsedFlow, Splitters, Node } from '@jstream/parser'
 import { Combinations, NonEmptyCombinations } from '@jstream/utils'
 
 export enum FlowActionType {
@@ -11,7 +11,7 @@ export enum FlowActionType {
 }
 
 export interface FlowActionPayload {
-  updateConfig: Configuration<ParsedFlow>
+  updateConfig: Configuration<Flow>
   executeFlow: { activeFlowId: string } & Combinations<{ flowId: string }>
   advanceFlowGraph: { activeFlowId: string; flowId: string; toNodeIndex: number } & Combinations<{
     fromNodeIndex: number
@@ -80,7 +80,7 @@ export type ActiveFlow = {
 
 export type FlowState = {
   splitters: Splitters
-  flows: ParsedFlow[]
+  flows: Flow[]
   activeFlows: ActiveFlow[]
   finishedFlows: ActiveFlow[]
   advanced: Request[]
@@ -93,3 +93,43 @@ export type FlowReducerSelector<AppState = any> = (state: AppState) => FlowState
 export type FlowThunkAction<ReturnValue> = ThunkAction<ReturnValue, FlowState, undefined, FlowAction>
 
 export type FlowThunkDispatch = ThunkDispatch<FlowState, undefined, FlowAction>
+
+// extension types:
+
+export type Func<LastParam, Result> = (
+  flow: Flow,
+) => (toNode: Node, i?: number, graph?: Node[]) => (param: LastParam) => Result | Promise<Result>
+
+export type RuleResult = string | string[]
+
+export type Rule<T extends {}> = T &
+  (
+    | { next: Func<any, RuleResult>; error: Func<any, RuleResult> }
+    | { next: Func<any, RuleResult> }
+    | { error: Func<any, RuleResult> })
+
+export type UnparsedRule = Rule<{ node_name: string } | {}>
+export type ParsedRule = Rule<{ nodeIndex: number } | {}>
+
+export type SideEffect<T extends {}> = T & { func: Func<any, any> }
+
+export type UnparsedSideEffect = SideEffect<{ node_name: string } | {}>
+export type ParsedSideEffect = SideEffect<{ nodeIndex: number } | {}>
+
+export type UnparsedFlowExtensions =
+  | {}
+  | { max_concurrency: number | boolean }
+  | { rules: UnparsedRule[] }
+  | { side_effects: UnparsedSideEffect[] }
+  | { max_concurrency: number; rules: UnparsedRule[] }
+  | { rules: UnparsedRule[]; side_effects: UnparsedSideEffect[] }
+  | { max_concurrency: number; side_effects: UnparsedSideEffect[] }
+  | { max_concurrency: number; rules: UnparsedRule[]; side_effects: UnparsedSideEffect[] }
+
+export type FlowExtensions = {
+  maxConcurrency: number
+  rules: ParsedRule[]
+  sideEffects: ParsedSideEffect[]
+}
+
+export type Flow = ParsedFlow<FlowExtensions>

@@ -1,8 +1,7 @@
-import { ParsedFlow } from '@jstream/parser'
-import { ActiveFlow } from '@flower/types'
+import { ActiveFlow, Flow } from '@flower/types'
 
 type GetFlowDetails = (
-  flows: ParsedFlow[],
+  flows: Flow[],
   activeFlows: ActiveFlow[],
   activeFlowId: string,
 ) =>
@@ -13,7 +12,7 @@ type GetFlowDetails = (
     } & (
       | {}
       | {
-          flow: ParsedFlow
+          flow: Flow
           flowIndex: number
         }
     ))
