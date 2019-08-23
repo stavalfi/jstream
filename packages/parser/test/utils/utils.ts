@@ -1,14 +1,14 @@
-import { parse } from '@parser/index'
+import parse from '@parser/index'
 import { distractDisplayNameBySplitters, graphNodeToDisplayName } from '@parser/utils'
 import { table as printMatrix } from 'table'
 import {
+  Configuration,
   Graph,
   Node,
-  ParsedFlow,
   ParsedFlowOptionalFields,
   Path,
+  PathsGroups,
   Splitters,
-  Configuration,
   UserFlow,
 } from '@parser/types'
 import { expect as chaiExpect } from 'chai'
@@ -16,18 +16,21 @@ import { Combinations, uuid } from '@jstream/utils'
 import deepEqual from 'fast-deep-equal'
 
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
-export type ExpectedFlow = {
+export type ExpectedFlow<Extensions = {}> = {
   graph: ExpectedFlowGraphNode[]
 } & Combinations<{
   name: string
-  maxConcurrency: number
   defaultNodeIndex: number
   extendedFlowIndex: number
   pathsGroups: (number | string)[][]
 }>
 
-export const declareFlows = (n: number, path: Path, extendsSplitter: string): ExpectedFlow[] =>
-  [...Array(n).keys()].map(
+export function declareFlows<Extensions = {}>(
+  n: number,
+  path: Path,
+  extendsSplitter: string,
+): ExpectedFlow<Extensions>[] {
+  return [...Array(n).keys()].map(
     (i): ExpectedFlow => ({
       name: `${path[0]}${i}`,
       graph: [
@@ -35,40 +38,46 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
           [`${path[0]}${i}${extendsSplitter}${path.slice(1).join(extendsSplitter)}`]: [[], []],
         },
       ],
-      maxConcurrency: 1,
       defaultNodeIndex: 0,
     }),
   )
+}
 
-export type ExpectedParsedFlow = Omit<ParsedFlow, 'id' | 'sideEffects' | 'rules' | 'maxConcurrency' | 'pathsGroups'> &
-  Combinations<Pick<ParsedFlow, 'pathsGroups'>> &
-  ParsedFlowOptionalFields
+export type ExpectedParsedFlow = {
+  hasPredefinedName: boolean
+  name: string
+  graph: Graph
+} & ({} | { pathsGroups: (string | number)[][] })
 
-export const createExpected = (
-  expectedFlowsArrays: ExpectedFlow[],
-  flowsConfig: Required<Configuration<UserFlow>>,
-): ExpectedParsedFlow[] =>
-  expectedFlowsArrays.map(flowToParse => {
+export function createExpected(
+  expectedFlowsArrays: ExpectedFlow<{}>[],
+  flowsConfig: Required<Configuration<UserFlow<{}>>>,
+): ExpectedParsedFlow[] {
+  return expectedFlowsArrays.map(flowToParse => {
     const nameObject = {
       hasPredefinedName: 'name' in flowToParse,
       name:
         'name' in flowToParse ? flowToParse.name : uuid().replace(new RegExp(flowsConfig.splitters.extends, 'g'), ''),
     }
-    return {
+    const graph: Graph = convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig, nameObject)
+    const pathsGroupsObject = 'pathsGroups' in flowToParse && {
+      pathsGroups: flowToParse.pathsGroups.map(array => array.map(groupId => `${groupId}`)),
+    }
+    const result: ExpectedParsedFlow = {
       ...flowToParse,
-      graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig, nameObject),
-      ...('pathsGroups' in flowToParse && {
-        pathsGroups: flowToParse.pathsGroups.map(array => array.map(groupId => `${groupId}`)),
-      }),
+      graph,
+      ...pathsGroupsObject,
       ...nameObject,
     }
+    return result
   })
+}
 
-const convertExpectedFlowGraphArray = (
+function convertExpectedFlowGraphArray(
   expectedFlowGraphArray: ExpectedFlowGraphNode[],
-  flowsConfig: Required<Configuration<UserFlow>>,
+  flowsConfig: Required<Configuration<UserFlow<{}>>>,
   nameObject: { hasPredefinedName: boolean; name: string },
-) => {
+) {
   return expectedFlowGraphArray.map(node => {
     const displayNode = distractDisplayNameBySplitters(flowsConfig.splitters, Object.keys(node)[0])
     return {
@@ -81,7 +90,7 @@ const convertExpectedFlowGraphArray = (
 
 export const createFlows = <T>(
   actualFlowGraph: T,
-  flowsConfig: (actualFlowGraph: T) => Required<Configuration<UserFlow>>,
+  flowsConfig: (actualFlowGraph: T) => Required<Configuration<UserFlow<{}>>>,
 ) => parse(flowsConfig(actualFlowGraph)).flows
 
 const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {
@@ -141,7 +150,7 @@ type ParsedFlowWithDisplyName = {
   hasPredefinedName: boolean
   name: string
   graph: (Node & { displayName?: string })[]
-  pathsGroups?: ParsedFlow['pathsGroups']
+  pathsGroups?: PathsGroups
 } & ParsedFlowOptionalFields
 
 const sortFlow = (splitters: Splitters) => (flow: ParsedFlowWithDisplyName): ParsedFlowWithDisplyName => {

@@ -1,11 +1,12 @@
-import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph } from '@parser/utils'
-import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow, UserFlowObject } from '@parser/types'
-import { toArray, uuid } from '@jstream/utils'
+import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph, removeSavedProps } from '@parser/utils'
+import { ParsedFlow, ParsedUserFlow, ParseExtensionsProps, Splitters, UserFlow, UserFlowObject } from '@parser/types'
+import { removeProp, toArray, uuid } from '@jstream/utils'
+import _isString from 'lodash/isString'
 
-function getFlowNameObject(
+function getFlowNameObject<Extensions>(
   splitters: Splitters,
-  parsedFlowsUntilNow: ParsedFlow[],
-  flow: UserFlowObject,
+  parsedFlowsUntilNow: ParsedFlow<Extensions>[],
+  flow: UserFlowObject<{}>,
 ): { hasPredefinedName: boolean; name: string } {
   if ('name' in flow) {
     return { hasPredefinedName: true, name: flow.name }
@@ -25,39 +26,41 @@ function getFlowNameObject(
   }
 }
 
-function maxConcurrencyToNumber(maxConcurrency: boolean | number): number {
-  if (maxConcurrency === true) {
-    return Infinity
+export const flattenUserFlowShortcuts = (splitters: Splitters) =>
+  function<UnparsedExtensions, Extensions>(parsedFlowsUntilNow: ParsedFlow<Extensions>[]) {
+    return (flow: UserFlow<UnparsedExtensions>): ParsedUserFlow<UnparsedExtensions> => {
+      if (_isString(flow)) {
+        return {
+          ...fillProps(splitters, parsedFlowsUntilNow, { graph: [flow] }),
+          extendsFlows: [],
+        }
+      }
+
+      if (Array.isArray(flow)) {
+        return {
+          ...fillProps(splitters, parsedFlowsUntilNow, { graph: flow }),
+          extendsFlows: [],
+        }
+      }
+
+      return {
+        ...removeSavedProps(flow),
+        ...fillProps(splitters, parsedFlowsUntilNow, flow),
+        extendsFlows: 'extends_flows' in flow ? flow.extends_flows : [],
+      }
+    }
   }
-  if (maxConcurrency === false) {
-    return 1
+
+function fillProps<Extensions>(
+  splitters: Splitters,
+  parsedFlowsUntilNow: ParsedFlow<Extensions>[],
+  flow: UserFlowObject<{}>,
+) {
+  return {
+    graph: toArray(flow.graph),
+    ...getFlowNameObject(splitters, parsedFlowsUntilNow, flow),
+    ...('default_path' in flow && {
+      defaultPath: flow.default_path.split(splitters.extends),
+    }),
   }
-  return maxConcurrency
 }
-
-export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUntilNow: ParsedFlow[]) =>
-  function flatten(flow: UserFlow): ParsedUserFlow {
-    if (typeof flow === 'string') {
-      return flatten({
-        graph: [flow],
-      })
-    }
-    if (Array.isArray(flow)) {
-      return flatten({
-        graph: flow,
-      })
-    }
-
-    const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flow)
-    return {
-      graph: toArray(flow.graph),
-      ...nameObject,
-      extendsFlows: flow.extends_flows ? flow.extends_flows : [],
-      ...('default_path' in flow && {
-        defaultPath: flow.default_path.split(splitters.extends),
-      }),
-      maxConcurrency: 'max_concurrency' in flow ? maxConcurrencyToNumber(flow.max_concurrency) : 1,
-      side_effects: 'side_effects' in flow ? flow.side_effects : [],
-      rules: 'rules' in flow ? flow.rules : [],
-    }
-  }

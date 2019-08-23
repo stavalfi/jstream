@@ -1,5 +1,3 @@
-import { Combinations } from '@jstream/utils'
-
 export type Splitters = {
   extends: string
 }
@@ -14,92 +12,81 @@ export type Node = {
 
 export type Graph = Node[]
 
-export type ParsedFlow = {
+export type ParsedFlowOptionalFields =
+  | {}
+  | {
+      defaultNodeIndex: number
+    }
+  | {
+      extendedFlowIndex: number
+    }
+  | {
+      extendedFlowIndex: number
+      defaultNodeIndex: number
+    }
+
+export type PathsGroups = string[][]
+
+export type BaseParsedFlow<Extensions> = {
   id: string
   hasPredefinedName: boolean
   name: string
-  maxConcurrency: number
   graph: Graph
-  pathsGroups: string[][]
-  sideEffects: SideEffect[]
-  rules: Rule<{ nodeIndex: number }>[]
-} & ParsedFlowOptionalFields
+  pathsGroups: PathsGroups
+} & Extensions
 
-export type ParsedFlowOptionalFields = Combinations<{
-  extendedFlowIndex: number
-  defaultNodeIndex: number
-}>
+export type ParsedFlow<Extensions> = BaseParsedFlow<Extensions> & ParsedFlowOptionalFields
 
-export type AlgorithmParsedFlow = ParsedFlow &
+export type AlgorithmParsedFlow<Extensions> = BaseParsedFlow<Extensions> &
+  ParsedFlowOptionalFields &
   (
     | {
         extendedFlowId: string
-        extendedParsedFlow: AlgorithmParsedFlow
+        extendedParsedFlow: AlgorithmParsedFlow<Extensions>
       }
     | {})
 
-export type SideEffectFunction = (
-  flow: ParsedFlow,
-) => (toNode: Node, i: number, graph: Node[]) => (context: any) => any | Promise<any>
-
-export type SideEffect = { sideEffectFunc: SideEffectFunction } & Combinations<{
-  nodeIndex: number
-}>
-
 export type UserGraph = string | string[]
 
-export type UserSideEffects = (
-  | { side_effect: SideEffectFunction }
-  | { node_name: string; side_effect: SideEffectFunction })[]
-
-export type UserFlowObject = {
+export type UserFlowObject<UnparsedExtensions> = {
   graph: UserGraph
-  extends_flows?: UserFlow[]
-} & Combinations<{
-  name: string
-  max_concurrency: boolean | number
-  default_path: string
-  side_effects: UserSideEffects
-  rules: Rule<{ node_name: string }>[]
-}>
+} & (UnparsedExtensions | {}) &
+  (
+    | {}
+    | { name: string }
+    | { default_path: string }
+    | { extends_flows: UserFlow<UnparsedExtensions>[] }
+    | { name: string; default_path: string }
+    | { default_path: string; extends_flows: UserFlow<UnparsedExtensions>[] }
+    | { name: string; extends_flows: UserFlow<UnparsedExtensions>[] }
+    | { name: string; default_path: string; extends_flows: UserFlow<UnparsedExtensions>[] })
 
-export type UserFlow = UserGraph | UserFlowObject
+export type UserFlow<UnparsedExtensions> = UserGraph | UserFlowObject<UnparsedExtensions>
 
-export type NextFunctionRule = (
-  flow: ParsedFlow,
-) => (
-  toNode: Node,
-  i: number,
-  graph: Node[],
-) => (result: any) => string | string[] | Promise<string> | Promise<string[]>
-
-export type ErrorFunctionRule = (
-  flow: ParsedFlow,
-) => (toNode: Node, i: number, graph: Node[]) => (error: any) => string | string[] | Promise<string> | Promise<string[]>
-
-export type Rule<T> = (
-  | { next: NextFunctionRule; error: ErrorFunctionRule }
-  | { next: NextFunctionRule }
-  | { error: ErrorFunctionRule }) &
-  (T | {})
-
-export type ParsedUserFlow = {
+export type ParsedUserFlow<UnparsedExtensions> = {
   hasPredefinedName: boolean
   name: string
-  maxConcurrency: number
   graph: string[]
-  extendsFlows: UserFlow[]
-  rules: Rule<{ node_name: string }>[]
-  side_effects: UserSideEffects
-} & Combinations<{
-  defaultPath: string[]
-}>
+  extendsFlows: UserFlow<UnparsedExtensions>[]
+} & (UnparsedExtensions | {}) &
+  ({} | { defaultPath: string[] })
 
 export type Configuration<Flow> = {
   splitters?: Splitters
   flows: Flow[]
 }
 
-export type ParsedUserConfigurationObject = Required<Configuration<UserFlow>>
+export type UserConfiguration<UnparsedExtensions> =
+  | UserFlow<UnparsedExtensions>
+  | UserFlow<UnparsedExtensions>[]
+  | Configuration<UserFlow<UnparsedExtensions>>
 
-export type UserConfiguration = UserFlow | UserFlow[] | Configuration<UserFlow>
+export type ParseExtensionsProps<UnparsedExtensions, Extensions> = ({
+  extProps,
+  parsedFlow,
+  splitters,
+}: {
+  extProps: UnparsedExtensions | {}
+  parsedFlow: AlgorithmParsedFlow<{}>
+  splitters: Required<Splitters>
+}) => Extensions

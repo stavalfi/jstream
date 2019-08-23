@@ -2,7 +2,7 @@ import { assertEqualFlows, createFlows, createExpected, ExpectedFlow } from '@pa
 import { Configuration, UserFlow } from '@parser/types'
 
 describe('multiple-flows-in-first-layer', () => {
-  const flowsConfig = (graph: UserFlow): Required<Configuration<UserFlow>> => ({
+  const flowsConfig = (graph: UserFlow<{}>): Required<Configuration<UserFlow<{}>>> => ({
     splitters: {
       extends: '_',
     },
@@ -82,7 +82,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('3', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -279,7 +279,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('7', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -324,7 +324,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('8', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -381,7 +381,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('9', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -443,7 +443,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('10', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -505,7 +505,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('11', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -558,7 +558,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('12', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -633,7 +633,7 @@ describe('multiple-flows-in-first-layer', () => {
   })
 
   it('13', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },

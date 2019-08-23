@@ -3,7 +3,7 @@ import { UserFlow } from '@parser/types'
 
 describe('multiple-layers', () => {
   it('1', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -59,7 +59,7 @@ describe('multiple-layers', () => {
   })
 
   it('2', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -126,7 +126,7 @@ describe('multiple-layers', () => {
   })
 
   it('3', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -158,7 +158,7 @@ describe('multiple-layers', () => {
   })
 
   it('4', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -200,7 +200,7 @@ describe('multiple-layers', () => {
   })
 
   it('5', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -257,7 +257,7 @@ describe('multiple-layers', () => {
   })
 
   it('6', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -300,7 +300,7 @@ describe('multiple-layers', () => {
   })
 
   it('7', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -355,7 +355,7 @@ describe('multiple-layers', () => {
   })
 
   it('8', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -480,7 +480,7 @@ describe('multiple-layers', () => {
   // });
 
   it('9', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -526,7 +526,7 @@ describe('multiple-layers', () => {
   })
 
   it('10', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -596,7 +596,7 @@ describe('multiple-layers', () => {
   })
 
   it('11', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -667,7 +667,7 @@ describe('multiple-layers', () => {
   })
 
   it('12', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -729,7 +729,7 @@ describe('multiple-layers', () => {
   })
 
   it('13', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -791,7 +791,7 @@ describe('multiple-layers', () => {
   })
 
   it('14', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },

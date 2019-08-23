@@ -1,20 +1,18 @@
-import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow } from '@parser/types'
+import { AlgorithmParsedFlow, Graph, Node, ParsedUserFlow, PathsGroups } from '@parser/types'
 import { uuid } from '@jstream/utils'
 import { getHeadsIndexOfSubFlows } from '@parser/utils'
 
-type FlowPathsGroups = ({
+export function flowPathsGroups<UnparsedExtensions, Extensions>({
   parsedFlows,
   flowToParse,
   parsedGraph,
   extendedParsedFlow,
 }: {
-  parsedFlows: AlgorithmParsedFlow[]
-  flowToParse: ParsedUserFlow
+  parsedFlows: AlgorithmParsedFlow<Extensions>[]
+  flowToParse: ParsedUserFlow<UnparsedExtensions>
   parsedGraph: Graph
-  extendedParsedFlow?: AlgorithmParsedFlow
-}) => ParsedFlow['pathsGroups']
-
-export const flowPathsGroups: FlowPathsGroups = ({ parsedFlows, flowToParse, parsedGraph, extendedParsedFlow }) => {
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
+}): PathsGroups {
   const mainGroupId = uuid()
   if (parsedGraph.length === 1 && parsedGraph[0].path.length === 1) {
     return [[mainGroupId]]
@@ -40,20 +38,20 @@ export const flowPathsGroups: FlowPathsGroups = ({ parsedFlows, flowToParse, par
         },
   )
 
-  const pathsGroups: ParsedFlow['pathsGroups'] = graph.map(node => node.path.map(() => ''))
+  const pathsGroups: PathsGroups = graph.map(node => node.path.map(() => ''))
 
   subFlowHeadIndexes.forEach(startIndex => fillGroupsOfSubFlow({ startIndex, parsedGraph: graph, pathsGroups }))
 
   return pathsGroups.map(pathGroups => [mainGroupId, ...pathGroups])
 }
 
-function fillGroupsOfSubFlow({
+function fillGroupsOfSubFlow<Extensions = {}>({
   parsedGraph,
   pathsGroups,
   startIndex,
 }: {
   parsedGraph: (Node & ({ subFlow: string } | {}))[]
-  pathsGroups: ParsedFlow['pathsGroups']
+  pathsGroups: PathsGroups
   startIndex: number
 }): void {
   const visited = parsedGraph.map(() => false)

@@ -1,21 +1,24 @@
 import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
 import { composeErrors, ErrorObject } from '@parser/error-messages'
 
-export const validateParsedFlow = (splitters: Splitters) => ({
-  userFlow,
-  parsedUserFlow,
-  flows,
-}: {
-  userFlow: UserFlow
-  parsedUserFlow: ParsedUserFlow
-  flows: ParsedFlow[]
-}) => (flow: ParsedFlow) => {
-  const errorObjects = buildErrorObjects(splitters)({ userFlow, parsedUserFlow, flows })(flow)
-  if (errorObjects.length > 0) {
-    throw new Error(composeErrors(...errorObjects))
+export const validateParsedFlow = (splitters: Splitters) =>
+  function<UnparsedExtensions, Extensions>({
+    userFlow,
+    parsedUserFlow,
+    flows,
+  }: {
+    userFlow: UserFlow<UnparsedExtensions>
+    parsedUserFlow: ParsedUserFlow<UnparsedExtensions>
+    flows: ParsedFlow<Extensions>[]
+  }) {
+    return (flow: ParsedFlow<Extensions>) => {
+      const errorObjects = buildErrorObjects(splitters)({ userFlow, parsedUserFlow, flows })(flow)
+      if (errorObjects.length > 0) {
+        throw new Error(composeErrors(...errorObjects))
+      }
+      return flow
+    }
   }
-  return flow
-}
 
 // function parsedFlowErrorObject({ flow, ...errorObject }: ErrorObject & { flow: ParsedFlow }): ErrorObject {
 //   return {
@@ -28,16 +31,19 @@ export const validateParsedFlow = (splitters: Splitters) => ({
 //   }
 // }
 
-const buildErrorObjects = (splitters: Splitters) => ({
-  userFlow,
-  parsedUserFlow,
-  flows,
-}: {
-  userFlow: UserFlow
-  parsedUserFlow: ParsedUserFlow
-  flows: ParsedFlow[]
-}) => (flow: ParsedFlow): ErrorObject[] => {
-  const errorObjects: ErrorObject[] = []
+const buildErrorObjects = (splitters: Splitters) =>
+  function<UnparsedExtensions, Extensions>({
+    userFlow,
+    parsedUserFlow,
+    flows,
+  }: {
+    userFlow: UserFlow<UnparsedExtensions>
+    parsedUserFlow: ParsedUserFlow<UnparsedExtensions>
+    flows: ParsedFlow<Extensions>[]
+  }) {
+    return (flow: ParsedFlow<Extensions>): ErrorObject[] => {
+      const errorObjects: ErrorObject[] = []
 
-  return errorObjects
-}
+      return errorObjects
+    }
+  }

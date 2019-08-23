@@ -8,10 +8,10 @@ describe('flatten-user-flow-shortcuts', () => {
   }
 
   const assert = (
-    actualUserFlows: ParsedUserFlow,
-    expectedUserFlows: Omit<ParsedUserFlow, 'name' | 'hasPredefinedName'> & Combinations<{ name: string }>,
+    actualUserFlows: ParsedUserFlow<{}>,
+    expectedUserFlows: Omit<ParsedUserFlow<{}>, 'name' | 'hasPredefinedName'> & Combinations<{ name: string }>,
   ) => {
-    const expected: ParsedUserFlow = {
+    const expected: ParsedUserFlow<{}> = {
       ...expectedUserFlows,
       hasPredefinedName: 'name' in expectedUserFlows,
       name:
@@ -30,9 +30,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow0',
       graph: ['flow0'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -45,9 +42,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow0',
       graph: ['flow0'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -59,9 +53,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -73,9 +64,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -87,9 +75,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -101,9 +86,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -115,9 +97,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow2'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -129,9 +108,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow2'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -147,9 +123,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow0',
       graph: ['flow0'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -165,9 +138,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow0',
       graph: ['flow0'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -181,9 +151,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow2'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -198,9 +165,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow2'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -214,9 +178,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['flow0:flow1:flow2'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -232,9 +193,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow0',
       graph: ['flow0'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -245,16 +203,11 @@ describe('flatten-user-flow-shortcuts', () => {
     const actual = {
       name: 'flow1',
       graph: ['flow0'],
-      rules: [],
-      side_effects: [],
     }
     const expectedUserFlows = {
       name: 'flow1',
       graph: ['flow0'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -270,9 +223,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow1',
       graph: ['flow0/id1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -287,9 +237,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow0/id1',
       graph: ['flow0/id1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -302,9 +249,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'a',
       graph: ['a_b:a_c'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)([])(actual)
@@ -312,7 +256,7 @@ describe('flatten-user-flow-shortcuts', () => {
   })
 
   it('19', () => {
-    const parsedFlows: ParsedFlow[] = [
+    const parsedFlows: ParsedFlow<{}>[] = [
       {
         name: 'a',
         hasPredefinedName: true,
@@ -324,9 +268,6 @@ describe('flatten-user-flow-shortcuts', () => {
           },
         ],
         id: '1',
-        maxConcurrency: 1,
-        rules: [],
-        sideEffects: [],
         pathsGroups: [],
       },
     ]
@@ -334,9 +275,6 @@ describe('flatten-user-flow-shortcuts', () => {
     const expectedUserFlows = {
       graph: ['a'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
@@ -344,7 +282,7 @@ describe('flatten-user-flow-shortcuts', () => {
   })
 
   it('20', () => {
-    const parsedFlows: ParsedFlow[] = [
+    const parsedFlows: ParsedFlow<{}>[] = [
       {
         name: 'a',
         hasPredefinedName: true,
@@ -356,9 +294,6 @@ describe('flatten-user-flow-shortcuts', () => {
           },
         ],
         id: '1',
-        sideEffects: [],
-        rules: [],
-        maxConcurrency: 1,
         pathsGroups: [],
       },
     ]
@@ -367,9 +302,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow1',
       graph: ['flow1_a'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)
@@ -377,7 +309,7 @@ describe('flatten-user-flow-shortcuts', () => {
   })
 
   it('21', () => {
-    const parsedFlows: ParsedFlow[] = [
+    const parsedFlows: ParsedFlow<{}>[] = [
       {
         name: 'a',
         hasPredefinedName: true,
@@ -389,9 +321,6 @@ describe('flatten-user-flow-shortcuts', () => {
           },
         ],
         id: '1',
-        sideEffects: [],
-        rules: [],
-        maxConcurrency: 1,
         pathsGroups: [],
       },
     ]
@@ -400,9 +329,6 @@ describe('flatten-user-flow-shortcuts', () => {
       name: 'flow1',
       graph: ['flow1_a:flow1'],
       extendsFlows: [],
-      maxConcurrency: 1,
-      rules: [],
-      side_effects: [],
     }
 
     const actualUserFlows = flattenUserFlowShortcuts(splitters)(parsedFlows)(actual)

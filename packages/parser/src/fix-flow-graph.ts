@@ -10,20 +10,19 @@ type AlgorithmNode = {
   newGroupId: string
 }
 
-type FixAndExtendGraph = (params: {
-  splitters: Splitters
-  parsedFlows: AlgorithmParsedFlow[]
-  flowToParse: ParsedUserFlow
-  parsedGraph: Graph
-  extendedParsedFlow?: AlgorithmParsedFlow
-}) => Graph
-export const fixAndExtendGraph: FixAndExtendGraph = ({
+export function fixAndExtendGraph<UnparsedExtensions, Extensions>({
   splitters,
   parsedFlows,
   flowToParse,
   parsedGraph,
   extendedParsedFlow,
-}) => {
+}: {
+  splitters: Splitters
+  parsedFlows: AlgorithmParsedFlow<Extensions>[]
+  flowToParse: ParsedUserFlow<UnparsedExtensions>
+  parsedGraph: Graph
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
+}): Graph {
   if (parsedGraph.length === 1 && parsedGraph[0].path.length === 1 && parsedGraph[0].path[0] === flowToParse.name) {
     if (extendedParsedFlow) {
       return extendedParsedFlow.graph.map(node => ({
@@ -66,7 +65,7 @@ export const fixAndExtendGraph: FixAndExtendGraph = ({
   }
 
   const extendedFlowsInGraphByFlowName = differentFlowNames
-    .map(flowName => parsedFlows.find(parsedFlow => parsedFlow.name === flowName) as AlgorithmParsedFlow)
+    .map(flowName => parsedFlows.find(parsedFlow => parsedFlow.name === flowName) as AlgorithmParsedFlow<Extensions>)
     .map(parsedFlow => ({
       ...parsedFlow,
       graph: parsedFlow.graph.map(addFlowName(flowToParse)),
@@ -129,85 +128,98 @@ const tryAddLink = ({ fromNode, toNode }: { fromNode: AlgorithmNode; toNode: Alg
   }
 }
 
-const getUsedFlowName = (flowToParse: ParsedUserFlow) => (path: Path) => {
-  if (path.length > 1) {
-    if (flowToParse.hasOwnProperty('name')) {
-      return path[1]
+function getUsedFlowName<UnparsedExtensions, Extensions>(flowToParse: ParsedUserFlow<UnparsedExtensions>) {
+  return (path: Path) => {
+    if (path.length > 1) {
+      if (flowToParse.hasOwnProperty('name')) {
+        return path[1]
+      } else {
+        return path[0]
+      }
     } else {
       return path[0]
     }
-  } else {
-    return path[0]
   }
 }
 
-const addFlowName = (flowToParse: ParsedUserFlow) => (node: Node): Node => {
-  return { ...node, path: [flowToParse.name, ...node.path] }
+function addFlowName<UnparsedExtensions, Extensions>(flowToParse: ParsedUserFlow<UnparsedExtensions>) {
+  return (node: Node): Node => {
+    return { ...node, path: [flowToParse.name, ...node.path] }
+  }
 }
 
-const extendGraph = (extendedParsedFlow?: AlgorithmParsedFlow) => (
-  parsedFlow: Omit<AlgorithmParsedFlow, 'graph'> & { graph: AlgorithmNode[] },
-): AlgorithmNode[] => {
-  if (!extendedParsedFlow) {
-    return parsedFlow.graph
-  }
-  // @ts-ignore https://github.com/microsoft/TypeScript/issues/32030
-  if ('extendedParsedFlow' in parsedFlow && parsedFlow.extendedParsedFlow.id === extendedParsedFlow.id) {
-    return parsedFlow.graph
-  }
-
-  const oldToExtended: Map<AlgorithmNode, AlgorithmNode[]> = new Map()
-
-  const newGroupId = parsedFlow.graph[0].newGroupId
-
-  for (const oldNode of parsedFlow.graph) {
-    const extendedFlowMember = extendedParsedFlow.graph
-      .map(pos => ({
-        path: [...oldNode.path, ...pos.path],
-        children: [],
-        parents: [],
-        newGroupId,
-      }))
-      .map((pos: AlgorithmNode, j, array) => {
-        pos.parents = extendedParsedFlow.graph[j].parentsIndexes.map(parentIndex => array[parentIndex])
-        pos.children = extendedParsedFlow.graph[j].childrenIndexes.map(childIndex => array[childIndex])
-        return pos
-      })
-    oldToExtended.set(oldNode, extendedFlowMember)
-  }
-
-  for (const oldNode of parsedFlow.graph) {
-    const algorithmNodes = oldToExtended.get(oldNode)
-    const newNode =
-      'defaultNodeIndex' in extendedParsedFlow && algorithmNodes && algorithmNodes[extendedParsedFlow.defaultNodeIndex]
-    newNode &&
-      oldNode.children
-        .map(oldChild => oldToExtended.get(oldChild))
-        .filter(Boolean)
-        .map(extended => (extended as AlgorithmNode[])[0])
-        .forEach(newChild => {
-          newNode.children.push(newChild)
-          newChild.parents.push(newNode)
-        })
-  }
-
-  // put new graph in array
-  const newGraph = []
-  const visited = new Map()
-
-  const head = parsedFlow.graph[0]
-  const extendedHeadGraph = oldToExtended.get(head) as AlgorithmNode[]
-  let stack: AlgorithmNode[] = [extendedHeadGraph[0]]
-  while (stack.length > 0) {
-    const newNode = stack.pop() as AlgorithmNode
-    if (!visited.get(newNode)) {
-      visited.set(newNode, true)
-      newGraph.push(newNode)
-      stack = [...newNode.children, ...stack]
+function extendGraph<Extensions>(extendedParsedFlow?: AlgorithmParsedFlow<Extensions>) {
+  return function(
+    parsedFlow: (
+      | {
+          extendedFlowId: string
+          extendedParsedFlow: AlgorithmParsedFlow<Extensions>
+        }
+      | {}) & { graph: AlgorithmNode[] },
+  ): AlgorithmNode[] {
+    if (!extendedParsedFlow) {
+      return parsedFlow.graph
     }
-  }
+    // @ts-ignore https://github.com/microsoft/TypeScript/issues/32030
+    if ('extendedParsedFlow' in parsedFlow && parsedFlow.extendedParsedFlow.id === extendedParsedFlow.id) {
+      return parsedFlow.graph
+    }
 
-  return newGraph
+    const oldToExtended: Map<AlgorithmNode, AlgorithmNode[]> = new Map()
+
+    const newGroupId = parsedFlow.graph[0].newGroupId
+
+    for (const oldNode of parsedFlow.graph) {
+      const extendedFlowMember = extendedParsedFlow.graph
+        .map(pos => ({
+          path: [...oldNode.path, ...pos.path],
+          children: [],
+          parents: [],
+          newGroupId,
+        }))
+        .map((pos: AlgorithmNode, j, array) => {
+          pos.parents = extendedParsedFlow.graph[j].parentsIndexes.map(parentIndex => array[parentIndex])
+          pos.children = extendedParsedFlow.graph[j].childrenIndexes.map(childIndex => array[childIndex])
+          return pos
+        })
+      oldToExtended.set(oldNode, extendedFlowMember)
+    }
+
+    for (const oldNode of parsedFlow.graph) {
+      const algorithmNodes = oldToExtended.get(oldNode)
+      const newNode =
+        'defaultNodeIndex' in extendedParsedFlow &&
+        algorithmNodes &&
+        algorithmNodes[extendedParsedFlow.defaultNodeIndex]
+      newNode &&
+        oldNode.children
+          .map(oldChild => oldToExtended.get(oldChild))
+          .filter(Boolean)
+          .map(extended => (extended as AlgorithmNode[])[0])
+          .forEach(newChild => {
+            newNode.children.push(newChild)
+            newChild.parents.push(newNode)
+          })
+    }
+
+    // put new graph in array
+    const newGraph = []
+    const visited = new Map()
+
+    const head = parsedFlow.graph[0]
+    const extendedHeadGraph = oldToExtended.get(head) as AlgorithmNode[]
+    let stack: AlgorithmNode[] = [extendedHeadGraph[0]]
+    while (stack.length > 0) {
+      const newNode = stack.pop() as AlgorithmNode
+      if (!visited.get(newNode)) {
+        visited.set(newNode, true)
+        newGraph.push(newNode)
+        stack = [...newNode.children, ...stack]
+      }
+    }
+
+    return newGraph
+  }
 }
 
 function graphByIndexesToObjects(graph: (Node & { newGroupId: string })[]): AlgorithmNode[] {

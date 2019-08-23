@@ -34,6 +34,10 @@ export const errorMessages = {
   [`flow with the same name is already defined as an extended flow`]: {
     errorCode: 'pa-9',
   },
+  [`overriding parser properties is not allowed`]: {
+    errorCode: 'pa-10',
+    additionalExplanation: `In your custom extension function you passed to the parser, you return object containing a keys that are being used in by the parser.`,
+  },
 }
 
 export const buildString = (...str: (string | false | null | undefined)[]): string => str.filter(Boolean).join(`\n`)

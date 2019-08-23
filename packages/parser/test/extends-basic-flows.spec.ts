@@ -2,7 +2,7 @@ import { assertEqualFlows, createFlows, createExpected, ExpectedFlow, declareFlo
 import { UserFlow } from '@parser/types'
 
 describe('extends-basic-flows', () => {
-  const flowsConfig = (graph: UserFlow) => ({
+  const flowsConfig = (graph: UserFlow<{}>) => ({
     splitters: {
       extends: '_',
     },
@@ -15,13 +15,13 @@ describe('extends-basic-flows', () => {
   })
 
   it('0', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
       flows: [graph],
     })
-    const actual: UserFlow = 'a'
+    const actual: UserFlow<{}> = 'a'
     const expected: ExpectedFlow[] = [
       {
         name: 'a',
@@ -920,7 +920,7 @@ describe('extends-basic-flows', () => {
   })
 
   it('35', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -952,7 +952,7 @@ describe('extends-basic-flows', () => {
   })
 
   it('36', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -994,7 +994,7 @@ describe('extends-basic-flows', () => {
   })
 
   it('38', () => {
-    const flowsConfig = (graph: UserFlow[]) => ({
+    const flowsConfig = (graph: UserFlow<{}>[]) => ({
       splitters: {
         extends: '_',
       },
