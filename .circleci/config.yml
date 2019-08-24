@@ -19,7 +19,7 @@ jobs:
             git config --global user.email "stavalfi@users.noreply.github.com"
             git config --global user.name "stavalfi"
             echo "machine github.com login stavalfi password $GITHUB_TOKEN" > ~/.netrc
-            cd website && yarn install && GIT_USER=stavalfi yarn run publish-gh-pages
+            yarn && GIT_USER=stavalfi yarn --cwd packages/docs/website publish-gh-pages
 
 workflows:
   version: 2
