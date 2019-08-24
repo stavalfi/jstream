@@ -4,7 +4,8 @@ title: Parser API
 sidebar_label: Parser API
 ---
 
-The real power comes from the result of the parsing. You will get everything you need to use the graphs as you wish.
+The real power comes from the result of the parsing.
+You will get everything you need to use the graphs.
 
 The following is the parsed configuration of the following code:
 
@@ -42,19 +43,28 @@ console.log(parse('flow1'))
 // https://stackoverflow.com/questions/56877697/get-all-combinations-of-a-type/56877972#56877972
 // type Combinations = all combinations of a type (including an empty type)
 
-type Flow = {
+type ParsedFlow = {
   id: string
+  hasPredefinedName: boolean
+  name: string
+  pathsGroups: string[][]
   graph: {
     path: string[]
     childrenIndexes: number[]
     parentsIndexes: number[]
   }[]
-  pathsGroups: string[][]
-} & (Combinations<{
-  name: string
-  extendedFlowIndex: number
-  defaultNodeIndex: number
-}>)
+} & (
+  | {}
+  | {
+      defaultNodeIndex: number
+    }
+  | {
+      extendedFlowIndex: number
+    }
+  | {
+      extendedFlowIndex: number
+      defaultNodeIndex: number
+    })
 ```
 
 ---
@@ -67,13 +77,16 @@ library, it will be an incremented numbers (for better debugging).
 Unless you are a contribe to this library right now, you will work
 with uuids.
 
-## name
+## name & hasPredefinedName
 
 The name of the flow. If you didn't provide a name, _parser_ will try to infer the name:
 
 If the graph has a single node, _parser_ will check if there isn't an
 already defined flow with that node-name. if not, the name of this
 flow will be equal to it's single node's name.
+
+If the _parser_ infered a name, `hasPredefinedName=true`. Else, the _parser_ will
+prodvide a random (unique) name and `hasPredefinedName=false`.
 
 ## defaultNodeIndex
 
@@ -218,3 +231,9 @@ Implementations notes about `pathsGroups`:
   value in `pathsGroups` is different then all the values of it's parents
   in `pathsGroups` - thats because every flow has a **_single_** entry point!).
   For more explaination, please open a github issue/ contact me in other ways.
+
+---
+
+## Extensions
+
+The parser support additional properties which can be passed to the inital configuration that is sent to the parser.
