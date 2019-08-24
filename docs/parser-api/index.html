@@ -1,0 +1,231 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Parser API · Jstream</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="The real power comes from the result of the parsing. You will get everything you need to use the graphs as you wish."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Parser API · Jstream"/><meta property="og:type" content="website"/><meta property="og:url" content="https://jstream.github.io//jstream/"/><meta property="og:description" content="The real power comes from the result of the parsing. You will get everything you need to use the graphs as you wish."/><meta property="og:image" content="https://jstream.github.io//jstream/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://jstream.github.io//jstream/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/jstream/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://jstream.github.io//jstream/blog/atom.xml" title="Jstream Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://jstream.github.io//jstream/blog/feed.xml" title="Jstream Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/jstream/js/scrollSpy.js"></script><link rel="stylesheet" href="/jstream/css/main.css"/><script src="/jstream/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/jstream/"><img class="logo" src="/jstream/img/favicon.ico" alt="Jstream"/><h2 class="headerTitleWithLogo">Jstream</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/jstream/docs/syntax" target="_self">Docs</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/jstream/docs/parser-api" target="_self">API</a></li><li class=""><a href="/jstream/help" target="_self">Help</a></li><li class=""><a href="https://jstream-editor.netlify.com/" target="_self">Editor</a></li><li class=""><a href="/jstream/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Parser</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Parser</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/jstream/docs/parser-api">Parser API</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Parser API</h1></header><article><div><span><p>The real power comes from the result of the parsing. You will get everything you need to use the graphs as you wish.</p>
+<p>The following is the parsed configuration of the following code:</p>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { parse } <span class="hljs-keyword">from</span> <span class="hljs-string">'@jstream/parser'</span>
+<span class="hljs-built_in">console</span>.log(parse(<span class="hljs-string">'flow1'</span>))
+</code></pre>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"splitters"</span>: {
+    <span class="hljs-attr">"extends"</span>: <span class="hljs-string">"/"</span>
+  },
+  <span class="hljs-attr">"flows"</span>: [
+    {
+      <span class="hljs-attr">"id"</span>: <span class="hljs-string">"4623"</span>,
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow1"</span>,
+      <span class="hljs-attr">"defaultNodeIndex"</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-attr">"graph"</span>: [
+        {
+          <span class="hljs-attr">"path"</span>: [<span class="hljs-string">"flow1"</span>],
+          <span class="hljs-attr">"childrenIndexes"</span>: [],
+          <span class="hljs-attr">"parentsIndexes"</span>: []
+        }
+      ],
+      <span class="hljs-attr">"pathsGroups"</span>: [[<span class="hljs-string">"4624"</span>]]
+    }
+  ]
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="flow-type"></a><a href="#flow-type" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Flow Type</h2>
+<pre><code class="hljs css language-typescript"><span class="hljs-comment">// https://stackoverflow.com/questions/56877697/get-all-combinations-of-a-type/56877972#56877972</span>
+<span class="hljs-comment">// type Combinations = all combinations of a type (including an empty type)</span>
+
+<span class="hljs-keyword">type</span> Flow = {
+  id: <span class="hljs-built_in">string</span>
+  graph: {
+    path: <span class="hljs-built_in">string</span>[]
+    childrenIndexes: <span class="hljs-built_in">number</span>[]
+    parentsIndexes: <span class="hljs-built_in">number</span>[]
+  }[]
+  pathsGroups: <span class="hljs-built_in">string</span>[][]
+} &amp; (Combinations&lt;{
+  name: <span class="hljs-built_in">string</span>
+  extendedFlowIndex: <span class="hljs-built_in">number</span>
+  defaultNodeIndex: <span class="hljs-built_in">number</span>
+}&gt;)
+</code></pre>
+<hr>
+<h2><a class="anchor" aria-hidden="true" id="id"></a><a href="#id" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>id</h2>
+<p>In <em>production</em> build of the <em>parser</em> library, it will be a valid
+uui-id using <em>uuid</em> library. For development builds of the <em>parser</em>
+library, it will be an incremented numbers (for better debugging).
+Unless you are a contribe to this library right now, you will work
+with uuids.</p>
+<h2><a class="anchor" aria-hidden="true" id="name"></a><a href="#name" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>name</h2>
+<p>The name of the flow. If you didn't provide a name, <em>parser</em> will try to infer the name:</p>
+<p>If the graph has a single node, <em>parser</em> will check if there isn't an
+already defined flow with that node-name. if not, the name of this
+flow will be equal to it's single node's name.</p>
+<h2><a class="anchor" aria-hidden="true" id="defaultnodeindex"></a><a href="#defaultnodeindex" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>defaultNodeIndex</h2>
+<p><em>parser</em> will infer (if possible) the default-node
+that will be used when using this flow in other flows. For example:</p>
+<pre><code class="hljs css language-json5">[
+  {
+    name: <span class="hljs-string">'flow1'</span>,
+    graph: <span class="hljs-string">'a:b'</span>,
+    <span class="hljs-keyword">default</span><span class="hljs-number">_p</span>ath: <span class="hljs-string">'b'</span>,
+  },
+  <span class="hljs-string">'flow1:flow2'</span>, <span class="hljs-comment">// same as "flow1/b:flow2</span>
+]
+</code></pre>
+<p><code>flow1</code> will be parse to:</p>
+<pre><code class="hljs css language-json5">{
+  <span class="hljs-attribute">id</span>: <span class="hljs-string">'5029'</span>,
+  <span class="hljs-attribute">name</span>: <span class="hljs-string">'flow1'</span>,
+  <span class="hljs-attribute">defaultNodeIndex</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attribute">graph</span>: [
+    {
+      <span class="hljs-attribute">path</span>: [<span class="hljs-string">'flow1'</span>, <span class="hljs-string">'a'</span>],
+      <span class="hljs-attribute">childrenIndexes</span>: [<span class="hljs-number">1</span>],
+      <span class="hljs-attribute">parentsIndexes</span>: [],
+    },
+    {
+      <span class="hljs-attribute">path</span>: [<span class="hljs-string">'flow1'</span>, <span class="hljs-string">'b'</span>],
+      <span class="hljs-attribute">childrenIndexes</span>: [],
+      <span class="hljs-attribute">parentsIndexes</span>: [<span class="hljs-number">0</span>],
+    },
+  ],
+  <span class="hljs-comment">// ...</span>
+}
+</code></pre>
+<p>We specified that <code>b</code> will be the default node when writing <code>flow1</code> in other flows. so <code>flow1</code> equals to <code>flow1/b</code>. <code>flow1/b</code>'s index (<code>defaultNodeIndex</code>) is <code>1</code>.</p>
+<p>The infering algorithm can do much more than that. For more information about <code>default_path</code>, please read in the docs.</p>
+<h2><a class="anchor" aria-hidden="true" id="graph"></a><a href="#graph" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>graph</h2>
+<p>An array of nodes.</p>
+<p>Each node contains:</p>
+<p><code>path</code> - contains all the flows that this node is a member in. <code>path[0]</code> will contain the flow's name if it has one.
+<code>childrenIndexes</code> - children node indexes.
+<code>parentsIndexes</code> - parents node indexes.</p>
+<h2><a class="anchor" aria-hidden="true" id="pathsgroups"></a><a href="#pathsgroups" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>pathsGroups</h2>
+<p>This feature is the opposite of the <code>path</code> property of each node.
+while the <code>path</code> of each nodes tells me which flows a node belongs,
+this feature tells us which nodes each <strong>appearance</strong> of a flow consist.</p>
+<p>Each node belongs to multiple flows. the name of those flows is listed in the <code>node.path</code> array. Let's have a look at the following configuration:</p>
+<pre><code class="hljs css language-json">[
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"base"</span>,
+    <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"base1:base2"</span>,
+    <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"base2"</span>,
+    <span class="hljs-attr">"extends_flows"</span>: [
+      {
+        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow1"</span>,
+        <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"a:b"</span>,
+        <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"b"</span>
+      },
+      {
+        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow2"</span>,
+        <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"c:d"</span>,
+        <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"d"</span>
+      },
+      <span class="hljs-string">"flow1:flow2"</span>
+    ]
+  }
+]
+</code></pre>
+<p><code>&quot;flow1:flow2&quot;</code> produce the following graph:</p>
+<p><img src="https://i.imgur.com/onmgrUb.png" alt=""></p>
+<p>Let's have a different look at this graph:</p>
+<p><img src="https://i.imgur.com/Bjd3Os2.jpg" alt=""></p>
+<p>At the above image, we see nodes and edges as the last image but we also
+see which flows, each node belongs in a clear way.</p>
+<p>For example, node <code>l</code> belongs to flows: <code>base</code>, <code>base1</code>, <code>flow1</code>, <code>a</code>.
+if we convert each of those flows to numbers, then this node belogs
+to flows: <code>[1,2,3,4]</code> (the order of this array is important; from the top
+most flow to the most inner flow).</p>
+<p>If we create an array such that each cell will be an array representing
+the numbers of the flows as we just did, we will get the following matrix:</p>
+<p><img src="https://i.imgur.com/QIytfC0.jpg" alt=""></p>
+<p>At this point we can conclude the followings:</p>
+<ol>
+<li>Each flow may appear multiple times at the same flow.
+For example. <code>flow2</code> appears multiple times in <code>base</code>.</li>
+<li>With the help of the <code>graph</code> array and the node's
+<code>childrenIndexes</code> and <code>parentsIndexes</code>, we can know which nodes
+belongs to each appearance of each flow. For example, <code>flow2</code> appears 2 times at the graph:
+<ul>
+<li>The nodes <em>lll</em>,<em>lV</em> are members of the first appearance of <code>flow2</code> in the graph.</li>
+<li>The nodes <em>Vll</em>,<em>lX</em> are members of the second appearance of <code>flow2</code> in the graph.</li>
+</ul></li>
+</ol>
+<p>Still, there are alot of questions to answer, but first let's talk about one
+practical use case of this feature:</p>
+<p><em>flower</em> package is a redux-extentsion for managing functions.
+Every node can be a function. If a fucntion is async, we can run the same function
+multiple times concurrently. But how can we contorl the concurrency level of each
+function? Well, thats easy. As every node belongs to multiple flows, so is a function.
+All we have to do it to specify every flow's max-concurrency-level and with
+the help of <code>pathsGroups</code>, we can know how much functions
+(different and the same functions) we are running at the
+same time in every appearance of every flow (remmber: <code>pathsGroups</code> will give us the
+abolity to know which functions belongs to a specific appearance of a specific flow).</p>
+<p>Implementations notes about <code>pathsGroups</code>:</p>
+<ul>
+<li>The numbers in the last image will be replaced by <em>uuid</em>s in production build of <em>parser</em>.</li>
+<li>The same numbers (dev build of parser)/ uuids (prod build of parser) will be given to
+every different appearance of every flow - same as the image above:
+Each appearance of <em>flow2</em> received a different number.</li>
+<li>You may think that <code>pathsGroups</code> can be generated, also, by creating a matrix from all
+the node's <em>path</em> property. Well, you can't. First of all, <code>pathsGroups</code> can tell you
+where are the different appearance of every flow while you can't get it in other ways.
+Secondly, <code>pathsGroups</code>gives the same appearance of every flow the same unique <em>uuid</em>
+so you can know where it start and where it ends. (to know where it start: go
+to the parent recorsivly and stop when you are looking at a node that it's
+value in <code>pathsGroups</code> is different then all the values of it's parents
+in <code>pathsGroups</code> - thats because every flow has a <strong><em>single</em></strong> entry point!).
+For more explaination, please open a github issue/ contact me in other ways.</li>
+</ul>
+</span></div></article></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#flow-type">Flow Type</a></li><li><a href="#id">id</a></li><li><a href="#name">name</a></li><li><a href="#defaultnodeindex">defaultNodeIndex</a></li><li><a href="#graph">graph</a></li><li><a href="#pathsgroups">pathsGroups</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/jstream/" class="nav-home"><img src="/jstream/img/favicon.ico" alt="Jstream" width="66" height="58"/></a><div><h5>Docs</h5><a href="/jstream/docs/en/doc1.html">Getting Started (or other categories)</a><a href="/jstream/docs/en/doc2.html">Guides (or other categories)</a><a href="/jstream/docs/en/doc3.html">API Reference (or other categories)</a></div><div><h5>Community</h5><a href="/jstream/en/users.html">User Showcase</a><a href="https://stackoverflow.com/questions/tagged/" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://discordapp.com/">Project Chat</a><a href="https://twitter.com/" target="_blank" rel="noreferrer noopener">Twitter</a></div><div><h5>More</h5><a href="/jstream/blog">Blog</a><a href="https://github.com/">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><a href="https://opensource.facebook.com/" target="_blank" rel="noreferrer noopener" class="fbOpenSource"><img src="/jstream/img/oss_logo.png" alt="Facebook Open Source" width="170" height="45"/></a><section class="copyright">Copyright © 2019 Stav Alfi</section></footer></div></body></html>

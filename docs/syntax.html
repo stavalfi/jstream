@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Syntax · Jstream</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="_Parser_ can be used as a mathematical tool to generate graphs"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Syntax · Jstream"/><meta property="og:type" content="website"/><meta property="og:url" content="https://jstream.github.io//jstream/"/><meta property="og:description" content="_Parser_ can be used as a mathematical tool to generate graphs"/><meta property="og:image" content="https://jstream.github.io//jstream/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://jstream.github.io//jstream/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/jstream/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://jstream.github.io//jstream/blog/atom.xml" title="Jstream Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://jstream.github.io//jstream/blog/feed.xml" title="Jstream Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/jstream/js/scrollSpy.js"></script><link rel="stylesheet" href="/jstream/css/main.css"/><script src="/jstream/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/jstream/"><img class="logo" src="/jstream/img/favicon.ico" alt="Jstream"/><h2 class="headerTitleWithLogo">Jstream</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive siteNavItemActive"><a href="/jstream/docs/syntax" target="_self">Docs</a></li><li class=""><a href="/jstream/docs/parser-api" target="_self">API</a></li><li class=""><a href="/jstream/help" target="_self">Help</a></li><li class=""><a href="https://jstream-editor.netlify.com/" target="_self">Editor</a></li><li class=""><a href="/jstream/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Parser</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Parser</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/jstream/docs/syntax">Syntax</a></li><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Examples</h4><ul><li class="navListItem"><a class="navItem" href="/jstream/docs/parser-example1">Example 1</a></li></ul></div></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Syntax</h1></header><article><div><span><p><em>Parser</em> can be used as a mathematical tool to generate graphs
+from simple text. It has a minimal and powerful syntax which
+takes the advantage of reprinting patterns inside your graph
+to minimize the actual description of it.</p>
+<p>We will start with a simple representaiton of the following graphs:</p>
+<table>
+<thead>
+<tr><th><em>flow</em></th><th>actual graph</th><th>notes</th></tr>
+</thead>
+<tbody>
+<tr><td><code>a:b</code></td><td><code>a-&gt;b</code></td><td></td></tr>
+<tr><td><code>a:b:c</code></td><td><code>a-&gt;b-&gt;c</code></td><td></td></tr>
+<tr><td><code>a:b:a</code></td><td><code>a&lt;-&gt;b</code></td><td></td></tr>
+<tr><td><code>a:b:a</code></td><td><code>a&lt;-&gt;b</code></td><td></td></tr>
+<tr><td><code>a:b,c</code></td><td><code>a-&gt;b, a-&gt;c</code></td><td></td></tr>
+<tr><td><code>a:b,c:a</code></td><td><code>a&lt;-&gt;b, a-&gt;c</code></td><td></td></tr>
+<tr><td><code>a:b,c,d:e</code></td><td><code>a-&gt;b, a-&gt;c, a-&gt;d, b,c,d-&gt;e</code></td><td></td></tr>
+<tr><td><code>a:[b:c],d</code></td><td><code>a-&gt;b-&gt;c, a-&gt;d</code></td><td><code>[..]</code> will return the first defined node</td></tr>
+<tr><td><code>a:[b:c],[d:e]:f</code></td><td><code>a-&gt;b-&gt;c, a-&gt;d-&gt;e b,d-&gt;f</code></td><td></td></tr>
+</tbody>
+</table>
+<hr>
+<p>Before we continue, Please use the <a href="">Live Editor</a> for practice.</p>
+<h2><a class="anchor" aria-hidden="true" id="flow"></a><a href="#flow" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Flow</h2>
+<blockquote>
+<p><strong>Definition 1.1.</strong> A <a href="https://proofwiki.org/wiki/Definition:Simple_Graph"><em>simple graph</em></a> is a graph which is;</p>
+<ul>
+<li>Not a multigraph, i.e. there is no more than one edge between each pair of vertices;</li>
+<li>Not a loop-graph, i.e. there are no loops, that is, edges which start and end at the same vertex;</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>**Definition 1.2. ** A <strong><em>Flow</em></strong> is a <em>directed-simple graph</em> with a single entry-point (head) such that there is a path from the fist node to every other node in the graph (there may not be a path from every node to any other node).</p>
+</blockquote>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">type</span> Flow = {
+  name: <span class="hljs-built_in">string</span> <span class="hljs-comment">// optional</span>
+  graph: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">string</span>[]
+}
+</code></pre>
+<p>For example:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow0"</span>,
+  <span class="hljs-attr">"graph"</span>: [<span class="hljs-string">"a:b"</span>, <span class="hljs-string">"b:c"</span>] // same as <span class="hljs-string">"a:b:c"</span>
+}
+</code></pre>
+<pre><code class="hljs"><span class="hljs-keyword">name</span>: flow0
+<span class="hljs-function"><span class="hljs-title">a</span>-&gt;</span><span class="hljs-function"><span class="hljs-title">b</span>-&gt;</span>c
+</code></pre>
+<p>To give each node a unique key, a prefix will be added to every
+node - the flow's name (if there is):</p>
+<pre><code class="hljs"><span class="hljs-keyword">name</span>: flow0
+<span class="hljs-function"><span class="hljs-title">flow0</span>/a -&gt;</span> <span class="hljs-function"><span class="hljs-title">flow0</span>/b -&gt;</span> flow0/c
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="composition"></a><a href="#composition" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Composition</h2>
+<p>A <em>flow</em> can contain multiple flows just by naming them as a ragular nodes
+in the graph. The parser will find those flows in the graph and replace
+them with all their nodes.</p>
+<pre><code class="hljs css language-json">[
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow0"</span>
+    // ....
+  },
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow1"</span>
+    // ....
+  },
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"composed-flow"</span>,
+    <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"flow0:flow1"</span>
+  }
+]
+</code></pre>
+<p>There is only one problem in the above example, if <code>flow0</code> contains multiple
+nodes, which node from <code>flow0</code> did you intend to be the bridge between
+those flows? To solve this problem, we will need to tell the <em>parser</em> who is that node:</p>
+<pre><code class="hljs css language-json">[
+  {
+    "name": "flow0",
+    "graph": "a:b",
+    "default_path": "a"
+  },
+  {
+    "name": "flow1",
+    "graph": "c"
+    // rule: if you have more than one node in a graph,
+    //       "default_path" must be specified.
+  },
+  "flow0:flow1"
+]
+</code></pre>
+<p>The above example , will produce a graph representation for
+every flow. Our nameless-flow will look like this:</p>
+<pre><code class="hljs">flow0/<span class="hljs-selector-tag">a</span> -&gt; flow0/<span class="hljs-selector-tag">b</span>
+        \
+         -&gt; flow1/c
+</code></pre>
+<p>If we will change the <code>default_path</code> to <code>b</code>, it will look like this:</p>
+<pre><code class="hljs">flow0/<span class="hljs-selector-tag">a</span> -&gt; flow0/<span class="hljs-selector-tag">b</span> -&gt; flow1/c
+</code></pre>
+<hr>
+<p>To be more precise, the <em>parser</em> will create a flow object for every node
+that he didn't see yet. The reason is for being able to reuse flows
+that you already defined.</p>
+<p>For the above example, the <em>parser</em> will create the following flows,
+each with it's graph: <em>a</em>,<em>b</em>,<em>flow0</em>,<em>c</em>,<em>flow1</em>, nameless-flow (<code>flow0:flow1</code>).</p>
+<p>You can even change the &quot;default_path&quot; while defining the last
+flow by explicitly specifing it:</p>
+<table>
+<thead>
+<tr><th><em>flow</em></th><th>actual graph</th><th>notes</th></tr>
+</thead>
+<tbody>
+<tr><td><code>flow0/a:flow1</code></td><td><code>flow0/a -&gt; flow0/b, flow0/a -&gt; flow1/c</code></td><td>same as the first output</td></tr>
+<tr><td><code>flow0/b:flow1</code></td><td><code>flow0/a -&gt; flow0/b -&gt; flow1/c</code></td><td>same as the second output</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="auto-filling-auto-inferring"></a><a href="#auto-filling-auto-inferring" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Auto-filling / Auto-inferring</h2>
+<p>The <em>parser</em> can receive a graph with references to other flows and
+it will build the output graph based on those flows.</p>
+<p>Let's have a look at this <em>parser-configuration</em>:</p>
+<pre><code class="hljs css language-json">[
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow0"</span>,
+    <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"a:b:c"</span>,
+    <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"c"</span>
+  },
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow1"</span>,
+    <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"d:e:f"</span>,
+    <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"f"</span>
+  },
+  <span class="hljs-string">"flow0:a:flow1"</span>
+]
+</code></pre>
+<p><code>&quot;flow0:a:flow1&quot;</code> will produce the following graph:</p>
+<pre><code class="hljs"><span class="hljs-function"><span class="hljs-title">flow0</span>/a -&gt;</span> <span class="hljs-function"><span class="hljs-title">flow0</span>/b -&gt;</span> <span class="hljs-function"><span class="hljs-title">flow0</span>/c -&gt;</span> <span class="hljs-function"><span class="hljs-title">a</span> -&gt;</span> <span class="hljs-function"><span class="hljs-title">flow1</span>/d -&gt;</span> <span class="hljs-function"><span class="hljs-title">flow1</span>/e -&gt;</span> flow1/f
+</code></pre>
+<p>while <code>&quot;flow0:a:flow1/a&quot;</code>, <code>&quot;flow0:a:flow1/b&quot;</code>, <code>&quot;flow0:a:flow1/c&quot;</code> will
+not produce different graph compired to <code>&quot;flow0:a:flow1&quot;</code>.
+That is because the <code>&lt;flow-1&gt;/&lt;flow-2&gt;:&lt;flow-3&gt;</code> syntax means - build <code>&lt;flow-1&gt;</code> but
+replace it's <code>default_path</code> to be equal to <code>&lt;flow-2&gt;</code>.
+It means that the node that is linking
+between <code>&lt;flow-1&gt;/&lt;flow-2&gt;</code> and <code>&lt;flow-3&gt;</code> is <code>&lt;flow-2&gt;</code> inside <code>&lt;flow-1&gt;</code>.</p>
+<p>If we won't provide <code>&lt;flow-2&gt;</code>, we don't tell what is
+the next node/flow we want a edge to. so this syntax,
+in this case, will not have any effect:</p>
+<p>if the graph (or the last node in the graph) is <code>&lt;flow-1&gt;/&lt;flow-2&gt;:&lt;flow-3&gt;</code>,
+then <code>&lt;flow-1&gt;/&lt;flow-2&gt;</code> equals to <code>&lt;flow-1&gt;</code>.</p>
+<p>Note: You need to remember that for every flow you define in the <em>parser-configuration</em>,
+there will be only a single entry point. Also, if a graph contains multiple flows,
+each flow will still have a single entry point; inside every graph, no flow is
+allowed to pass edges from any node inside <code>&lt;flow-1&gt;</code> to any
+internal (non-head) nodes of <code>&lt;flow-2&gt;</code>.</p>
+<p>For example, for the following flows:</p>
+<pre><code class="hljs css language-json">[
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow0"</span>,
+    <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"a:b:c"</span>,
+    <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"c"</span>
+  },
+  {
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow1"</span>,
+    <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"d:e:f"</span>,
+    <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"f"</span>
+  }
+]
+</code></pre>
+<p>The <em>parser</em> can't produce a new flow based on <em>flow0</em> and <em>flow1</em> such that flow0
+will have an edge to <code>flow1/e</code> nor <code>flow1/f</code>. If you want that, you will
+need to use directly <em>e</em> and <em>f</em> or define a composition over them (or manually
+and explicitly define all the nodes in the graph).</p>
+<p>Note: You can use any other string instead of <code>/</code> by specify it in the head of the
+parser configuration:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"splitters"</span>: {
+    <span class="hljs-attr">"extends"</span>: <span class="hljs-string">"_!!!_"</span>
+  },
+  <span class="hljs-attr">"flows"</span>: [
+    {
+      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow1"</span>,
+      <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"a:b"</span>,
+      <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"b"</span>
+    },
+    <span class="hljs-string">"a:b:c:d:flow1_!!!_b:a"</span>
+  ]
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="extending-expending"></a><a href="#extending-expending" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Extending (Expending)</h2>
+<p>The <em>parser</em> can create flow which will extend other flow.</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"flow0"</span>,
+  <span class="hljs-attr">"graph"</span>: <span class="hljs-string">"a:b:c"</span>,
+  <span class="hljs-attr">"default_path"</span>: <span class="hljs-string">"c"</span>,
+  <span class="hljs-attr">"extends_flows"</span>: [<span class="hljs-string">"d:e"</span>]
+}
+</code></pre>
+<p><code>&quot;d:e&quot;</code> will produce the following graph: (which node extends <code>flow0</code>)</p>
+<pre><code class="hljs">d/flow0/<span class="hljs-selector-tag">a</span> -&gt; d/flow0/<span class="hljs-selector-tag">b</span> -&gt; d/flow0/c -&gt; e/flow0/<span class="hljs-selector-tag">a</span> -&gt; e/flow0/<span class="hljs-selector-tag">a</span> -&gt; e/flow0/<span class="hljs-selector-tag">a</span>
+</code></pre>
+<p>As you can see, <code>&quot;default_path&quot;: &quot;c&quot;</code> has an important role; <code>&quot;default_path&quot;: &quot;c&quot;</code> defined
+which node in the extended <code>d</code> will have edge to the head of the extended <code>e</code>.</p>
+<p>Note: A flow can extend only a single flow.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-next button" href="/jstream/docs/parser-example1"><span>Example 1</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#flow">Flow</a></li><li><a href="#composition">Composition</a></li><li><a href="#auto-filling-auto-inferring">Auto-filling / Auto-inferring</a></li><li><a href="#extending-expending">Extending (Expending)</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/jstream/" class="nav-home"><img src="/jstream/img/favicon.ico" alt="Jstream" width="66" height="58"/></a><div><h5>Docs</h5><a href="/jstream/docs/en/doc1.html">Getting Started (or other categories)</a><a href="/jstream/docs/en/doc2.html">Guides (or other categories)</a><a href="/jstream/docs/en/doc3.html">API Reference (or other categories)</a></div><div><h5>Community</h5><a href="/jstream/en/users.html">User Showcase</a><a href="https://stackoverflow.com/questions/tagged/" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://discordapp.com/">Project Chat</a><a href="https://twitter.com/" target="_blank" rel="noreferrer noopener">Twitter</a></div><div><h5>More</h5><a href="/jstream/blog">Blog</a><a href="https://github.com/">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><a href="https://opensource.facebook.com/" target="_blank" rel="noreferrer noopener" class="fbOpenSource"><img src="/jstream/img/oss_logo.png" alt="Facebook Open Source" width="170" height="45"/></a><section class="copyright">Copyright © 2019 Stav Alfi</section></footer></div></body></html>
