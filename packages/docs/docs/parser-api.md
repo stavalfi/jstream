@@ -4,8 +4,6 @@ title: Parser API
 sidebar_label: Parser API
 ---
 
-aaaaaaaaaaaaaaa
-
 The real power comes from the result of the parsing.
 You will get everything you need to use the graphs.
 

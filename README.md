@@ -3,6 +3,7 @@
 
 [![Build Status](https://dev.azure.com/stavalfi/jstream/_apis/build/status/stavalfi.jstream?branchName=master)](https://dev.azure.com/stavalfi/jstream/_build/latest?definitionId=1&branchName=master)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a2959f98-cdf7-4d0c-9526-e6e7e87632e7/deploy-status)](https://app.netlify.com/sites/jstream-editor/deploys)
+[![CircleCI](https://circleci.com/gh/stavalfi/jstream.svg?style=svg)](https://circleci.com/gh/stavalfi/jstream)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/stavalfi/jstream?style=flat)]()
 
 ## Table of Contents

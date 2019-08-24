@@ -29,11 +29,13 @@ steps:
     displayName: 'running build:dev in all packages'
 
   - script: yarn lerna run clean
+    displayName: 'cleaning dist folder in all packages'
 
   - script: yarn lerna run build:prod
     displayName: 'running build:prod in all packages'
 
   - script: yarn lerna run clean
+    displayName: 'cleaning dist folder in all packages'
 
   - script: yarn lerna run test
     displayName: 'running tests in all packages'
