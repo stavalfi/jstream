@@ -12,9 +12,6 @@
     "build:prod": "echo no-build:prod",
     "test": "echo no-test"
   },
-  "dependencies": {
-    "@jstream/editor": "^1.0.0"
-  },
   "devDependencies": {
     "docusaurus": "^1.12.0"
   }
