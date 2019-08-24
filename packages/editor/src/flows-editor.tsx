@@ -7,13 +7,14 @@ import 'brace/theme/github'
 import Jsonic from 'jsonic'
 // @ts-ignore
 import dJSON from 'dirty-json'
-import { Configuration, parse, ParsedFlow } from '@jstream/parser'
+import { Configuration } from '@jstream/parser'
+import { Flow, parse } from '@jstream/flower'
 import deepEqual from 'deep-equal'
 
 type Props = {
   onSelectedFlowIndexChange: (index: number) => void
-  onConfigChange: (config: Required<Configuration<ParsedFlow>>) => void
-  config: Required<Configuration<ParsedFlow>>
+  onConfigChange: (config: Required<Configuration<Flow>>) => void
+  config: Required<Configuration<Flow>>
 }
 
 type State = {
@@ -94,7 +95,7 @@ export default class FlowsEditor extends React.Component<Props, State> {
     }
   }
 
-  getFlowName = (flow: ParsedFlow, index: number) => {
+  getFlowName = (flow: Flow, index: number) => {
     if ('name' in flow) {
       return flow.name
     }

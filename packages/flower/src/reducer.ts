@@ -1,5 +1,5 @@
-import { ActiveFlow, FlowReducer, FlowState, GraphConcurrency, Request } from '@flower/types'
-import { ParsedFlow } from '@jstream/parser'
+import { ActiveFlow, Flow, FlowReducer, FlowState, GraphConcurrency, Request } from '@flower/types'
+import { PathsGroups } from '@jstream/parser'
 import immer from 'immer'
 import { getFlowDetails } from '@flower/utils'
 
@@ -31,11 +31,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
     }
     case 'executeFlow': {
       const { activeFlowId } = action.payload
-      const flow = flows.find(flow =>
-        'flowName' in action.payload
-          ? 'name' in flow && flow.name === action.payload.flowName
-          : flow.id === action.payload.flowId,
-      )
+      const flow = flows.find(flow => flow.name === action.flowName)
       if (
         !flow ||
         activeFlows.some(activeflow => activeflow.id === activeFlowId) ||
@@ -146,7 +142,7 @@ const reducer: FlowReducer = (lastState = initialState, action) => {
 
 export default reducer
 
-function isValidAdvancePayload(flow: ParsedFlow, activeFlow: ActiveFlow, request: Request) {
+function isValidAdvancePayload(flow: Flow, activeFlow: ActiveFlow, request: Request) {
   if (activeFlow.queue.some(r1 => r1.id === request.id)) {
     return false
   }
@@ -177,8 +173,8 @@ function isValidAdvancePayload(flow: ParsedFlow, activeFlow: ActiveFlow, request
 }
 
 type CanAdvance = (params: {
-  flows: ParsedFlow[]
-  flow: ParsedFlow
+  flows: Flow[]
+  flow: Flow
   graphConcurrency: ActiveFlow['graphConcurrency']
   request: Request
   requestIdIndex: number
@@ -218,7 +214,7 @@ const canAdvance: CanAdvance = ({ flows, flow, graphConcurrency, request, reques
 
 type GetConcurrencyCountOfGroup = (params: {
   graphConcurrency: ActiveFlow['graphConcurrency']
-  pathsGroups: ParsedFlow['pathsGroups']
+  pathsGroups: PathsGroups
   groupId: string
 }) => number
 

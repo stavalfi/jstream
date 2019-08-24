@@ -1,5 +1,4 @@
-import { FlowState, reducer, updateConfigActionCreator } from '@flower/index'
-import { parse, ParsedFlow } from '@jstream/parser'
+import { Flow, FlowState, parse, reducer, updateConfigActionCreator } from '@flower/index'
 
 const state = (state: FlowState) => state
 
@@ -18,7 +17,7 @@ describe('updateConfig', () => {
       },
       flows: ['a'],
     })
-    const action = updateConfigActionCreator(configuration)
+    const action = updateConfigActionCreator({ payload: configuration })
     expect(reducer(initialState, action)).toEqual(
       state({
         splitters: {
@@ -39,7 +38,7 @@ describe('updateConfig', () => {
       },
       flows: ['a', 'b'],
     })
-    const action = updateConfigActionCreator(configuration)
+    const action = updateConfigActionCreator({ payload: configuration })
     const initialState = state({
       splitters: { extends: 'delimiter1' },
       flows: configuration.flows.slice(1),
@@ -128,8 +127,8 @@ describe('updateConfig', () => {
     })
     expect(
       reducer(
-        reducer(initialState, updateConfigActionCreator(configuration)),
-        updateConfigActionCreator({ flows: [], splitters: { extends: '1' } }),
+        reducer(initialState, updateConfigActionCreator({ payload: configuration })),
+        updateConfigActionCreator({ payload: { flows: [], splitters: { extends: '1' } } }),
       ),
     ).toEqual(
       state({
@@ -155,7 +154,7 @@ describe('updateConfig', () => {
         {
           id: 'id1',
           flowName: 'a',
-          flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as ParsedFlow).id,
+          flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as Flow).id,
           queue: [],
           graphConcurrency: [
             {
@@ -168,7 +167,7 @@ describe('updateConfig', () => {
       finishedFlows: [],
       advanced: [],
     })
-    expect(reducer(initialState, updateConfigActionCreator({ flows: [] }))).toEqual(
+    expect(reducer(initialState, updateConfigActionCreator({ payload: { flows: [] } }))).toEqual(
       state({
         splitters: { extends: '/' },
         flows: configuration.flows.filter(f => 'name' in f && f.name === 'a'),
@@ -176,7 +175,7 @@ describe('updateConfig', () => {
           {
             id: 'id1',
             flowName: 'a',
-            flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as ParsedFlow).id,
+            flowId: (configuration.flows.find(f => 'name' in f && f.name === 'a') as Flow).id,
             queue: [],
             graphConcurrency: [
               {

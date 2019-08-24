@@ -18,3 +18,9 @@ export const mapIf = <T, U>(
 }
 
 export const toArray = <T>(param: T | T[]): T[] => (Array.isArray(param) ? param : [param])
+
+export const removeProp = <T extends { [prop: string]: any }>(obj: T, ...properties: string[]): T => {
+  const copy = { ...obj }
+  properties.forEach(prop => delete copy[prop])
+  return copy
+}

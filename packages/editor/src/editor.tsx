@@ -3,11 +3,12 @@ import React from 'react'
 import DrawFlow from '@editor/draw-flow'
 // @ts-ignore
 import FlowsEditor from '@editor/flows-editor'
-import { Configuration, ParsedFlow } from '@jstream/parser'
+import { Configuration } from '@jstream/parser'
+import { Flow } from '@jstream/flower'
 
 interface State {
   selectedFlowIndex?: number
-  config: Required<Configuration<ParsedFlow>>
+  config: Required<Configuration<Flow>>
 }
 
 export default class Editor extends React.Component<{}, State> {
@@ -22,7 +23,7 @@ export default class Editor extends React.Component<{}, State> {
     }
   }
 
-  setConfig = (config: Required<Configuration<ParsedFlow>>) =>
+  setConfig = (config: Required<Configuration<Flow>>) =>
     this.setState({ config, ...(config.flows.length > 0 && { selectedFlowIndex: config.flows.length - 1 }) })
 
   setSelectedFlowIndex = (selectedFlowIndex: number) => this.setState({ selectedFlowIndex })

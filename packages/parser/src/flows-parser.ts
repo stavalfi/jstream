@@ -1,119 +1,105 @@
 import { parseGraph } from '@parser/graph-parser'
 import { fixAndExtendGraph } from '@parser/fix-flow-graph'
-import { parseSideEffects } from '@parser/side-effects-parser'
 import {
   arePathsEqual,
   displayNameToFullGraphNode,
   extractUniqueFlowsNamesFromGraph,
   graphNodeToDisplayName,
   isSubsetOf,
+  removeSavedProps,
 } from '@parser/utils'
-import { validateFlowToParse } from '@parser/validators/unparsed-flow-validator'
+import { validateParsedUserFlow } from '@parser/validators/parsed-user-flow-validator'
 import { flattenUserFlowShortcuts } from '@parser/user-shortcuts-parser'
 import { uuid } from '@jstream/utils'
-import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, ParsedUserFlow, Splitters, UserFlow } from '@parser/types'
-import { parseRules } from '@parser/rules-parser'
+import {
+  AlgorithmParsedFlow,
+  Graph,
+  Node,
+  ParsedFlow,
+  ParsedUserFlow,
+  ParseExtensionsProps,
+  Splitters,
+  UserFlow,
+} from '@parser/types'
 import { flowPathsGroups } from '@parser/flow-paths-groups'
+import { validateUserFlow } from '@parser/validators/user-flow-validator'
+import { validateParsedFlow } from '@parser/validators/parsed-flow-validator'
 
-type ParseMultipleFlows = ({
+export function parseMultipleFlows<UnparsedExtensions, Extensions>({
   userFlows,
   splitters,
+  parseExtensionsProps,
   parsedFlowsUntilNow,
 }: {
-  userFlows: UserFlow[]
+  userFlows: UserFlow<UnparsedExtensions>[]
   splitters: Splitters
-  parsedFlowsUntilNow?: AlgorithmParsedFlow[]
-}) => ParsedFlow[]
-export const parseMultipleFlows: ParseMultipleFlows = ({ userFlows = [], splitters, parsedFlowsUntilNow = [] }) =>
-  parseUserFlows({
+  parseExtensionsProps: ParseExtensionsProps<UnparsedExtensions, Extensions>
+  parsedFlowsUntilNow?: AlgorithmParsedFlow<Extensions>[]
+}): ParsedFlow<Extensions>[] {
+  return parseUserFlows({
     userFlows,
     splitters,
     parsedFlowsUntilNow,
     finalMapper: parsedFlows =>
-      parsedFlows
-        .map((parsedFlow, i, array) => ({
-          ...parsedFlow,
+      parsedFlows.map((parsedFlow, i, array) => {
+        const copy = { ...parsedFlow }
+        'extendedFlowId' in copy && delete copy.extendedFlowId
+        return {
+          ...copy,
           ...('extendedFlowId' in parsedFlow && {
             extendedFlowIndex: array.findIndex(flow => flow.id === parsedFlow.extendedFlowId),
           }),
-        }))
-        .map((parsedFlow: AlgorithmParsedFlow) => ({
-          id: parsedFlow.id,
-          ...('extendedFlowIndex' in parsedFlow && {
-            extendedFlowIndex: parsedFlow.extendedFlowIndex,
-          }),
-          ...('name' in parsedFlow && { name: parsedFlow.name }),
-          ...('defaultNodeIndex' in parsedFlow && {
-            defaultNodeIndex: parsedFlow.defaultNodeIndex,
-          }),
-          maxConcurrency: parsedFlow.maxConcurrency,
-          graph: parsedFlow.graph,
-          pathsGroups: parsedFlow.pathsGroups,
-          sideEffects: parsedFlow.sideEffects,
-          rules: parsedFlow.rules,
-        })),
+        }
+      }),
+    parseExtensionsProps,
   })
+}
 
-type ParseUserFlows = ({
-  userFlows,
-  splitters,
-  parsedFlowsUntilNow,
-  extendedParsedFlow,
-  filterUserFlowPredicate,
-  concatWith,
-  finalMapper,
-}: {
-  userFlows?: UserFlow[]
-  splitters: Splitters
-  parsedFlowsUntilNow: AlgorithmParsedFlow[]
-  extendedParsedFlow?: AlgorithmParsedFlow
-  filterUserFlowPredicate?: (
-    parsedFlowsUntilNow: AlgorithmParsedFlow[],
-  ) => (userFlow: ParsedUserFlow, i: number) => boolean
-  concatWith?: AlgorithmParsedFlow[]
-  finalMapper?: (parsedFlows: AlgorithmParsedFlow[]) => AlgorithmParsedFlow[]
-}) => AlgorithmParsedFlow[]
-const parseUserFlows: ParseUserFlows = ({
+function parseUserFlows<UnparsedExtensions, Extensions>({
   userFlows = [],
   splitters,
   parsedFlowsUntilNow = [],
   extendedParsedFlow,
-  filterUserFlowPredicate = () => () => true,
   concatWith = [],
   finalMapper = x => x,
-}) => {
-  const parsedFlows = userFlows
-    .reduce((acc1: AlgorithmParsedFlow[], userFlow) => {
-      const userFlows = flattenUserFlowShortcuts(splitters)([...parsedFlowsUntilNow, ...acc1])(userFlow)
-      const result = userFlows.reduce((acc2: AlgorithmParsedFlow[], userFlow, i) => {
-        const acc3 = [...parsedFlowsUntilNow, ...acc1, ...acc2]
-        const validatedUserFlow = validateFlowToParse(splitters)(acc3, extendedParsedFlow)(userFlow)
-        if (
-          !filterUserFlowPredicate(acc3)(validatedUserFlow, i) ||
-          ('name' in validatedUserFlow &&
-            extendedParsedFlow &&
-            'name' in extendedParsedFlow &&
-            extendedParsedFlow.name === validatedUserFlow.name)
-        ) {
-          return acc2
-        }
-        const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(
-          acc3,
-          validatedUserFlow,
-          extendedParsedFlow,
-        )
-        const parsedFlows = parseFlow({
-          splitters,
-          parsedFlowsUntilNow: [...acc3, ...missingParsedFlows],
-          flowToParse: validatedUserFlow,
-          extendedParsedFlow,
-        })
-        return [...acc2, ...missingParsedFlows, ...parsedFlows]
-      }, [])
+  parseExtensionsProps,
+}: {
+  userFlows?: UserFlow<UnparsedExtensions>[]
+  splitters: Splitters
+  parsedFlowsUntilNow?: AlgorithmParsedFlow<Extensions>[]
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
+  concatWith?: AlgorithmParsedFlow<Extensions>[]
+  finalMapper?: (parsedFlows: AlgorithmParsedFlow<Extensions>[]) => AlgorithmParsedFlow<Extensions>[]
+  parseExtensionsProps: ParseExtensionsProps<UnparsedExtensions, Extensions>
+}): AlgorithmParsedFlow<Extensions>[] {
+  const parsedFlows: ParsedFlow<Extensions>[] = [...concatWith]
 
-      return [...acc1, ...result]
-    }, [])
-    .concat(concatWith)
+  for (const userFlow of userFlows) {
+    const flows: ParsedFlow<Extensions>[] = [...parsedFlowsUntilNow, ...parsedFlows]
+    validateUserFlow(splitters)(flows, extendedParsedFlow)(userFlow)
+
+    const parsedUserFlow = flattenUserFlowShortcuts(splitters)(flows)(userFlow)
+
+    validateParsedUserFlow(splitters)(flows, extendedParsedFlow)(parsedUserFlow)
+
+    const missingParsedFlows = parseMissingFlowsFromDisplayName(splitters)(
+      flows,
+      parsedUserFlow,
+      parseExtensionsProps,
+      extendedParsedFlow,
+    )
+
+    const newParsedFlows = parseFlow({
+      splitters,
+      parsedFlowsUntilNow: [...flows, ...missingParsedFlows],
+      userFlow,
+      flowToParse: parsedUserFlow,
+      extendedParsedFlow,
+      parseExtensionsProps,
+    })
+
+    parsedFlows.push(...missingParsedFlows, ...newParsedFlows)
+  }
 
   return finalMapper(parsedFlows)
 }
@@ -125,27 +111,21 @@ const removePointersFromNodeToHimSelf = (graph: Graph): Graph =>
     parentsIndexes: node.parentsIndexes.filter(j => j !== i),
   }))
 
-type ComputeDefaultNodeIndexObject = ({
+function computeDefaultNodeIndexObject<UnparsedExtensions, Extensions>({
   parsedFlowsUntilNow,
   flowToParse,
   parsedGraph,
   extendedParsedFlow,
 }: {
-  parsedFlowsUntilNow: AlgorithmParsedFlow[]
-  flowToParse: ParsedUserFlow
+  parsedFlowsUntilNow: AlgorithmParsedFlow<Extensions>[]
+  flowToParse: ParsedUserFlow<UnparsedExtensions>
   parsedGraph: Graph
-  extendedParsedFlow?: AlgorithmParsedFlow
-}) =>
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
+}):
   | {
       defaultNodeIndex: number
     }
-  | {}
-const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
-  parsedFlowsUntilNow,
-  flowToParse,
-  parsedGraph,
-  extendedParsedFlow,
-}) => {
+  | {} {
   if (parsedGraph.length === 1) {
     return { defaultNodeIndex: 0 }
   }
@@ -159,8 +139,7 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
         defaultNodeIndex: options[0],
       }
     } else {
-      const defaultFlow =
-        parsedFlowsUntilNow.find(flow => 'name' in flow && flow.name === defaultPath[defaultPath.length - 1]) || {}
+      const defaultFlow = parsedFlowsUntilNow.find(flow => flow.name === defaultPath[defaultPath.length - 1]) || {}
       if (defaultFlow && defaultFlow.hasOwnProperty('defaultNodeIndex')) {
         const option = options.find(i => {
           // @ts-ignore
@@ -184,7 +163,7 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
   const flowsIndex = flowToParse.hasOwnProperty('name') ? 1 : 0
   const differentFlows = [...new Set(parsedGraph.map(node => node.path[flowsIndex]))]
   if (differentFlows.length === 1) {
-    const parsedFlow = parsedFlowsUntilNow.find(flow => 'name' in flow && flow.name === differentFlows[0])
+    const parsedFlow = parsedFlowsUntilNow.find(flow => flow.name === differentFlows[0])
     if (parsedFlow) {
       if (!('defaultNodeIndex' in parsedFlow)) {
         return {}
@@ -215,18 +194,21 @@ const computeDefaultNodeIndexObject: ComputeDefaultNodeIndexObject = ({
   }
 }
 
-type ParseFlow = ({
+function parseFlow<UnparsedExtensions, Extensions>({
   splitters,
   parsedFlowsUntilNow,
+  userFlow,
   flowToParse,
   extendedParsedFlow,
+  parseExtensionsProps,
 }: {
   splitters: Splitters
-  parsedFlowsUntilNow: AlgorithmParsedFlow[]
-  flowToParse: ParsedUserFlow
-  extendedParsedFlow?: AlgorithmParsedFlow
-}) => AlgorithmParsedFlow[]
-const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, extendedParsedFlow }) => {
+  parsedFlowsUntilNow: AlgorithmParsedFlow<Extensions>[]
+  userFlow: UserFlow<UnparsedExtensions>
+  flowToParse: ParsedUserFlow<UnparsedExtensions>
+  parseExtensionsProps: ParseExtensionsProps<UnparsedExtensions, Extensions>
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
+}): AlgorithmParsedFlow<Extensions>[] {
   const parsedGraph = removePointersFromNodeToHimSelf(
     parseGraph(
       graphNodeToDisplayName(splitters),
@@ -254,10 +236,11 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     extendedParsedFlow,
   })
 
-  const parsedFlow: ParsedFlow = {
+  const parsedFlowWithoutExt: AlgorithmParsedFlow<{}> = {
     id: uuid(),
     ...(extendedParsedFlow && { extendedFlowId: extendedParsedFlow.id }),
-    ...('name' in flowToParse && { name: flowToParse.name }),
+    hasPredefinedName: flowToParse.hasPredefinedName,
+    name: flowToParse.name,
     ...(extendedParsedFlow && { extendedParsedFlow }),
     ...defaultNodeIndexObject,
     graph: updatedParsedGraph,
@@ -267,18 +250,25 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
       flowToParse,
       extendedParsedFlow,
     }),
-    maxConcurrency: flowToParse.maxConcurrency,
-    sideEffects: parseSideEffects(splitters)({
-      parsedFlowsUntilNow,
-      flowToParse,
-      extendedParsedFlow,
-    }),
-    rules: parseRules(splitters)({
-      parsedFlowsUntilNow,
-      extendedParsedFlow,
-      flowToParse,
-    }),
   }
+
+  const unparsedExtProps = removeSavedProps(flowToParse)
+  const extProps = parseExtensionsProps({
+    extProps: unparsedExtProps,
+    parsedFlow: parsedFlowWithoutExt,
+    splitters,
+  })
+
+  const parsedFlow: AlgorithmParsedFlow<Extensions> = {
+    ...removeSavedProps(extProps, true),
+    ...parsedFlowWithoutExt,
+  }
+
+  validateParsedFlow(splitters)({
+    userFlow,
+    parsedUserFlow: flowToParse,
+    flows: parsedFlowsUntilNow,
+  })(parsedFlow)
 
   return parseUserFlows({
     splitters,
@@ -286,41 +276,36 @@ const parseFlow: ParseFlow = ({ splitters, parsedFlowsUntilNow, flowToParse, ext
     parsedFlowsUntilNow,
     userFlows: 'extendsFlows' in flowToParse ? flowToParse.extendsFlows : [],
     concatWith: [parsedFlow],
+    parseExtensionsProps,
   })
 }
 
 // find all the flows that I didn't parse yet AND weren't defined
 // explicitly by the user and then parse them.
-const parseMissingFlowsFromDisplayName = (splitters: Splitters) => (
-  parsedFlows: AlgorithmParsedFlow[],
-  flowToParse: ParsedUserFlow,
-  extendedParsedFlow?: AlgorithmParsedFlow,
-) => {
-  const flowsNamesInGraph = extractUniqueFlowsNamesFromGraph(splitters)(flowToParse.graph)
+const parseMissingFlowsFromDisplayName = (splitters: Splitters) =>
+  function<UnparsedExtensions, Extensions>(
+    parsedFlows: AlgorithmParsedFlow<Extensions>[],
+    flowToParse: ParsedUserFlow<UnparsedExtensions>,
+    parseExtensionsProps: ParseExtensionsProps<UnparsedExtensions, Extensions>,
+    extendedParsedFlow?: AlgorithmParsedFlow<Extensions>,
+  ) {
+    const parsedFlowNames = parsedFlows.map(f => f.name).filter(Boolean) as string[]
 
-  return parseUserFlows({
-    userFlows: flowsNamesInGraph,
-    splitters,
-    parsedFlowsUntilNow: parsedFlows,
-    extendedParsedFlow,
-    filterUserFlowPredicate: parsedFlowsUntilNow => userFlow => {
-      if (!userFlow.hasOwnProperty('name')) {
-        if (
-          flowsNamesInGraph.length === 1 &&
-          parsedFlowsUntilNow.some(flow => 'name' in flow && flow.name === flowsNamesInGraph[0])
-        ) {
-          // to avoid recursive stack overflow exception
-          return false
-        } else {
-          // todo: what should i return here:
-          return false
-        }
-      } else {
-        return (
-          ('name' in flowToParse && flowToParse.name) !== ('name' in userFlow && userFlow.name) &&
-          parsedFlowsUntilNow.every(flow => !('name' in flow) || flow.name !== ('name' in userFlow && userFlow.name))
-        )
-      }
-    },
-  })
-}
+    const uniqueFlowsNames = extractUniqueFlowsNamesFromGraph(splitters)(flowToParse.graph)
+    const flowsNamesInGraph = uniqueFlowsNames.filter(flowName => !parsedFlowNames.includes(flowName))
+
+    if (
+      flowsNamesInGraph.length === 0 ||
+      (flowsNamesInGraph.length === 1 && flowToParse.name === flowsNamesInGraph[0])
+    ) {
+      return []
+    } else {
+      return parseUserFlows({
+        userFlows: flowsNamesInGraph,
+        splitters,
+        parsedFlowsUntilNow: parsedFlows,
+        parseExtensionsProps,
+        extendedParsedFlow,
+      })
+    }
+  }

@@ -8,11 +8,12 @@ export const recordActionsEnhancer = createStore => (...args) => {
       return store.dispatch(action)
     },
     getActions: () =>
-      actions
-        .map(action => ({
-          type: action.type,
-          payload: action.payload,
-        }))
-        .sort(),
+      actions.map(action => {
+        const copy = { ...action }
+        delete copy.id
+        delete copy.toNode
+        delete copy.fromNode
+        return copy
+      }),
   }
 }

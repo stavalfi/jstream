@@ -3,7 +3,7 @@ import { UserFlow } from '@parser/types'
 
 describe('multiple-layers', () => {
   it('1', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -52,13 +52,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('2', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -118,13 +119,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('3', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -149,13 +151,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('4', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -190,13 +193,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('5', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -246,13 +250,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('6', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -288,13 +293,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('7', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -342,13 +348,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('8', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -426,9 +433,10 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   // this it is an example for why we must specify the name of the extended-flow if we
@@ -472,7 +480,7 @@ describe('multiple-layers', () => {
   // });
 
   it('9', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -511,13 +519,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('10', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -580,13 +589,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('11', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -650,13 +660,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('12', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -711,13 +722,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('13', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -772,13 +784,14 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('14', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -870,8 +883,9 @@ describe('multiple-layers', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 })

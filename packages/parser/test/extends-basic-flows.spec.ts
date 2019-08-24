@@ -2,7 +2,7 @@ import { assertEqualFlows, createFlows, createExpected, ExpectedFlow, declareFlo
 import { UserFlow } from '@parser/types'
 
 describe('extends-basic-flows', () => {
-  const flowsConfig = (graph: UserFlow) => ({
+  const flowsConfig = (graph: UserFlow<{}>) => ({
     splitters: {
       extends: '_',
     },
@@ -15,13 +15,13 @@ describe('extends-basic-flows', () => {
   })
 
   it('0', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
       flows: [graph],
     })
-    const actual: UserFlow = 'a'
+    const actual: UserFlow<{}> = 'a'
     const expected: ExpectedFlow[] = [
       {
         name: 'a',
@@ -32,9 +32,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('1', () => {
@@ -53,9 +54,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('2', () => {
@@ -72,10 +74,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('3', () => {
@@ -92,10 +96,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('4', () => {
@@ -112,10 +118,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('5', () => {
@@ -132,10 +140,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('6', () => {
@@ -152,10 +162,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('7', () => {
@@ -172,10 +184,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('8', () => {
@@ -200,10 +214,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('9', () => {
@@ -228,10 +244,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('10', () => {
@@ -250,9 +268,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('11', () => {
@@ -274,9 +293,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('12', () => {
@@ -298,9 +318,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('13', () => {
@@ -322,9 +343,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('14', () => {
@@ -351,9 +373,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('15', () => {
@@ -381,9 +404,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('16', () => {
@@ -409,9 +433,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('17', () => {
@@ -438,9 +463,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('18', () => {
@@ -467,9 +493,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('19', () => {
@@ -494,9 +521,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('20', () => {
@@ -521,9 +549,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('21', () => {
@@ -552,9 +581,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('22', () => {
@@ -574,10 +604,12 @@ describe('extends-basic-flows', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('23', () => {
@@ -601,9 +633,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('24', () => {
@@ -628,9 +661,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('25', () => {
@@ -657,9 +691,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('26', () => {
@@ -686,9 +721,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('27', () => {
@@ -712,9 +748,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('28', () => {
@@ -739,9 +776,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('29', () => {
@@ -767,9 +805,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('30', () => {
@@ -786,9 +825,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('31', () => {
@@ -811,9 +851,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('32', () => {
@@ -836,9 +877,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('33', () => {
@@ -853,9 +895,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('34', () => {
@@ -870,13 +913,14 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('35', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -901,13 +945,14 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('36', () => {
-    const flowsConfig = (graph: UserFlow) => ({
+    const flowsConfig = (graph: UserFlow<{}>) => ({
       splitters: {
         extends: '_',
       },
@@ -932,9 +977,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('37', () => {
@@ -942,27 +988,13 @@ describe('extends-basic-flows', () => {
       name: 'flow0',
       graph: 'a',
     }
-    const expected: ExpectedFlow[] = [
-      {
-        name: 'a',
-        graph: [{ a: [[], []] }],
-        defaultNodeIndex: 0,
-      },
-      {
-        name: 'flow0',
-        graph: [{ flow0_a: [[], []] }],
-        defaultNodeIndex: 0,
-      },
-    ]
-
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
-
-    assertEqualFlows(expectedFlows, actualFlows)
+    expect(() => createFlows(actual, flowsConfig)).toThrow(
+      'using the name of the extends flow inside a graph is not allowed',
+    )
   })
 
   it('38', () => {
-    const flowsConfig = (graph: UserFlow[]) => ({
+    const flowsConfig = (graph: UserFlow<{}>[]) => ({
       splitters: {
         extends: '_',
       },
@@ -1006,9 +1038,10 @@ describe('extends-basic-flows', () => {
     ]
 
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
   it('39', () => {
     const flowsConfig = () => ({
@@ -1094,6 +1127,6 @@ describe('extends-basic-flows', () => {
     const actualFlows = createFlows(undefined, flowsConfig)
     const expectedFlows = createExpected(expected, flowsConfig())
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    assertEqualFlows(flowsConfig().splitters, expectedFlows, actualFlows)
   })
 })

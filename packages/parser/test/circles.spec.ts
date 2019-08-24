@@ -2,7 +2,7 @@ import { assertEqualFlows, createFlows, createExpected, declareFlows, ExpectedFl
 import { UserFlow } from '@parser/types'
 
 describe('circle', () => {
-  const flowsConfig = (graph: UserFlow) => ({
+  const flowsConfig = (graph: UserFlow<{}>) => ({
     splitters: {
       extends: '_',
     },
@@ -31,9 +31,12 @@ describe('circle', () => {
         graph: [{ 'composed-flow_flow0_a': [[1], [1]] }, { 'composed-flow_flow1_a': [[0], [0]] }],
       },
     ]
+
     const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
-    assertEqualFlows(expectedFlows, actualFlows)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('2', () => {
@@ -53,10 +56,12 @@ describe('circle', () => {
         graph: [{ 'composed-flow_flow0_a': [[1], [1]] }, { 'composed-flow_flow1_a': [[0], [0]] }],
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('3', () => {
@@ -76,10 +81,12 @@ describe('circle', () => {
         graph: [{ 'composed-flow_flow0_a': [[1], [1]] }, { 'composed-flow_flow1_a': [[0], [0]] }],
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('4', () => {
@@ -99,10 +106,12 @@ describe('circle', () => {
         graph: [{ 'composed-flow_flow0_a': [[1], [1]] }, { 'composed-flow_flow1_a': [[0], [0]] }],
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('5', () => {
@@ -122,10 +131,12 @@ describe('circle', () => {
         graph: [{ 'composed-flow_flow0_a': [[1], [1]] }, { 'composed-flow_flow1_a': [[0], [0]] }],
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('6', () => {
@@ -145,10 +156,12 @@ describe('circle', () => {
         graph: [{ 'composed-flow_flow0_a': [[1], [1]] }, { 'composed-flow_flow1_a': [[0], [0]] }],
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('7', () => {
@@ -169,10 +182,12 @@ describe('circle', () => {
         defaultNodeIndex: 0,
       },
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 
   it('8', () => {
@@ -188,9 +203,11 @@ describe('circle', () => {
       },
       ...declareFlows(1, ['flow', 'a'], '_'),
     ]
-    const actualFlows = createFlows(actual, flowsConfig)
-    const expectedFlows = createExpected(expected, flowsConfig(actual))
 
-    assertEqualFlows(expectedFlows, actualFlows)
+    const actualFlows = createFlows(actual, flowsConfig)
+    const config = flowsConfig(actual)
+    const expectedFlows = createExpected(expected, config)
+
+    assertEqualFlows(config.splitters, expectedFlows, actualFlows)
   })
 })

@@ -1,69 +1,66 @@
-import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph } from '@parser/utils'
+import { distractDisplayNameBySplitters, extractUniqueFlowsNamesFromGraph, removeSavedProps } from '@parser/utils'
 import { ParsedFlow, ParsedUserFlow, Splitters, UserFlow, UserFlowObject } from '@parser/types'
-import { toArray } from '@jstream/utils'
+import { toArray, uuid } from '@jstream/utils'
+import _isString from 'lodash/isString'
 
-function getGraph(flow: UserFlowObject) {
-  return Array.isArray(flow.graph) ? flow.graph : [flow.graph]
-}
-
-function getFlowNameObject(
+function getFlowNameObject<Extensions>(
   splitters: Splitters,
-  parsedFlowsUntilNow: ParsedFlow[],
-  flow: UserFlowObject,
-): { name: string } | {} {
+  parsedFlowsUntilNow: ParsedFlow<Extensions>[],
+  flow: UserFlowObject<{}>,
+): { hasPredefinedName: boolean; name: string } {
   if ('name' in flow) {
-    return { name: flow.name }
+    return { hasPredefinedName: true, name: flow.name }
   }
-  const graph = getGraph(flow)
+  const graph = toArray(flow.graph)
   const flowsInGraph = extractUniqueFlowsNamesFromGraph(splitters)(graph)
+  const defaultNameObject = { hasPredefinedName: false, name: uuid().replace(new RegExp(splitters.extends, 'g'), '') }
   if (flowsInGraph.length === 1) {
     const possibleName = distractDisplayNameBySplitters(splitters, flowsInGraph[0]).partialPath[0]
     if (parsedFlowsUntilNow.some(flow1 => 'name' in flow1 && flow1.name === possibleName)) {
-      return {}
+      return defaultNameObject
     } else {
-      return { name: possibleName }
+      return { hasPredefinedName: true, name: possibleName }
     }
   } else {
-    return {}
+    return defaultNameObject
   }
 }
 
-function maxConcurrencyToNumber(maxConcurrency: boolean | number): number {
-  if (maxConcurrency === true) {
-    return Infinity
+export const flattenUserFlowShortcuts = (splitters: Splitters) =>
+  function<UnparsedExtensions, Extensions>(parsedFlowsUntilNow: ParsedFlow<Extensions>[]) {
+    return (flow: UserFlow<UnparsedExtensions>): ParsedUserFlow<UnparsedExtensions> => {
+      if (_isString(flow)) {
+        return {
+          ...fillProps(splitters, parsedFlowsUntilNow, { graph: [flow] }),
+          extendsFlows: [],
+        }
+      }
+
+      if (Array.isArray(flow)) {
+        return {
+          ...fillProps(splitters, parsedFlowsUntilNow, { graph: flow }),
+          extendsFlows: [],
+        }
+      }
+
+      return {
+        ...removeSavedProps(flow),
+        ...fillProps(splitters, parsedFlowsUntilNow, flow),
+        extendsFlows: 'extends_flows' in flow ? flow.extends_flows : [],
+      }
+    }
   }
-  if (maxConcurrency === false) {
-    return 1
+
+function fillProps<Extensions>(
+  splitters: Splitters,
+  parsedFlowsUntilNow: ParsedFlow<Extensions>[],
+  flow: UserFlowObject<{}>,
+) {
+  return {
+    graph: toArray(flow.graph),
+    ...getFlowNameObject(splitters, parsedFlowsUntilNow, flow),
+    ...('default_path' in flow && {
+      defaultPath: flow.default_path.split(splitters.extends),
+    }),
   }
-  return maxConcurrency
 }
-
-export const flattenUserFlowShortcuts = (splitters: Splitters) => (parsedFlowsUntilNow: ParsedFlow[]) =>
-  function flatten(flow: UserFlow): ParsedUserFlow[] {
-    if (typeof flow === 'string') {
-      return flatten({
-        graph: [flow],
-      })
-    }
-    if (Array.isArray(flow)) {
-      return flatten({
-        graph: flow as string[],
-      })
-    }
-
-    const flowObject: UserFlowObject = flow as UserFlowObject
-    const nameObject = getFlowNameObject(splitters, parsedFlowsUntilNow, flowObject)
-    return [
-      {
-        graph: toArray(flowObject.graph),
-        ...nameObject,
-        extendsFlows: flowObject.extends_flows ? flowObject.extends_flows : [],
-        ...('default_path' in flowObject && {
-          defaultPath: flowObject.default_path.split(splitters.extends),
-        }),
-        maxConcurrency: 'max_concurrency' in flowObject ? maxConcurrencyToNumber(flowObject.max_concurrency) : 1,
-        side_effects: 'side_effects' in flowObject ? flowObject.side_effects : [],
-        rules: 'rules' in flowObject ? flowObject.rules : [],
-      },
-    ]
-  }

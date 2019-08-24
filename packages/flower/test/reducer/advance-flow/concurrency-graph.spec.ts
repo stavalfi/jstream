@@ -1,6 +1,5 @@
-import { parse, ParsedFlow } from '@jstream/parser'
-import { FlowState } from '@flower/types'
-import { advanceFlowActionCreator, reducer } from '@flower/index'
+import { Flow, FlowState } from '@flower/types'
+import { advanceFlowActionCreator, parse, reducer } from '@flower/index'
 
 const state = (state: FlowState) => state
 
@@ -22,7 +21,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -49,10 +48,12 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        toNodeIndex: 0,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -106,7 +107,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -133,10 +134,12 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        toNodeIndex: 0,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -190,7 +193,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -217,10 +220,12 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        toNodeIndex: 0,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -274,7 +279,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -301,10 +306,12 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      toNodeIndex: 1,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        toNodeIndex: 1,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -358,7 +365,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -385,11 +392,13 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      fromNodeIndex: 0,
-      toNodeIndex: 1,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: 0,
+        toNodeIndex: 1,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({
@@ -447,7 +456,7 @@ describe('try to advance in complex concurrency graph', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow2') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -474,10 +483,12 @@ describe('try to advance in complex concurrency graph', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      toNodeIndex: 0,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        toNodeIndex: 0,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({

@@ -9,6 +9,7 @@
     "utils": "yarn --cwd packages/utils start",
     "docs": "yarn --cwd packages/docs/website start",
     "playground": "yarn --cwd packages/playground start",
+    "test": "lerna exec --stream -- yarn test",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules"
   },
@@ -27,6 +28,7 @@
   },
   "description": "represent graphs, differently.",
   "keywords": [
+    "flow",
     "jstream",
     "lerna",
     "webpack",

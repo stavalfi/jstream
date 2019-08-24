@@ -1,4 +1,4 @@
-module.exports = ({ isDevelopmentMode, isTestMode }) => {
+module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun }) => {
   const productionPresets = [
     [
       '@babel/preset-env',
@@ -10,6 +10,7 @@ module.exports = ({ isDevelopmentMode, isTestMode }) => {
     ],
   ]
   const productionPlugins = [
+    ,
     '@babel/proposal-object-rest-spread',
     [
       '@babel/plugin-proposal-decorators',
@@ -47,6 +48,10 @@ module.exports = ({ isDevelopmentMode, isTestMode }) => {
       ],
       '@babel/typescript',
     ],
-    plugins: [...(isDevelopmentMode && !isTestMode ? [] : productionPlugins), '@babel/proposal-class-properties'],
+    plugins: [
+      (!isDevelopmentMode || isCI || isManualRun) && ['transform-remove-console', { exclude: ['error', 'warn'] }],
+      ...(isDevelopmentMode && !isTestMode ? [] : productionPlugins),
+      '@babel/proposal-class-properties',
+    ].filter(Boolean),
   }
 }

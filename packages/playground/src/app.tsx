@@ -1,10 +1,10 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
-import Hohahoha from '@playground/playground-hoha'
+import Something from '@playground/playground-hoha'
 
 const App: Function = () => (
   <>
-    <Hohahoha />
+    <Something />
   </>
 )
 

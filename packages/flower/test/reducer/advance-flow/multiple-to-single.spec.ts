@@ -1,7 +1,6 @@
-import { FlowState } from '@flower/types'
-import { parse, ParsedFlow } from '@jstream/parser'
+import { Flow, FlowState } from '@flower/types'
 import { advanceFlowActionCreator } from '@flower/actions'
-import { reducer } from '@flower/index'
+import { parse, reducer } from '@flower/index'
 
 const state = (state: FlowState) => state
 
@@ -14,7 +13,7 @@ describe('multiple nodes advance to single node', () => {
         graph: 'a:b,c:d',
       },
     ])
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -53,10 +52,13 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action2 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      flowName: flow.name,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      },
     })
     const flowState = reducer(initialState, action2)
     expect(flowState).toEqual(
@@ -107,7 +109,7 @@ describe('multiple nodes advance to single node', () => {
         graph: 'a:b,c:d',
       },
     ])
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -146,10 +148,13 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action1 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      flowName: flow.name,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      },
     })
     expect(reducer(initialState, action1)).toEqual(
       state({
@@ -205,7 +210,7 @@ describe('multiple nodes advance to single node', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const initialState: FlowState = {
       ...configuration,
       activeFlows: [
@@ -244,10 +249,13 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action1 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      flowName: flow.name,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('c')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      },
     })
     expect(reducer(initialState, action1)).toEqual(
       state({
@@ -292,24 +300,36 @@ describe('multiple nodes advance to single node', () => {
 
   it(`4 - advance one node to a joined node that has multiple same request.payload (but differet request.id)`, () => {
     const configuration = parse([['a:b,c:d', 'd:a']])
-    const flow = configuration.flows.find(flow => !('name' in flow)) as ParsedFlow
+    const flow = configuration.flows.find(flow => flow.graph.length === 4) as Flow
     const action1 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      flowName: flow.name,
+
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      },
     })
     const action2 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      flowName: flow.name,
+
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      },
     })
     const action3 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      flowName: flow.name,
+
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('b')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+      },
     })
     const initialState: FlowState = {
       ...configuration,
@@ -349,10 +369,14 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action4 = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
-      fromNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
-      toNodeIndex: flow.graph.findIndex(node => node.path.includes('a')),
+      flowName: flow.name,
+
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        fromNodeIndex: flow.graph.findIndex(node => node.path.includes('d')),
+        toNodeIndex: flow.graph.findIndex(node => node.path.includes('a')),
+      },
     })
     expect(reducer(initialState, action4)).toEqual(
       state({
@@ -408,7 +432,7 @@ describe('multiple nodes advance to single node', () => {
         },
       ],
     })
-    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as ParsedFlow & {
+    const flow = configuration.flows.find(flow => 'name' in flow && flow.name === 'flow0') as Flow & {
       name: string
     }
     const initialState: FlowState = {
@@ -435,10 +459,12 @@ describe('multiple nodes advance to single node', () => {
       advanced: [],
     }
     const action = advanceFlowActionCreator({
-      activeFlowId: '1',
-      flowId: flow.id,
       flowName: flow.name,
-      toNodeIndex: 1,
+      payload: {
+        activeFlowId: '1',
+        flowId: flow.id,
+        toNodeIndex: 1,
+      },
     })
     expect(reducer(initialState, action)).toEqual(
       state({

@@ -1,30 +1,36 @@
-import { parse } from '@parser/index'
+import parse from '@parser/index'
 import { distractDisplayNameBySplitters, graphNodeToDisplayName } from '@parser/utils'
 import { table as printMatrix } from 'table'
 import {
+  Configuration,
   Graph,
   Node,
-  ParsedFlow,
   ParsedFlowOptionalFields,
   Path,
+  PathsGroups,
   Splitters,
-  Configuration,
   UserFlow,
 } from '@parser/types'
 import { expect as chaiExpect } from 'chai'
+import { Combinations, uuid } from '@jstream/utils'
+import deepEqual from 'fast-deep-equal'
 
 type ExpectedFlowGraphNode = { [key1: string]: [number[], number[]] }
-export type ExpectedFlow = {
-  name?: string
-  maxConcurrency?: number // it should be mandatory but we are too lazy to specify it in every test.
+export type ExpectedFlow<Extensions = {}> = {
   graph: ExpectedFlowGraphNode[]
-  defaultNodeIndex?: number
-  extendedFlowIndex?: number
-  pathsGroups?: (number | string)[][]
-}
+} & Combinations<{
+  name: string
+  defaultNodeIndex: number
+  extendedFlowIndex: number
+  pathsGroups: (number | string)[][]
+}>
 
-export const declareFlows = (n: number, path: Path, extendsSplitter: string): ExpectedFlow[] =>
-  [...Array(n).keys()].map(
+export function declareFlows<Extensions = {}>(
+  n: number,
+  path: Path,
+  extendsSplitter: string,
+): ExpectedFlow<Extensions>[] {
+  return [...Array(n).keys()].map(
     (i): ExpectedFlow => ({
       name: `${path[0]}${i}`,
       graph: [
@@ -32,40 +38,59 @@ export const declareFlows = (n: number, path: Path, extendsSplitter: string): Ex
           [`${path[0]}${i}${extendsSplitter}${path.slice(1).join(extendsSplitter)}`]: [[], []],
         },
       ],
-      maxConcurrency: 1,
       defaultNodeIndex: 0,
     }),
   )
+}
 
-export const createExpected = (
-  expectedFlowsArrays: ExpectedFlow[],
-  flowsConfig: Required<Configuration<UserFlow>>,
-): (Partial<Omit<ParsedFlow, 'id' | 'graph'>> & Pick<ParsedFlow, 'graph'> & ParsedFlowOptionalFields)[] =>
-  expectedFlowsArrays.map(flowToParse => ({
-    ...flowToParse,
-    graph: convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig),
-    ...(flowToParse.pathsGroups
-      ? { pathsGroups: flowToParse.pathsGroups.map(array => array.map(groupId => `${groupId}`)) }
-      : { pathsGroups: undefined }),
-  }))
+export type ExpectedParsedFlow = {
+  hasPredefinedName: boolean
+  name: string
+  graph: Graph
+} & ({} | { pathsGroups: (string | number)[][] })
 
-const convertExpectedFlowGraphArray = (
+export function createExpected(
+  expectedFlowsArrays: ExpectedFlow<{}>[],
+  flowsConfig: Required<Configuration<UserFlow<{}>>>,
+): ExpectedParsedFlow[] {
+  return expectedFlowsArrays.map(flowToParse => {
+    const nameObject = {
+      hasPredefinedName: 'name' in flowToParse,
+      name:
+        'name' in flowToParse ? flowToParse.name : uuid().replace(new RegExp(flowsConfig.splitters.extends, 'g'), ''),
+    }
+    const graph: Graph = convertExpectedFlowGraphArray(flowToParse.graph, flowsConfig, nameObject)
+    const pathsGroupsObject = 'pathsGroups' in flowToParse && {
+      pathsGroups: flowToParse.pathsGroups.map(array => array.map(groupId => `${groupId}`)),
+    }
+    const result: ExpectedParsedFlow = {
+      ...flowToParse,
+      graph,
+      ...pathsGroupsObject,
+      ...nameObject,
+    }
+    return result
+  })
+}
+
+function convertExpectedFlowGraphArray(
   expectedFlowGraphArray: ExpectedFlowGraphNode[],
-  flowsConfig: Required<Configuration<UserFlow>>,
-) => {
+  flowsConfig: Required<Configuration<UserFlow<{}>>>,
+  nameObject: { hasPredefinedName: boolean; name: string },
+) {
   return expectedFlowGraphArray.map(node => {
     const displayNode = distractDisplayNameBySplitters(flowsConfig.splitters, Object.keys(node)[0])
     return {
       parentsIndexes: Object.values(node)[0][0],
       childrenIndexes: Object.values(node)[0][1],
-      path: displayNode.partialPath,
+      path: nameObject.hasPredefinedName ? displayNode.partialPath : [nameObject.name, ...displayNode.partialPath],
     }
   })
 }
 
 export const createFlows = <T>(
   actualFlowGraph: T,
-  flowsConfig: (actualFlowGraph: T) => Required<Configuration<UserFlow>>,
+  flowsConfig: (actualFlowGraph: T) => Required<Configuration<UserFlow<{}>>>,
 ) => parse(flowsConfig(actualFlowGraph)).flows
 
 const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {
@@ -79,8 +104,8 @@ const compareNodes = (splitters: Splitters) => (node1: Node, node2: Node) => {
 }
 
 function sortGraph(
+  splitters: Splitters,
   graph: Graph,
-  splitters = { extends: '_' },
 ): {
   oldIndexToNewIndex: { [index: number]: number }
   newGraph: (Node & { displayName: string })[]
@@ -122,12 +147,14 @@ function sortGraph(
 }
 
 type ParsedFlowWithDisplyName = {
+  hasPredefinedName: boolean
+  name: string
   graph: (Node & { displayName?: string })[]
-  pathsGroups?: ParsedFlow['pathsGroups']
+  pathsGroups?: PathsGroups
 } & ParsedFlowOptionalFields
 
-const sortFlow = (flow: ParsedFlowWithDisplyName): ParsedFlowWithDisplyName => {
-  const { newGraph, oldIndexToNewIndex } = sortGraph(flow.graph)
+const sortFlow = (splitters: Splitters) => (flow: ParsedFlowWithDisplyName): ParsedFlowWithDisplyName => {
+  const { newGraph, oldIndexToNewIndex } = sortGraph(splitters, flow.graph)
   const newPathsGroups = flow.pathsGroups && flow.pathsGroups.map(x => x)
   newPathsGroups &&
     flow.pathsGroups &&
@@ -143,8 +170,8 @@ const sortFlow = (flow: ParsedFlowWithDisplyName): ParsedFlowWithDisplyName => {
   }
 }
 
-const sortFlows = (flows: ParsedFlowWithDisplyName[]): ParsedFlowWithDisplyName[] => {
-  const withSourceIndexes = flows.map(sortFlow).map((flow, startIndex) => ({
+const sortFlows = (splitters: Splitters) => (flows: ParsedFlowWithDisplyName[]): ParsedFlowWithDisplyName[] => {
+  const withSourceIndexes = flows.map(sortFlow(splitters)).map((flow, startIndex) => ({
     ...flow,
     startIndex,
     graphAsString: JSON.stringify(flow.graph),
@@ -174,24 +201,125 @@ const sortFlows = (flows: ParsedFlowWithDisplyName[]): ParsedFlowWithDisplyName[
     }))
 }
 
+const removeGeneratedNamesFromGraph = (splitters: Splitters, flows: ParsedFlowWithDisplyName[]) => (
+  graph: ParsedFlowWithDisplyName['graph'],
+) =>
+  graph.map(node => {
+    const newNode = {
+      ...node,
+      path: node.path.filter(flowName => {
+        const flow = flows.find(f => f.name === flowName)
+        return (flow as ParsedFlowWithDisplyName).hasPredefinedName
+      }),
+    }
+    newNode.displayName = graphNodeToDisplayName(splitters)(newNode)
+    return newNode
+  })
+
+function fillNames({
+  splitters,
+  actualFlowsArray,
+  expectedFlowArray,
+  count,
+}: {
+  splitters: Splitters
+  actualFlowsArray: ParsedFlowWithDisplyName[]
+  expectedFlowArray: ParsedFlowWithDisplyName[]
+  count: number
+}) {
+  if (count > 0) {
+    return expectedFlowArray
+  }
+
+  const oldToNewName: { [oldName: string]: string } = {}
+
+  for (const actualFlowIndex in actualFlowsArray) {
+    const actualFlow = actualFlowsArray[actualFlowIndex]
+    if (!actualFlow.hasPredefinedName) {
+      const graphWithoutGeneratedNames = removeGeneratedNamesFromGraph(splitters, actualFlowsArray)(actualFlow.graph)
+
+      const expectedFlow = expectedFlowArray.find(f => {
+        const expectedGraphWithoutGeneratedNames = removeGeneratedNamesFromGraph(splitters, expectedFlowArray)(f.graph)
+        return deepEqual(expectedGraphWithoutGeneratedNames, graphWithoutGeneratedNames)
+      }) as ParsedFlowWithDisplyName
+      chaiExpect(
+        expectedFlow,
+        `can't find the expect flow that corespond to this actual flow:\n${flowToString(actualFlow)}\n${graphToString(
+          actualFlow.graph,
+        )}\n\ngood guess that this is the missing expected flow:\n${flowToString(
+          expectedFlowArray[actualFlowIndex],
+        )}\n${graphToString(expectedFlowArray[actualFlowIndex].graph)}`,
+      ).not.undefined
+
+      oldToNewName[expectedFlow.name] = actualFlow.name
+    } else {
+      oldToNewName[actualFlow.name] = actualFlow.name
+    }
+  }
+
+  return expectedFlowArray.map(flow => ({
+    ...flow,
+    name: oldToNewName[flow.name],
+    graph: flow.graph.map(node => {
+      const newNode = {
+        ...node,
+        path: node.path.map(oldFlowName => oldToNewName[oldFlowName]),
+      }
+      return {
+        ...newNode,
+        displayName: graphNodeToDisplayName(splitters)(newNode),
+      }
+    }),
+  }))
+}
+
+const buildErrorMessage = ({
+  expectedFlow,
+  guessedFlow,
+  count,
+}: {
+  expectedFlow: ParsedFlowWithDisplyName
+  guessedFlow: ParsedFlowWithDisplyName
+  count: number
+}) =>
+  `${count === 0 ? 'expected' : 'actual'} flow: ${
+    expectedFlow.hasPredefinedName ? expectedFlow.name : '__NO_NAME__'
+  } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
+        \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
+        \n${flowToString(guessedFlow)} \n${graphToString(guessedFlow.graph)}`
+
 export function assertEqualFlows(
-  expectedFlowsArray1: ParsedFlowWithDisplyName[],
-  actualFlowsArray1: ParsedFlowWithDisplyName[],
-  count = 0,
+  splitters: Splitters,
+  expectedFlowsArray: ParsedFlowWithDisplyName[],
+  actualFlowsArray: ParsedFlowWithDisplyName[],
+  count = -1,
 ) {
-  const expectedFlowsArray = sortFlows(expectedFlowsArray1)
-  const actualFlowsArray = sortFlows(actualFlowsArray1)
+  if (count === -1) {
+    // re-order all arrays to be in the same order and make all the random ids in both arrays the same ids.
+    const expectedFlowsArray2 = sortFlows(splitters)(expectedFlowsArray)
+    const newActualFlowsArray = sortFlows(splitters)(actualFlowsArray)
+
+    const newExpectedFlowsArray = fillNames({
+      splitters,
+      expectedFlowArray: expectedFlowsArray2,
+      actualFlowsArray: newActualFlowsArray,
+      count,
+    })
+    assertEqualFlows(splitters, newExpectedFlowsArray, newActualFlowsArray, count + 1)
+    return
+  }
 
   if (count > 1) {
     return
   }
+
   expectedFlowsArray.forEach((expectedFlow, i) => {
     const actualFlow = findFlowByFlow(actualFlowsArray, expectedFlow)
-    const errorMessage = `${count === 0 ? 'expected' : 'actual'} flow: ${
-      'name' in expectedFlow ? expectedFlow.name : '__NO_NAME__'
-    } - does not exist: \n${flowToString(expectedFlow)} \n${graphToString(expectedFlow.graph)}
-        \n\ngood guess that this is the ${count === 0 ? 'actual' : 'expected'} graph (same index):
-        \n${flowToString(actualFlowsArray[i])} \n${graphToString((actualFlow || actualFlowsArray[i]).graph)}`
+    const errorMessage = buildErrorMessage({
+      expectedFlow,
+      count,
+      guessedFlow: actualFlow || actualFlowsArray[i],
+    })
     chaiExpect(actualFlow, errorMessage).not.undefined
     if (actualFlow) {
       chaiExpect(actualFlow.graph, errorMessage).deep.equal(expectedFlow.graph)
@@ -224,7 +352,7 @@ export function assertEqualFlows(
     }
   })
 
-  assertEqualFlows(actualFlowsArray1, expectedFlowsArray1, count + 1)
+  assertEqualFlows(splitters, actualFlowsArray, expectedFlowsArray, count + 1)
 }
 
 function assertPathsGroupsEqual(
@@ -274,7 +402,7 @@ function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: Pa
     const stringToFind = graphToString(flowToSearch.graph)
     const stringNow = graphToString(flow.graph)
     return (
-      ('name' in flow && 'name' in flowToSearch && flow.name === flowToSearch.name) ||
+      (flow.hasPredefinedName && flowToSearch.hasPredefinedName && flow.name === flowToSearch.name) ||
       // @ts-ignore
       (flow.defaultNodeIndex === flowToSearch.defaultNodeIndex && stringNow === stringToFind)
     )
@@ -283,7 +411,7 @@ function findFlowByFlow(flowsArray: ParsedFlowWithDisplyName[], flowToSearch: Pa
 
 function flowToString(flow: ParsedFlowWithDisplyName) {
   let str = ''
-  if ('name' in flow) {
+  if (flow.hasPredefinedName) {
     str += `name: ${flow.name}\n`
   }
   if ('extendedFlowIndex' in flow) {

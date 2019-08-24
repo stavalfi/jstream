@@ -1,5 +1,14 @@
 import _escapeRegExp from 'lodash/escapeRegExp'
 import { AlgorithmParsedFlow, Graph, Node, ParsedFlow, Path, Splitters, UserFlowObject } from '@parser/types'
+import { removeProp } from '@jstream/utils'
+import { savedProps } from '@parser/constants'
+import { buildErrorString } from '@parser/error-messages'
+
+export const findNodeIndex = (splitter: Splitters) => (graph: Graph) => (displayName: string) => {
+  const { partialPath } = distractDisplayNameBySplitters(splitter, displayName)
+  const exactNode = graph.findIndex(({ path }) => arePathsEqual(partialPath, path))
+  return exactNode > -1 ? exactNode : graph.findIndex(({ path }) => isSubsetOf(partialPath, path))
+}
 
 export const distractDisplayNameBySplitters = (splitters: Splitters, displayName: string): { partialPath: Path } => ({
   partialPath: displayName.split(splitters.extends),
@@ -32,49 +41,50 @@ export const graphNodeToDisplayName: GraphNodeToDisplayName = splitters => flowN
   return flowNode.path.join(splitters.extends)
 }
 
-export type DisplayNameToFullGraphNode = (
-  splitters: Splitters,
-) => (
-  params: {
-    parsedFlows: ParsedFlow[]
-    flowToParse: { name: string } | {}
-  } & ({} | { extendedParsedFlow: ParsedFlow }),
-) => (displayName: string) => { path: Path }
-
-export const displayNameToFullGraphNode: DisplayNameToFullGraphNode = splitters => ({
-  flowToParse,
-  parsedFlows,
-  ...rest
-}) => displayName => {
-  const { partialPath } = distractDisplayNameBySplitters(splitters, displayName)
-  const path = fillUserPath({
+export const displayNameToFullGraphNode = (splitters: Splitters) =>
+  function<Extensions>({
+    flowToParse,
     parsedFlows,
-    ...('name' in flowToParse && { flowName: flowToParse.name }),
-    ...('extendedParsedFlow' in rest && { extendedParsedFlow: rest.extendedParsedFlow }),
-    userPath: partialPath,
-  })
-  return {
-    path,
+    ...rest
+  }: {
+    parsedFlows: ParsedFlow<Extensions>[]
+    flowToParse: { name: string }
+  } & ({} | { extendedParsedFlow: ParsedFlow<Extensions> })) {
+    return (displayName: string): { path: Path } => {
+      const { partialPath } = distractDisplayNameBySplitters(splitters, displayName)
+      const path = fillUserPath({
+        parsedFlows,
+        flowName: flowToParse.name,
+        ...('extendedParsedFlow' in rest && { extendedParsedFlow: rest.extendedParsedFlow }),
+        userPath: partialPath,
+      })
+      return {
+        path,
+      }
+    }
   }
-}
 
-export const excludeExtendedFlows = (path: Path, extendedParsedFlow?: ParsedFlow) =>
-  extendedParsedFlow
+export function excludeExtendedFlows<Extensions>(path: Path, extendedParsedFlow?: ParsedFlow<Extensions>) {
+  return extendedParsedFlow
     ? path.filter(flowName => !extendedParsedFlow.graph.some(node => node.path.includes(flowName)))
     : path
+}
 
-const onlyIncludeExtendedFlows = (path: Path, extendedParsedFlow?: ParsedFlow) =>
-  extendedParsedFlow ? path.filter(flowName => extendedParsedFlow.graph.some(node => node.path.includes(flowName))) : []
+function onlyIncludeExtendedFlows<Extensions>(path: Path, extendedParsedFlow?: ParsedFlow<Extensions>) {
+  return extendedParsedFlow
+    ? path.filter(flowName => extendedParsedFlow.graph.some(node => node.path.includes(flowName)))
+    : []
+}
 
-function fillUserPath({
+function fillUserPath<Extensions>({
   parsedFlows,
   flowName,
   extendedParsedFlow,
   userPath,
 }: {
-  parsedFlows: AlgorithmParsedFlow[]
+  parsedFlows: AlgorithmParsedFlow<Extensions>[]
   flowName?: string
-  extendedParsedFlow?: AlgorithmParsedFlow
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
   userPath: Path
 }) {
   let newPath = flowName ? [flowName] : []
@@ -85,15 +95,15 @@ function fillUserPath({
 
   if (subPathNotExtendedFlows.length > 0) {
     const parsedFlow = parsedFlows.find(
-      parsedFlow => 'name' in parsedFlow && parsedFlow.name === subPathNotExtendedFlows[0],
-    ) as AlgorithmParsedFlow
+      parsedFlow => parsedFlow.name === subPathNotExtendedFlows[0],
+    ) as AlgorithmParsedFlow<Extensions>
 
     const isExtendingTheSameFlow = (() => {
       if (extendedParsedFlow) {
         const extended = 'extendedParsedFlow' in parsedFlow && parsedFlow.extendedParsedFlow
         // TODO: Critical BUG!!!! fast solution: replaced while(extended) => if(extended)
         if (extended) {
-          if ('name' in extended && 'name' in extendedParsedFlow && extended.name === extendedParsedFlow.name) {
+          if (extended.name === extendedParsedFlow.name) {
             return true
           }
         }
@@ -106,13 +116,15 @@ function fillUserPath({
       newPath = newPath.concat(options[0])
     } else {
       // else: options.length > 10
-      const parsedFlowWithDefaultNodeIndex = parsedFlow as AlgorithmParsedFlow & { defaultNodeIndex: number }
+      const parsedFlowWithDefaultNodeIndex = parsedFlow as AlgorithmParsedFlow<Extensions> & {
+        defaultNodeIndex: number
+      }
       if (isSubsetOf(userPath, parsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)) {
         newPath = newPath.concat(parsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)
       } else {
         const lastParsedFlow = parsedFlows.find(
-          parsedFlow => 'name' in parsedFlow && parsedFlow.name === userPath[userPath.length - 1],
-        ) as AlgorithmParsedFlow & { defaultNodeIndex: number }
+          parsedFlow => parsedFlow.name === userPath[userPath.length - 1],
+        ) as AlgorithmParsedFlow<Extensions> & { defaultNodeIndex: number }
         const option = options.find(path =>
           isSubsetOf(lastParsedFlow.graph[lastParsedFlow.defaultNodeIndex as number].path, path),
         ) as Path
@@ -132,7 +144,9 @@ function fillUserPath({
     if (options.length === 1) {
       newPath = newPath.concat(options[0])
     } else {
-      const parsedFlowWithDefaultNodeIndex = extendedParsedFlow as AlgorithmParsedFlow & { defaultNodeIndex: number }
+      const parsedFlowWithDefaultNodeIndex = extendedParsedFlow as AlgorithmParsedFlow<Extensions> & {
+        defaultNodeIndex: number
+      }
       newPath = newPath.concat(extendedParsedFlow.graph[parsedFlowWithDefaultNodeIndex.defaultNodeIndex].path)
     }
   }
@@ -166,39 +180,35 @@ export const arePathsEqual = (path1: Path, path2: Path) => {
   return true
 }
 
-type GetHeadsIndexOfSubFlows = (params: {
-  parsedFlows: ParsedFlow[]
-  flowToParse: UserFlowObject
-  graph: Graph
-  extendedParsedFlow?: AlgorithmParsedFlow
-}) => number[]
-
 // - the graph parameter don't have to be fully parsed graph. but every node must have a full path.
-export const getHeadsIndexOfSubFlows: GetHeadsIndexOfSubFlows = ({
+export function getHeadsIndexOfSubFlows<Extensions>({
   parsedFlows,
   flowToParse,
   graph,
   extendedParsedFlow,
-}) => {
+}: {
+  parsedFlows: ParsedFlow<Extensions>[]
+  flowToParse: UserFlowObject<Extensions>
+  graph: Graph
+  extendedParsedFlow?: AlgorithmParsedFlow<Extensions>
+}): number[] {
   function isHead(node: Node) {
     if (node.path.length === 1) {
       return true
     }
 
-    const path = 'name' in flowToParse ? node.path.slice(1) : node.path
+    const path = node.path.slice(1)
 
     if (!extendedParsedFlow) {
-      const subFlow = parsedFlows.find(flow => 'name' in flow && flow.name === path[0]) as ParsedFlow
+      const subFlow = parsedFlows.find(flow => flow.name === path[0]) as ParsedFlow<Extensions>
       return arePathsEqual(subFlow.graph[0].path, path)
     } else {
-      const extendedFlowNameIndex = path.findIndex(
-        flowName => 'name' in extendedParsedFlow && flowName === extendedParsedFlow.name,
-      )
+      const extendedFlowNameIndex = path.findIndex(flowName => flowName === extendedParsedFlow.name)
       if (extendedFlowNameIndex === 0) {
         return arePathsEqual(extendedParsedFlow.graph[0].path, path)
       }
 
-      const subFlow = parsedFlows.find(flow => 'name' in flow && flow.name === path[0]) as ParsedFlow
+      const subFlow = parsedFlows.find(flow => flow.name === path[0]) as ParsedFlow<Extensions>
 
       if (!subFlow.graph[0].path.every((flowName, i) => path[i] === flowName)) {
         return false
@@ -216,4 +226,21 @@ export const getHeadsIndexOfSubFlows: GetHeadsIndexOfSubFlows = ({
   }
 
   return graph.reduce((acc: number[], node, i) => (isHead(node) ? [...acc, i] : acc), [])
+}
+
+export const removeSavedProps = <T extends { [prop: string]: any }>(obj: T, throwError?: boolean): T => {
+  if (throwError) {
+    const existingSavedProps = Object.keys(obj).filter(savedProps.includes.bind(savedProps))
+    if (existingSavedProps.length > 0) {
+      throw new Error(
+        buildErrorString({
+          errorMessageKey: 'overriding parser properties is not allowed',
+          additionalDetails: `you used those keys: [${existingSavedProps.join(
+            ', ',
+          )}]. these keys can't be used: [${savedProps.join(', ')}]`,
+        }),
+      )
+    }
+  }
+  return removeProp(obj, ...savedProps)
 }
