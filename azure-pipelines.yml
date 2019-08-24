@@ -22,7 +22,7 @@ steps:
       versionSpec: $(node_version)
     displayName: 'Install Node.js'
 
-  - script: yarn --ignore-scripts
+  - script: yarn
     displayName: 'install dependencies'
 
   - script: yarn lerna run build:dev --sort
@@ -37,10 +37,3 @@ steps:
 
   - script: yarn lerna run test
     displayName: 'running tests in all packages'
-
-  - script: git config --global user.name "${GH_NAME}"
-  - script: git config --global user.email "${GH_EMAIL}"
-  - script: echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
-  - script: GIT_USER="${GH_NAME}" yarn --cwd packages/docs/website publish-gh-pages
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    displayName: 'deploy docs to github-pages'
