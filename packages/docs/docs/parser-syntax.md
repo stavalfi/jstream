@@ -16,11 +16,10 @@ We will start with a simple representaiton of the following graphs:
 | `a:b`             | `a->b`                       |                                           |
 | `a:b:c`           | `a->b->c`                    |                                           |
 | `a:b:a`           | `a<->b`                      |                                           |
-| `a:b:a`           | `a<->b`                      |                                           |
 | `a:b,c`           | `a->b, a->c`                 |                                           |
-| `a:b,c:a`         | `a<->b, a->c`                |                                           |
+| `a:b,c:a`         | `a<->b, a<->c`               |                                           |
 | `a:b,c,d:e`       | `a->b, a->c, a->d, b,c,d->e` |                                           |
-| `a:[b:c],d`       | `a->b->c, a->d`              | `[..]` will return the first defined node |
+| `a:[b:c:d],e`     | `a->b->c->d, a->e`           | `[..]` will return the first defined node |
 | `a:[b:c],[d:e]:f` | `a->b->c, a->d->e b,d->f`    |                                           |
 
 ---
