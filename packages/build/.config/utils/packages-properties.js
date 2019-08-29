@@ -6,11 +6,11 @@ module.exports = [
   {
     packageDirectoryName: 'editor',
     isWebApp: false,
+    keepConsole: true,
   },
   {
     packageDirectoryName: 'editor-website',
     isWebApp: true,
-    keepConsole: true,
   },
   {
     packageDirectoryName: 'flower',
