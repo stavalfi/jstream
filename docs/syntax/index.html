@@ -56,8 +56,8 @@
             });
         </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Syntax</h1></header><article><div><span><p><em>Parser</em> can be used as a mathematical tool to generate graphs
 from simple text. It has a minimal and powerful syntax which
-takes the advantage of reprinting patterns inside your graph
-to minimize the actual description of it.</p>
+takes the advantage of repeating patterns inside your graph
+to minimize the time you waste on writing it.</p>
 <p>We will start with a simple representaiton of the following graphs:</p>
 <table>
 <thead>
@@ -67,11 +67,10 @@ to minimize the actual description of it.</p>
 <tr><td><code>a:b</code></td><td><code>a-&gt;b</code></td><td></td></tr>
 <tr><td><code>a:b:c</code></td><td><code>a-&gt;b-&gt;c</code></td><td></td></tr>
 <tr><td><code>a:b:a</code></td><td><code>a&lt;-&gt;b</code></td><td></td></tr>
-<tr><td><code>a:b:a</code></td><td><code>a&lt;-&gt;b</code></td><td></td></tr>
 <tr><td><code>a:b,c</code></td><td><code>a-&gt;b, a-&gt;c</code></td><td></td></tr>
-<tr><td><code>a:b,c:a</code></td><td><code>a&lt;-&gt;b, a-&gt;c</code></td><td></td></tr>
+<tr><td><code>a:b,c:a</code></td><td><code>a&lt;-&gt;b, a&lt;-&gt;c</code></td><td></td></tr>
 <tr><td><code>a:b,c,d:e</code></td><td><code>a-&gt;b, a-&gt;c, a-&gt;d, b,c,d-&gt;e</code></td><td></td></tr>
-<tr><td><code>a:[b:c],d</code></td><td><code>a-&gt;b-&gt;c, a-&gt;d</code></td><td><code>[..]</code> will return the first defined node</td></tr>
+<tr><td><code>a:[b:c:d],e</code></td><td><code>a-&gt;b-&gt;c-&gt;d, a-&gt;e</code></td><td><code>[..]</code> will return the first defined node</td></tr>
 <tr><td><code>a:[b:c],[d:e]:f</code></td><td><code>a-&gt;b-&gt;c, a-&gt;d-&gt;e b,d-&gt;f</code></td><td></td></tr>
 </tbody>
 </table>
@@ -256,4 +255,4 @@ parser configuration:</p>
 <p>As you can see, <code>&quot;default_path&quot;: &quot;c&quot;</code> has an important role; <code>&quot;default_path&quot;: &quot;c&quot;</code> defined
 which node in the extended <code>d</code> will have edge to the head of the extended <code>e</code>.</p>
 <p>Note: A flow can extend only a single flow.</p>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-next button" href="/jstream/docs/parser-example1"><span>Example 1</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#flow">Flow</a></li><li><a href="#composition">Composition</a></li><li><a href="#auto-filling-auto-inferring">Auto-filling / Auto-inferring</a></li><li><a href="#extending-expending">Extending (Expending)</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/jstream/" class="nav-home"><img src="/jstream/img/favicon.ico" alt="Jstream" width="66" height="58"/></a><div><h5>Docs</h5><a href="/jstream/docs/en/doc1.html">Getting Started (or other categories)</a><a href="/jstream/docs/en/doc2.html">Guides (or other categories)</a><a href="/jstream/docs/en/doc3.html">API Reference (or other categories)</a></div><div><h5>Community</h5><a href="/jstream/en/users.html">User Showcase</a><a href="https://stackoverflow.com/questions/tagged/" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://discordapp.com/">Project Chat</a><a href="https://twitter.com/" target="_blank" rel="noreferrer noopener">Twitter</a></div><div><h5>More</h5><a href="/jstream/blog">Blog</a><a href="https://github.com/">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><a href="https://opensource.facebook.com/" target="_blank" rel="noreferrer noopener" class="fbOpenSource"><img src="/jstream/img/oss_logo.png" alt="Facebook Open Source" width="170" height="45"/></a><section class="copyright">Copyright © 2019 Stav Alfi</section></footer></div></body></html>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 8/29/2019 by stavalfi</em></div><div class="docs-prevnext"><a class="docs-next button" href="/jstream/docs/parser-example1"><span>Example 1</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#flow">Flow</a></li><li><a href="#composition">Composition</a></li><li><a href="#auto-filling-auto-inferring">Auto-filling / Auto-inferring</a></li><li><a href="#extending-expending">Extending (Expending)</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/jstream/" class="nav-home"><img src="/jstream/img/favicon.ico" alt="Jstream" width="66" height="58"/></a><div><h5>Docs</h5><a href="/jstream/docs/en/doc1.html">Getting Started (or other categories)</a><a href="/jstream/docs/en/doc2.html">Guides (or other categories)</a><a href="/jstream/docs/en/doc3.html">API Reference (or other categories)</a></div><div><h5>Community</h5><a href="/jstream/en/users.html">User Showcase</a><a href="https://stackoverflow.com/questions/tagged/" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://discordapp.com/">Project Chat</a><a href="https://twitter.com/" target="_blank" rel="noreferrer noopener">Twitter</a></div><div><h5>More</h5><a href="/jstream/blog">Blog</a><a href="https://github.com/stavalfi/jstream">GitHub</a><a class="github-button" href="https://github.com/stavalfi/jstream" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><a href="https://opensource.facebook.com/" target="_blank" rel="noreferrer noopener" class="fbOpenSource"><img src="/jstream/img/oss_logo.png" alt="Facebook Open Source" width="170" height="45"/></a><section class="copyright">Copyright © 2019 Stav Alfi</section></footer></div></body></html>
