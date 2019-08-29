@@ -23,4 +23,5 @@ module.exports = {
   ...envVariables,
   packagesProperties,
   isWebApp: currentPackageProperties.isWebApp,
+  keepConsole: currentPackageProperties.keepConsole,
 }

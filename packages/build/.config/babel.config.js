@@ -1,4 +1,4 @@
-module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun }) => {
+module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsole }) => {
   const productionPresets = [
     [
       '@babel/preset-env',
@@ -49,7 +49,11 @@ module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun }) => {
       '@babel/typescript',
     ],
     plugins: [
-      (!isDevelopmentMode || isCI || isManualRun) && ['transform-remove-console', { exclude: ['error', 'warn'] }],
+      !keepConsole &&
+        (!isDevelopmentMode || isCI || (isManualRun && isTestMode)) && [
+          'transform-remove-console',
+          { exclude: ['error', 'warn'] },
+        ],
       ...(isDevelopmentMode && !isTestMode ? [] : productionPlugins),
       '@babel/proposal-class-properties',
     ].filter(Boolean),

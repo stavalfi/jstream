@@ -5,7 +5,7 @@ const jsonImporter = require('node-sass-json-importer')
 
 module.exports = ({
   isDevelopmentMode,
-  constants: { isWebApp, isCI, isManualRun },
+  constants: { isWebApp, isCI, isManualRun, keepConsole },
   publicPath = '.',
   paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
 }) => ({
@@ -18,7 +18,7 @@ module.exports = ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            ...require(babelRcPath)({ isDevelopmentMode, isCI, isManualRun }),
+            ...require(babelRcPath)({ isDevelopmentMode, isCI, isManualRun, keepConsole }),
           },
         },
         ...(isWebApp || isDevelopmentMode

@@ -6,8 +6,8 @@ sidebar_label: Syntax
 
 _Parser_ can be used as a mathematical tool to generate graphs
 from simple text. It has a minimal and powerful syntax which
-takes the advantage of reprinting patterns inside your graph
-to minimize the actual description of it.
+takes the advantage of repeating patterns inside your graph
+to minimize the time you waste on writing it.
 
 We will start with a simple representaiton of the following graphs:
 

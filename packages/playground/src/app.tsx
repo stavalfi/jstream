@@ -1,10 +1,11 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
-import Something from '@playground/playground-hoha'
+import MyComponent from '@playground/my-component'
 
 const App: Function = () => (
   <>
-    <Something />
+    <MyComponent />
+    {/*<Something />*/}
   </>
 )
 

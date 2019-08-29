@@ -54,11 +54,12 @@ module.exports = {
     'no-useless-escape': 0,
     'getter-return': 0,
     curly: 'error',
-    'react-hooks/rules-of-hooks': 'error',
     'import/no-unresolved': 'error',
     'import/named': 'error',
     'import/default': 'error',
     'import/no-extraneous-dependencies': 'error',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
     'import/resolver': {

@@ -10,7 +10,7 @@ const {
   babelRcPath,
 } = paths
 
-const { isManualRun, isCI } = constants
+const { isManualRun, isCI, keepConsole } = constants
 
 module.exports = {
   expand: true,
@@ -40,7 +40,13 @@ module.exports = {
         __DEV__: true,
         'ts-jest': {
           tsConfig: linterTsconfigPath,
-          babelConfig: require(babelRcPath)({ isDevelopmentMode: true, isTestMode: true, isCI, isManualRun }),
+          babelConfig: require(babelRcPath)({
+            isDevelopmentMode: true,
+            isTestMode: true,
+            isCI,
+            isManualRun,
+            keepConsole,
+          }),
         },
         window: {},
       },
