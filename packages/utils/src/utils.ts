@@ -5,7 +5,8 @@ function id() {
 }
 
 // it's *much* easier to debug this file with shorter id's
-export const uuid: () => string = __DEV__ ? id : require('uuid/v4')
+// export const uuid: () => string = __DEV__ ? id : require('uuid/v4')
+export const uuid: () => string = id
 
 export const mapIf = <T, U>(
   predicate: (element: T, index: number, array: T[]) => any,

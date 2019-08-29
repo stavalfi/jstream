@@ -26,7 +26,7 @@ export default class FlowsEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      config: '',
+      config: `"HEAD:a,b:c"`,
     }
   }
 
@@ -73,6 +73,26 @@ export default class FlowsEditor extends React.Component<Props, State> {
           return { config }
         }
       })
+    }
+  }
+
+  componentDidMount(): void {
+    console.log(
+      'allowed props in flow: \n',
+      `UserFlow: {
+      name?: string
+      graph: UserGraph
+      default_path?: string
+      extends_flows?: UserFlow[]
+    }`,
+    )
+    if (this.state.error) {
+      console.log(this.state.error)
+    } else {
+      const json = this.stringToObject(this.state.config)
+      const configObject = parse(json)
+      console.log(configObject)
+      this.props.onConfigChange(configObject)
     }
   }
 

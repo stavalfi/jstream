@@ -6,8 +6,8 @@ sidebar_label: Syntax
 
 _Parser_ can be used as a mathematical tool to generate graphs
 from simple text. It has a minimal and powerful syntax which
-takes the advantage of reprinting patterns inside your graph
-to minimize the actual description of it.
+takes the advantage of repeating patterns inside your graph
+to minimize the time you waste on writing it.
 
 We will start with a simple representaiton of the following graphs:
 
@@ -16,11 +16,10 @@ We will start with a simple representaiton of the following graphs:
 | `a:b`             | `a->b`                       |                                           |
 | `a:b:c`           | `a->b->c`                    |                                           |
 | `a:b:a`           | `a<->b`                      |                                           |
-| `a:b:a`           | `a<->b`                      |                                           |
 | `a:b,c`           | `a->b, a->c`                 |                                           |
-| `a:b,c:a`         | `a<->b, a->c`                |                                           |
+| `a:b,c:a`         | `a<->b, a<->c`               |                                           |
 | `a:b,c,d:e`       | `a->b, a->c, a->d, b,c,d->e` |                                           |
-| `a:[b:c],d`       | `a->b->c, a->d`              | `[..]` will return the first defined node |
+| `a:[b:c:d],e`     | `a->b->c->d, a->e`           | `[..]` will return the first defined node |
 | `a:[b:c],[d:e]:f` | `a->b->c, a->d->e b,d->f`    |                                           |
 
 ---
