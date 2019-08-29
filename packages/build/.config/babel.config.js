@@ -49,11 +49,10 @@ module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsol
       '@babel/typescript',
     ],
     plugins: [
-      !keepConsole &&
-        (!isDevelopmentMode || isCI || (isManualRun && isTestMode)) && [
-          'transform-remove-console',
-          { exclude: ['error', 'warn'] },
-        ],
+      (!keepConsole || !isDevelopmentMode || isCI || (isManualRun && isTestMode)) && [
+        'transform-remove-console',
+        { exclude: ['error', 'warn'] },
+      ],
       ...(isDevelopmentMode && !isTestMode ? [] : productionPlugins),
       '@babel/proposal-class-properties',
     ].filter(Boolean),
