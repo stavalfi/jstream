@@ -1,8 +1,9 @@
-import React, { FC } from 'react'
 import { connect } from 'react-redux'
 import { createSelector, createStructuredSelector } from 'reselect'
 import { AppState } from '@playground/redux/store'
 import { RemoveTodoActionCreator, removeTodoActionCreator, Todo } from '@playground/redux/actions'
+import { FC } from 'react'
+import React from 'react'
 
 type Props = {
   todoId: string

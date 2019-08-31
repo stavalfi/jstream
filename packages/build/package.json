@@ -109,6 +109,7 @@
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.3.1",
-    "webpack-messages": "^2.0.4"
+    "webpack-messages": "^2.0.4",
+    "worker-plugin": "^3.2.0"
   }
 }

@@ -8,6 +8,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
 const _flatMap = require('lodash/flatMap')
+const WorkerPlugin = require('worker-plugin')
 
 module.exports = ({ isDevelopmentMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI } = constants
@@ -19,6 +20,7 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
   ]
   const developmentPlugins = []
   return [
+    new WorkerPlugin(),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,
     }),
