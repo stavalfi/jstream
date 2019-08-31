@@ -4,11 +4,11 @@
     "baseUrl": "..",
     "paths": {
       "*": ["playground/node_modules/*", "../node_modules/*"],
+      "@playground/*": ["playground/src/*"],
       "@parser/*": ["parser/src/*"],
       "@editor/*": ["editor/src/*"],
       "@flower/*": ["flower/src/*"],
       "@utils/*": ["utils/src/*"],
-      "@playground/*": ["playground/src/*"],
       "@parser-test/*": ["parser/test/*"],
       "@editor-test/*": ["editor/test/*"],
       "@flower-test/*": ["flower/test/*"],

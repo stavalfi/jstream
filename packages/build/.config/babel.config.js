@@ -61,7 +61,7 @@ function removeConsolePlguin({ isDevelopmentMode, isTestMode, isCI, isManualRun,
     return false
   }
 
-  if (isCI || isManualRun) {
+  if (isCI || (isTestMode && isManualRun)) {
     return ['transform-remove-console', { exclude: ['error', 'warn'] }]
   }
 
