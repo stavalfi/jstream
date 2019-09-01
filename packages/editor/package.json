@@ -20,8 +20,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@jstream/parser": "^1.0.0",
     "@jstream/flower": "^1.0.0",
+    "@jstream/parser": "^1.0.0",
     "@jstream/utils": "^1.0.0",
     "d3": "^5.9.2",
     "deep-equal": "^1.0.1",
@@ -39,6 +39,6 @@
     "pkg-ok": "^2.3.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "typescript": "^3.5.2"
+    "typescript": "^3.6.2"
   }
 }

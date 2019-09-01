@@ -12,4 +12,29 @@
 //   rootElement,
 // )
 
-import '@playground/workers'
+// import '@playground/workers'
+
+function canceledPromise<T,>(promise: Promise<T>): Promise<T> & { cancel: () => Promise<any> } {
+  let isCancelled = false
+
+  const finalPromise = promise.then(
+    result => (isCancelled ? Promise.reject('cancelled!') : result),
+    error => (isCancelled ? Promise.reject('cancelled!') : error),
+  )
+
+  return {
+    ...finalPromise,
+    cancel: () => {
+      isCancelled = true
+      return Promise.race([canceledPromise, Promise.reject('cancelled!')])
+    },
+  }
+}
+
+canceledPromise(new Promise(res => setTimeout(res, 2000)))
+  .cancel()
+  .then(x => console.log('result: ' + x))
+  .catch(e => console.log('error: ' + e))
+  .finally(() => {
+    return console.log('finished')
+  })
