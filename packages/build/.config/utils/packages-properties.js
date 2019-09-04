@@ -28,4 +28,8 @@ module.exports = [
     packageDirectoryName: 'playground',
     isWebApp: true,
   },
+  {
+    packageDirectoryName: 'alpha',
+    isWebApp: true,
+  },
 ]

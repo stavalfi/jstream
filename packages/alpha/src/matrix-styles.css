@@ -1,0 +1,18 @@
+.cell{
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    border: bisque 1px solid;
+}
+
+.row {
+    height: 30px;
+}
+
+.black{
+    background-color: black;
+}
+.white{
+    background-color: white;
+}
+

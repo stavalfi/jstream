@@ -3,6 +3,7 @@
   "name": "@jstream/main",
   "private": true,
   "scripts": {
+    "alpha": "yarn && yarn --cwd ./packages/alpha start",
     "editor": "yarn --cwd ./packages/editor start",
     "editor-website": "yarn --cwd ./packages/editor-website start",
     "parser": "yarn --cwd ./packages/parser start",

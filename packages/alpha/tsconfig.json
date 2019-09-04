@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "*": ["alpha/node_modules/*", "../node_modules/*"],
+      "@alpha/*": ["alpha/src/*"],
+      "@alpha-test/*": ["alpha/test/*"],
+      "@jstream/alpha": ["alpha/src/index.ts"]
+    }
+  },
+  "include": ["src", "test"]
+}

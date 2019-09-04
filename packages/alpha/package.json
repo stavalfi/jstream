@@ -1,0 +1,30 @@
+{
+  "name": "@jstream/alpha",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "yarn run exec b:start",
+    "build:dev": "yarn run exec b:build:dev",
+    "build:prod": "yarn run exec b:build:prod",
+    "test": "yarn run exec b:test",
+    "test:unit": "yarn run exec b:test:unit",
+    "test:watch": "yarn run exec b:test:watch",
+    "lint-staged": "yarn run exec b:lint-staged",
+    "clean": "rm -rf dist",
+    "clean:all": "yarn run clean && rm -rf node_modules",
+    "exec": "FOLDER=alpha yarn workspace @jstream/build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hot-loader": "^4.8.6"
+  },
+  "devDependencies": {
+    "@jstream/build": "^1.0.0",
+    "pkg-ok": "^2.3.1",
+    "typescript": "^3.6.2"
+  }
+}
