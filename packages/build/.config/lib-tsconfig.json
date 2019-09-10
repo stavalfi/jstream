@@ -11,14 +11,6 @@
     "noEmit": false,
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "../parser/node_modules/*",
-        "../editor/node_modules/*",
-        "../flower/node_modules/*",
-        "../build/node_modules/*",
-        "../utils/node_modules/*",
-        "../../node_modules/*"
-      ],
       "@parser/*": ["../parser/src/*"],
       "@editor/*": ["../editor/src/*"],
       "@flower/*": ["../flower/src/*"],
