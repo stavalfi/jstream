@@ -1,40 +1,42 @@
-const { externals, moduleWithRules, resolve, plugins, devServer } = require('./index')
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+
+const { externals, output, moduleWithRules, resolve, plugins, devServer } = require('./index')
 const { paths, constants } = require('../utils')
 
-const { distPath, appEntryFilePaths } = paths
-const { isWebApp } = constants
+const { appEntryFilePath, webappReactHmrEntryFile } = paths
+const { isMeasureWebpack, isWebApp } = constants
+
+const smp = new SpeedMeasurePlugin({
+  disable: !isMeasureWebpack,
+  granularLoaderData: false,
+})
 
 let config // because `eslint-import-resolver-webpack` calls webpack.config too much times.
 
 module.exports = (env = {}, argv = {}) => {
-  const isDevelopmentMode = env.devServer || argv.mode !== 'production'
-  const publicPath = '/'
+  const isDevelopmentMode = argv.mode !== 'production'
   if (!config) {
-    config = {
+    config = smp.wrap({
       stats: isDevelopmentMode ? 'none' : 'normal',
 
-      devtool: isDevelopmentMode ? 'source-map' : 'none',
+      devtool: isDevelopmentMode ? 'cheap-module-eval-source-map' : 'none',
 
       entry: {
-        index: appEntryFilePaths,
+        index: isWebApp ? webappReactHmrEntryFile : appEntryFilePath,
       },
 
-      output: {
-        path: distPath,
-        filename: `[${isWebApp ? 'hash' : 'name'}].js`,
-        ...(!isWebApp && { libraryTarget: 'umd' }),
-      },
+      output: output({ isDevelopmentMode, constants, paths }),
 
-      devServer: devServer({ isDevelopmentMode, constants, publicPath, paths }),
+      devServer: devServer({ isDevelopmentMode, constants, paths }),
 
-      externals: externals({ isDevelopmentMode, constants, publicPath, paths }),
+      externals: externals({ isDevelopmentMode, constants, paths }),
 
-      resolve: resolve({ isDevelopmentMode, constants, publicPath, paths }),
+      resolve: resolve({ isDevelopmentMode, constants, paths }),
 
-      plugins: plugins({ isDevelopmentMode, constants, publicPath, paths }),
+      plugins: plugins({ isDevelopmentMode, constants, paths }),
 
-      module: moduleWithRules({ isDevelopmentMode, constants, publicPath, paths }),
-    }
+      module: moduleWithRules({ isDevelopmentMode, constants, paths }),
+    })
   }
   return config
 }

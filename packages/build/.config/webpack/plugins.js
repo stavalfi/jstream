@@ -7,73 +7,42 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
-const _flatMap = require('lodash/flatMap')
+const HtmlWebpackTemplate = require('html-webpack-template')
+const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
 
 module.exports = ({ isDevelopmentMode, constants, paths }) => {
-  const { isWebApp, packageDirectoryName, isCI } = constants
-  const { linterTsconfigPath, indexHtmlPath } = paths
-  const productionPlugins = [
-    new MiniCssExtractPlugin({
-      filename: '[chunkhash].css',
-    }),
-  ]
-  const developmentPlugins = []
+  const { isWebApp, packageDirectoryName, isCI, isDevServer } = constants
+  const { linterTsconfigPath } = paths
   return [
-    new DefinePlugin({
-      __DEV__: isDevelopmentMode,
-    }),
-    ...(isWebApp
-      ? [
-          new HtmlWebpackPlugin({
-            template: indexHtmlPath,
-          }),
-        ]
-      : []),
-    ...(!isCI
-      ? [
-          new ProgressBarPlugin({
-            format: `Building ${packageDirectoryName} [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
-          }),
-        ]
-      : []),
     new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ isDevelopmentMode, constants, paths })),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,
       formatter: 'codeframe',
-      compilerOptions: getCompilerOptions(isDevelopmentMode, { isDevelopmentMode, constants, paths }),
+      compilerOptions: {
+        ...ForkTsPluginAliases,
+      },
     }),
-    ...(isDevelopmentMode ? developmentPlugins : productionPlugins),
-    new CleanWebpackPlugin(),
-  ]
+    new DefinePlugin({
+      __DEV__: isDevelopmentMode,
+    }),
+    isWebApp &&
+      new HtmlWebpackPlugin({
+        template: HtmlWebpackTemplate,
+        title: 'Flow Editor',
+        bodyHtmlSnippet: '<div id="app"></div>',
+      }),
+    !isCI &&
+      new ProgressBarPlugin({
+        format: `Building ${packageDirectoryName} [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
+      }),
+    !isDevServer && new CleanWebpackPlugin(),
+    !isDevelopmentMode &&
+      new MiniCssExtractPlugin({
+        filename: '[chunkhash].css',
+      }),
+  ].filter(Boolean)
 }
-
-const getCompilerOptions = (
-  isDevelopmentMode,
-  { constants: { packagesProperties, mainProjectDirName, packageDirectoryName }, paths: { packagesPath } },
-) => ({
-  baseUrl: packagesPath,
-  paths: {
-    '*': _flatMap(['src', 'test', 'node_modules'], subFolder =>
-      packagesProperties.map(packageProperties => `${packageProperties.packageDirectoryName}/${subFolder}/*`),
-    ).concat(['../node_modules/*']),
-    ...packagesProperties
-      .map(packageProperties => ({
-        [`@${packageProperties.packageDirectoryName}/*`]: [`${packageProperties.packageDirectoryName}/src/*`],
-        [`@${packageProperties.packageDirectoryName}-test/*`]: [`${packageProperties.packageDirectoryName}/test/*`],
-      }))
-      .reduce((acc, obj) => ({ ...acc, ...obj }), {}),
-    ...(isDevelopmentMode &&
-      packagesProperties
-        .filter(packageProperties => packageProperties.packageDirectoryName !== packageDirectoryName)
-        .map(packageProperties => ({
-          [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: [
-            `${packageProperties.packageDirectoryName}/src/${packageProperties.isWebApp ? 'index.tsx' : 'index.ts'}`,
-          ],
-        }))
-        .reduce((acc, obj) => ({ ...acc, ...obj }), {})),
-  },
-})
 
 const getFriendlyErrorsWebpackPluginOptions = ({
   isDevelopmentMode,

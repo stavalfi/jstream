@@ -15,13 +15,13 @@ const currentPackageProperties =
 module.exports = {
   mainProjectDirName,
   packagesDirName,
+  publicPath: '/',
   devServerPort: 8002,
   devServerHost: 'localhost',
   devServerHttpProtocol: true,
   filesExt,
   testFilesExt,
-  ...envVariables,
   packagesProperties,
-  isWebApp: currentPackageProperties.isWebApp,
   keepConsole: currentPackageProperties.keepConsole,
+  ...envVariables,
 }

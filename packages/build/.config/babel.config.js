@@ -1,4 +1,4 @@
-module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsole }) => {
+module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsole, isDevServer, isWebApp }) => {
   const productionPresets = [
     [
       '@babel/preset-env',
@@ -10,7 +10,6 @@ module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsol
     ],
   ]
   const productionPlugins = [
-    ,
     '@babel/proposal-object-rest-spread',
     [
       '@babel/plugin-proposal-decorators',
@@ -49,6 +48,7 @@ module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsol
       '@babel/typescript',
     ],
     plugins: [
+      isWebApp && 'react-hot-loader/babel',
       removeConsolePlguin({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsole }),
       ...(isDevelopmentMode && !isTestMode ? [] : productionPlugins),
       '@babel/proposal-class-properties',
@@ -61,8 +61,10 @@ function removeConsolePlguin({ isDevelopmentMode, isTestMode, isCI, isManualRun,
     return false
   }
 
-  if (isCI || isManualRun) {
-    return ['transform-remove-console', { exclude: ['error', 'warn'] }]
+  const noConsolePlugin = ['transform-remove-console', { exclude: ['error', 'warn'] }]
+
+  if (isTestMode && isManualRun && !isCI) {
+    return noConsolePlugin
   }
 
   return false

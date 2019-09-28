@@ -11,7 +11,7 @@
       "@editor-test/*": ["editor/test/*"],
       "@flower-test/*": ["flower/test/*"],
       "@utils-test/*": ["utils/test/*"],
-      "@jstream/editor": ["editor/src/index.ts"],
+      "@jstream/editor": ["editor/src/index.tsx"],
       "@jstream/flower": ["flower/src/index.ts"],
       "@jstream/build": ["build/src/index.ts"],
       "@jstream/utils": ["utils/src/index.ts"]

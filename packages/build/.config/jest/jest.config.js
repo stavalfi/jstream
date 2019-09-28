@@ -1,9 +1,9 @@
-const { jestResolver } = require('../utils/paths-resolving-strategies')
+const { jestAliases } = require('../utils/paths-resolving-strategies')
 const { paths, constants } = require('../utils')
 
 const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, linterTsconfigPath, babelRcPath } = paths
 
-const { isManualRun, isCI, keepConsole } = constants
+const { isManualRun, isCI, keepConsole, isWebApp } = constants
 
 module.exports = {
   expand: true,
@@ -23,7 +23,7 @@ module.exports = {
       displayName: 'test',
       preset: 'ts-jest/presets/js-with-ts',
       testEnvironment: 'node',
-      moduleNameMapper: jestResolver,
+      moduleNameMapper: jestAliases,
       testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
       roots: [mainTestsFolderPath, srcPath],
       testPathIgnorePatterns: ['node_modules'],
@@ -38,6 +38,8 @@ module.exports = {
             isCI,
             isManualRun,
             keepConsole,
+            isDevServer: false,
+            isWebApp,
           }),
         },
         window: {},

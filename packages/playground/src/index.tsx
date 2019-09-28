@@ -1,7 +1,11 @@
-import '@playground/fonts/my-symphony.font'
-import ReactDOM from 'react-dom'
-import App from '@playground/app'
-import * as React from 'react'
+import React, { useEffect } from 'react'
 
-// @ts-ignore
-ReactDOM.render(<App />, document.getElementById('app'))
+const Component = () => {
+  useEffect(() => {
+    console.log()
+  }, [])
+  console.log(2)
+  return <h1>123</h1>
+}
+
+export default Component
