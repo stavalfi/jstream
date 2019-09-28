@@ -1,18 +1,18 @@
 const { webpackDevelopmentAlias, webpackOtherAlias, webpackProdAlias } = require('../utils/paths-resolving-strategies')
 
-module.exports = ({ isDevelopmentMode, constants: {} }) => {
+module.exports = ({ isDevelopmentMode, constants: { isDevServer, isWebApp }, paths: { appEntryFilePath } }) => {
   const baseAlias = isDevelopmentMode ? webpackDevelopmentAlias : webpackProdAlias
-  console.log({
-    ...baseAlias,
-    ...webpackOtherAlias,
-    ...(isDevelopmentMode && { 'react-dom': '@hot-loader/react-dom' }),
-  })
   return {
     extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
     alias: {
       ...baseAlias,
       ...webpackOtherAlias,
-      ...(isDevelopmentMode && { 'react-dom': '@hot-loader/react-dom' }),
+      ...(isDevServer && {
+        'react-dom': '@hot-loader/react-dom',
+      }),
+      ...(isWebApp && {
+        'webapp-main-component-path': appEntryFilePath,
+      }),
     },
   }
 }

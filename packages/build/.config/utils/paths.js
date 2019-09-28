@@ -11,7 +11,7 @@ const libTsconfigFilePath = path.resolve(configFolderPath, 'lib-tsconfig.json')
 const linterTsconfigPath = path.resolve(packageJsonFolderPath, 'tsconfig.json')
 const mainNodeModulesPath = path.resolve(packageJsonFolderPath, '..', '..', 'node_modules')
 const srcPath = path.resolve(packageJsonFolderPath, 'src')
-const appEntryFilePaths = [path.resolve(srcPath, isWebApp ? 'index.tsx' : 'index.ts')]
+const appEntryFilePath = path.resolve(srcPath, isWebApp ? 'index.tsx' : 'index.ts')
 const distPath = path.join(packageJsonFolderPath, 'dist')
 const babelRcPath = path.join(configFolderPath, 'babel.config.js')
 const jestFolderPath = path.join(configFolderPath, 'jest')
@@ -23,13 +23,15 @@ const nodeModulesPath = path.resolve(packageJsonFolderPath, 'node_modules')
 const mainTestsFolderPath = path.resolve(packageJsonFolderPath, 'test')
 const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
 const webpackConfigPath = path.resolve(webpackFolderPath, 'webpack.config.js')
+const webappReactHmrEntryFile = path.resolve(webpackFolderPath, 'webapp-react-hmr', 'index.tsx')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 module.exports = {
+  webappReactHmrEntryFile,
   allTestsFolders,
-  appEntryFilePaths,
+  appEntryFilePath,
   babelRcPath,
   distPath,
   eslintIgnorePath,

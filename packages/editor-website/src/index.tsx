@@ -1,7 +1,3 @@
-import 'react-hot-loader'
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from '@editor-website/app'
+import Editor from '@jstream/editor'
 
-// @ts-ignore
-ReactDOM.render(<App />, document.getElementById('app'))
+export default Editor

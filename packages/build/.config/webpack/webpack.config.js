@@ -3,8 +3,8 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 const { externals, output, moduleWithRules, resolve, plugins, devServer } = require('./index')
 const { paths, constants } = require('../utils')
 
-const { appEntryFilePaths } = paths
-const { isDevServer, isMeasureWebpack } = constants
+const { appEntryFilePath, webappReactHmrEntryFile } = paths
+const { isMeasureWebpack, isWebApp } = constants
 
 const smp = new SpeedMeasurePlugin({
   disable: !isMeasureWebpack,
@@ -19,10 +19,10 @@ module.exports = (env = {}, argv = {}) => {
     config = smp.wrap({
       stats: isDevelopmentMode ? 'none' : 'normal',
 
-      devtool: isDevelopmentMode ? 'cheap-module-eval-source-map' : 'source-map',
+      devtool: isDevelopmentMode ? 'cheap-module-eval-source-map' : 'none',
 
       entry: {
-        index: appEntryFilePaths,
+        index: isWebApp ? webappReactHmrEntryFile : appEntryFilePath,
       },
 
       output: output({ isDevelopmentMode, constants, paths }),
@@ -36,19 +36,6 @@ module.exports = (env = {}, argv = {}) => {
       plugins: plugins({ isDevelopmentMode, constants, paths }),
 
       module: moduleWithRules({ isDevelopmentMode, constants, paths }),
-
-      // optimization: {
-      //   splitChunks: {
-      //     cacheGroups: {
-      //       vendors: {
-      //         test: /[\\/]node_modules[\\/]/,
-      //         name: 'vendors',
-      //         chunks: 'all',
-      //         enforce: true,
-      //       },
-      //     },
-      //   },
-      // },
     })
   }
   return config
