@@ -21,7 +21,6 @@ const eslintRcPath = path.join(configFolderPath, '.eslintrc.js')
 const eslintIgnorePath = path.join(packageJsonFolderPath, '.eslintignore')
 const nodeModulesPath = path.resolve(packageJsonFolderPath, 'node_modules')
 const mainTestsFolderPath = path.resolve(packageJsonFolderPath, 'test')
-const indexHtmlPath = path.resolve(configFolderPath, 'webpack', 'index.html')
 const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
 const webpackConfigPath = path.resolve(webpackFolderPath, 'webpack.config.js')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
@@ -35,7 +34,6 @@ module.exports = {
   distPath,
   eslintIgnorePath,
   eslintRcPath,
-  indexHtmlPath,
   jestConfigFilePath,
   libTsconfigFilePath,
   linterTsconfigPath,

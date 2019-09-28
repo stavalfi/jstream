@@ -31,7 +31,7 @@ steps:
   - script: yarn lerna run clean
     displayName: 'cleaning dist folder in all packages'
 
-  - script: yarn lerna run build:prod
+  - script: yarn lerna run build:prod --sort
     displayName: 'running build:prod in all packages'
 
   - script: yarn lerna run clean

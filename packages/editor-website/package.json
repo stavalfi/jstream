@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "yarn run exec b:start",
+    "start:prod": "yarn run exec b:start:prod",
     "build:dev": "yarn run exec b:build:dev",
     "build:prod": "yarn run exec b:build:prod",
     "test": "yarn run exec b:test",
@@ -19,9 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.11",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-hot-loader": "^4.8.6",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-hot-loader": "^4.12.14",
     "@jstream/editor": "^1.0.0"
   },
   "devDependencies": {

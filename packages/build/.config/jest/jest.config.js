@@ -3,7 +3,7 @@ const { paths, constants } = require('../utils')
 
 const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, linterTsconfigPath, babelRcPath } = paths
 
-const { isManualRun, isCI, keepConsole } = constants
+const { isManualRun, isCI, keepConsole, isWebApp } = constants
 
 module.exports = {
   expand: true,
@@ -38,6 +38,8 @@ module.exports = {
             isCI,
             isManualRun,
             keepConsole,
+            isDevServer: false,
+            isWebApp,
           }),
         },
         window: {},

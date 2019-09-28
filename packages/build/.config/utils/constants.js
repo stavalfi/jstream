@@ -15,6 +15,7 @@ const currentPackageProperties =
 module.exports = {
   mainProjectDirName,
   packagesDirName,
+  publicPath: '/',
   devServerPort: 8002,
   devServerHost: 'localhost',
   devServerHttpProtocol: true,

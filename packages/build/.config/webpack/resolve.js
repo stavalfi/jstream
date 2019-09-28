@@ -2,6 +2,11 @@ const { webpackDevelopmentAlias, webpackOtherAlias, webpackProdAlias } = require
 
 module.exports = ({ isDevelopmentMode, constants: {} }) => {
   const baseAlias = isDevelopmentMode ? webpackDevelopmentAlias : webpackProdAlias
+  console.log({
+    ...baseAlias,
+    ...webpackOtherAlias,
+    ...(isDevelopmentMode && { 'react-dom': '@hot-loader/react-dom' }),
+  })
   return {
     extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
     alias: {

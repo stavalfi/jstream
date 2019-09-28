@@ -8,34 +8,12 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
 const _flatMap = require('lodash/flatMap')
+const HtmlWebpackTemplate = require('html-webpack-template')
 
 module.exports = ({ isDevelopmentMode, constants, paths }) => {
-  const { isWebApp, packageDirectoryName, isCI } = constants
-  const { linterTsconfigPath, indexHtmlPath } = paths
-  const productionPlugins = [
-    new MiniCssExtractPlugin({
-      filename: '[chunkhash].css',
-    }),
-  ]
-  const developmentPlugins = []
+  const { isWebApp, packageDirectoryName, isCI, isDevServer } = constants
+  const { linterTsconfigPath } = paths
   return [
-    new DefinePlugin({
-      __DEV__: isDevelopmentMode,
-    }),
-    ...(isWebApp
-      ? [
-          new HtmlWebpackPlugin({
-            template: indexHtmlPath,
-          }),
-        ]
-      : []),
-    ...(!isCI
-      ? [
-          new ProgressBarPlugin({
-            format: `Building ${packageDirectoryName} [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
-          }),
-        ]
-      : []),
     new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ isDevelopmentMode, constants, paths })),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
@@ -43,9 +21,25 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
       formatter: 'codeframe',
       compilerOptions: getCompilerOptions(isDevelopmentMode, { isDevelopmentMode, constants, paths }),
     }),
-    ...(isDevelopmentMode ? developmentPlugins : productionPlugins),
-    new CleanWebpackPlugin(),
-  ]
+    new DefinePlugin({
+      __DEV__: isDevelopmentMode,
+    }),
+    isWebApp &&
+      new HtmlWebpackPlugin({
+        template: HtmlWebpackTemplate,
+        title: 'Flow Editor',
+        bodyHtmlSnippet: '<div id="app"></div>',
+      }),
+    !isCI &&
+      new ProgressBarPlugin({
+        format: `Building ${packageDirectoryName} [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
+      }),
+    !isDevServer && new CleanWebpackPlugin(),
+    !isDevelopmentMode &&
+      new MiniCssExtractPlugin({
+        filename: '[chunkhash].css',
+      }),
+  ].filter(Boolean)
 }
 
 const getCompilerOptions = (

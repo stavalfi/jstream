@@ -1,12 +1,10 @@
-const { babelDevelopmentAlias, babelProdAlias } = require('../utils/paths-resolving-strategies')
-
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const jsonImporter = require('node-sass-json-importer')
+const { babelDevelopmentAlias, babelProdAlias } = require('../utils/paths-resolving-strategies')
 
 module.exports = ({
   isDevelopmentMode,
-  constants: { isWebApp, isCI, isManualRun, keepConsole },
-  publicPath = '.',
+  constants: { isWebApp, isCI, isManualRun, keepConsole, publicPath, isDevServer },
   paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
 }) => ({
   rules: [
@@ -18,7 +16,7 @@ module.exports = ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            ...require(babelRcPath)({ isDevelopmentMode, isCI, isManualRun, keepConsole }),
+            ...require(babelRcPath)({ isDevelopmentMode, isCI, isManualRun, keepConsole, isDevServer, isWebApp }),
           },
         },
         ...(isWebApp || isDevelopmentMode
@@ -44,28 +42,27 @@ module.exports = ({
                 },
               },
             ]),
-        {
-          loader: 'eslint-loader',
-          options: {
-            failOnError: !isDevelopmentMode,
-            failOnWarning: !isDevelopmentMode,
-            configFile: eslintRcPath,
-            fix: false,
-            cache: true,
-            formatter: require('eslint-formatter-friendly'),
-          },
-        },
+        // {
+        //   loader: 'eslint-loader',
+        //   options: {
+        //     failOnError: !isDevelopmentMode,
+        //     failOnWarning: !isDevelopmentMode,
+        //     configFile: eslintRcPath,
+        //     fix: false,
+        //     cache: true,
+        //     formatter: require('eslint-formatter-friendly'),
+        //   },
+        // },
       ],
     },
     {
       test: /\.css$/,
-      loaders: [isDevelopmentMode || !isWebApp ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
+      loaders: getCssLoaders({ isDevelopmentMode, isWebApp }),
     },
     {
       test: /\.font\.js$/,
       loaders: [
-        'style-loader',
-        'css-loader',
+        ...getCssLoaders({ isDevelopmentMode, isWebApp }),
         {
           loader: 'webfonts-loader',
           options: {
@@ -76,69 +73,68 @@ module.exports = ({
         },
       ],
     },
-    ...(isCI || !isDevelopmentMode
-      ? [
-          {
-            test: /\.(jpe?g|png|gif)$/i,
-            loaders: [
-              {
-                loader: 'file-loader',
-                options: {
-                  query: {
-                    name: 'assets/[hash].[name].[ext]',
-                  },
-                },
+    {
+      test: /\.(jpe?g|png|gif)$/i,
+      loaders: [
+        {
+          loader: 'file-loader',
+          options: {
+            query: {
+              name: 'assets/[hash].[name].[ext]',
+            },
+          },
+        },
+        !isDevelopmentMode && {
+          loader: 'image-webpack-loader',
+          options: {
+            query: {
+              mozjpeg: {
+                progressive: true,
               },
-              {
-                loader: 'image-webpack-loader',
-                options: {
-                  query: {
-                    mozjpeg: {
-                      progressive: true,
-                    },
-                    gifsicle: {
-                      interlaced: true,
-                    },
-                    optipng: {
-                      optimizationLevel: 7,
-                    },
-                  },
-                },
+              gifsicle: {
+                interlaced: true,
               },
-            ],
-          },
-          {
-            test: /\.svg(\?.*)?$/,
-            loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
-          },
-          {
-            test: /\.ttf(\?.*)?$/,
-            loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
-          },
-          {
-            test: /\.(woff|woff2)(\?.*)?$/,
-            loader: 'url-loader?limit=10000&mimetype=application/font-woff',
-          },
-          {
-            test: /\.eot(\?.*)?$/,
-            loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
-          },
-          {
-            test: /\.(scss|sass)$/,
-            exclude: /(node_modules)/,
-            use: [
-              'style-loader',
-              'css-loader',
-              {
-                loader: 'sass-loader',
-                options: {
-                  indentedSyntax: true,
-                  importer: jsonImporter,
-                },
+              optipng: {
+                optimizationLevel: 7,
               },
-            ],
+            },
           },
-        ]
-      : []),
+        },
+      ].filter(Boolean),
+    },
+    {
+      test: /\.svg(\?.*)?$/,
+      loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
+    },
+    {
+      test: /\.ttf(\?.*)?$/,
+      loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+    },
+    {
+      test: /\.(woff|woff2)(\?.*)?$/,
+      loader: 'url-loader?limit=10000&mimetype=application/font-woff',
+    },
+    {
+      test: /\.eot(\?.*)?$/,
+      loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
+    },
+    {
+      test: /\.(scss|sass)$/,
+      exclude: /(node_modules)/,
+      use: [
+        ...getCssLoaders({ isDevelopmentMode, isWebApp }),
+        {
+          loader: 'sass-loader',
+          options: {
+            indentedSyntax: true,
+            importer: jsonImporter,
+          },
+        },
+      ],
+    },
   ],
 })
+
+function getCssLoaders({ isDevelopmentMode, isWebApp }) {
+  return [!isWebApp || isDevelopmentMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'fast-css-loader']
+}

@@ -15,9 +15,13 @@ const packageDirectoryName =
 
 const isCI = stringToBoolean(process.env.CI || process.env['CI'])
 const isManualRun = stringToBoolean(process.env.MANUAL_RUN || process.env['MANUAL_RUN'])
+const isDevServer = stringToBoolean(process.env.DEV_SERVER || process.env['DEV_SERVER'])
+const isMeasureWebpack = stringToBoolean(process.env.MEASURE_WEBPACK || process.env['MEASURE_WEBPACK'])
 
 module.exports = {
   packageDirectoryName,
   isCI,
   isManualRun,
+  isDevServer,
+  isMeasureWebpack,
 }
