@@ -57,6 +57,10 @@ module.exports = ({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsol
 }
 
 function removeConsolePlguin({ isDevelopmentMode, isTestMode, isCI, isManualRun, keepConsole }) {
+  if (keepConsole) {
+    return false
+  }
+
   const noConsolePlugin = ['transform-remove-console', { exclude: ['error', 'warn'] }]
 
   if (isTestMode && isManualRun && !isCI) {

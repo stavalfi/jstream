@@ -1,6 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const jsonImporter = require('node-sass-json-importer')
-const { babelDevelopmentAlias, babelProdAlias } = require('../utils/paths-resolving-strategies')
+const { babelAliases } = require('../utils/paths-resolving-strategies')
 
 module.exports = ({
   isDevelopmentMode,
@@ -38,21 +38,21 @@ module.exports = ({
                   cwd: srcPath,
                   root: [srcPath],
                   extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
-                  alias: isDevelopmentMode ? babelDevelopmentAlias : babelProdAlias,
+                  alias: babelAliases,
                 },
               },
             ]),
-        // {
-        //   loader: 'eslint-loader',
-        //   options: {
-        //     failOnError: !isDevelopmentMode,
-        //     failOnWarning: !isDevelopmentMode,
-        //     configFile: eslintRcPath,
-        //     fix: false,
-        //     cache: true,
-        //     formatter: require('eslint-formatter-friendly'),
-        //   },
-        // },
+        {
+          loader: 'eslint-loader',
+          options: {
+            failOnError: !isDevelopmentMode,
+            failOnWarning: !isDevelopmentMode,
+            configFile: eslintRcPath,
+            fix: false,
+            cache: true,
+            formatter: require('eslint-formatter-friendly'),
+          },
+        },
       ],
     },
     {

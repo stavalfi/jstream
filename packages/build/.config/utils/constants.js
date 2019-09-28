@@ -21,8 +21,7 @@ module.exports = {
   devServerHttpProtocol: true,
   filesExt,
   testFilesExt,
-  ...envVariables,
   packagesProperties,
-  isWebApp: currentPackageProperties.isWebApp,
   keepConsole: currentPackageProperties.keepConsole,
+  ...envVariables,
 }

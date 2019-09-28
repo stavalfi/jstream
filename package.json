@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "editor": "yarn --cwd ./packages/editor start",
-    "editor-website": "yarn --cwd ./packages/editor-website start",
     "parser": "yarn --cwd ./packages/parser start",
     "flower": "yarn --cwd packages/flower start",
     "utils": "yarn --cwd packages/utils start",
@@ -13,7 +12,7 @@
     "test": "lerna exec --stream -- yarn test",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
-    "check:all": "yarn && lerna run build:dev --sort && lerna run clean && lerna run build:prod --sort && lerna run clean && lerna run test"
+    "check:all": "yarn && lerna run build:dev && lerna run clean && lerna run build:prod && lerna run clean && lerna run test"
   },
   "devDependencies": {
     "husky": "^2.3.0",

@@ -7,8 +7,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
-const _flatMap = require('lodash/flatMap')
 const HtmlWebpackTemplate = require('html-webpack-template')
+const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
 
 module.exports = ({ isDevelopmentMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI, isDevServer } = constants
@@ -19,7 +19,9 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,
       formatter: 'codeframe',
-      compilerOptions: getCompilerOptions(isDevelopmentMode, { isDevelopmentMode, constants, paths }),
+      compilerOptions: {
+        ...ForkTsPluginAliases,
+      },
     }),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,
@@ -41,33 +43,6 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
       }),
   ].filter(Boolean)
 }
-
-const getCompilerOptions = (
-  isDevelopmentMode,
-  { constants: { packagesProperties, mainProjectDirName, packageDirectoryName }, paths: { packagesPath } },
-) => ({
-  baseUrl: packagesPath,
-  paths: {
-    '*': _flatMap(['src', 'test', 'node_modules'], subFolder =>
-      packagesProperties.map(packageProperties => `${packageProperties.packageDirectoryName}/${subFolder}/*`),
-    ).concat(['../node_modules/*']),
-    ...packagesProperties
-      .map(packageProperties => ({
-        [`@${packageProperties.packageDirectoryName}/*`]: [`${packageProperties.packageDirectoryName}/src/*`],
-        [`@${packageProperties.packageDirectoryName}-test/*`]: [`${packageProperties.packageDirectoryName}/test/*`],
-      }))
-      .reduce((acc, obj) => ({ ...acc, ...obj }), {}),
-    ...(isDevelopmentMode &&
-      packagesProperties
-        .filter(packageProperties => packageProperties.packageDirectoryName !== packageDirectoryName)
-        .map(packageProperties => ({
-          [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: [
-            `${packageProperties.packageDirectoryName}/src/${packageProperties.isWebApp ? 'index.tsx' : 'index.ts'}`,
-          ],
-        }))
-        .reduce((acc, obj) => ({ ...acc, ...obj }), {})),
-  },
-})
 
 const getFriendlyErrorsWebpackPluginOptions = ({
   isDevelopmentMode,

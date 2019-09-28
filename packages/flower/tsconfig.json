@@ -12,7 +12,7 @@
       "@flower-test/*": ["flower/test/*"],
       "@utils-test/*": ["utils/test/*"],
       "@jstream/parser": ["parser/src/index.ts"],
-      "@jstream/editor": ["editor/src/index.ts"],
+      "@jstream/editor": ["editor/src/index.tsx"],
       "@jstream/build": ["build/src/index.ts"],
       "@jstream/utils": ["utils/src/index.ts"]
     }
