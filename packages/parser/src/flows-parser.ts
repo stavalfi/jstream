@@ -140,7 +140,7 @@ function computeDefaultNodeIndexObject<UnparsedExtensions, Extensions>({
       }
     } else {
       const defaultFlow = parsedFlowsUntilNow.find(flow => flow.name === defaultPath[defaultPath.length - 1]) || {}
-      if (defaultFlow && defaultFlow.hasOwnProperty('defaultNodeIndex')) {
+      if (defaultFlow && 'defaultNodeIndex' in defaultFlow) {
         const option = options.find(i => {
           // @ts-ignore
           return isSubsetOf(defaultFlow.graph[defaultFlow.defaultNodeIndex].path, parsedGraph[i].path)
@@ -160,7 +160,7 @@ function computeDefaultNodeIndexObject<UnparsedExtensions, Extensions>({
     }
   }
 
-  const flowsIndex = flowToParse.hasOwnProperty('name') ? 1 : 0
+  const flowsIndex = 'name' in flowToParse ? 1 : 0
   const differentFlows = [...new Set(parsedGraph.map(node => node.path[flowsIndex]))]
   if (differentFlows.length === 1) {
     const parsedFlow = parsedFlowsUntilNow.find(flow => flow.name === differentFlows[0])

@@ -131,7 +131,7 @@ const tryAddLink = ({ fromNode, toNode }: { fromNode: AlgorithmNode; toNode: Alg
 function getUsedFlowName<UnparsedExtensions, Extensions>(flowToParse: ParsedUserFlow<UnparsedExtensions>) {
   return (path: Path) => {
     if (path.length > 1) {
-      if (flowToParse.hasOwnProperty('name')) {
+      if ('name' in flowToParse) {
         return path[1]
       } else {
         return path[0]

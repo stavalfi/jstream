@@ -88,7 +88,7 @@ const parseSubGraph = (nodeToDisplayName: ToDisplayName, displayNameToNode: ToNo
 
           const displayName = improveDisplayName(subFlowToParse.slice(fromIndex, displayNameEndIndex))
 
-          if (!displayNameToIndexes.hasOwnProperty(displayName)) {
+          if (!(displayName in displayNameToIndexes)) {
             const newNode = {
               ...displayNameToNode(displayName),
               childrenIndexes: [],
