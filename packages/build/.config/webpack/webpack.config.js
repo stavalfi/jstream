@@ -1,6 +1,6 @@
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
-const { externals, output, moduleWithRules, resolve, plugins, devServer } = require('./index')
+const { externals, output, moduleWithRules, resolve, plugins, devServer, optimization } = require('./index')
 const { paths, constants } = require('../utils')
 
 const { appEntryFilePath, webappReactHmrEntryFile } = paths
@@ -36,6 +36,8 @@ module.exports = (env = {}, argv = {}) => {
       plugins: plugins({ isDevelopmentMode, constants, paths }),
 
       module: moduleWithRules({ isDevelopmentMode, constants, paths }),
+
+      optimization: optimization({ isDevelopmentMode, constants, paths }),
     })
   }
   return config

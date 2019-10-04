@@ -8,4 +8,6 @@ module.exports = ({ constants: { isWebApp } }) =>
         lodash: 'lodash',
         redux: 'redux',
         'redux-thunk': 'redux-thunk',
+        d3: 'd3',
+        immer: 'immer',
       }
