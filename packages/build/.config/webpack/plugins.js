@@ -9,6 +9,8 @@ const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
 const HtmlWebpackTemplate = require('html-webpack-template')
 const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
+const MyPlugin = require('./custom-plugins/cdn-stav-webpack-plugin')
+const WebpackCdnPlugin = require('webpack-cdn-plugin')
 
 module.exports = ({ isDevelopmentMode, constants, paths }) => {
   const { isWebApp, packageDirectoryName, isCI, isDevServer } = constants
@@ -41,6 +43,8 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
       new MiniCssExtractPlugin({
         filename: '[chunkhash].css',
       }),
+    // new DynamicCdnWebpackPlugin(),
+    new MyPlugin({}),
   ].filter(Boolean)
 }
 
