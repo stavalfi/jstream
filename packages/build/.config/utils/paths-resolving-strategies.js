@@ -6,26 +6,24 @@ const { packagesPath, getEntryFilePath } = paths
 
 const { packagesProperties, mainProjectDirName, packageDirectoryName } = constants
 
-const buildAliasesToPackage = ({ fromRegex = '', toRegex = '', isToArray }) =>
+const buildAliasesToPackage = ({ fromRegex = '', toRegex = '', isToArray, configToIde }) =>
   packagesProperties
     .map(packageProperties => ({
-      ...(packageProperties.packageDirectoryName === packageDirectoryName && {
-        [`@${packageProperties.packageDirectoryName}-test${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
-          packagesPath,
-          packageProperties.packageDirectoryName,
+      ...((configToIde || packageProperties.name === packageDirectoryName) && {
+        [`@${packageProperties.name}-test${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
+          packageProperties.path,
           'test',
           toRegex,
         ),
       }),
-      [`@${packageProperties.packageDirectoryName}${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
-        packagesPath,
-        packageProperties.packageDirectoryName,
+      [`@${packageProperties.name}${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
+        packageProperties.path,
         'src',
         toRegex,
       ),
-      ...(packageProperties.packageDirectoryName !== packageDirectoryName && {
-        [`@${mainProjectDirName}/${packageProperties.packageDirectoryName}`]: getEntryFilePath(
-          path.resolve(packagesPath, packageProperties.packageDirectoryName, 'src'),
+      ...((configToIde || packageProperties.name !== packageDirectoryName) && {
+        [`@${mainProjectDirName}/${packageProperties.name}`]: getEntryFilePath(
+          path.resolve(packageProperties.path, 'src'),
         ),
       }),
     }))
@@ -42,6 +40,8 @@ const jestAliases = buildAliasesToPackage({ fromRegex: '(.+)', toRegex: '$1' })
 
 const webpackAliases = buildAliasesToPackage({ fromRegex: '', toRegex: '' })
 
+const webpackAliasesIde = buildAliasesToPackage({ fromRegex: '', toRegex: '', configToIde: true })
+
 const babelAliases = buildAliasesToPackage({ fromRegex: '(.+)', toRegex: '\\1' })
 
 const ForkTsPluginAliases = {
@@ -52,6 +52,7 @@ const ForkTsPluginAliases = {
 module.exports = {
   babelAliases,
   webpackAliases,
+  webpackAliasesIde,
   jestAliases,
   ForkTsPluginAliases,
 }

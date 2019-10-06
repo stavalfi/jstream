@@ -2,8 +2,7 @@ const stringToBoolean = require('boolean')
 const packagesProperties = require('./packages-properties')
 
 const pwd = process.env.PWD || process.env['PWD'] || ''
-const packageProperties =
-  packagesProperties.find(({ packageDirectoryName }) => pwd.endsWith(packageDirectoryName)) || {}
+const packageProperties = packagesProperties.find(({ name }) => pwd.endsWith(name)) || {}
 
 // it will be used when ide-tools try to read eslintrc.js/webpack.connfig.js/...
 // to prevent failure, we must specify packageDirectoryName or else,
@@ -23,6 +22,7 @@ const isWebApp = stringToBoolean(process.env.WEB_APP || process.env['WEB_APP'])
 // and we want to give him the DEV configuration for every config file.
 const isDevelopmentMode = stringToBoolean(process.env.DEV || process.env['DEV']) || true
 const isTestMode = stringToBoolean(process.env.TEST || process.env['TEST'])
+const notIdeMode = stringToBoolean(process.env.NOT_IDE || process.env['NOT_IDE'])
 
 module.exports = {
   packageDirectoryName,
@@ -33,4 +33,5 @@ module.exports = {
   isMeasureWebpack,
   isDevelopmentMode,
   isTestMode,
+  notIdeMode,
 }

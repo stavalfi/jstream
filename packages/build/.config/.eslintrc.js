@@ -55,7 +55,7 @@ module.exports = {
     'getter-return': 0,
     curly: 'error',
     'import/no-unresolved': 'error',
-    'import/named': 'error',
+    'import/named': 'off', // it barly work
     'import/default': 'error',
     'import/no-extraneous-dependencies': 'error',
     'react-hooks/rules-of-hooks': 'error',
