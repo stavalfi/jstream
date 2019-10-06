@@ -1,6 +1,6 @@
 const path = require('path')
 
-const { paths, constants } = require('..')
+const { paths, constants } = require('./index')
 
 const { packagesPath, getEntryFilePath } = paths
 

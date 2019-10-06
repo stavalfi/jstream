@@ -1,7 +1,7 @@
-import { Action, Reducer } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import { Configuration, ParsedFlow, Splitters, Node } from '@jstream/parser'
 import { Combinations, NonEmptyCombinations } from '@jstream/utils'
+import { Action, Reducer } from 'redux'
 
 export enum FlowActionType {
   updateConfig = 'updateConfig',

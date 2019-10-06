@@ -37,7 +37,7 @@ export default class Editor extends React.Component<{}, State> {
             width={800}
             config={this.state.config}
             selectedFlowIndex={
-              this.state.hasOwnProperty('selectedFlowIndex')
+              'selectedFlowIndex' in this.state
                 ? (this.state.selectedFlowIndex as number)
                 : this.state.config.flows.length - 1
             }

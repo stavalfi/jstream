@@ -3,8 +3,7 @@ const jsonImporter = require('node-sass-json-importer')
 const { babelAliases } = require('../utils/paths-resolving-strategies')
 
 module.exports = ({
-  isDevelopmentMode,
-  constants: { isWebApp, isCI, isManualRun, keepConsole, publicPath, isDevServer },
+  constants: { isDevelopmentMode, isWebApp, publicPath },
   paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
 }) => ({
   rules: [
@@ -16,7 +15,7 @@ module.exports = ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            ...require(babelRcPath)({ isDevelopmentMode, isCI, isManualRun, keepConsole, isDevServer, isWebApp }),
+            ...require(babelRcPath),
           },
         },
         ...(isWebApp || isDevelopmentMode

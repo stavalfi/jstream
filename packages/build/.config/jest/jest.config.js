@@ -3,7 +3,7 @@ const { paths, constants } = require('../utils')
 
 const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, linterTsconfigPath, babelRcPath } = paths
 
-const { isManualRun, isCI, keepConsole, isWebApp } = constants
+const { isManualRun } = constants
 
 module.exports = {
   expand: true,
@@ -13,6 +13,7 @@ module.exports = {
       ? [
           {
             displayName: 'lint',
+            // jest-runner-eslint.config.js must be at the same level of this file.
             runner: 'jest-runner-eslint',
             testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
             roots: [mainTestsFolderPath, srcPath],
@@ -32,15 +33,7 @@ module.exports = {
         __DEV__: true,
         'ts-jest': {
           tsConfig: linterTsconfigPath,
-          babelConfig: require(babelRcPath)({
-            isDevelopmentMode: true,
-            isTestMode: true,
-            isCI,
-            isManualRun,
-            keepConsole,
-            isDevServer: false,
-            isWebApp,
-          }),
+          babelConfig: require(babelRcPath),
         },
         window: {},
       },

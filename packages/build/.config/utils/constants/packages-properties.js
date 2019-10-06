@@ -4,7 +4,6 @@ module.exports = [
   },
   {
     packageDirectoryName: 'editor',
-    keepConsole: true,
   },
   {
     packageDirectoryName: 'flower',
