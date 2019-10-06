@@ -7,11 +7,6 @@ const packagesDirName = 'packages'
 const filesExt = ['ts', 'tsx', 'js', 'jsx']
 const testFilesExt = 'spec'
 
-const currentPackageProperties =
-  packagesProperties.find(
-    packageProperties => packageProperties.packageDirectoryName === envVariables.packageDirectoryName,
-  ) || {}
-
 module.exports = {
   mainProjectDirName,
   packagesDirName,
@@ -22,6 +17,5 @@ module.exports = {
   filesExt,
   testFilesExt,
   packagesProperties,
-  keepConsole: currentPackageProperties.keepConsole,
   ...envVariables,
 }

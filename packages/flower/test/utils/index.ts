@@ -21,7 +21,7 @@ export function getFlow(flows: Flow[], flowName: string): Flow & { name: string 
   const flow = flows.find(flow => 'name' in flow && flow.name === flowName)
   expect(flow).not.toBeUndefined()
   if (!flow || !('name' in flow)) {
-    // I will never be here but it's for typescript.
+    // we will never be here but it's for typescript.
     throw new Error('flow is undefined.')
   }
   return flow

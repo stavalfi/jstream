@@ -280,7 +280,7 @@ function parseFlow<UnparsedExtensions, Extensions>({
   })
 }
 
-// find all the flows that I didn't parse yet AND weren't defined
+// find all the flows that we didn't parse yet AND weren't defined
 // explicitly by the user and then parse them.
 const parseMissingFlowsFromDisplayName = (splitters: Splitters) =>
   function<UnparsedExtensions, Extensions>(

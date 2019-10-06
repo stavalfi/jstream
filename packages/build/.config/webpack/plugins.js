@@ -9,12 +9,29 @@ const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
 const HtmlWebpackTemplate = require('html-webpack-template')
 const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
+const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
-module.exports = ({ isDevelopmentMode, constants, paths }) => {
-  const { isWebApp, packageDirectoryName, isCI, isDevServer } = constants
+module.exports = ({ constants, paths }) => {
+  const { isDevelopmentMode, isWebApp, packageDirectoryName, isCI, isDevServer, mainProjectDirName } = constants
   const { linterTsconfigPath } = paths
+  const gitRevisionPlugin = new GitRevisionPlugin()
+
+  const htmlComment = [
+    `Project: ${mainProjectDirName}`,
+    `Package: ${packageDirectoryName}`,
+    `Repository-Git-Branch: ${JSON.stringify(gitRevisionPlugin.branch())}`,
+    `Repository-Git-Hash: ${JSON.stringify(gitRevisionPlugin.commithash())}`,
+  ].join('\n')
+
+  const bodyHtmlSnippet = `
+  <!--
+${htmlComment}
+  -->
+  <div id="app"></div>
+  `
+
   return [
-    new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ isDevelopmentMode, constants, paths })),
+    new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ constants, paths })),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,
@@ -30,7 +47,7 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
       new HtmlWebpackPlugin({
         template: HtmlWebpackTemplate,
         title: 'Flow Editor',
-        bodyHtmlSnippet: '<div id="app"></div>',
+        bodyHtmlSnippet,
       }),
     !isCI &&
       new ProgressBarPlugin({
@@ -39,14 +56,21 @@ module.exports = ({ isDevelopmentMode, constants, paths }) => {
     !isDevServer && new CleanWebpackPlugin(),
     !isDevelopmentMode &&
       new MiniCssExtractPlugin({
-        filename: '[chunkhash].css',
+        filename: '[contenthash].css',
       }),
   ].filter(Boolean)
 }
 
 const getFriendlyErrorsWebpackPluginOptions = ({
-  isDevelopmentMode,
-  constants: { isWebApp, packageDirectoryName, isCI, devServerHost, devServerPort, devServerHttpProtocol },
+  constants: {
+    isDevelopmentMode,
+    packageDirectoryName,
+    isCI,
+    devServerHost,
+    devServerPort,
+    devServerHttpProtocol,
+    isDevServer,
+  },
 }) => {
   const mode = isDevelopmentMode ? 'Development' : 'Production'
   const link = `${devServerHttpProtocol ? 'http' : 'https'}://${devServerHost}:${devServerPort}`
@@ -55,7 +79,7 @@ const getFriendlyErrorsWebpackPluginOptions = ({
       compilationSuccessInfo: {
         notes: [
           `${chalk.bold(_startCase(packageDirectoryName))} - ${mode}${
-            isWebApp ? `: ${chalk.blueBright(link)}` : ''
+            isDevServer ? `: ${chalk.blueBright(link)}` : ''
           }\n\n`,
         ],
       },
