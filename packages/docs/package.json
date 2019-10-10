@@ -13,8 +13,6 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@jstream/build": "^1.0.0",
-    "docusaurus-init": "^1.12.0",
-    "typescript": "^3.5.2"
+    "@jstream/build": "^1.0.0"
   }
 }

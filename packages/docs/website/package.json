@@ -11,8 +11,5 @@
     "rename-version": "docusaurus-rename-version",
     "build:prod": "echo no-build:prod",
     "test": "echo no-test"
-  },
-  "devDependencies": {
-    "docusaurus": "^1.12.0"
   }
 }

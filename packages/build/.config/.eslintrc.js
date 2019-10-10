@@ -57,7 +57,7 @@ module.exports = {
     'import/no-unresolved': 'error',
     'import/named': 'off', // it barly work
     'import/default': 'error',
-    'import/no-extraneous-dependencies': 'error',
+    'import/no-extraneous-dependencies': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
   },
