@@ -4,7 +4,7 @@ const { externals, output, moduleWithRules, resolve, plugins, devServer, optimiz
 const { paths, constants } = require('./utils')
 
 const { appEntryFilePath, webappReactHmrEntryFile } = paths
-const { isMeasureWebpack, isWebApp, isDevelopmentMode } = constants
+const { isMeasureWebpack, isWebApp, isDevelopmentMode, isBuildInfoMode } = constants
 
 const smp = new SpeedMeasurePlugin({
   // to enable -> you will need to downgrade HtmlWebpackPlugin to 3.x also.
@@ -15,7 +15,7 @@ const smp = new SpeedMeasurePlugin({
 const config = {
   mode: isDevelopmentMode ? 'development' : 'production',
 
-  stats: isDevelopmentMode ? 'none' : 'normal',
+  stats: isDevelopmentMode && !isBuildInfoMode ? 'none' : 'normal',
 
   devtool: isDevelopmentMode ? 'cheap-module-eval-source-map' : 'none',
 

@@ -12,7 +12,15 @@ const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
 module.exports = ({ constants, paths }) => {
-  const { isDevelopmentMode, isWebApp, packageDirectoryName, isCI, isDevServer, mainProjectDirName } = constants
+  const {
+    isDevelopmentMode,
+    isWebApp,
+    packageDirectoryName,
+    isCI,
+    isDevServer,
+    mainProjectDirName,
+    isBuildInfoMode,
+  } = constants
   const { linterTsconfigPath } = paths
   const gitRevisionPlugin = new GitRevisionPlugin()
 
@@ -31,7 +39,7 @@ ${htmlComment}
   `
 
   return [
-    new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ constants, paths })),
+    !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ constants, paths })),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,
@@ -49,7 +57,8 @@ ${htmlComment}
         title: 'Flow Editor',
         bodyHtmlSnippet,
       }),
-    !isCI &&
+    !isBuildInfoMode &&
+      !isCI &&
       new ProgressBarPlugin({
         format: `Building ${packageDirectoryName} [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
       }),

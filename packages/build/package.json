@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": ".config/index.js",
+  "source": true,
   "scripts": {
-    "b:start": "NOT_IDE=true MANUAL_RUN=true DEV=true DEV_SERVER=true webpack-dev-server --hot --config .config/webpack.config.js",
+    "b:start": "BUILD_INFO=false NOT_IDE=true MANUAL_RUN=true DEV=true DEV_SERVER=true webpack-dev-server --hot --config .config/webpack.config.js",
     "b:start:prod": "NOT_IDE=true MANUAL_RUN=true DEV=false DEV_SERVER=true webpack-dev-server --hot --config .config/webpack.config.js",
     "b:start:dev:measure": "NOT_IDE=true MEASURE_WEBPACK=true yarn run b:start",
     "b:build:dev": "NOT_IDE=true MANUAL_RUN=true DEV=true webpack --config .config/webpack.config.js",
@@ -21,5 +22,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.6.4"
+  }
 }

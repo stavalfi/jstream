@@ -1,8 +1,6 @@
 import React from 'react'
 import AceEditor from 'react-ace'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'brace/mode/json'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'brace/theme/github'
 import Jsonic from 'jsonic'
 // @ts-ignore

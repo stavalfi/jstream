@@ -23,6 +23,7 @@ const isWebApp = stringToBoolean(process.env.WEB_APP || process.env['WEB_APP'])
 const isDevelopmentMode = stringToBoolean(process.env.DEV || process.env['DEV']) || true
 const isTestMode = stringToBoolean(process.env.TEST || process.env['TEST'])
 const notIdeMode = stringToBoolean(process.env.NOT_IDE || process.env['NOT_IDE'])
+const isBuildInfoMode = stringToBoolean(process.env.BUILD_INFO || process.env['BUILD_INFO'])
 
 module.exports = {
   packageDirectoryName,
@@ -34,4 +35,5 @@ module.exports = {
   isDevelopmentMode,
   isTestMode,
   notIdeMode,
+  isBuildInfoMode,
 }

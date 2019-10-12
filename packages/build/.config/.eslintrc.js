@@ -1,7 +1,3 @@
-const {
-  paths: { webpackConfigPath },
-} = require('./utils')
-
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -22,15 +18,8 @@ module.exports = {
     'jest/globals': true,
     jest: true,
   },
-  plugins: ['react', 'react-hooks', '@typescript-eslint', 'json', 'import', 'jest'],
-  extends: [
-    'eslint:recommended',
-    'prettier',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-    'plugin:import/typescript',
-    'plugin:jest/recommended',
-  ],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'json', 'jest'],
+  extends: ['eslint:recommended', 'prettier', 'plugin:jest/recommended'],
   globals: {
     __DEV__: true,
   },
@@ -54,18 +43,7 @@ module.exports = {
     'no-useless-escape': 0,
     'getter-return': 0,
     curly: 'error',
-    'import/no-unresolved': 'error',
-    'import/named': 'off', // it barly work
-    'import/default': 'error',
-    'import/no-extraneous-dependencies': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-  },
-  settings: {
-    'import/resolver': {
-      webpack: {
-        config: webpackConfigPath,
-      },
-    },
   },
 }

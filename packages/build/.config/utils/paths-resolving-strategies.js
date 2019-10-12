@@ -9,23 +9,23 @@ const { packagesProperties, mainProjectDirName, packageDirectoryName } = constan
 const buildAliasesToPackage = ({ fromRegex = '', toRegex = '', isToArray, configToIde }) =>
   packagesProperties
     .map(packageProperties => ({
-      ...((configToIde || packageProperties.name === packageDirectoryName) && {
-        [`@${packageProperties.name}-test${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
-          packageProperties.path,
-          'test',
-          toRegex,
-        ),
-      }),
+      // ...((configToIde || packageProperties.name === packageDirectoryName) && {
+      [`@${packageProperties.name}-test${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
+        packageProperties.path,
+        'test',
+        toRegex,
+      ),
+      // }),
       [`@${packageProperties.name}${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
         packageProperties.path,
         'src',
         toRegex,
       ),
-      ...((configToIde || packageProperties.name !== packageDirectoryName) && {
-        [`@${mainProjectDirName}/${packageProperties.name}`]: getEntryFilePath(
-          path.resolve(packageProperties.path, 'src'),
-        ),
-      }),
+      // ...((configToIde || packageProperties.name !== packageDirectoryName) && {
+      [`@${mainProjectDirName}/${packageProperties.name}`]: getEntryFilePath(
+        path.resolve(packageProperties.path, 'src'),
+      ),
+      // }),
     }))
     .map(aliases =>
       Object.entries(aliases)
