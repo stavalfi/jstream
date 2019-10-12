@@ -36,6 +36,11 @@ const config = {
   module: moduleWithRules({ constants, paths }),
 
   optimization: optimization({ constants, paths }),
+
+  node: {
+    Buffer: false,
+    process: false,
+  },
 }
 
 module.exports = smp.wrap(config)

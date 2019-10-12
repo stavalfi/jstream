@@ -1,6 +1,6 @@
 const { DefinePlugin } = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -21,8 +21,10 @@ module.exports = ({ constants, paths }) => {
     mainProjectDirName,
     isBuildInfoMode,
   } = constants
-  const { linterTsconfigPath } = paths
+  const { linterTsconfigPath, eslintRcPath } = paths
   const gitRevisionPlugin = new GitRevisionPlugin()
+
+  const eslintConfig = require(eslintRcPath)
 
   const htmlComment = [
     `Project: ${mainProjectDirName}`,
@@ -46,6 +48,11 @@ ${htmlComment}
       formatter: 'codeframe',
       compilerOptions: {
         ...ForkTsPluginAliases,
+      },
+      eslint: true,
+      eslintOptions: {
+        ...eslintConfig,
+        globals: Object.keys(eslintConfig.globals || {}),
       },
     }),
     new DefinePlugin({

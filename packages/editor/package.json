@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "MEASURE_WEBPACK=true yarn run exec b:start",
-    "start:prod": "MEASURE_WEBPACK=true yarn run exec b:start:prod",
+    "start": "yarn run exec b:start",
+    "start:prod": "yarn run exec b:start:prod",
     "build:dev": "yarn run exec b:build:dev",
     "build:prod": "yarn run exec b:build:prod",
     "test": "yarn run exec b:test",

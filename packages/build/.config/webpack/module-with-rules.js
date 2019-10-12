@@ -4,7 +4,7 @@ const { babelAliases } = require('../utils/paths-resolving-strategies')
 
 module.exports = ({
   constants: { isDevelopmentMode, isWebApp, publicPath },
-  paths: { srcPath, eslintRcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
+  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
 }) => ({
   rules: [
     {
@@ -41,17 +41,6 @@ module.exports = ({
                 },
               },
             ]),
-        {
-          loader: 'eslint-loader',
-          options: {
-            failOnError: !isDevelopmentMode,
-            failOnWarning: !isDevelopmentMode,
-            configFile: eslintRcPath,
-            fix: false,
-            cache: true,
-            formatter: require('eslint-formatter-friendly'),
-          },
-        },
       ],
     },
     {
