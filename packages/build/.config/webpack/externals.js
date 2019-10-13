@@ -1,4 +1,8 @@
-module.exports = ({ constants: { isWebApp } }) =>
+const {
+  constants: { isWebApp },
+} = require('../utils')
+
+module.exports = () =>
   isWebApp
     ? {}
     : {

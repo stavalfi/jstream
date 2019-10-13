@@ -8,7 +8,7 @@ const packageProperties = packagesProperties.find(({ name }) => pwd.endsWith(nam
 // to prevent failure, we must specify packageDirectoryName or else,
 // we will get errors in other files in this package.
 // also, the value we specify here won't be used by the ide so it's just a valid value, not more then that.
-const defaultPackageDirectoryName = 'utils'
+const defaultPackageDirectoryName = packagesProperties[0].name
 
 const packageDirectoryName =
   process.env['FOLDER'] || packageProperties.packageDirectoryName || defaultPackageDirectoryName

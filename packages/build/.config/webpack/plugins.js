@@ -11,8 +11,9 @@ const HtmlWebpackTemplate = require('html-webpack-template')
 const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
-module.exports = ({ constants, paths }) => {
-  const {
+const {
+  paths: { linterTsconfigPath, eslintRcPath },
+  constants: {
     isDevelopmentMode,
     isWebApp,
     packageDirectoryName,
@@ -20,8 +21,13 @@ module.exports = ({ constants, paths }) => {
     isDevServer,
     mainProjectDirName,
     isBuildInfoMode,
-  } = constants
-  const { linterTsconfigPath, eslintRcPath } = paths
+    devServerHost,
+    devServerPort,
+    devServerHttpProtocol,
+  },
+} = require('../utils')
+
+module.exports = () => {
   const gitRevisionPlugin = new GitRevisionPlugin()
 
   const eslintConfig = require(eslintRcPath)
@@ -41,7 +47,7 @@ ${htmlComment}
   `
 
   return [
-    !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ constants, paths })),
+    !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions()),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,
@@ -77,17 +83,7 @@ ${htmlComment}
   ].filter(Boolean)
 }
 
-const getFriendlyErrorsWebpackPluginOptions = ({
-  constants: {
-    isDevelopmentMode,
-    packageDirectoryName,
-    isCI,
-    devServerHost,
-    devServerPort,
-    devServerHttpProtocol,
-    isDevServer,
-  },
-}) => {
+const getFriendlyErrorsWebpackPluginOptions = () => {
   const mode = isDevelopmentMode ? 'Development' : 'Production'
   const link = `${devServerHttpProtocol ? 'http' : 'https'}://${devServerHost}:${devServerPort}`
   return {

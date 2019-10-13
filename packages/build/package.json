@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": ".config/index.js",
-  "source": true,
   "scripts": {
-    "b:start": "BUILD_INFO=true MEASURE_WEBPACK=false NOT_IDE=true MANUAL_RUN=true DEV=true DEV_SERVER=true node --trace-deprecation ../../node_modules/webpack-dev-server/bin/webpack-dev-server --hot --config .config/webpack.config.js",
+    "b:start": "BUILD_INFO=false MEASURE_WEBPACK=false NOT_IDE=true MANUAL_RUN=true DEV=true DEV_SERVER=true node --trace-deprecation ../../node_modules/webpack-dev-server/bin/webpack-dev-server --hot --config .config/webpack.config.js",
     "b:start:prod": "NOT_IDE=true MANUAL_RUN=true DEV=false DEV_SERVER=true webpack-dev-server --hot --config .config/webpack.config.js",
-    "b:start:dev:measure": "NOT_IDE=true MEASURE_WEBPACK=true yarn run b:start",
     "b:build:dev": "BUILD_INFO=true NOT_IDE=true MANUAL_RUN=true DEV=true node --trace-deprecation ../../node_modules/webpack/bin/webpack --config .config/webpack.config.js",
     "b:build:prod": "BUILD_INFO=true NOT_IDE=true MANUAL_RUN=true DEV=false node --trace-deprecation ../../node_modules/webpack/bin/webpack --config .config/webpack.config.js",
     "b:test": "NOT_IDE=true MANUAL_RUN=true TEST=true DEV=true yarn run b:test:unit",
@@ -15,15 +13,12 @@
     "b:test:unit": "NOT_IDE=true MANUAL_RUN=true TEST=true DEV=true jest --config .config/jest/jest.config.js",
     "b:lint-staged": "NOT_IDE=true MANUAL_RUN=true lint-staged --config .config/lint-staged.config.js",
     "lint-staged": "NOT_IDE=true MANUAL_RUN=true FOLDER=build yarn run b:lint-staged",
-    "build:prod": "echo no-build:prod in this package",
-    "test": "echo no-test in this package",
+    "build:prod": "echo no build:prod command in this package",
+    "test": "echo no test command in this package",
     "clean": "NOT_IDE=true MANUAL_RUN=true rm -rf dist",
     "clean:all": "NOT_IDE=true MANUAL_RUN=true yarn run clean && rm -rf node_modules"
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@babel/core": "^7.6.4"
-  }
+  "license": "MIT"
 }

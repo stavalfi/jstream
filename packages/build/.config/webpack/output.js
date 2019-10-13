@@ -1,4 +1,9 @@
-module.exports = ({ constants: { isWebApp, isDevServer, publicPath }, paths: { distPath } }) => ({
+const {
+  paths: { distPath },
+  constants: { isWebApp, isDevServer, publicPath },
+} = require('../utils')
+
+module.exports = () => ({
   path: distPath,
   pathinfo: false,
   publicPath,

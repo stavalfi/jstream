@@ -1,6 +1,10 @@
 const { webpackAliases, webpackAliasesIde } = require('../utils/paths-resolving-strategies')
+const {
+  paths: { appEntryFilePath },
+  constants: { isDevServer, isWebApp, notIdeMode },
+} = require('../utils')
 
-module.exports = ({ constants: { isDevServer, isWebApp, notIdeMode }, paths: { appEntryFilePath } }) => ({
+module.exports = π => ({
   extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
   alias: {
     ...(notIdeMode ? webpackAliases : webpackAliasesIde),
