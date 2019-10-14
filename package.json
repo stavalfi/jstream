@@ -28,7 +28,9 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "rxjs": "^6.5.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "react-hot-loader": "^4.12.15",
+    "@hot-loader/react-dom": "^16.10.2"
   },
   "devDependencies": {
     "@babel/code-frame": "^7.5.5",
@@ -46,7 +48,6 @@
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-react": "^7.6.3",
     "@babel/preset-typescript": "^7.6.0",
-    "@hot-loader/react-dom": "^16.10.2",
     "@stavalfi/babel-plugin-module-resolver-loader": "1.4.0",
     "@types/chai": "4.1.7",
     "@types/d3": "^5.7.2",
@@ -109,7 +110,6 @@
     "prettier": "^1.18.0",
     "pretty-quick": "^1.11.0",
     "progress-bar-webpack-plugin": "^1.12.1",
-    "react-hot-loader": "^4.12.15",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "sass-loader": "7.1.0",

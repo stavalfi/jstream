@@ -4,7 +4,7 @@ const {
   constants: { isDevServer, isWebApp, notIdeMode },
 } = require('../utils')
 
-module.exports = π => ({
+module.exports = () => ({
   extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
   alias: {
     ...(notIdeMode ? webpackAliases : webpackAliasesIde),
