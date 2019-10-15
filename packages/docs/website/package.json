@@ -1,5 +1,5 @@
 {
-  "name": "@jstream/docs",
+  "name": "@jstream/website",
   "version": "1.0.0",
   "scripts": {
     "examples": "docusaurus-examples",
@@ -11,8 +11,5 @@
     "rename-version": "docusaurus-rename-version",
     "build:prod": "echo no-build:prod",
     "test": "echo no-test"
-  },
-  "devDependencies": {
-    "docusaurus": "^1.12.0"
   }
 }

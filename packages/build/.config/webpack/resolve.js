@@ -1,14 +1,13 @@
-const path = require('path')
-const { webpackAliases } = require('../utils/paths-resolving-strategies')
-const MonoResolverPlugin = require('./mono-resolver-plugin')
+const { webpackAliases, webpackAliasesIde } = require('../utils/paths-resolving-strategies')
+const {
+  paths: { appEntryFilePath },
+  constants: { isDevServer, isWebApp, notIdeMode },
+} = require('../utils')
 
-module.exports = ({
-  constants: { isDevServer, isWebApp, packagesProperties, mainProjectDirName },
-  paths: { appEntryFilePath, packagesPath },
-}) => ({
+module.exports = () => ({
   extensions: ['.js', '.sass', '.json', '.ts', '.tsx'],
   alias: {
-    ...webpackAliases,
+    ...(notIdeMode ? webpackAliases : webpackAliasesIde),
     ...(isDevServer && {
       'react-dom': '@hot-loader/react-dom',
     }),
@@ -16,16 +15,4 @@ module.exports = ({
       'webapp-main-component-path': appEntryFilePath,
     }),
   },
-  plugins: [
-    new MonoResolverPlugin({
-      packagesProps: packagesProperties.map(packageProps => ({
-        name: packageProps.packageDirectoryName,
-        path: path.resolve(packagesPath, packageProps.packageDirectoryName),
-      })),
-      ignoreModules: packagesProperties.map(
-        packageProps => `@${mainProjectDirName}/${packageProps.packageDirectoryName}`,
-      ),
-      ignoreAliases: Object.keys(webpackAliases).map(alias => `${alias}/?.*`),
-    }),
-  ],
 })

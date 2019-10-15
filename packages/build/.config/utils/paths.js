@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const { packageDirectoryName } = require('./constants')
+const { packageDirectoryName, packagesProperties } = require('./constants')
 
 function getEntryFileName(entryFolderPath) {
   return ['index.ts', 'index.tsx'].find(entryFileName => fs.existsSync(path.resolve(entryFolderPath, entryFileName)))
@@ -16,7 +16,7 @@ const currentPackageRootPath = path.resolve(__dirname, '..', '..')
 const packagesPath = path.resolve(currentPackageRootPath, '..')
 const configFolderPath = path.resolve(currentPackageRootPath, '.config')
 
-const packageJsonFolderPath = path.resolve(packagesPath, packageDirectoryName)
+const packageJsonFolderPath = (packagesProperties.find(({ name }) => name === packageDirectoryName) || {}).path
 const libTsconfigFilePath = path.resolve(configFolderPath, 'lib-tsconfig.json')
 const linterTsconfigPath = path.resolve(packageJsonFolderPath, 'tsconfig.json')
 const mainNodeModulesPath = path.resolve(packageJsonFolderPath, '..', '..', 'node_modules')
@@ -29,17 +29,23 @@ const jestFolderPath = path.join(configFolderPath, 'jest')
 const jestConfigFilePath = path.join(jestFolderPath, 'jest.config.js')
 const testPolyfillsFilePath = path.join(jestFolderPath, 'polyfills.js')
 const eslintRcPath = path.join(configFolderPath, '.eslintrc.js')
+const ideEslintRcPath = path.join(configFolderPath, 'ide-eslintrc.js')
 const eslintIgnorePath = path.join(packageJsonFolderPath, '.eslintignore')
 const nodeModulesPath = path.resolve(packageJsonFolderPath, 'node_modules')
 const mainTestsFolderPath = path.resolve(packageJsonFolderPath, 'test')
 const webpackConfigPath = path.resolve(configFolderPath, 'webpack.config.js')
 const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
-const webappReactHmrEntryFile = path.resolve(webpackFolderPath, 'webapp-react-hmr', 'index.tsx')
+const webappReactHmrFolderPath = path.resolve(webpackFolderPath, 'webapp-react-hmr')
+const webappReactHmrEntryFile = path.resolve(webappReactHmrFolderPath, 'index.tsx')
+const htmlWebpackPluginIndexHtmlPath = path.resolve(webappReactHmrFolderPath, 'index.html')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 module.exports = {
+  htmlWebpackPluginIndexHtmlPath,
+  webappReactHmrFolderPath,
+  ideEslintRcPath,
   getEntryFileName,
   getEntryFilePath,
   webappReactHmrEntryFile,

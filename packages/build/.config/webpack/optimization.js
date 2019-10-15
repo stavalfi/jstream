@@ -1,7 +1,10 @@
 const TerserJSPlugin = require('terser-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const {
+  constants: { isDevelopmentMode },
+} = require('../utils')
 
-module.exports = ({ constants: { isDevelopmentMode } }) =>
+module.exports = () =>
   isDevelopmentMode
     ? {}
     : {

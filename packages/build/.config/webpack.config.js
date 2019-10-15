@@ -1,13 +1,12 @@
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
-const { externals, output, moduleWithRules, resolve, plugins, devServer, optimization } = require('./webpack')
-const { paths, constants } = require('./utils')
-
-const { appEntryFilePath, webappReactHmrEntryFile } = paths
-const { isMeasureWebpack, isWebApp, isDevelopmentMode } = constants
+const { externals, output, moduleWithRules, resolve, plugins, devServer, optimization, entry } = require('./webpack')
+const {
+  constants: { isMeasureWebpack, isDevelopmentMode, isBuildInfoMode },
+} = require('./utils')
 
 const smp = new SpeedMeasurePlugin({
-  // to enable -> you will need to downgrade HtmlWebpackPlugin to 3.x also.
+  // to enable -> you will ALSO need to downgrade HtmlWebpackPlugin from 4.x to 3.x.
   disable: !isMeasureWebpack,
   granularLoaderData: false,
 })
@@ -15,27 +14,25 @@ const smp = new SpeedMeasurePlugin({
 const config = {
   mode: isDevelopmentMode ? 'development' : 'production',
 
-  stats: isDevelopmentMode ? 'none' : 'normal',
+  stats: isDevelopmentMode && !isBuildInfoMode ? 'none' : 'normal',
 
   devtool: isDevelopmentMode ? 'cheap-module-eval-source-map' : 'none',
 
-  entry: {
-    index: isWebApp ? webappReactHmrEntryFile : appEntryFilePath,
-  },
+  entry: entry(),
 
-  output: output({ constants, paths }),
+  output: output(),
 
-  devServer: devServer({ constants, paths }),
+  devServer: devServer(),
 
-  externals: externals({ constants, paths }),
+  externals: externals(),
 
-  resolve: resolve({ constants, paths }),
+  resolve: resolve(),
 
-  plugins: plugins({ constants, paths }),
+  plugins: plugins(),
 
-  module: moduleWithRules({ constants, paths }),
+  module: moduleWithRules(),
 
-  optimization: optimization({ constants, paths }),
+  optimization: optimization(),
 }
 
 module.exports = smp.wrap(config)

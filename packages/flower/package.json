@@ -24,15 +24,9 @@
   },
   "dependencies": {
     "@jstream/parser": "^1.0.0",
-    "@jstream/utils": "^1.0.0",
-    "immer": "^3.1.3",
-    "lodash": "^4.17.11"
+    "@jstream/utils": "^1.0.0"
   },
   "devDependencies": {
-    "@jstream/build": "^1.0.0",
-    "pkg-ok": "^2.3.1",
-    "redux": "^4.0.4",
-    "redux-thunk": "^2.3.0",
-    "typescript": "^3.5.2"
+    "@jstream/build": "^1.0.0"
   }
 }

@@ -23,15 +23,9 @@
     "lodash": "^4.17.11"
   },
   "dependencies": {
-    "@jstream/utils": "^1.0.0",
-    "lodash": "^4.17.11"
+    "@jstream/utils": "^1.0.0"
   },
   "devDependencies": {
-    "@jstream/build": "^1.0.0",
-    "chai": "^4.2.0",
-    "fast-deep-equal": "^2.0.1",
-    "pkg-ok": "^2.3.1",
-    "table": "^5.4.1",
-    "typescript": "^3.5.2"
+    "@jstream/build": "^1.0.0"
   }
 }

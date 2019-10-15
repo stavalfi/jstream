@@ -1,37 +1,38 @@
 const { DefinePlugin } = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
-const HtmlWebpackTemplate = require('html-webpack-template')
 const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
-module.exports = ({ constants, paths }) => {
-  const { isDevelopmentMode, isWebApp, packageDirectoryName, isCI, isDevServer, mainProjectDirName } = constants
-  const { linterTsconfigPath } = paths
+const {
+  paths: { linterTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
+  constants: {
+    isDevelopmentMode,
+    isWebApp,
+    packageDirectoryName,
+    isCI,
+    isDevServer,
+    mainProjectDirName,
+    isBuildInfoMode,
+    devServerHost,
+    devServerPort,
+    devServerHttpProtocol,
+  },
+} = require('../utils')
+
+module.exports = () => {
   const gitRevisionPlugin = new GitRevisionPlugin()
 
-  const htmlComment = [
-    `Project: ${mainProjectDirName}`,
-    `Package: ${packageDirectoryName}`,
-    `Repository-Git-Branch: ${JSON.stringify(gitRevisionPlugin.branch())}`,
-    `Repository-Git-Hash: ${JSON.stringify(gitRevisionPlugin.commithash())}`,
-  ].join('\n')
-
-  const bodyHtmlSnippet = `
-  <!--
-${htmlComment}
-  -->
-  <div id="app"></div>
-  `
+  const eslintConfig = require(eslintRcPath)
 
   return [
-    new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions({ constants, paths })),
+    !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions()),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,
@@ -39,17 +40,29 @@ ${htmlComment}
       compilerOptions: {
         ...ForkTsPluginAliases,
       },
+      eslint: true,
+      eslintOptions: {
+        ...eslintConfig,
+        globals: Object.keys(eslintConfig.globals || {}),
+      },
     }),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,
     }),
     isWebApp &&
       new HtmlWebpackPlugin({
-        template: HtmlWebpackTemplate,
-        title: 'Flow Editor',
-        bodyHtmlSnippet,
+        template: htmlWebpackPluginIndexHtmlPath,
+        build_info: [
+          '<!--',
+          `Project: ${mainProjectDirName}`,
+          `Package: ${packageDirectoryName}`,
+          `Repository-Git-Branch: ${JSON.stringify(gitRevisionPlugin.branch())}`,
+          `Repository-Git-Hash: ${JSON.stringify(gitRevisionPlugin.commithash())}`,
+          '-->',
+        ].join('\n'),
       }),
-    !isCI &&
+    !isBuildInfoMode &&
+      !isCI &&
       new ProgressBarPlugin({
         format: `Building ${packageDirectoryName} [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
       }),
@@ -61,17 +74,7 @@ ${htmlComment}
   ].filter(Boolean)
 }
 
-const getFriendlyErrorsWebpackPluginOptions = ({
-  constants: {
-    isDevelopmentMode,
-    packageDirectoryName,
-    isCI,
-    devServerHost,
-    devServerPort,
-    devServerHttpProtocol,
-    isDevServer,
-  },
-}) => {
+const getFriendlyErrorsWebpackPluginOptions = () => {
   const mode = isDevelopmentMode ? 'Development' : 'Production'
   const link = `${devServerHttpProtocol ? 'http' : 'https'}://${devServerHost}:${devServerPort}`
   return {

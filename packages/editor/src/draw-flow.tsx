@@ -1,51 +1,31 @@
-import React from 'react'
+import React, { FC, useEffect, useRef } from 'react'
 import { updateChart } from '@editor/my-d3'
-import deepEqual from 'deep-equal'
 import { Configuration } from '@jstream/parser'
 import { Flow } from '@jstream/flower'
-
+import _isNumber from 'lodash/isNumber'
 type Props = {
-  config: Required<Configuration<Flow>>
-  selectedFlowIndex: number
+  config: Required<Configuration<Flow>> | false
+  selectedFlowIndex: number | false
   height: number
   width: number
 }
 
-export default class DrawFlow extends React.Component<Props, {}> {
-  shouldComponentUpdate(nextProps: Props) {
-    return !deepEqual(
-      nextProps.config.flows[nextProps.selectedFlowIndex],
-      this.props.config.flows[this.props.selectedFlowIndex],
-    )
-  }
+const DrawFlow: FC<Props> = ({ config, selectedFlowIndex, height, width }) => {
+  const svg = useRef(null)
 
-  componentDidMount() {
-    const { config, selectedFlowIndex, height, width } = this.props
-    selectedFlowIndex > -1 &&
-      config.flows.length > selectedFlowIndex &&
+  useEffect(() => {
+    if (_isNumber(selectedFlowIndex) && config && 0 <= selectedFlowIndex && selectedFlowIndex < config.flows.length) {
       updateChart({
-        svgReact: this.refs.mySvg,
+        svgReact: svg.current,
         config,
         flow: config.flows[selectedFlowIndex],
         height,
         width,
       })
-  }
+    }
+  }, [config, height, width, selectedFlowIndex])
 
-  componentDidUpdate() {
-    const { config, selectedFlowIndex, height, width } = this.props
-    selectedFlowIndex > -1 &&
-      config.flows.length > selectedFlowIndex &&
-      updateChart({
-        svgReact: this.refs.mySvg,
-        config,
-        flow: config.flows[selectedFlowIndex],
-        height,
-        width,
-      })
-  }
-
-  render() {
-    return <svg key={JSON.stringify(this.props.config)} ref={'mySvg'} />
-  }
+  return <svg key={JSON.stringify(config)} ref={svg} />
 }
+
+export default DrawFlow

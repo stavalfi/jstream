@@ -1,9 +1,9 @@
-const { constants } = require('../utils')
-
-const { devServerHost, devServerPort } = constants
+const {
+  constants: { devServerHost, devServerPort, isBuildInfoMode },
+} = require('../utils')
 
 module.exports = () => ({
   host: devServerHost,
   port: devServerPort,
-  quiet: true,
+  quiet: !isBuildInfoMode,
 })
