@@ -5,6 +5,6 @@ import { hot } from 'react-hot-loader/root'
 // @ts-ignore
 import WebAppComponent from 'webapp-main-component-path'
 
-const App: Function = hot(() => <WebAppComponent />)
+const App: Function = hot(WebAppComponent)
 
 ReactDOM.render(<App />, document.getElementById('app'))

@@ -37,11 +37,13 @@ const webpackConfigPath = path.resolve(configFolderPath, 'webpack.config.js')
 const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
 const webappReactHmrFolderPath = path.resolve(webpackFolderPath, 'webapp-react-hmr')
 const webappReactHmrEntryFile = path.resolve(webappReactHmrFolderPath, 'index.tsx')
+const htmlWebpackPluginIndexHtmlPath = path.resolve(webappReactHmrFolderPath, 'index.html')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 module.exports = {
+  htmlWebpackPluginIndexHtmlPath,
   webappReactHmrFolderPath,
   ideEslintRcPath,
   getEntryFileName,

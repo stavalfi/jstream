@@ -7,12 +7,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
-const HtmlWebpackTemplate = require('html-webpack-template')
 const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
 const {
-  paths: { linterTsconfigPath, eslintRcPath },
+  paths: { linterTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
   constants: {
     isDevelopmentMode,
     isWebApp,
@@ -31,20 +30,6 @@ module.exports = () => {
   const gitRevisionPlugin = new GitRevisionPlugin()
 
   const eslintConfig = require(eslintRcPath)
-
-  const htmlComment = [
-    `Project: ${mainProjectDirName}`,
-    `Package: ${packageDirectoryName}`,
-    `Repository-Git-Branch: ${JSON.stringify(gitRevisionPlugin.branch())}`,
-    `Repository-Git-Hash: ${JSON.stringify(gitRevisionPlugin.commithash())}`,
-  ].join('\n')
-
-  const bodyHtmlSnippet = `
-  <!--
-${htmlComment}
-  -->
-  <div id="app"></div>
-  `
 
   return [
     !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions()),
@@ -66,9 +51,15 @@ ${htmlComment}
     }),
     isWebApp &&
       new HtmlWebpackPlugin({
-        template: HtmlWebpackTemplate,
-        title: 'Flow Editor',
-        bodyHtmlSnippet,
+        template: htmlWebpackPluginIndexHtmlPath,
+        build_info: [
+          '<!--',
+          `Project: ${mainProjectDirName}`,
+          `Package: ${packageDirectoryName}`,
+          `Repository-Git-Branch: ${JSON.stringify(gitRevisionPlugin.branch())}`,
+          `Repository-Git-Hash: ${JSON.stringify(gitRevisionPlugin.commithash())}`,
+          '-->',
+        ].join('\n'),
       }),
     !isBuildInfoMode &&
       !isCI &&

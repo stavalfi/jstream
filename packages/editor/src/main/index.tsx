@@ -15,23 +15,22 @@ const Main: FC<{}> = () => {
 
   return (
     <div className={'home'}>
-      1234590
-      {/*<div className={'draw-flow-section'}>*/}
-      {/*  <DrawFlow*/}
-      {/*    height={600}*/}
-      {/*    width={800}*/}
-      {/*    config={'config' in state && state.config}*/}
-      {/*    selectedFlowIndex={'selectedFlowIndex' in state && state.selectedFlowIndex}*/}
-      {/*  />*/}
-      {/*</div>*/}
-      {/*<div className={'flows-editor-section'}>*/}
-      {/*  <FlowsEditor*/}
-      {/*    config={'config' in state && state.config}*/}
-      {/*    configAsString={'configAsString' in state && state.configAsString}*/}
-      {/*    error={'error' in state && state.error}*/}
-      {/*    dispatch={dispatch}*/}
-      {/*  />*/}
-      {/*</div>*/}
+      <div className={'draw-flow-section'}>
+        <DrawFlow
+          height={600}
+          width={800}
+          config={'config' in state && state.config}
+          selectedFlowIndex={'selectedFlowIndex' in state && state.selectedFlowIndex}
+        />
+      </div>
+      <div className={'flows-editor-section'}>
+        <FlowsEditor
+          config={'config' in state && state.config}
+          configAsString={'configAsString' in state && state.configAsString}
+          error={'error' in state && state.error}
+          dispatch={dispatch}
+        />
+      </div>
     </div>
   )
 }

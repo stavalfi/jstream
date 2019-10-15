@@ -15,6 +15,7 @@
     "check:all": "yarn && lerna run build:dev && lerna run clean && lerna run build:prod && lerna run clean && lerna run test"
   },
   "dependencies": {
+    "@hot-loader/react-dom": "^16.10.2",
     "d3": "^5.9.2",
     "deep-equal": "^1.0.1",
     "dirty-json": "^0.7.0",
@@ -24,13 +25,12 @@
     "react": "^16.10.2",
     "react-ace": "^6.5.0",
     "react-dom": "^16.10.2",
+    "react-hot-loader": "^4.12.15",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "rxjs": "^6.5.2",
-    "uuid": "^3.3.2",
-    "react-hot-loader": "^4.12.15",
-    "@hot-loader/react-dom": "^16.10.2"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@babel/code-frame": "^7.5.5",
@@ -93,7 +93,6 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "git-revision-webpack-plugin": "^3.0.4",
     "html-webpack-plugin": "^3.2.0",
-    "html-webpack-template": "^6.2.0",
     "husky": "^2.3.0",
     "image-webpack-loader": "^6.0.0",
     "jest": "24.8.0",
