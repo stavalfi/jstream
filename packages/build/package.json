@@ -4,7 +4,7 @@
   "description": "",
   "main": ".config/index.js",
   "scripts": {
-    "b:start": "BUILD_INFO=false MEASURE_WEBPACK=false NOT_IDE=true MANUAL_RUN=true DEV=true DEV_SERVER=true node --trace-deprecation ../../node_modules/webpack-dev-server/bin/webpack-dev-server --hot --config .config/webpack.config.js",
+    "b:start": "BUILD_INFO=true MEASURE_WEBPACK=false NOT_IDE=true MANUAL_RUN=true DEV=true DEV_SERVER=true node --trace-deprecation ../../node_modules/webpack-dev-server/bin/webpack-dev-server --hot --config .config/webpack.config.js",
     "b:start:prod": "NOT_IDE=true MANUAL_RUN=true DEV=false DEV_SERVER=true webpack-dev-server --hot --config .config/webpack.config.js",
     "b:build:dev": "BUILD_INFO=true NOT_IDE=true MANUAL_RUN=true DEV=true node --trace-deprecation ../../node_modules/webpack/bin/webpack --config .config/webpack.config.js",
     "b:build:prod": "BUILD_INFO=true NOT_IDE=true MANUAL_RUN=true DEV=false node --trace-deprecation ../../node_modules/webpack/bin/webpack --config .config/webpack.config.js",

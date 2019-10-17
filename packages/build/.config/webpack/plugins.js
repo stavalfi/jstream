@@ -7,8 +7,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
-const { ForkTsPluginAliases } = require('../utils/paths-resolving-strategies')
+const {
+  pathsResolvingStrategies: { ForkTsPluginAliases },
+} = require('../utils')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
+const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 const {
   paths: { linterTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
@@ -33,6 +36,17 @@ module.exports = () => {
 
   return [
     !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions()),
+    new CircularDependencyPlugin({
+      // exclude detection of files based on a RegExp
+      exclude: /node_modules/,
+      // add errors to webpack instead of warnings
+      failOnError: false,
+      // allow import cycles that include an asyncronous import,
+      // e.g. via import(/* webpackMode: "weak" */ './file.js')
+      allowAsyncCycles: false,
+      // set the current working directory for displaying module paths
+      cwd: process.cwd(),
+    }),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: linterTsconfigPath,
       async: isDevelopmentMode,

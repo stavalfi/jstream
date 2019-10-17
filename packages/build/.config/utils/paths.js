@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const { packageDirectoryName, packagesProperties } = require('./constants')
+const { packageDirectoryName, packagesProperties, isBuildInfoMode } = require('./constants')
 
 function getEntryFileName(entryFolderPath) {
   return ['index.ts', 'index.tsx'].find(entryFileName => fs.existsSync(path.resolve(entryFolderPath, entryFileName)))
@@ -42,7 +42,7 @@ const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-
 
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
-module.exports = {
+const paths = {
   htmlWebpackPluginIndexHtmlPath,
   webappReactHmrFolderPath,
   ideEslintRcPath,
@@ -70,3 +70,5 @@ module.exports = {
   webpackConfigPath,
   webpackFolderPath,
 }
+
+module.exports = paths

@@ -1,4 +1,6 @@
-const { jestAliases } = require('../utils/paths-resolving-strategies')
+const {
+  pathsResolvingStrategies: { jestAliases },
+} = require('../utils')
 const { paths, constants } = require('../utils')
 
 const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, linterTsconfigPath, babelRcPath } = paths
