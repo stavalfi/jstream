@@ -7,15 +7,15 @@ const packagesDirName = 'packages'
 const filesExt = ['ts', 'tsx', 'js', 'jsx']
 const testFilesExt = 'spec'
 
-module.exports = {
+const constants = {
   mainProjectDirName,
   packagesDirName,
   publicPath: '/',
-  devServerPort: 8002,
-  devServerHost: 'localhost',
   devServerHttpProtocol: true,
   filesExt,
   testFilesExt,
   packagesProperties,
   ...envVariables,
 }
+
+module.exports = constants

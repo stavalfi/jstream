@@ -1,4 +1,6 @@
-const { webpackAliases, webpackAliasesIde } = require('../utils/paths-resolving-strategies')
+const {
+  pathsResolvingStrategies: { webpackAliases, webpackAliasesIde },
+} = require('../utils')
 const {
   paths: { appEntryFilePath },
   constants: { isDevServer, isWebApp, notIdeMode },

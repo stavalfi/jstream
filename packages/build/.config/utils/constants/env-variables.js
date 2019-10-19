@@ -10,8 +10,8 @@ const packageProperties = packagesProperties.find(({ name }) => pwd.endsWith(nam
 // also, the value we specify here won't be used by the ide so it's just a valid value, not more then that.
 const defaultPackageDirectoryName = packagesProperties[0].name
 
-const packageDirectoryName =
-  process.env['FOLDER'] || packageProperties.packageDirectoryName || defaultPackageDirectoryName
+const folder = process.env['FOLDER']
+const packageDirectoryName = folder || packageProperties.packageDirectoryName || defaultPackageDirectoryName
 
 const isCI = stringToBoolean(process.env['CI'])
 const isManualRun = stringToBoolean(process.env['MANUAL_RUN'])
@@ -24,8 +24,12 @@ const isDevelopmentMode = 'DEV' in process.env ? stringToBoolean(process.env['DE
 const isTestMode = stringToBoolean(process.env['TEST'])
 const notIdeMode = stringToBoolean(process.env['NOT_IDE'])
 const isBuildInfoMode = stringToBoolean(process.env['BUILD_INFO'])
+const devServerHost = process.env.HOST || 'localhost'
+const devServerPort = process.env.LOADER_PORT || '8080'
 
 module.exports = {
+  pwd,
+  folder,
   packageDirectoryName,
   isWebApp,
   isCI,

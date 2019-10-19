@@ -1,6 +1,8 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const jsonImporter = require('node-sass-json-importer')
-const { babelAliases } = require('../utils/paths-resolving-strategies')
+const {
+  pathsResolvingStrategies: { babelAliases },
+} = require('../utils')
 const {
   paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
   constants: { isDevelopmentMode, isWebApp, publicPath },
@@ -110,16 +112,7 @@ module.exports = () => ({
     {
       test: /\.(scss|sass)$/,
       exclude: /(node_modules)/,
-      use: [
-        ...getCssLoaders({ isDevelopmentMode, isWebApp }),
-        {
-          loader: 'sass-loader',
-          options: {
-            indentedSyntax: true,
-            importer: jsonImporter,
-          },
-        },
-      ],
+      use: [...getCssLoaders({ isDevelopmentMode, isWebApp }), 'fast-sass-loader'],
     },
   ],
 })
