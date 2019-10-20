@@ -11,7 +11,7 @@
     "test": "yarn run exec b:test",
     "test:unit": "yarn run exec b:test:unit",
     "test:watch": "yarn run exec b:test:watch",
-    "lint-staged": "yarn run exec b:lint-staged",
+    "pre-hook-stage": "FOLDER=parser NOT_IDE=true MANUAL_RUN=true yarn lint-staged --config ./lint-staged.config.js",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
     "exec": "FOLDER=parser yarn workspace @jstream/build"
