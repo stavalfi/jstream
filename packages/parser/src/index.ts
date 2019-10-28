@@ -28,4 +28,21 @@ export {
   findNodeIndex,
   arePathsEqual,
 } from '@parser/utils'
-export * from '@parser/types'
+export {
+  Graph,
+  PathsGroups,
+  AlgorithmParsedFlow,
+  ParsedFlow,
+  UserFlow,
+  ParsedUserFlow,
+  Splitters,
+  UserFlowObject,
+  Node,
+  UserGraph,
+  Path,
+  UserConfiguration,
+  BaseParsedFlow,
+  Configuration,
+  ParsedFlowOptionalFields,
+  ParseExtensionsProps,
+} from '@parser/types'

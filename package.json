@@ -130,7 +130,8 @@
     "webpack": "^4.41.1",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.2",
-    "webpack-messages": "^2.0.4"
+    "webpack-messages": "^2.0.4",
+    "@jstream/build": "^1.0.0"
   },
   "workspaces": [
     "packages/*",

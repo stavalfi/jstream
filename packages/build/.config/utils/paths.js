@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const { packageDirectoryName, packagesProperties, isBuildInfoMode } = require('./constants')
+const { packageDirectoryName, packagesProperties } = require('./constants')
 
 function getEntryFileName(entryFolderPath) {
   return ['index.ts', 'index.tsx'].find(entryFileName => fs.existsSync(path.resolve(entryFolderPath, entryFileName)))
@@ -14,6 +14,8 @@ function getEntryFilePath(entryFolderPath) {
 
 const currentPackageRootPath = path.resolve(__dirname, '..', '..')
 const packagesPath = path.resolve(currentPackageRootPath, '..')
+const repositoryDirPath = path.resolve(packagesPath, '..')
+const mainTsconfigPath = path.resolve(repositoryDirPath, 'tsconfig.json')
 const configFolderPath = path.resolve(currentPackageRootPath, '.config')
 
 const packageJsonFolderPath = (packagesProperties.find(({ name }) => name === packageDirectoryName) || {}).path
@@ -43,6 +45,8 @@ const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 const paths = {
+  repositoryDirPath,
+  mainTsconfigPath,
   htmlWebpackPluginIndexHtmlPath,
   webappReactHmrFolderPath,
   ideEslintRcPath,

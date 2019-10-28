@@ -1,6 +1,3 @@
-variables:
-  - group: github-props
-
 trigger:
   - master
 

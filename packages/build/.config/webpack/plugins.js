@@ -14,7 +14,7 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 const {
-  paths: { linterTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
+  paths: { mainTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
   constants: {
     isDevelopmentMode,
     isWebApp,
@@ -49,7 +49,7 @@ module.exports = () => {
         cwd: process.cwd(),
       }),
     new ForkTsCheckerWebpackPlugin({
-      tsconfig: linterTsconfigPath,
+      tsconfig: mainTsconfigPath,
       async: isDevelopmentMode,
       formatter: 'codeframe',
       compilerOptions: {

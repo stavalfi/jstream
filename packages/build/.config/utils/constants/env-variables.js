@@ -28,6 +28,8 @@ const devServerHost = process.env.HOST || 'localhost'
 const devServerPort = process.env.LOADER_PORT || '8080'
 
 module.exports = {
+  devServerHost,
+  devServerPort,
   pwd,
   folder,
   packageDirectoryName,

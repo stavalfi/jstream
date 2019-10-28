@@ -3,7 +3,7 @@ const {
 } = require('../utils')
 const { paths, constants } = require('../utils')
 
-const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, linterTsconfigPath, babelRcPath } = paths
+const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, mainTsconfigPath, babelRcPath } = paths
 
 const { isManualRun } = constants
 
@@ -34,7 +34,7 @@ module.exports = {
       globals: {
         __DEV__: true,
         'ts-jest': {
-          tsConfig: linterTsconfigPath,
+          tsConfig: mainTsconfigPath,
           babelConfig: require(babelRcPath),
         },
         window: {},
