@@ -50,7 +50,7 @@ export type ErrorObject = {
 type BuildErrorString = (params: ErrorObject) => string
 
 export const buildErrorString: BuildErrorString = ({ errorMessageKey, printDevError = __DEV__, ...rest }) => {
-  const errorMessage = errorMessages[errorMessageKey]
+  const errorMessage = errorMessages[errorMessageKey as keyof typeof errorMessages]
   const additionalExplanation = 'additionalExplanation' in errorMessage && errorMessage.additionalExplanation
   const solution = 'solution' in errorMessage && errorMessage.solution
 

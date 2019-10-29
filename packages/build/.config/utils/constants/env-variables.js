@@ -11,7 +11,7 @@ const packageProperties = packagesProperties.find(({ name }) => pwd.endsWith(nam
 const defaultPackageDirectoryName = packagesProperties[0].name
 
 const folder = process.env['FOLDER']
-const packageDirectoryName = folder || packageProperties.packageDirectoryName || defaultPackageDirectoryName
+const packageDirectoryName = folder || packageProperties.name || defaultPackageDirectoryName
 
 const isCI = stringToBoolean(process.env['CI'])
 const isManualRun = stringToBoolean(process.env['MANUAL_RUN'])
@@ -28,6 +28,8 @@ const devServerHost = process.env.HOST || 'localhost'
 const devServerPort = process.env.LOADER_PORT || '8080'
 
 module.exports = {
+  devServerHost,
+  devServerPort,
   pwd,
   folder,
   packageDirectoryName,

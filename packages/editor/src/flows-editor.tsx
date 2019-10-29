@@ -16,11 +16,13 @@ type Props = {
 const FlowsEditor: FC<Props> = ({ error, configAsString, config, dispatch }) => {
   useEffect(() => {
     if (error) {
+      // eslint-disable-next-line no-console
       console.log(error)
     }
   }, [error])
   useEffect(() => {
     if (config) {
+      // eslint-disable-next-line no-console
       console.log(config)
     }
   }, [config])

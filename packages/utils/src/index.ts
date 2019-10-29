@@ -1,2 +1,2 @@
-export * from '@utils/types'
-export * from '@utils/utils'
+export { Combinations, NonEmptyCombinations } from '@utils/types'
+export { removeProp, toArray, uuid, mapIf } from '@utils/utils'
