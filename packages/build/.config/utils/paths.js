@@ -40,11 +40,13 @@ const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
 const webappReactHmrFolderPath = path.resolve(webpackFolderPath, 'webapp-react-hmr')
 const webappReactHmrEntryFile = path.resolve(webappReactHmrFolderPath, 'index.tsx')
 const htmlWebpackPluginIndexHtmlPath = path.resolve(webappReactHmrFolderPath, 'index.html')
+const jsonStylesFilePathsPath = path.resolve(webappReactHmrFolderPath, 'json-sass-files.js')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 const paths = {
+  jsonStylesFilePathsPath,
   repositoryDirPath,
   mainTsconfigPath,
   htmlWebpackPluginIndexHtmlPath,

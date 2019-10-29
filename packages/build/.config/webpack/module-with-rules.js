@@ -3,7 +3,7 @@ const {
   pathsResolvingStrategies: { babelAliases },
 } = require('../utils')
 const {
-  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath, eslintConfig },
+  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath, eslintConfig, jsonStylesFilePathsPath },
   constants: { isDevelopmentMode, isWebApp, publicPath },
 } = require('../utils')
 
@@ -122,7 +122,19 @@ module.exports = () => ({
     {
       test: /\.(scss|sass)$/,
       exclude: /(node_modules)/,
-      use: [...getCssLoaders({ isDevelopmentMode, isWebApp }), 'fast-sass-loader'],
+      use: [
+        ...getCssLoaders({ isDevelopmentMode, isWebApp }),
+        'sass-loader',
+        {
+          loader: '@epegzz/sass-vars-loader',
+          options: {
+            syntax: 'sass',
+            // get array of paths of all json files that are been used
+            // in sass files and use them in the sass files.
+            files: require(jsonStylesFilePathsPath),
+          },
+        },
+      ],
     },
   ],
 })
