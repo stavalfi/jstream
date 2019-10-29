@@ -14,7 +14,7 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 const {
-  paths: { mainTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
+  paths: { mainTsconfigPath, htmlWebpackPluginIndexHtmlPath },
   constants: {
     isDevelopmentMode,
     isWebApp,
@@ -31,8 +31,6 @@ const {
 
 module.exports = () => {
   const gitRevisionPlugin = new GitRevisionPlugin()
-
-  const eslintConfig = require(eslintRcPath)
 
   return [
     !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions()),
@@ -55,11 +53,7 @@ module.exports = () => {
       compilerOptions: {
         ...ForkTsPluginAliases,
       },
-      eslint: true,
-      eslintOptions: {
-        ...eslintConfig,
-        globals: Object.keys(eslintConfig.globals || {}),
-      },
+      eslint: false,
     }),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,

@@ -1,10 +1,9 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const jsonImporter = require('node-sass-json-importer')
 const {
   pathsResolvingStrategies: { babelAliases },
 } = require('../utils')
 const {
-  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
+  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath, eslintConfig },
   constants: { isDevelopmentMode, isWebApp, publicPath },
 } = require('../utils')
 
@@ -44,6 +43,17 @@ module.exports = () => ({
                 },
               },
             ]),
+        {
+          loader: 'eslint-loader',
+          options: {
+            failOnError: !isDevelopmentMode,
+            failOnWarning: !isDevelopmentMode,
+            configFile: eslintConfig,
+            fix: false,
+            cache: isDevelopmentMode, // change to false if you change eslintrc rules (and then return to current value)
+            formatter: require('eslint-formatter-friendly'),
+          },
+        },
       ],
     },
     {
