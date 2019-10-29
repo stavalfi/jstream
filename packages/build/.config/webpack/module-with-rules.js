@@ -48,11 +48,11 @@ module.exports = () => ({
     },
     {
       test: /\.css$/,
-      loaders: getCssLoaders({ isDevelopmentMode, isWebApp }),
+      use: getCssLoaders({ isDevelopmentMode, isWebApp }),
     },
     {
       test: /\.font\.js$/,
-      loaders: [
+      use: [
         ...getCssLoaders({ isDevelopmentMode, isWebApp }),
         {
           loader: 'webfonts-loader',
@@ -66,7 +66,7 @@ module.exports = () => ({
     },
     {
       test: /\.(jpe?g|png|gif)$/i,
-      loaders: [
+      use: [
         {
           loader: 'file-loader',
           options: {
@@ -95,19 +95,19 @@ module.exports = () => ({
     },
     {
       test: /\.svg(\?.*)?$/,
-      loaders: ['url-loader?limit=10000&mimetype=image/svg+xml'],
+      use: ['url-loader?limit=10000&mimetype=image/svg+xml'],
     },
     {
       test: /\.ttf(\?.*)?$/,
-      loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+      use: ['url-loader?limit=10000&mimetype=application/octet-stream'],
     },
     {
       test: /\.(woff|woff2)(\?.*)?$/,
-      loader: 'url-loader?limit=10000&mimetype=application/font-woff',
+      use: ['url-loader?limit=10000&mimetype=application/font-woff'],
     },
     {
       test: /\.eot(\?.*)?$/,
-      loader: 'url-loader?limit=10000&mimetype=application/vnd.ms-fontobject',
+      use: ['url-loader?limit=10000&mimetype=application/vnd.ms-fontobject'],
     },
     {
       test: /\.(scss|sass)$/,

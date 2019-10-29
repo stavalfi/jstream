@@ -7,6 +7,6 @@ module.exports = () => ({
   path: distPath,
   pathinfo: false,
   publicPath,
-  filename: `[${isDevServer ? 'hash' : 'contenthash'}].[name].js`,
+  filename: isDevServer ? '[name].js' : '[contenthash].[name].js',
   ...(!isWebApp && { libraryTarget: 'umd' }),
 })

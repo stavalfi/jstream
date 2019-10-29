@@ -1,7 +1,20 @@
-import * as d3 from 'd3'
 import { Configuration, Graph, graphNodeToDisplayName, Splitters } from '@jstream/parser'
 import { Flow } from '@jstream/flower'
 import '@editor/styles.css'
+import {
+  scaleOrdinal,
+  schemeCategory10,
+  forceManyBody,
+  forceCenter,
+  forceX,
+  forceY,
+  event,
+  select,
+  forceSimulation,
+  forceLink,
+  zoom,
+  drag,
+} from 'd3'
 
 function toNodes({ splitters, graph }: { splitters: Splitters; graph: Graph }) {
   return graph.map(graphNodeToDisplayName(splitters)).map((displayName, index) => ({ id: `(${index}) ${displayName}` }))
@@ -34,7 +47,7 @@ export function updateChart({
   const nodes = toNodes({ splitters: config.splitters, graph: flow.graph })
   const links = toLinks({ splitters: config.splitters, graph: flow.graph })
 
-  const color = d3.scaleOrdinal(d3.schemeCategory10)
+  const color = scaleOrdinal(schemeCategory10)
 
   drawD3({ nodes, links })
 
@@ -60,29 +73,25 @@ export function updateChart({
       })
     })
 
-    const labelLayout = d3
-      // @ts-ignore
-      .forceSimulation(label.nodes)
-      .force('charge', d3.forceManyBody().strength(-50))
+    // @ts-ignore
+    const labelLayout = forceSimulation(label.nodes)
+      .force('charge', forceManyBody().strength(-50))
       .force(
         'link',
-        d3
-          .forceLink(label.links)
+        forceLink(label.links)
           .distance(0)
           .strength(1),
       )
 
-    const graphLayout = d3
-      // @ts-ignore
-      .forceSimulation(graph.nodes)
-      .force('charge', d3.forceManyBody().strength(-3000))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('x', d3.forceX(width / 2).strength(1))
-      .force('y', d3.forceY(height / 2).strength(1))
+    // @ts-ignore
+    const graphLayout = forceSimulation(graph.nodes)
+      .force('charge', forceManyBody().strength(-3000))
+      .force('center', forceCenter(width / 2, height / 2))
+      .force('x', forceX(width / 2).strength(1))
+      .force('y', forceY(height / 2).strength(1))
       .force(
         'link',
-        d3
-          .forceLink(graph.links)
+        forceLink(graph.links)
           .id(function(d) {
             // @ts-ignore
             return d.id
@@ -106,8 +115,7 @@ export function updateChart({
       return a === b || adjlist[`${a}-${b}`]
     }
 
-    const svg = d3
-      .select(svgReact)
+    const svg = select(svgReact)
       .attr('width', x => {
         return width
       })
@@ -128,11 +136,10 @@ export function updateChart({
     const container = svg.append('g')
 
     svg.call(
-      d3
-        .zoom()
+      zoom()
         .scaleExtent([0.1, 4])
         .on('zoom', function() {
-          container.attr('transform', d3.event.transform)
+          container.attr('transform', event.transform)
         }),
     )
 
@@ -164,8 +171,7 @@ export function updateChart({
 
     node.call(
       // @ts-ignore
-      d3
-        .drag()
+      drag()
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended),
@@ -213,7 +219,7 @@ export function updateChart({
     // @ts-ignore
     function focus(d) {
       // @ts-ignore
-      const index = d3.select(d3.event.target).datum().index
+      const index = select(event.target).datum().index
       node.style('opacity', function(o) {
         // @ts-ignore
         return neigh(index, o.index) ? 1 : 0.1
@@ -265,8 +271,8 @@ export function updateChart({
 
     // @ts-ignore
     function dragstarted(d) {
-      d3.event.sourceEvent.stopPropagation()
-      if (!d3.event.active) {
+      event.sourceEvent.stopPropagation()
+      if (!event.active) {
         graphLayout.alphaTarget(0.3).restart()
       }
       d.fx = d.x
@@ -275,17 +281,17 @@ export function updateChart({
 
     // @ts-ignore
     function dragged(d) {
-      d.fx = d3.event.x
-      d.fy = d3.event.y
+      d.fx = event.x
+      d.fy = event.y
     }
 
     // @ts-ignore
     function dragended(d) {
-      if (!d3.event.active) {
+      if (!event.active) {
         graphLayout.alphaTarget(0)
       }
       d.fx = null
       d.fy = null
     }
-  } // d3.json
+  }
 }
