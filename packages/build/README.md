@@ -1,5 +1,9 @@
 # Bob - Intellij compatible unified build package
 
+#### Webpack 5 - Stay if you are brave
+
+(remove webpack 5 commit if you want production-ready starter)
+
 ### Supported liberaries:
 
 1. React
