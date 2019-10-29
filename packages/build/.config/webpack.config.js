@@ -2,7 +2,7 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const { externals, output, moduleWithRules, resolve, plugins, devServer, optimization, entry } = require('./webpack')
 const {
-  constants: { isMeasureWebpack, isDevelopmentMode, isBuildInfoMode },
+  constants: { isMeasureWebpack, isDevelopmentMode, isBuildInfoMode, isDevServer },
 } = require('./utils')
 
 const smp = new SpeedMeasurePlugin({
@@ -14,9 +14,9 @@ const smp = new SpeedMeasurePlugin({
 const config = {
   mode: isDevelopmentMode ? 'development' : 'production',
 
-  stats: isDevelopmentMode && !isBuildInfoMode ? 'none' : 'normal',
+  ...(isDevServer && !isBuildInfoMode && { stats: 'none' }),
 
-  devtool: isDevelopmentMode ? 'cheap-module-eval-source-map' : 'none',
+  devtool: isDevelopmentMode ? 'eval-cheap-module-source-map' : 'nosources-source-map',
 
   entry: entry(),
 

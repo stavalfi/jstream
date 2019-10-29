@@ -3,7 +3,7 @@ trigger:
 
 strategy:
   matrix:
-    linux:
+    linux_node_12:
       imageName: 'ubuntu-latest'
       node_version: 12.x
     mac_node_10:

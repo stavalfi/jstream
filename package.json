@@ -9,6 +9,7 @@
     "docs": "yarn workspace @jstream/website start",
     "playground": "yarn workspace @jstream/playground start",
     "test": "lerna exec --stream -- yarn test",
+    "build:prod": "lerna exec --stream --concurrency 1 -- yarn build:prod",
     "clean": "lerna run clean --parallel",
     "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
     "check:all": "yarn && lerna run build:dev && lerna run clean && lerna run build:prod && lerna run clean && lerna run test"
@@ -20,13 +21,9 @@
     "packages/*",
     "packages/docs/website"
   ],
-  "resolutions": {
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.3"
-  },
   "dependencies": {
     "@hot-loader/react-dom": "^16.10.2",
-    "d3": "^5.9.2",
+    "d3": "^5.12.0",
     "deep-equal": "^1.0.1",
     "dirty-json": "^0.7.0",
     "jsonic": "^0.3.1",
@@ -106,7 +103,7 @@
     "fork-ts-checker-webpack-plugin": "^1.5.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "git-revision-webpack-plugin": "^3.0.4",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "https://github.com/PutziSan/html-webpack-plugin",
     "husky": "^2.3.0",
     "image-webpack-loader": "^6.0.0",
     "jest": "24.8.0",
@@ -138,7 +135,7 @@
     "typescript": "3.5.2",
     "url-loader": "1.1.2",
     "webfonts-loader": "4.4.0",
-    "webpack": "^4.41.1",
+    "webpack": "^5.0.0-beta.1",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.2",
     "webpack-messages": "^2.0.4"
