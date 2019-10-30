@@ -6,13 +6,14 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "yarn run exec b:start",
+    "start:react-experimental": "yarn run exec b:start:react-experimental",
     "start:prod": "yarn run exec b:start:prod",
     "build:dev": "yarn run exec b:build:dev",
     "build:prod": "yarn run exec b:build:prod",
     "test": "yarn run exec b:test",
     "test:unit": "yarn run exec b:test:unit",
     "test:watch": "yarn run exec b:test:watch",
-    "pre-hook-stage": "FOLDER=editor NOT_IDE=true MANUAL_RUN=true yarn lint-staged --config ./lint-staged.config.js",
+    "pre-hook-stage": "FOLDER=editor NOT_IDE=true yarn lint-staged --config ./lint-staged.config.js",
     "clean": "rm -rf dist",
     "clean:all": "yarn run clean && rm -rf node_modules",
     "exec": "FOLDER=editor WEB_APP=true yarn workspace @jstream/build"

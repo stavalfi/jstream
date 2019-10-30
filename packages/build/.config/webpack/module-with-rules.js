@@ -8,15 +8,16 @@ const {
 } = require('../utils')
 
 module.exports = () => ({
+  strictExportPresence: true,
   rules: [
     {
       test: /\.(ts|js)x?$/,
-      exclude: /(node_module|dist|my-symphony.font.js)/,
+      exclude: /(node_module|dist)/,
       use: [
         {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: true,
+            cacheDirectory: false,
             ...require(babelRcPath),
           },
         },
@@ -50,7 +51,7 @@ module.exports = () => ({
             failOnWarning: !isDevelopmentMode,
             configFile: eslintConfig,
             fix: false,
-            cache: isDevelopmentMode, // change to false if you change eslintrc rules (and then return to current value)
+            cache: false, // change to false if you change eslintrc rules (and then return to current value)
             formatter: require('eslint-formatter-friendly'),
           },
         },

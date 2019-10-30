@@ -3,6 +3,7 @@
   "name": "@jstream/main",
   "scripts": {
     "editor": "yarn workspace @jstream/editor start",
+    "editor:react-experimental": "yarn workspace @jstream/editor start:react-experimental",
     "parser": "yarn workspace @jstream/parser start",
     "flower": "yarn workspace @jstream/flower start",
     "utils": "yarn workspace @jstream/utils start",
@@ -10,8 +11,9 @@
     "playground": "yarn workspace @jstream/playground start",
     "test": "lerna exec --stream -- yarn test",
     "build:prod": "lerna exec --stream --concurrency 1 -- yarn build:prod",
-    "clean": "lerna run clean --parallel",
-    "clean:all": "lerna run clean:all --parallel && rm -rf node_modules",
+    "clear-caches": "rm js/builder/.eslintcache || find . -name \".cache\" -print0 | xargs -0 rm -rf || yarn workspace @ui/builder jest --clearCache",
+    "clean": "lerna run clean --parallel && yarn clear-caches",
+    "clean:all": "yarn clean && lerna run clean:all --parallel && rm -rf node_modules",
     "check:all": "yarn && lerna run build:dev && lerna run clean && lerna run build:prod && lerna run clean && lerna run test"
   },
   "engines": {
@@ -32,6 +34,8 @@
     "react": "^16.11.0",
     "react-ace": "^6.5.0",
     "react-dom": "^16.11.0",
+    "react-dom-experimental": "npm:react-dom@experimental",
+    "react-experimental": "npm:react@experimental",
     "react-hot-loader": "^4.12.15",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
@@ -132,7 +136,7 @@
     "terser-webpack-plugin": "^2.1.3",
     "ts-jest": "24.0.2",
     "ts-loader": "6.0.0",
-    "typescript": "3.5.2",
+    "typescript": "^3.6.4",
     "url-loader": "1.1.2",
     "webfonts-loader": "4.4.0",
     "webpack": "^5.0.0-beta.1",

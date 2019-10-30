@@ -17,9 +17,11 @@ const {
   paths: { mainTsconfigPath, htmlWebpackPluginIndexHtmlPath },
   constants: {
     isDevelopmentMode,
+    isExperimentalReactMode,
     isWebApp,
     packageDirectoryName,
     isCI,
+    disableHmr,
     isDevServer,
     mainProjectDirName,
     isBuildInfoMode,
@@ -57,6 +59,9 @@ module.exports = () => {
     }),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,
+      __DEV_SERVER__: isDevServer,
+      __HMR__: !disableHmr,
+      __REACT_EXPERIMENTAL__: isExperimentalReactMode,
     }),
     isWebApp &&
       new HtmlWebpackPlugin({

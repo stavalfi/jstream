@@ -14,7 +14,6 @@ const folder = process.env['FOLDER']
 const packageDirectoryName = folder || packageProperties.name || defaultPackageDirectoryName
 
 const isCI = stringToBoolean(process.env['CI'])
-const isManualRun = stringToBoolean(process.env['MANUAL_RUN'])
 const isDevServer = stringToBoolean(process.env['DEV_SERVER'])
 const isMeasureWebpack = stringToBoolean(process.env['MEASURE_WEBPACK'])
 const isWebApp = stringToBoolean(process.env['WEB_APP'])
@@ -26,8 +25,12 @@ const notIdeMode = stringToBoolean(process.env['NOT_IDE'])
 const isBuildInfoMode = stringToBoolean(process.env['BUILD_INFO'])
 const devServerHost = process.env.HOST || 'localhost'
 const devServerPort = process.env.LOADER_PORT || '8080'
+const disableHmr = stringToBoolean(process.env.DISABLE_HMR)
+const isExperimentalReactMode = stringToBoolean(process.env.REACT_EXPERIMENTAL)
 
-module.exports = {
+const env = {
+  isExperimentalReactMode,
+  disableHmr: isExperimentalReactMode || disableHmr,
   devServerHost,
   devServerPort,
   pwd,
@@ -35,7 +38,6 @@ module.exports = {
   packageDirectoryName,
   isWebApp,
   isCI,
-  isManualRun,
   isDevServer,
   isMeasureWebpack,
   isDevelopmentMode,
@@ -43,3 +45,4 @@ module.exports = {
   notIdeMode,
   isBuildInfoMode,
 }
+module.exports = env

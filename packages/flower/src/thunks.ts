@@ -101,6 +101,7 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
     rule => !('nodeIndex' in rule),
   )
 
+  // eslint-disable-next-line no-console
   console.log(
     `request: ${
       'fromNodeIndex' in request.payload
@@ -136,6 +137,7 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
     .then<string[], string[]>(
       nextNodeNames => (nextNodeNames ? (Array.isArray(nextNodeNames) ? nextNodeNames : [nextNodeNames]) : []),
       error => {
+        // eslint-disable-next-line no-console
         console.log(
           'custom rule function threw error. this library will assume that this rule returned an empty array instead. error:',
           error,
@@ -155,6 +157,7 @@ const getNextAdvanceActions: GetNextAdvanceActions = request => ({ flows, active
 
       const fromNodeDisplayName = graphNodeToDisplayName(splitters)(toNode)
 
+      // eslint-disable-next-line no-console
       console.log(
         `from: ${fromNodeDisplayName} (${request.payload.toNodeIndex}) to: [${nextNodeIndexes
           .map(i => `${graphNodeToDisplayName(splitters)(flow.graph[i])} (${i})`)
