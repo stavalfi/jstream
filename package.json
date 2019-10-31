@@ -22,6 +22,9 @@
     "packages/*",
     "packages/docs/website"
   ],
+  "resolutions": {
+    "@types/node": "12.7.2"
+  },
   "dependencies": {
     "@hot-loader/react-dom": "^16.10.2",
     "d3": "^5.12.0",
@@ -101,6 +104,7 @@
     "fast-css-loader": "1.0.2",
     "fast-deep-equal": "^2.0.1",
     "file-loader": "3.0.1",
+    "find-git-root": "^1.0.2",
     "find-package-json": "^1.2.0",
     "fork-ts-checker-webpack-plugin": "^1.5.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
@@ -114,12 +118,7 @@
     "lerna": "^3.6.0",
     "lint-staged": "^9.4.2",
     "mini-css-extract-plugin": "0.6.0",
-    "module-alias": "^2.2.2",
-    "node-command-line": "1.0.2",
-    "node-sass-json-importer": "4.1.0",
-    "now": "^16.1.2",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "parcel-bundler": "^1.12.4",
     "pkg-ok": "^2.3.1",
     "prettier": "^1.18.0",
     "pretty-quick": "^1.11.0",
@@ -139,10 +138,9 @@
     "typescript": "^3.6.4",
     "url-loader": "1.1.2",
     "webfonts-loader": "4.4.0",
-    "webpack": "^4.41.2",
+    "webpack": "^5.0.0-beta.2",
     "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.2",
-    "webpack-messages": "^2.0.4"
+    "webpack-dev-server": "^3.8.2"
   },
   "private": true,
   "description": "represent graphs, differently.",

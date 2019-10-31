@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
+const findGitRoot = require('find-git-root')
 
-const { packageDirectoryName, packagesProperties } = require('./constants')
+const { packageDirectoryName, packagesProperties, packagesDirName } = require('./constants')
 
 function getEntryFileName(entryFolderPath) {
   return ['index.ts', 'index.tsx'].find(entryFileName => fs.existsSync(path.resolve(entryFolderPath, entryFileName)))
@@ -12,12 +13,12 @@ function getEntryFilePath(entryFolderPath) {
   return path.resolve(entryFolderPath, entryFileName)
 }
 
-const currentPackageRootPath = path.resolve(__dirname, '..', '..')
-const packagesPath = path.resolve(currentPackageRootPath, '..')
-const repositoryDirPath = path.resolve(packagesPath, '..')
+const repositoryDirPath = path.resolve(findGitRoot(__dirname), '..')
 const mainTsconfigPath = path.resolve(repositoryDirPath, 'tsconfig.json')
-const configFolderPath = path.resolve(currentPackageRootPath, '.config')
+const packagesPath = path.resolve(repositoryDirPath, packagesDirName)
 
+const currentPackageRootPath = (packagesProperties.find(({ name }) => name === 'build') || {}).path
+const configFolderPath = path.resolve(currentPackageRootPath, '.config')
 const packageJsonFolderPath = (packagesProperties.find(({ name }) => name === packageDirectoryName) || {}).path
 const libTsconfigFilePath = path.resolve(configFolderPath, 'lib-tsconfig.json')
 const linterTsconfigPath = path.resolve(packageJsonFolderPath, 'tsconfig.json')

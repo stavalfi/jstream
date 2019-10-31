@@ -9,6 +9,7 @@ const { packagesProperties, mainProjectDirName, packageDirectoryName } = constan
 
 const buildAliasesToPackage = ({ fromRegex = '', toRegex = '', isToArray, configToIde }) =>
   packagesProperties
+    .filter(packageProps => !['build', 'docs', 'website'].includes(packageProps.name))
     .map(packageProperties => ({
       ...((configToIde || packageProperties.name === packageDirectoryName) && {
         [`@${packageProperties.name}-test${fromRegex ? `/${fromRegex}` : ''}`]: path.resolve(
