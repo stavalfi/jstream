@@ -6,9 +6,6 @@ strategy:
     linux_node_12:
       imageName: 'ubuntu-latest'
       node_version: 12.x
-    mac_node_10:
-      imageName: 'macos-10.13'
-      node_version: 10.x
     mac_node_12:
       imageName: 'macos-10.13'
       node_version: 12.x
@@ -25,8 +22,8 @@ steps:
       versionSpec: $(node_version)
     displayName: 'Install Node.js'
 
-  - script: yarn
-    displayName: 'install dependencies'
+  - script: yarn && yarn add --dev -W webpack && yarn
+    displayName: 'install dependencies with webpack 4'
 
   - script: yarn lerna run build:dev --sort
     displayName: 'running build:dev in all packages'
@@ -42,3 +39,15 @@ steps:
 
   - script: yarn lerna run test
     displayName: 'running tests in all packages'
+
+  - script: yarn add --dev -W webpack@next && yarn
+    displayName: 'install webpack 5'
+
+  - script: yarn lerna run build:dev --sort
+    displayName: 'running build:dev in all packages'
+
+  - script: yarn lerna run clean
+    displayName: 'cleaning dist folder in all packages'
+
+  - script: yarn lerna run build:prod --sort
+    displayName: 'running build:prod in all packages'

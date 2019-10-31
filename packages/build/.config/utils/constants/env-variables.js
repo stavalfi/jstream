@@ -27,7 +27,12 @@ const devServerHost = process.env.HOST || 'localhost'
 const devServerPort = process.env.LOADER_PORT || '8080'
 const disableHmr = stringToBoolean(process.env.DISABLE_HMR)
 const isExperimentalReactMode = stringToBoolean(process.env.REACT_EXPERIMENTAL)
-const isWebpack5Mode = stringToBoolean(process.env.WEBPACK_5)
+
+// determine webpack version
+const finder = require('find-package-json')
+const { version: webpackVersion } = finder('webpack').next().value
+
+const isWebpack5Mode = webpackVersion.startsWith('5')
 
 const env = {
   isWebpack5Mode,

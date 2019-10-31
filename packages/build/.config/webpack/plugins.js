@@ -31,7 +31,7 @@ const {
   },
 } = require('../utils')
 
-const HtmlWebpackPlugin = isWebpack5Mode ? require('html-webpack-plugin') : require('html-webpack-plugin-stable')
+const HtmlWebpackPlugin = isWebpack5Mode ? require('html-webpack-plugin-webpack5') : require('html-webpack-plugin')
 
 module.exports = () => {
   const gitRevisionPlugin = new GitRevisionPlugin()
