@@ -17,7 +17,7 @@ module.exports = () => ({
         {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: false,
+            cacheDirectory: true,
             ...require(babelRcPath),
           },
         },
@@ -51,7 +51,7 @@ module.exports = () => ({
             failOnWarning: !isDevelopmentMode,
             configFile: eslintConfig,
             fix: false,
-            cache: false, // change to false if you change eslintrc rules (and then return to current value)
+            cache: isDevelopmentMode, // change to false if you change eslintrc rules (and then return to current value)
             formatter: require('eslint-formatter-friendly'),
           },
         },

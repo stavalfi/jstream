@@ -12,8 +12,6 @@ module.exports = () => ({
     ? {
         ...webpackAliases,
         ...getReactAliases(),
-        // to support webpack 5: https://github.com/webpack/webpack/issues/9802#issuecomment-547407544
-        'd3-color': 'd3-color/dist/d3-color.js',
         ...(isWebApp && {
           'webapp-main-component-path': appEntryFilePath,
         }),

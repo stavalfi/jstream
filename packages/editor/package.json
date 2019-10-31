@@ -6,7 +6,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "yarn run exec b:start",
-    "start:react-experimental": "yarn run exec b:start:react-experimental",
     "start:prod": "yarn run exec b:start:prod",
     "build:dev": "yarn run exec b:build:dev",
     "build:prod": "yarn run exec b:build:prod",

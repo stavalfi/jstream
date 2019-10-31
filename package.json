@@ -3,7 +3,6 @@
   "name": "@jstream/main",
   "scripts": {
     "editor": "yarn workspace @jstream/editor start",
-    "editor:react-experimental": "yarn workspace @jstream/editor start:react-experimental",
     "parser": "yarn workspace @jstream/parser start",
     "flower": "yarn workspace @jstream/flower start",
     "utils": "yarn workspace @jstream/utils start",
@@ -11,7 +10,7 @@
     "playground": "yarn workspace @jstream/playground start",
     "test": "lerna exec --stream -- yarn test",
     "build:prod": "lerna exec --stream --concurrency 1 -- yarn build:prod",
-    "clear-caches": "rm js/builder/.eslintcache || find . -name \".cache\" -print0 | xargs -0 rm -rf || yarn workspace @ui/builder jest --clearCache",
+    "clear-caches": "rm packages/builder/.eslintcache || find . -name \".cache\" -print0 | xargs -0 rm -rf || yarn workspace @ui/builder jest --clearCache",
     "clean": "lerna run clean --parallel && yarn clear-caches",
     "clean:all": "yarn clean && lerna run clean:all --parallel && rm -rf node_modules",
     "check:all": "yarn && lerna run build:dev && lerna run clean && lerna run build:prod && lerna run clean && lerna run test"
@@ -108,6 +107,7 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "git-revision-webpack-plugin": "^3.0.4",
     "html-webpack-plugin": "https://github.com/PutziSan/html-webpack-plugin",
+    "html-webpack-plugin-stable": "npm:html-webpack-plugin",
     "husky": "^2.3.0",
     "image-webpack-loader": "^6.0.0",
     "jest": "24.8.0",
@@ -115,6 +115,7 @@
     "lerna": "^3.6.0",
     "lint-staged": "^9.4.2",
     "mini-css-extract-plugin": "0.6.0",
+    "module-alias": "^2.2.2",
     "node-command-line": "1.0.2",
     "node-sass-json-importer": "4.1.0",
     "now": "^16.1.2",
@@ -139,7 +140,7 @@
     "typescript": "^3.6.4",
     "url-loader": "1.1.2",
     "webfonts-loader": "4.4.0",
-    "webpack": "^5.0.0-beta.1",
+    "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.2",
     "webpack-messages": "^2.0.4"
