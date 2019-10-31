@@ -3,15 +3,22 @@ const {
 } = require('../utils')
 const { paths, constants } = require('../utils')
 
-const { mainTestsFolderPath, testPolyfillsFilePath, srcPath, mainTsconfigPath, babelRcPath } = paths
+const {
+  mainTestsFolderPath,
+  testPolyfillsFilePath,
+  srcPath,
+  mainTsconfigPath,
+  babelRcPath,
+  isExperimentalReactMode,
+} = paths
 
-const { isManualRun } = constants
+const { notIdeMode } = constants
 
 module.exports = {
   expand: true,
   projects: [
     // webstorm doesn't support running multiple projects when clicking on jest buttons in the IDE.
-    ...(isManualRun
+    ...(notIdeMode
       ? [
           {
             displayName: 'lint',
@@ -26,13 +33,22 @@ module.exports = {
       displayName: 'test',
       preset: 'ts-jest/presets/js-with-ts',
       testEnvironment: 'node',
-      moduleNameMapper: jestAliases,
+      moduleNameMapper: {
+        ...(isExperimentalReactMode && {
+          react: 'react-experimental',
+          'react-dom': 'react-dom-experimental',
+        }),
+        ...jestAliases,
+      },
       testRegex: [`./*.spec.js$`, `./*.spec.ts$`],
       roots: [mainTestsFolderPath, srcPath],
       testPathIgnorePatterns: ['node_modules'],
       setupFiles: [testPolyfillsFilePath],
       globals: {
         __DEV__: true,
+        __DEV_SERVER__: false,
+        __HMR__: false,
+        __REACT_EXPERIMENTAL__: isExperimentalReactMode,
         'ts-jest': {
           tsConfig: mainTsconfigPath,
           babelConfig: require(babelRcPath),

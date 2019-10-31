@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
+const findGitRoot = require('find-git-root')
 
-const { packageDirectoryName, packagesProperties } = require('./constants')
+const { packageDirectoryName, packagesProperties, packagesDirName } = require('./constants')
 
 function getEntryFileName(entryFolderPath) {
   return ['index.ts', 'index.tsx'].find(entryFileName => fs.existsSync(path.resolve(entryFolderPath, entryFileName)))
@@ -12,12 +13,12 @@ function getEntryFilePath(entryFolderPath) {
   return path.resolve(entryFolderPath, entryFileName)
 }
 
-const currentPackageRootPath = path.resolve(__dirname, '..', '..')
-const packagesPath = path.resolve(currentPackageRootPath, '..')
-const repositoryDirPath = path.resolve(packagesPath, '..')
+const repositoryDirPath = path.resolve(findGitRoot(__dirname), '..')
 const mainTsconfigPath = path.resolve(repositoryDirPath, 'tsconfig.json')
-const configFolderPath = path.resolve(currentPackageRootPath, '.config')
+const packagesPath = path.resolve(repositoryDirPath, packagesDirName)
 
+const currentPackageRootPath = (packagesProperties.find(({ name }) => name === 'build') || {}).path
+const configFolderPath = path.resolve(currentPackageRootPath, '.config')
 const packageJsonFolderPath = (packagesProperties.find(({ name }) => name === packageDirectoryName) || {}).path
 const libTsconfigFilePath = path.resolve(configFolderPath, 'lib-tsconfig.json')
 const linterTsconfigPath = path.resolve(packageJsonFolderPath, 'tsconfig.json')
@@ -37,18 +38,20 @@ const nodeModulesPath = path.resolve(packageJsonFolderPath, 'node_modules')
 const mainTestsFolderPath = path.resolve(packageJsonFolderPath, 'test')
 const webpackConfigPath = path.resolve(configFolderPath, 'webpack.config.js')
 const webpackFolderPath = path.resolve(configFolderPath, 'webpack')
-const webappReactHmrFolderPath = path.resolve(webpackFolderPath, 'webapp-react-hmr')
-const webappReactHmrEntryFile = path.resolve(webappReactHmrFolderPath, 'index.tsx')
-const htmlWebpackPluginIndexHtmlPath = path.resolve(webappReactHmrFolderPath, 'index.html')
+const webappReactEntryPointFolderPath = path.resolve(webpackFolderPath, 'webapp-react-entry-point')
+const webappReactHmrEntryFile = path.resolve(webappReactEntryPointFolderPath, 'entry-file.jsx')
+const htmlWebpackPluginIndexHtmlPath = path.resolve(webappReactEntryPointFolderPath, 'index.html')
+const jsonStylesFilePathsPath = path.resolve(webappReactEntryPointFolderPath, 'json-sass-files.js')
 const testPolyfillFilePath = path.resolve(mainTestsFolderPath, 'utils', 'import-polyfills.ts')
 
 const allTestsFolders = [srcPath, mainTestsFolderPath]
 
 const paths = {
+  jsonStylesFilePathsPath,
   repositoryDirPath,
   mainTsconfigPath,
   htmlWebpackPluginIndexHtmlPath,
-  webappReactHmrFolderPath,
+  webappReactEntryPointFolderPath,
   ideEslintRcPath,
   getEntryFileName,
   getEntryFilePath,

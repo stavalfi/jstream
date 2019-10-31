@@ -1,6 +1,6 @@
 const { constants } = require('./utils')
 
-const { isCI, isManualRun, isWebApp, isTestMode } = constants
+const { isWebApp, isTestMode, disableHmr } = constants
 
 module.exports = {
   presets: [
@@ -21,7 +21,7 @@ module.exports = {
     '@babel/typescript',
   ].filter(Boolean),
   plugins: [
-    isWebApp && 'react-hot-loader/babel',
+    !disableHmr && isWebApp && 'react-hot-loader/babel',
     '@babel/proposal-object-rest-spread',
     [
       '@babel/plugin-proposal-decorators',
@@ -37,16 +37,5 @@ module.exports = {
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-syntax-import-meta',
     isTestMode && 'dynamic-import-node',
-    removeConsolePlugin(),
   ].filter(Boolean),
-}
-
-function removeConsolePlugin() {
-  const noConsolePlugin = ['transform-remove-console', { exclude: ['error', 'warn'] }]
-
-  if (isTestMode && isManualRun && !isCI) {
-    return noConsolePlugin
-  }
-
-  return false
 }

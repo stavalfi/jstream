@@ -3,7 +3,6 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const chalk = require('chalk')
 const _startCase = require('lodash/startCase')
@@ -14,12 +13,15 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 const {
-  paths: { mainTsconfigPath, eslintRcPath, htmlWebpackPluginIndexHtmlPath },
+  paths: { mainTsconfigPath, htmlWebpackPluginIndexHtmlPath },
   constants: {
+    isWebpack5Mode,
     isDevelopmentMode,
+    isExperimentalReactMode,
     isWebApp,
     packageDirectoryName,
     isCI,
+    disableHmr,
     isDevServer,
     mainProjectDirName,
     isBuildInfoMode,
@@ -29,10 +31,10 @@ const {
   },
 } = require('../utils')
 
+const HtmlWebpackPlugin = isWebpack5Mode ? require('html-webpack-plugin-webpack5') : require('html-webpack-plugin')
+
 module.exports = () => {
   const gitRevisionPlugin = new GitRevisionPlugin()
-
-  const eslintConfig = require(eslintRcPath)
 
   return [
     !isBuildInfoMode && new FriendlyErrorsWebpackPlugin(getFriendlyErrorsWebpackPluginOptions()),
@@ -55,14 +57,13 @@ module.exports = () => {
       compilerOptions: {
         ...ForkTsPluginAliases,
       },
-      eslint: true,
-      eslintOptions: {
-        ...eslintConfig,
-        globals: Object.keys(eslintConfig.globals || {}),
-      },
+      eslint: false,
     }),
     new DefinePlugin({
       __DEV__: isDevelopmentMode,
+      __DEV_SERVER__: isDevServer,
+      __HMR__: !disableHmr,
+      __REACT_EXPERIMENTAL__: isExperimentalReactMode,
     }),
     isWebApp &&
       new HtmlWebpackPlugin({

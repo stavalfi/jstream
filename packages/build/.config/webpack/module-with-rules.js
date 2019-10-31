@@ -1,18 +1,18 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const jsonImporter = require('node-sass-json-importer')
 const {
   pathsResolvingStrategies: { babelAliases },
 } = require('../utils')
 const {
-  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath },
+  paths: { srcPath, libTsconfigFilePath, babelRcPath, packageJsonFolderPath, eslintConfig, jsonStylesFilePathsPath },
   constants: { isDevelopmentMode, isWebApp, publicPath },
 } = require('../utils')
 
 module.exports = () => ({
+  strictExportPresence: true,
   rules: [
     {
       test: /\.(ts|js)x?$/,
-      exclude: /(node_module|dist|my-symphony.font.js)/,
+      exclude: /(node_module|dist)/,
       use: [
         {
           loader: 'babel-loader',
@@ -44,6 +44,17 @@ module.exports = () => ({
                 },
               },
             ]),
+        {
+          loader: 'eslint-loader',
+          options: {
+            failOnError: !isDevelopmentMode,
+            failOnWarning: !isDevelopmentMode,
+            configFile: eslintConfig,
+            fix: false,
+            cache: isDevelopmentMode, // change to false if you change eslintrc rules (and then return to current value)
+            formatter: require('eslint-formatter-friendly'),
+          },
+        },
       ],
     },
     {
@@ -112,7 +123,19 @@ module.exports = () => ({
     {
       test: /\.(scss|sass)$/,
       exclude: /(node_modules)/,
-      use: [...getCssLoaders({ isDevelopmentMode, isWebApp }), 'fast-sass-loader'],
+      use: [
+        ...getCssLoaders({ isDevelopmentMode, isWebApp }),
+        'sass-loader',
+        {
+          loader: '@epegzz/sass-vars-loader',
+          options: {
+            syntax: 'sass',
+            // get array of paths of all json files that are been used
+            // in sass files and use them in the sass files.
+            files: require(jsonStylesFilePathsPath),
+          },
+        },
+      ],
     },
   ],
 })

@@ -1,6 +1,6 @@
 const {
   paths: { appEntryFilePath, webappReactHmrEntryFile },
-  constants: { isWebApp },
+  constants: { isWebApp, disableHmr },
 } = require('../utils')
 
 module.exports = () => ({
