@@ -140,7 +140,7 @@
     "webfonts-loader": "4.4.0",
     "webpack": "^5.0.0-beta.2",
     "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.2"
+    "webpack-dev-server": "^5.2.1"
   },
   "private": true,
   "description": "represent graphs, differently.",
